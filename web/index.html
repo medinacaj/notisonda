@@ -9,7 +9,7 @@
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' https: data:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests">
   <link rel="icon" href="./favicon.svg" type="image/svg+xml">
   <link rel="manifest" href="./manifest.webmanifest">
-  <link rel="stylesheet" href="./styles.css?v=3.4.0">
+  <link rel="stylesheet" href="./styles.css?v=4.0.0">
   <title>Radar RSS — Actualidad en un solo lugar</title>
 </head>
 <body>
@@ -24,7 +24,7 @@
       <div class="sidebar-bottom">
         <div class="source-state"><span class="live-dot"></span><span>Seguimiento automático</span></div>
         <div class="sidebar-small" id="sidebarSources">Cargando fuentes...</div>
-        <button type="button" class="minimal-button" id="aboutButton">Sobre este proyecto <span>↗</span></button>
+        <button type="button" class="minimal-button" id="aboutButton">Sobre el proyecto <span data-icon="info" class="ui-icon-slot" aria-hidden="true"></span></button>
       </div>
     </aside>
     <div class="page">
@@ -33,9 +33,9 @@
         <div class="topbar-actions">
           <span class="update-label" id="lastUpdate">Sin sincronizar</span>
           <button id="feedHealthIndicator" class="health-indicator" type="button" hidden aria-label="Abrir diagnóstico de las fuentes RSS" title="Ver fuentes con incidencias"><span class="health-indicator-dot" aria-hidden="true"></span><span id="feedHealthCount" class="health-indicator-count">0</span><span class="health-indicator-label">fuentes</span></button>
-          <button id="settingsButton" class="settings-trigger" type="button" title="Configuración" aria-label="Abrir configuración" aria-haspopup="dialog"><span aria-hidden="true">⚙</span><span class="settings-text">Configuración</span></button>
-          <button id="themeToggle" class="icon-button" type="button" aria-label="Cambiar tema" title="Cambiar modo claro u oscuro"><span id="themeGlyph">☀</span></button>
-          <a class="top-external" id="githubLink" href="https://github.com/medinacaj/radar-rss-publico" target="_blank" rel="noopener noreferrer" title="GitHub">GitHub ↗</a>
+          <button id="settingsButton" class="settings-trigger" type="button" title="Configuración" aria-label="Abrir configuración" aria-haspopup="dialog"><span data-icon="settings" class="ui-icon-slot" aria-hidden="true"></span><span class="settings-text">Configuración</span></button>
+          <button id="themeToggle" class="icon-button" type="button" aria-label="Cambiar tema" title="Cambiar modo claro u oscuro"><span id="themeGlyph"></span></button>
+          <a class="top-external" id="githubLink" href="https://github.com/medinacaj/radar-rss-publico" target="_blank" rel="noopener noreferrer" title="GitHub">GitHub <span data-icon="external" class="ui-icon-slot" aria-hidden="true"></span></a>
         </div>
       </header>
       <div class="refresh-cycle" id="refreshCycle" title="Es una estimación del ciclo programado de seis horas, no la descarga de noticias en tiempo real. GitHub Actions puede ejecutar o publicar con retraso.">
@@ -56,20 +56,24 @@
           <div class="hero-art" aria-hidden="true"><span class="hero-ring ring-a"></span><span class="hero-ring ring-b"></span><span class="hero-ring ring-c"></span><span class="hero-center">RSS</span></div>
         </section>
         <section class="stats" aria-label="Resumen de contenidos">
-          <div class="stat"><div class="stat-ico">◫</div><div><span id="statArticles">—</span><small>ARTÍCULOS DISPONIBLES</small></div></div>
-          <div class="stat"><div class="stat-ico">◎</div><div><span id="statSources">150</span><small>FUENTES CONFIGURADAS</small></div></div>
-          <div class="stat"><div class="stat-ico">▤</div><div><span id="statCategories">6</span><small>CATEGORÍAS</small></div></div>
-          <div class="stat"><div class="stat-ico">◷</div><div><span id="statUpdated">—</span><small>ÚLTIMA ACTUALIZACIÓN</small></div></div>
+          <div class="stat"><div class="stat-ico"><span data-icon="newspaper" class="ui-icon-slot" aria-hidden="true"></span></div><div><span id="statArticles">—</span><small>ARTÍCULOS DISPONIBLES</small></div></div>
+          <div class="stat"><div class="stat-ico"><span data-icon="rss" class="ui-icon-slot" aria-hidden="true"></span></div><div><span id="statSources">150</span><small>FUENTES CONFIGURADAS</small></div></div>
+          <div class="stat"><div class="stat-ico"><span data-icon="grid" class="ui-icon-slot" aria-hidden="true"></span></div><div><span id="statCategories">6</span><small>CATEGORÍAS</small></div></div>
+          <div class="stat"><div class="stat-ico"><span data-icon="clock" class="ui-icon-slot" aria-hidden="true"></span></div><div><span id="statUpdated">—</span><small>ÚLTIMA ACTUALIZACIÓN</small></div></div>
         </section>
 
         <section id="dashboardView" class="dashboard-view" aria-labelledby="dashboardTitle" hidden>
           <div class="dashboard-head">
             <div><span class="dashboard-kicker">PORTADA · RADAR RSS</span><h1 id="dashboardTitle">Tu panorama informativo</h1><p>Noticias recientes y categorías, sin ruido visual.</p></div>
-            <a class="dashboard-read-all" href="#noticias">Explorar todas las noticias <span aria-hidden="true">↗</span></a>
+            <a class="dashboard-read-all" href="#noticias">Explorar todas las noticias <span data-icon="arrow-right" class="ui-icon-slot" aria-hidden="true"></span></a>
           </div>
           <section class="dashboard-panel dashboard-feature-panel" aria-label="Noticias recientes de diferentes categorías">
             <div class="dashboard-panel-head"><h2>En portada</h2><span>Selección cronológica de distintas categorías</span></div>
             <div class="dashboard-feature" id="dashboardFeature"></div>
+          </section>
+          <section class="dashboard-panel dashboard-saved-panel" id="dashboardSavedPanel" hidden aria-label="Artículos guardados">
+            <div class="dashboard-panel-head"><h2>Tu lista para después</h2><button type="button" id="dashboardSavedAll" class="dashboard-read-all">Ver mis guardadas <span data-icon="arrow-right" class="ui-icon-slot" aria-hidden="true"></span></button></div>
+            <div id="dashboardSavedList" class="dashboard-saved-list"></div>
           </section>
           <div class="dashboard-lower">
             <section class="dashboard-panel" aria-labelledby="dashboardCategoriesTitle">
@@ -83,11 +87,12 @@
           </div>
           <section class="dashboard-panel dashboard-health-panel" aria-label="Resumen de fuentes">
             <div><h2>Estado de las fuentes</h2><p id="dashboardHealthText">Comprobando las fuentes...</p></div>
-            <button type="button" id="dashboardHealthButton" class="dashboard-read-all">Ver diagnóstico RSS <span aria-hidden="true">↗</span></button>
+            <button type="button" id="dashboardHealthButton" class="dashboard-read-all">Ver diagnóstico RSS <span data-icon="arrow-right" class="ui-icon-slot" aria-hidden="true"></span></button>
           </section>
         </section>
         <section class="feed-area" id="feedView" aria-labelledby="feedHeading">
           <div class="section-heading"><div><span class="section-eyebrow" id="sectionEyebrow">SELECCIÓN EDITORIAL</span><h2 id="feedHeading">Todas las noticias</h2><p id="feedDescription">Titulares y novedades de tus medios favoritos.</p></div><span class="count-label" id="visibleCount">0 ARTÍCULOS</span></div>
+          <nav class="topic-rail" id="topicRail" aria-label="Temas y categorías"></nav>
           <div class="filter-bar">
             <div class="mode-tabs" role="group" aria-label="Tipo de noticias">
               <button type="button" data-mode="all" class="mode-tab active">Todas</button>
@@ -106,18 +111,18 @@
                 </select>
               </label>
               <div class="layout-switch" role="group" aria-label="Vista">
-                <button type="button" class="view-button active" data-view="cards" title="Tarjetas" aria-label="Vista tarjetas"><svg viewBox="0 0 20 20" fill="currentColor"><rect x="1" y="1" width="8" height="8" rx="1.4"/><rect x="11" y="1" width="8" height="8" rx="1.4"/><rect x="1" y="11" width="8" height="8" rx="1.4"/><rect x="11" y="11" width="8" height="8" rx="1.4"/></svg></button>
-                <button type="button" class="view-button" data-view="list" title="Lista" aria-label="Vista lista"><svg viewBox="0 0 20 20" fill="currentColor"><rect x="1" y="2" width="18" height="3" rx="1"/><rect x="1" y="9" width="18" height="3" rx="1"/><rect x="1" y="16" width="18" height="3" rx="1"/></svg></button>
+                <button type="button" class="view-button active" data-view="cards" title="Tarjetas" aria-label="Vista tarjetas"><span data-icon="grid" class="ui-icon-slot" aria-hidden="true"></span></button>
+                <button type="button" class="view-button" data-view="list" title="Lista" aria-label="Vista lista"><span data-icon="list" class="ui-icon-slot" aria-hidden="true"></span></button>
               </div>
             </div>
           </div>
-          <div class="feed-actions"><button id="markAllVisible" class="settings-secondary" type="button" title="Marca como leídas las noticias que coinciden con los filtros">Marcar visibles como leídas ✓</button><span id="filterSummary" class="filter-summary"></span></div>
+          <div class="feed-actions"><button id="markAllVisible" class="settings-secondary" type="button" title="Marca como leídas las noticias que coinciden con los filtros"><span data-icon="check" class="ui-icon-slot" aria-hidden="true"></span> Marcar visibles como leídas</button><span id="filterSummary" class="filter-summary"></span></div>
           <div id="statusBanner" class="status-banner" role="status" hidden>
             <span class="status-icon" aria-hidden="true">!</span>
             <span id="statusMessage" class="status-message"></span>
             <span class="status-actions">
               <button id="statusDetails" class="status-details" type="button" hidden>Ver detalles</button>
-              <button id="statusDismiss" class="status-dismiss" type="button" title="Cerrar aviso" aria-label="Cerrar aviso de estado de las fuentes">×</button>
+              <button id="statusDismiss" class="status-dismiss" type="button" title="Cerrar aviso" aria-label="Cerrar aviso de estado de las fuentes"><span data-icon="x" class="ui-icon-slot" aria-hidden="true"></span></button>
             </span>
           </div>
           <div id="articleGrid" class="article-grid" aria-live="polite"></div>
@@ -130,7 +135,7 @@
   <dialog id="feedHealthDialog" class="feed-health-dialog" aria-labelledby="feedHealthTitle">
     <div class="feed-health-header">
       <div><span class="feed-health-kicker">DIAGNÓSTICO · RSS</span><h2 id="feedHealthTitle">Estado de las fuentes</h2><p>Incidencias detectadas durante la última actualización automática.</p></div>
-      <button type="button" id="closeFeedHealth" aria-label="Cerrar diagnóstico RSS" title="Cerrar">×</button>
+      <button type="button" id="closeFeedHealth" aria-label="Cerrar diagnóstico RSS" title="Cerrar"><span data-icon="x" class="ui-icon-slot" aria-hidden="true"></span></button>
     </div>
     <div class="feed-health-body">
       <p id="feedHealthOverview" class="feed-health-overview"></p>
@@ -139,21 +144,21 @@
     </div>
     <div class="feed-health-footer"><button type="button" id="doneFeedHealth">Cerrar diagnóstico</button></div>
   </dialog>
-  <dialog id="aboutDialog" class="about-dialog"><div class="dialog-head"><h2>Acerca de Radar RSS</h2><button type="button" id="closeAbout" aria-label="Cerrar">✕</button></div>
+  <dialog id="aboutDialog" class="about-dialog"><div class="dialog-head"><h2>Acerca de Radar RSS</h2><button type="button" id="closeAbout" aria-label="Cerrar"><span data-icon="x" class="ui-icon-slot" aria-hidden="true"></span></button></div>
     <p>Radar RSS reúne titulares, extractos breves y enlaces a noticias de medios y blogs externos. Cada artículo enlaza al sitio original y sus derechos siguen perteneciendo a sus respectivos autores.</p>
     <p>Las fuentes se organizan en seis categorías, inicialmente importadas desde OPML. Los contenidos se recopilan mediante GitHub Actions y se publican de forma estática. La frecuencia programada es de aproximadamente seis horas, sujeta a disponibilidad de GitHub y de cada feed.</p>
     <p>Los artículos guardados y marcados como leídos se conservan <strong>solo en este navegador</strong>; no hay cuentas, sincronización entre dispositivos ni seguimiento personal desde esta aplicación. Las imágenes externas pueden realizar solicitudes a los sitios de sus editores.</p>
     <p>Un RSS con error o sin noticias recientes no implica necesariamente que el periódico haya cerrado. La revisión editorial es necesaria antes de retirar una fuente.</p>
     <button type="button" class="dialog-close" id="dialogAccept">Entendido</button></dialog>
   <dialog id="settingsDialog" class="settings-dialog" aria-labelledby="settingsTitle">
-    <div class="settings-top"><div><span class="setting-eyebrow">CENTRO DE PREFERENCIAS</span><h2 id="settingsTitle">Configuración</h2><p>Personaliza Radar RSS. Tus ajustes se guardan en este navegador.</p></div><button type="button" id="closeSettings" aria-label="Cerrar configuración">✕</button></div>
+    <div class="settings-top"><div><span class="setting-eyebrow">CENTRO DE PREFERENCIAS</span><h2 id="settingsTitle">Configuración</h2><p>Personaliza Radar RSS. Tus ajustes se guardan en este navegador.</p></div><button type="button" id="closeSettings" aria-label="Cerrar configuración"><span data-icon="x" class="ui-icon-slot" aria-hidden="true"></span></button></div>
     <div class="settings-body">
       <nav class="settings-tabs" aria-label="Secciones de configuración">
-        <button type="button" class="settings-tab active" data-settings-tab="appearance" aria-selected="true">◫ <span>Apariencia</span></button>
-        <button type="button" class="settings-tab" data-settings-tab="reading" aria-selected="false">▤ <span>Lectura y filtros</span></button>
-        <button type="button" class="settings-tab" data-settings-tab="sources" aria-selected="false">◎ <span>Mis fuentes</span></button>
-        <button type="button" class="settings-tab" data-settings-tab="data" aria-selected="false">↧ <span>Datos y privacidad</span></button>
-        <button type="button" class="settings-tab" data-settings-tab="health" aria-selected="false">◷ <span>Estado de RSS</span></button>
+        <button type="button" class="settings-tab active" data-settings-tab="appearance" aria-selected="true"><span data-icon="settings" class="ui-icon-slot" aria-hidden="true"></span> <span>Apariencia</span></button>
+        <button type="button" class="settings-tab" data-settings-tab="reading" aria-selected="false"><span data-icon="newspaper" class="ui-icon-slot" aria-hidden="true"></span> <span>Lectura y filtros</span></button>
+        <button type="button" class="settings-tab" data-settings-tab="sources" aria-selected="false"><span data-icon="rss" class="ui-icon-slot" aria-hidden="true"></span> <span>Mis fuentes</span></button>
+        <button type="button" class="settings-tab" data-settings-tab="data" aria-selected="false"><span data-icon="bookmark" class="ui-icon-slot" aria-hidden="true"></span> <span>Datos y privacidad</span></button>
+        <button type="button" class="settings-tab" data-settings-tab="health" aria-selected="false"><span data-icon="clock" class="ui-icon-slot" aria-hidden="true"></span> <span>Estado de RSS</span></button>
       </nav>
       <div class="settings-pages">
         <section class="settings-pane active" data-settings-pane="appearance" aria-label="Apariencia">
@@ -208,7 +213,8 @@
     </div>
     <div class="settings-footer"><span>Preferencias del navegador · Radar RSS</span><button type="button" class="dialog-close" id="settingsDone">Guardar y cerrar</button></div>
   </dialog>
+  <button id="backTop" class="back-to-top" type="button" aria-label="Volver arriba" title="Volver arriba" hidden><span data-icon="arrow-up" class="ui-icon-slot" aria-hidden="true"></span></button>
   <div id="actionToast" class="action-toast" role="status" aria-live="polite" aria-atomic="true" hidden></div>
-  <script src="./app.js?v=3.4.0" defer></script>
+  <script src="./app.js?v=4.0.0" defer></script>
 </body>
 </html>

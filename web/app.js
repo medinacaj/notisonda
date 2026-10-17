@@ -24,7 +24,46 @@ const state = {
   hiddenSources: safeStoredSet('radar-hidden-sources'),
   saved: safeStoredSet('radar-saved'), read: safeStoredSet('radar-read')
 };
-const ICONS = ['✧', '⌘', '◉', '♧', '◈', '◎'];
+
+const VECTOR_PATHS={
+  home:'<path d="m3 10 9-7 9 7v10H5V10M9 21v-7h6v7"/>',
+  newspaper:'<rect x="3" y="3" width="18" height="18" rx="2"/><path d="M7 7h5v5H7zM15 8h3M15 12h3M7 16h11"/>',
+  brain:'<path d="M12 5A4 4 0 0 0 5 4a5 5 0 0 0-1 8 5 5 0 0 0 6 8l2-2V5Zm0 0a4 4 0 0 1 7-1 5 5 0 0 1 1 8 5 5 0 0 1-6 8l-2-2"/>',
+  cpu:'<rect x="5" y="5" width="14" height="14" rx="2"/><rect x="9" y="9" width="6" height="6"/><path d="M9 1v4M15 1v4M9 19v4M15 19v4M1 9h4M1 15h4M19 9h4M19 15h4"/>',
+  globe:'<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c-7 6-7 12 0 18 7-6 7-12 0-18"/>',
+  map:'<path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/>',
+  flag:'<path d="M5 22V4m0 1c7-5 9 5 16 0v12c-7 5-9-5-16 0"/>',
+  compass:'<circle cx="12" cy="12" r="9"/><path d="m16 8-3 5-5 3 3-5z"/>',
+  rss:'<circle cx="5" cy="19" r="1.5" fill="currentColor" stroke="none"/><path d="M4 11a9 9 0 0 1 9 9M4 4a16 16 0 0 1 16 16"/>',
+  grid:'<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>',
+  list:'<path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" stroke-linecap="round"/>',
+  clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l4 2"/>',
+  settings:'<circle cx="12" cy="12" r="3"/><path d="m10 2-.5 2-2 1-2-.7L3 7l1 2-1 2v2l1 2-1 2 2.5 2.7 2-.7 2 1 .5 2h4l.5-2 2-1 2 .7L21 17l-1-2 1-2v-2l-1-2 1-2-2.5-2.7-2 .7-2-1-.5-2z"/>',
+  sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5 19 19M5 19l1.5-1.5M17.5 6.5 19 5"/>',
+  moon:'<path d="M20 15.5A9 9 0 0 1 8.5 4 9 9 0 1 0 20 15.5Z"/>',
+  external:'<path d="M12 5H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7M13 3h8v8M10 14 21 3"/>',
+  'arrow-right':'<path d="M4 12h16m-7-7 7 7-7 7"/>',
+  'arrow-up':'<path d="M12 20V4M5 11l7-7 7 7"/>',
+  check:'<path d="m5 12 5 5L20 7"/>',
+  bookmark:'<path d="M6 4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18l-6-4-6 4z"/>',
+  share:'<circle cx="18" cy="5" r="2"/><circle cx="6" cy="12" r="2"/><circle cx="18" cy="19" r="2"/><path d="m8 11 8-5M8 13l8 5"/>',
+  undo:'<path d="M3 7v6h6M3 13a9 9 0 1 0 3-7"/>',
+  info:'<circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7h.01"/>',
+  x:'<path d="M18 6 6 18M6 6l12 12"/>',
+  search:'<circle cx="11" cy="11" r="7"/><path d="m16 16 5 5"/>'
+};
+const CATEGORY_ICONS=['brain','cpu','globe','map','flag','compass'];
+function svgIcon(name){
+ const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
+ svg.setAttribute('viewBox','0 0 24 24');svg.setAttribute('width','20');svg.setAttribute('height','20');
+ svg.setAttribute('stroke','currentColor');svg.setAttribute('fill','none');
+ svg.setAttribute('stroke-width','1.8');svg.setAttribute('stroke-linecap','round');svg.setAttribute('stroke-linejoin','round');
+ svg.setAttribute('aria-hidden','true');svg.classList.add('ui-icon');
+ svg.innerHTML=VECTOR_PATHS[name]||VECTOR_PATHS.newspaper;
+ return svg;
+}
+function hydrateIcons(){document.querySelectorAll('[data-icon]').forEach(node=>node.replaceChildren(svgIcon(node.dataset.icon)));}
+
 const CATEGORY_LABELS = ['Inteligencia Artificial', 'Tecnología', 'Internacionales', 'Chile', 'Venezuela', 'Latinoamérica'];
 
 function safeStoredSet(key) {
@@ -80,7 +119,7 @@ function setTheme(theme) {
   state.theme = ['light','dark','system'].includes(theme) ? theme : 'system';
   const light=state.theme==='light' || (state.theme==='system' && Boolean(browserTheme?.matches));
   document.body.classList.toggle('light',light);
-  $('themeGlyph').textContent=light?'☾':'☀';
+  $('themeGlyph').replaceChildren(svgIcon(light?'moon':'sun'));
   try{localStorage.setItem('radar-theme',state.theme);}catch{}
 }
 function setColumns(value){
@@ -277,14 +316,24 @@ function buildNav() {
     const active=cat.id==='home' ? state.pageView==='dashboard' : state.pageView==='feed' && state.category===cat.id;
     const button=mk('button', 'nav-link'+(active?' active':''));
     button.type='button'; button.setAttribute('aria-current',active?'page':'false');
-    const glyph=i===0?'⌂':i===1?'▦':ICONS[i-2];
-    const left=mk('span','nav-left');
-    left.append(mk('span','nav-glyph',glyph),mk('span','nav-label',cat.label));
+    const symbol=mk('span','nav-glyph');symbol.append(svgIcon(i===0?'home':i===1?'newspaper':CATEGORY_ICONS[i-2]));
+    const left=mk('span','nav-left');left.append(symbol,mk('span','nav-label',cat.label));
     const count=cat.id==='home' ? '' : (cat.id==='all' ? state.sources.filter(x=>!state.hiddenSources.has(x.id)).length : state.sources.filter(x=>x.category===cat.id&&!state.hiddenSources.has(x.id)).length);
     button.append(left,mk('span','nav-count',String(count)));
     button.addEventListener('click',()=>goTo(cat.id));
     nav.append(button);
   });
+  renderTopicRail();
+}
+function renderTopicRail(){
+ const rail=$('topicRail');rail.replaceChildren();
+ const entries=[{id:'all',label:'Todos los temas',icon:'newspaper'},...state.categories.map((id,i)=>({id,label:categoryLabel(id),icon:CATEGORY_ICONS[i]||'grid'}))];
+ entries.forEach(entry=>{
+  const active=state.pageView==='feed'&&state.category===entry.id;
+  const button=mk('button','topic-chip'+(active?' active':''));button.type='button';
+  button.setAttribute('aria-pressed',String(active));button.append(svgIcon(entry.icon),mk('span','',entry.label));
+  button.addEventListener('click',()=>goTo(entry.id));rail.append(button);
+ });
 }
 function goTo(target){
   const hash=target==='home'?'#inicio':target==='all'?'#noticias':'#categoria/'+encodeURIComponent(target);
@@ -296,7 +345,7 @@ function navigateFromHash(){
   state.pageView=(!hash||hash==='inicio')?'dashboard':'feed';
   state.category=hash.startsWith('categoria/')&&state.categories.includes(hash.slice(10))?hash.slice(10):'all';
   state.feed='';
-  state.page=1;
+  state.page=1;progressiveLoads=0;
   updateHeader();buildNav();fillSelect();
   $('dashboardView').hidden=state.pageView!=='dashboard';
   $('feedView').hidden=state.pageView!=='feed';
@@ -440,6 +489,18 @@ function renderDashboard(){
   for(const item of items){if(top.length>=3)break;if(!top.some(x=>x.id===item.id))top.push(item);}
   if(top.length)feature.replaceChildren(...top.map(card));
   else feature.replaceChildren(mk('p','dashboard-empty','No hay artículos disponibles con las preferencias actuales.'));
+  const savedPanel=$('dashboardSavedPanel'), savedList=$('dashboardSavedList');
+  const savedNews=items.filter(x=>state.saved.has(x.id)).slice(0,4);
+  savedPanel.hidden=!savedNews.length;
+  savedList.replaceChildren(...savedNews.map(story=>{
+   const row=mk('div','dashboard-saved-item'),content=mk('div','dashboard-saved-content');
+   const image=mk('a','dashboard-saved-cover');image.href=safeURL(story.url)||'#';
+   image.target=state.newTab?'_blank':'_self';image.rel='noopener noreferrer external';
+   if(safeURL(story.image)){const img=mk('img');img.src=story.image;img.alt='';img.loading='lazy';img.referrerPolicy='no-referrer';image.append(img);}
+   else image.append(svgIcon('bookmark'));
+   const title=link(story.url,story.title||'Sin título','dashboard-saved-title');title.target=state.newTab?'_blank':'_self';title.addEventListener('click',()=>markRead(story.id,true));
+   content.append(title,mk('span','dashboard-saved-meta',story.publisher||story.source||'Fuente RSS'));row.append(image,content);return row;
+  }));
   const categoryNodes=state.categories.map((cat,i)=>{
     const shown=state.sources.filter(s=>s.category===cat&&!state.hiddenSources.has(s.id));
     const count=items.filter(item=>(item.categories||[]).includes(cat)).length;
@@ -447,7 +508,9 @@ function renderDashboard(){
     button.type='button'; button.disabled=shown.length===0;
     const label=mk('span','dashboard-category-label',categoryLabel(cat));
     const countText=mk('span','dashboard-category-meta',format.format(count)+' noticias · '+shown.length+' fuentes');
-    button.append(mk('span','dashboard-category-icon',ICONS[i]||'◫'),label,countText,mk('span','dashboard-category-arrow','↗'));
+    const symbol=mk('span','dashboard-category-icon');symbol.append(svgIcon(CATEGORY_ICONS[i]||'grid'));
+    const arrow=mk('span','dashboard-category-arrow');arrow.append(svgIcon('arrow-right'));
+    button.append(symbol,label,countText,arrow);
     button.addEventListener('click',()=>goTo(cat));
     return button;
   });
@@ -476,7 +539,8 @@ function renderDashboard(){
 function emptyState(filtered) {
   const isEmpty = !state.items.length;
   const el = mk('div','empty-state');
-  el.append(mk('div','empty-icon',isEmpty ? '◌' : '⌕'),
+  const symbol=mk('div','empty-icon');symbol.append(svgIcon(isEmpty?'rss':'search'));
+  el.append(symbol,
     mk('h3','',isEmpty ? 'Esperando las primeras noticias' : 'No hay noticias con estos filtros'),
     mk('p','',isEmpty ? 'El diseño y las 150 fuentes están preparados. La recopilación debe ejecutarse desde GitHub Actions después de publicar el proyecto.' : 'Prueba otra categoría o fuente, desmarca tus filtros o busca con otros términos.'));
   return el;
@@ -515,14 +579,11 @@ async function shareArticle(item) {
     window.prompt('Copia el enlace de la noticia:',url);
   }
 }
-function articleAction(icon,label,extraClass=''){
-  const button=mk('button','article-action'+(extraClass?' '+extraClass:''));
-  button.type='button';
-  button.title=label;
-  button.setAttribute('aria-label',label);
-  button.append(mk('span','article-action-icon',icon),mk('span','article-action-label',label));
-  button.querySelector('.article-action-icon').setAttribute('aria-hidden','true');
-  return button;
+function articleAction(iconName,label,extraClass=''){
+ const button=mk('button','article-action'+(extraClass?' '+extraClass:''));button.type='button';
+ button.title=label;button.setAttribute('aria-label',label);
+ const symbol=mk('span','article-action-icon');symbol.setAttribute('aria-hidden','true');symbol.append(svgIcon(iconName));
+ button.append(symbol,mk('span','article-action-label',label));return button;
 }
 function card(item) {
   const isRead=state.read.has(item.id);
@@ -546,13 +607,13 @@ function card(item) {
   actions.setAttribute('role','group');actions.setAttribute('aria-label','Acciones de esta noticia');
   const read=link(item.url,'','article-action article-open');
   read.target=state.newTab?'_blank':'_self';read.title='Leer noticia original';read.setAttribute('aria-label','Leer noticia original');
-  read.append(mk('span','article-action-icon','↗'),mk('span','article-action-label','Leer'));
-  read.querySelector('.article-action-icon').setAttribute('aria-hidden','true');
+  const symbol=mk('span','article-action-icon');symbol.setAttribute('aria-hidden','true');symbol.append(svgIcon('external'));
+  read.append(symbol,mk('span','article-action-label','Leer'));
   read.addEventListener('click',()=>markRead(item.id,true));
-  const share=articleAction('⇧','Compartir','article-share');
+  const share=articleAction('share','Compartir','article-share');
   share.addEventListener('click',()=>{void shareArticle(item);});
   const saved=state.saved.has(item.id);
-  const save=articleAction(saved?'★':'☆',saved?'Quitar de guardadas':'Guardar','article-save'+(saved?' saved':''));
+  const save=articleAction('bookmark',saved?'Quitar de guardadas':'Guardar','article-save'+(saved?' saved':''));
   save.setAttribute('aria-pressed',String(saved));
   save.addEventListener('click',()=>{
     if(state.saved.has(item.id))state.saved.delete(item.id);else state.saved.add(item.id);
@@ -560,7 +621,7 @@ function card(item) {
     render();
     actionToast(state.saved.has(item.id)?'Noticia guardada.':'Noticia quitada de guardadas.');
   });
-  const mark=articleAction(isRead?'↶':'✓',isRead?'Marcar no leída':'Marcar leída','article-read-toggle');
+  const mark=articleAction(isRead?'undo':'check',isRead?'Marcar no leída':'Marcar leída','article-read-toggle');
   mark.setAttribute('aria-pressed',String(isRead));
   mark.addEventListener('click',()=>markRead(item.id,!state.read.has(item.id)));
   actions.append(read,share,save,mark);
@@ -578,7 +639,7 @@ function markRead(id,value){
     if(!button)return;
     const label=value?'Marcar no leída':'Marcar leída';
     button.title=label;button.setAttribute('aria-label',label);button.setAttribute('aria-pressed',String(value));
-    button.querySelector('.article-action-icon').textContent=value?'↶':'✓';
+    button.querySelector('.article-action-icon').replaceChildren(svgIcon(value?'undo':'check'));
     button.querySelector('.article-action-label').textContent=label;
   });
   $('filterSummary').textContent=`${format.format(applyFilters().slice(0,state.page*state.pageSize).length)} visibles · ${format.format(state.read.size)} leídas`;
@@ -682,7 +743,21 @@ async function boot() {
   }
   statusSummary(); navigateFromHash();
 }
+let progressiveLoads=0;
+function initSocialNavigation(){
+ $('dashboardSavedAll').addEventListener('click',()=>{state.mode='saved';goTo('all');});
+ const back=$('backTop');back.addEventListener('click',()=>window.scrollTo({top:0,behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'}));
+ window.addEventListener('scroll',()=>{back.hidden=window.scrollY<600;},{passive:true});
+ if('IntersectionObserver' in window){
+  const observer=new IntersectionObserver(entries=>{
+   if(!entries.some(entry=>entry.isIntersecting)||state.pageView!=='feed'||window.scrollY<350||progressiveLoads>=3||$('loadMore').hidden)return;
+   progressiveLoads++;state.page+=1;render();
+  },{rootMargin:'250px 0px'});
+  observer.observe($('loadMore'));
+ }
+}
 function initHandlers() {
+ initSocialNavigation();
   window.setInterval(updateScheduleProgress,30_000);
   window.setInterval(refreshPublishedData,5*60_000);
   window.addEventListener('focus',refreshPublishedData);
@@ -700,7 +775,7 @@ function initHandlers() {
   $('closeFeedHealth').addEventListener('click',()=>feedHealthDialog.close());
   $('doneFeedHealth').addEventListener('click',()=>feedHealthDialog.close());
   feedHealthDialog.addEventListener('click',e=>{if(e.target===feedHealthDialog)feedHealthDialog.close();});
-  document.querySelectorAll('.mode-tab').forEach(button=>button.addEventListener('click',()=>{state.mode=button.dataset.mode;state.page=1;render();}));
+  document.querySelectorAll('.mode-tab').forEach(button=>button.addEventListener('click',()=>{state.mode=button.dataset.mode;state.page=1;progressiveLoads=0;render();}));
   document.querySelectorAll('.view-button').forEach(button=>button.addEventListener('click',()=>{state.layout=button.dataset.view;state.page=1;savePref('layout',state.layout);applyDisplaySettings();render();}));
   $('columnsSelect').addEventListener('change',e=>setColumns(e.target.value));
   $('sourceSelect').addEventListener('change',e=>{state.feed=e.target.value;state.page=1;render();});
@@ -716,4 +791,4 @@ function initHandlers() {
   initSettingsHandlers();
   document.addEventListener('keydown',e=>{if(e.key==='/' && !['INPUT','TEXTAREA','SELECT'].includes(document.activeElement.tagName) && !dialog.open && !$('settingsDialog').open && !$('feedHealthDialog').open){e.preventDefault();$('searchInput').focus();}});
 }
-initHandlers(); updateScheduleProgress(); boot();
+hydrateIcons(); initHandlers(); updateScheduleProgress(); boot();
