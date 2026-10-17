@@ -15,7 +15,7 @@
 <body>
   <div class="app-shell">
     <aside class="sidebar" aria-label="Menú de fuentes">
-      <a class="brand" href="./" aria-label="Radar RSS, inicio">
+      <a class="brand" id="brandHome" href="#inicio" aria-label="Radar RSS: ir al inicio">
         <span class="brand-mark" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="5" cy="19" r="3" fill="currentColor"/><path d="M3 11a10 10 0 0 1 10 10M3 3a18 18 0 0 1 18 18" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg></span>
         <span><strong>RADAR <em>RSS</em></strong><small>Tu panorama informativo</small></span>
       </a>
@@ -51,7 +51,32 @@
           <div class="stat"><div class="stat-ico">▤</div><div><span id="statCategories">6</span><small>CATEGORÍAS</small></div></div>
           <div class="stat"><div class="stat-ico">◷</div><div><span id="statUpdated">—</span><small>ÚLTIMA ACTUALIZACIÓN</small></div></div>
         </section>
-        <section class="feed-area" aria-labelledby="feedHeading">
+
+        <section id="dashboardView" class="dashboard-view" aria-labelledby="dashboardTitle" hidden>
+          <div class="dashboard-head">
+            <div><span class="dashboard-kicker">PORTADA · RADAR RSS</span><h1 id="dashboardTitle">Tu panorama informativo</h1><p>Noticias recientes y categorías, sin ruido visual.</p></div>
+            <a class="dashboard-read-all" href="#noticias">Explorar todas las noticias <span aria-hidden="true">↗</span></a>
+          </div>
+          <section class="dashboard-panel dashboard-feature-panel" aria-label="Noticias recientes de diferentes categorías">
+            <div class="dashboard-panel-head"><h2>En portada</h2><span>Selección cronológica de distintas categorías</span></div>
+            <div class="dashboard-feature" id="dashboardFeature"></div>
+          </section>
+          <div class="dashboard-lower">
+            <section class="dashboard-panel" aria-labelledby="dashboardCategoriesTitle">
+              <div class="dashboard-panel-head"><h2 id="dashboardCategoriesTitle">Explorar por categoría</h2><span>Acceso directo a las noticias</span></div>
+              <div class="dashboard-categories" id="dashboardCategories"></div>
+            </section>
+            <section class="dashboard-panel" aria-labelledby="dashboardRecentTitle">
+              <div class="dashboard-panel-head"><h2 id="dashboardRecentTitle">Últimas publicaciones</h2><span>Actualización de tus fuentes RSS</span></div>
+              <div class="dashboard-recent" id="dashboardRecent"></div>
+            </section>
+          </div>
+          <section class="dashboard-panel dashboard-health-panel" aria-label="Resumen de fuentes">
+            <div><h2>Estado de las fuentes</h2><p id="dashboardHealthText">Comprobando las fuentes...</p></div>
+            <button type="button" id="dashboardHealthButton" class="dashboard-read-all">Ver diagnóstico RSS <span aria-hidden="true">↗</span></button>
+          </section>
+        </section>
+        <section class="feed-area" id="feedView" aria-labelledby="feedHeading">
           <div class="section-heading"><div><span class="section-eyebrow" id="sectionEyebrow">SELECCIÓN EDITORIAL</span><h2 id="feedHeading">Todas las noticias</h2><p id="feedDescription">Titulares y novedades de tus medios favoritos.</p></div><span class="count-label" id="visibleCount">0 ARTÍCULOS</span></div>
           <div class="filter-bar">
             <div class="mode-tabs" role="group" aria-label="Tipo de noticias">

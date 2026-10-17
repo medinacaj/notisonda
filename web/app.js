@@ -5,7 +5,7 @@ const format = new Intl.NumberFormat('es-CL');
 function storeGet(key) { try { return localStorage.getItem(key); } catch { return null; } }
 const state = {
   sources: [], categories: [], items: [], health: [], generated: null,
-  category: 'all', feed: '', mode: 'all', layout: storeGet('radar-layout') === 'list' ? 'list' : 'cards',
+  pageView: 'dashboard', category: 'all', feed: '', mode: 'all', layout: storeGet('radar-layout') === 'list' ? 'list' : 'cards',
   theme: ['system','light','dark'].includes(storeGet('radar-theme')) ? storeGet('radar-theme') : 'system',
   search: '', page: 1, ready: false,
   density: storeGet('radar-density') === 'compact' ? 'compact' : 'comfortable',
@@ -260,16 +260,36 @@ function initSettingsHandlers(){
 }
 function buildNav() {
   const nav = $('categoryNav'); nav.replaceChildren();
-  const choices = [{id:'all', label:'Todas las noticias'}, ...state.categories.map(x => ({id:x, label:categoryLabel(x)}))];
+  const choices = [{id:'home', label:'Inicio'}, {id:'all', label:'Todas las noticias'}, ...state.categories.map(x => ({id:x, label:categoryLabel(x)}))];
   choices.forEach((cat, i) => {
-    const button = mk('button', `nav-link ${state.category === cat.id ? 'active' : ''}`);
-    button.type='button'; button.setAttribute('aria-current', state.category === cat.id ? 'page' : 'false');
-    const left = mk('span', 'nav-left'); left.append(mk('span','nav-glyph',i === 0 ? '▦' : ICONS[i-1]),mk('span','nav-label',cat.label));
-    const count = i === 0 ? state.sources.filter(x=>!state.hiddenSources.has(x.id)).length : state.sources.filter(x => x.category === cat.id && !state.hiddenSources.has(x.id)).length;
+    const active=cat.id==='home' ? state.pageView==='dashboard' : state.pageView==='feed' && state.category===cat.id;
+    const button=mk('button', 'nav-link'+(active?' active':''));
+    button.type='button'; button.setAttribute('aria-current',active?'page':'false');
+    const glyph=i===0?'⌂':i===1?'▦':ICONS[i-2];
+    const left=mk('span','nav-left');
+    left.append(mk('span','nav-glyph',glyph),mk('span','nav-label',cat.label));
+    const count=cat.id==='home' ? '' : (cat.id==='all' ? state.sources.filter(x=>!state.hiddenSources.has(x.id)).length : state.sources.filter(x=>x.category===cat.id&&!state.hiddenSources.has(x.id)).length);
     button.append(left,mk('span','nav-count',String(count)));
-    button.addEventListener('click', () => { state.category = cat.id; state.feed=''; $('sourceSelect').value=''; state.page=1; updateHeader(); buildNav(); fillSelect(); render(); });
+    button.addEventListener('click',()=>goTo(cat.id));
     nav.append(button);
   });
+}
+function goTo(target){
+  const hash=target==='home'?'#inicio':target==='all'?'#noticias':'#categoria/'+encodeURIComponent(target);
+  if(window.location.hash===hash)navigateFromHash();
+  else window.location.hash=hash;
+}
+function navigateFromHash(){
+  const hash=decodeURIComponent(window.location.hash.slice(1));
+  state.pageView=(!hash||hash==='inicio')?'dashboard':'feed';
+  state.category=hash.startsWith('categoria/')&&state.categories.includes(hash.slice(10))?hash.slice(10):'all';
+  state.feed='';
+  state.page=1;
+  updateHeader();buildNav();fillSelect();
+  $('dashboardView').hidden=state.pageView!=='dashboard';
+  $('feedView').hidden=state.pageView!=='feed';
+  document.body.classList.toggle('on-dashboard',state.pageView==='dashboard');
+  render();
 }
 function fillSelect() {
   const select = $('sourceSelect'); const old = state.feed; select.replaceChildren();
@@ -283,7 +303,7 @@ function fillSelect() {
 function updateHeader() {
   const name = state.category === 'all' ? 'Todas las noticias' : categoryLabel(state.category);
   $('feedHeading').textContent = name;
-  $('topbarSection').textContent = name;
+  $('topbarSection').textContent = state.pageView === 'dashboard' ? 'Inicio' : name;
   $('sectionEyebrow').textContent = state.category === 'all' ? 'SELECCIÓN EDITORIAL' : 'EXPLORAR CATEGORÍA';
   $('feedDescription').textContent = state.category === 'all' ? 'Titulares y novedades de todas las fuentes.' : `Publicaciones seleccionadas de ${name.toLowerCase()}.`;
 }
@@ -315,6 +335,69 @@ function applyFilters() {
   else if(state.sort==='source')filtered.sort((a,b)=>String(a.publisher||a.source||'').localeCompare(String(b.publisher||b.source||''),'es'));
   return filtered;
 }
+
+// La portada utiliza las noticias realmente recopiladas. No inventa puntuaciones
+// de popularidad ni presenta la recencia como una clasificación editorial.
+function dashboardEligible(){
+  const words=state.mutedKeywords.split(',').map(w=>stripAccents(w.trim())).filter(w=>w.length>1).slice(0,30);
+  return state.items.filter(item=>{
+    if(!(item.source_ids||[]).some(id=>!state.hiddenSources.has(id)))return false;
+    if(state.maxAge){
+      const date=new Date(item.published_at).getTime();
+      if(!Number.isFinite(date)||(Date.now()-date)>state.maxAge*86400000)return false;
+    }
+    const text=stripAccents([item.title,item.summary,item.publisher,item.source].join(' '));
+    return !words.some(word=>text.includes(word));
+  }).sort((a,b)=>new Date(b.published_at||b.first_seen_at||0)-new Date(a.published_at||a.first_seen_at||0));
+}
+function renderDashboard(){
+  const feature=$('dashboardFeature');
+  const recent=$('dashboardRecent');
+  const categories=$('dashboardCategories');
+  if(!feature||!recent||!categories)return;
+  const items=dashboardEligible();
+  const top=[],seen=new Set();
+  for(const item of items){
+    const primary=(item.categories||[])[0]||'';
+    if(!seen.has(primary)){top.push(item);seen.add(primary);}
+    if(top.length>=3)break;
+  }
+  for(const item of items){if(top.length>=3)break;if(!top.some(x=>x.id===item.id))top.push(item);}
+  if(top.length)feature.replaceChildren(...top.map(card));
+  else feature.replaceChildren(mk('p','dashboard-empty','No hay artículos disponibles con las preferencias actuales.'));
+  const categoryNodes=state.categories.map((cat,i)=>{
+    const shown=state.sources.filter(s=>s.category===cat&&!state.hiddenSources.has(s.id));
+    const count=items.filter(item=>(item.categories||[]).includes(cat)).length;
+    const button=mk('button','dashboard-category');
+    button.type='button'; button.disabled=shown.length===0;
+    const label=mk('span','dashboard-category-label',categoryLabel(cat));
+    const countText=mk('span','dashboard-category-meta',format.format(count)+' noticias · '+shown.length+' fuentes');
+    button.append(mk('span','dashboard-category-icon',ICONS[i]||'◫'),label,countText,mk('span','dashboard-category-arrow','↗'));
+    button.addEventListener('click',()=>goTo(cat));
+    return button;
+  });
+  categories.replaceChildren(...categoryNodes);
+  const topIds=new Set(top.map(x=>x.id));
+  const last=items.filter(x=>!topIds.has(x.id)).slice(0,6);
+  if(!last.length)recent.replaceChildren(mk('p','dashboard-empty','Todavía no hay más publicaciones.'));
+  else recent.replaceChildren(...last.map(item=>{
+    const row=mk('div','dashboard-recent-row');
+    const title=link(item.url,item.title||'Sin título','dashboard-recent-title');
+    title.target=state.newTab?'_blank':'_self';
+    title.addEventListener('click',()=>markRead(item.id,true));
+    const info=mk('span','dashboard-recent-meta',(item.publisher||item.source||'Fuente RSS')+' · '+ageDate(item.published_at));
+    row.append(title,info);
+    return row;
+  }));
+  const errors=state.health.filter(s=>s.state==='error').length;
+  const empty=state.health.filter(s=>s.state==='empty').length;
+  const stale=state.health.filter(s=>s.state==='stale').length;
+  const ok=state.health.filter(s=>s.state==='ok').length;
+  $('dashboardHealthText').textContent=state.health.length
+    ? `${ok} fuentes operativas · ${errors} con error · ${empty} sin artículos · ${stale} desactualizadas. Diagnóstico de la última recopilación.`
+    : 'Aún no hay datos de diagnóstico del recolector.';
+}
+
 function emptyState(filtered) {
   const isEmpty = !state.items.length;
   const el = mk('div','empty-state');
@@ -332,7 +415,7 @@ function card(item) {
     img.addEventListener('error',() => { img.remove(); cover.prepend(mk('div','cover-fallback','RADAR')); },{once:true}); cover.append(img);
   } else { cover.append(mk('div','cover-fallback', 'RADAR')); }
   const category=(item.categories || [])[0] || '';
-  cover.append(mk('span','cover-badge',categoryLabel(category)));
+  // Categoría fuera de la fotografía para mantener las imágenes limpias.
   const content=mk('div','article-content');
   const meta=mk('div','article-meta'); meta.append(mk('span','publisher',item.publisher || item.source || 'Fuente RSS'),mk('time','',ageDate(item.published_at)));
   const title=mk('h3','article-title'); const titleLink=link(item.url,item.title || 'Sin título'); titleLink.target=state.newTab?'_blank':'_self'; titleLink.addEventListener('click',() => markRead(item.id,true)); title.append(titleLink);
@@ -340,7 +423,8 @@ function card(item) {
   const bottom=mk('div','article-bottom'); const open=link(item.url,'Leer original ↗','read-link'); open.target=state.newTab?'_blank':'_self'; open.addEventListener('click',()=>markRead(item.id,true));
   const save=mk('button','save-btn'+(state.saved.has(item.id) ? ' saved' : ''),state.saved.has(item.id)?'★':'☆'); save.type='button'; save.title=state.saved.has(item.id) ? 'Quitar de guardadas' : 'Guardar noticia'; save.setAttribute('aria-label',save.title); save.setAttribute('aria-pressed',String(state.saved.has(item.id)));
   save.addEventListener('click',() => {if(state.saved.has(item.id))state.saved.delete(item.id);else state.saved.add(item.id);persist('radar-saved',state.saved);render();});
-  bottom.append(open,save); content.append(meta,title,excerpt,bottom); el.append(cover,content); return el;
+  const categoryText=mk('span','article-category',categoryLabel(category));
+  bottom.append(open,save); content.append(categoryText,meta,title,excerpt,bottom); el.append(cover,content); return el;
 }
 function markRead(id, value) {
   if (value) state.read.add(id); else state.read.delete(id);
@@ -359,6 +443,7 @@ function render() {
   $('loadMore').hidden=visible.length>=filtered.length;
   document.querySelectorAll('.mode-tab').forEach(button=>button.classList.toggle('active',button.dataset.mode === state.mode));
   document.querySelectorAll('.view-button').forEach(button=>button.classList.toggle('active',button.dataset.view === state.layout));
+  if(state.pageView==='dashboard')renderDashboard();
 }
 async function dataFetch(path, fallback) {
   const response = await fetch(path,{cache:'no-cache'});
@@ -389,9 +474,11 @@ async function boot() {
     state.ready=false;
     console.error('Carga de fuentes:',err);
   }
-  buildNav(); fillSelect(); updateHeader(); statusSummary(); render();
+  statusSummary(); navigateFromHash();
 }
 function initHandlers() {
+  window.addEventListener('hashchange',navigateFromHash);
+  $('dashboardHealthButton').addEventListener('click',()=>{syncSettings();selectedTab('health');$('settingsDialog').showModal();});
   document.querySelectorAll('.mode-tab').forEach(button=>button.addEventListener('click',()=>{state.mode=button.dataset.mode;state.page=1;render();}));
   document.querySelectorAll('.view-button').forEach(button=>button.addEventListener('click',()=>{state.layout=button.dataset.view;state.page=1;try{localStorage.setItem('radar-layout',state.layout);}catch{}render();}));
   $('sourceSelect').addEventListener('change',e=>{state.feed=e.target.value;state.page=1;render();});
