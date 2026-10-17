@@ -508,6 +508,60 @@ function render() {
   document.querySelectorAll('.view-button').forEach(button=>button.classList.toggle('active',button.dataset.view === state.layout));
   if(state.pageView==='dashboard')renderDashboard();
 }
+// Programación definida en .github/workflows/deploy.yml: "17 */6 * * *" (UTC).
+// Indicador temporal, NO porcentaje real de descarga o despliegue.
+const RSS_CYCLE_MS=6*60*60*1000;
+const RSS_CRON_OFFSET_MS=17*60*1000;
+function updateScheduleProgress(){
+  const now=Date.now();
+  const start=Math.floor((now-RSS_CRON_OFFSET_MS)/RSS_CYCLE_MS)*RSS_CYCLE_MS+RSS_CRON_OFFSET_MS;
+  const next=start+RSS_CYCLE_MS;
+  const percentage=Math.max(0,Math.min(100,(now-start)*100/RSS_CYCLE_MS));
+  const remaining=Math.max(0,Math.ceil((next-now)/60000));
+  const hours=Math.floor(remaining/60),mins=remaining%60;
+  const eta=hours ? `${hours} h ${mins} min` : `${mins} min`;
+  const nextTime=new Intl.DateTimeFormat('es-CL',{hour:'2-digit',minute:'2-digit'}).format(new Date(next));
+  const label=`Próxima revisión estimada: ${nextTime} · faltan ${eta}`;
+  $('refreshCycleTime').textContent=label;
+  $('refreshCycleTime').dateTime=new Date(next).toISOString();
+  $('refreshCycleFill').style.width=percentage.toFixed(2)+'%';
+  $('refreshCycleProgress').setAttribute('aria-valuenow',String(Math.round(percentage)));
+  $('refreshCycleProgress').setAttribute('aria-valuetext',label+'. El avance representa tiempo transcurrido, no descarga de noticias.');
+}
+// Comprueba si GitHub Pages ya publicó datos nuevos sin perder filtros o favoritos.
+// Se consulta el JSON pequeño de estado y solo se recargan artículos si cambió.
+let feedRefreshBusy=false;
+async function refreshPublishedData(){
+  if(feedRefreshBusy||!state.ready||document.hidden)return;
+  feedRefreshBusy=true;
+  try{
+    const latestStatus=await dataFetch('./data/status.json?check='+Date.now());
+    const availableAt=Date.parse(latestStatus.checked_at||'');
+    const loadedAt=Date.parse(state.generated||'');
+    if(!Number.isFinite(availableAt)|| (Number.isFinite(loadedAt)&&availableAt<=loadedAt))return;
+    const [sources,articles]=await Promise.all([
+      dataFetch('./data/sources.json?check='+Date.now()),
+      dataFetch('./data/articles.json?check='+Date.now())
+    ]);
+    const actualAt=Date.parse(articles.generated_at||'');
+    if(!Number.isFinite(actualAt)|| (Number.isFinite(loadedAt)&&actualAt<=loadedAt))return;
+    state.sources=Array.isArray(sources.sources)?sources.sources:state.sources;
+    state.categories=Array.isArray(sources.categories)?sources.categories:state.categories;
+    state.items=Array.isArray(articles.items)?articles.items:state.items;
+    state.health=Array.isArray(latestStatus.feeds)?latestStatus.feeds:state.health;
+    state.generated=articles.generated_at;
+    $('statArticles').textContent=format.format(state.items.length);
+    $('statSources').textContent=format.format(state.sources.length);
+    $('statCategories').textContent=state.categories.length;
+    $('statUpdated').textContent=shortDate(state.generated);
+    $('lastUpdate').textContent='Actualizado: '+shortDate(state.generated);
+    buildNav();fillSelect();updateHeader();statusSummary();render();
+  }catch(error){
+    // Una comprobación fallida no debe interrumpir la lectura actual.
+    console.warn('Comprobación automática RSS:',error);
+  }finally{feedRefreshBusy=false;}
+}
+
 async function dataFetch(path, fallback) {
   const response = await fetch(path,{cache:'no-cache'});
   if (!response.ok) throw new Error(`HTTP ${response.status} al abrir ${path}`);
@@ -540,6 +594,10 @@ async function boot() {
   statusSummary(); navigateFromHash();
 }
 function initHandlers() {
+  window.setInterval(updateScheduleProgress,30_000);
+  window.setInterval(refreshPublishedData,4*60_000);
+  window.addEventListener('focus',refreshPublishedData);
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden){updateScheduleProgress();refreshPublishedData();}});
   window.addEventListener('hashchange',navigateFromHash);
   $('feedHealthIndicator').addEventListener('click',openFeedHealth);
   $('statusDetails').addEventListener('click',openFeedHealth);
@@ -568,4 +626,4 @@ function initHandlers() {
   initSettingsHandlers();
   document.addEventListener('keydown',e=>{if(e.key==='/' && !['INPUT','TEXTAREA','SELECT'].includes(document.activeElement.tagName) && !dialog.open && !$('settingsDialog').open && !$('feedHealthDialog').open){e.preventDefault();$('searchInput').focus();}});
 }
-initHandlers(); boot();
+initHandlers(); updateScheduleProgress(); boot();

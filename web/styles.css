@@ -377,3 +377,22 @@ body.light .feed-health-status{color:#846122}
  .feed-health-header h2{font-size:19px}
  .feed-health-item-head{align-items:flex-start}
 }
+
+/* Radar RSS V3.3 · barra temporal del ciclo RSS, discreta y no intrusiva */
+.refresh-cycle{padding:5px clamp(18px,2.2vw,34px) 6px;border-bottom:1px solid var(--line);background:var(--bg);display:flex;flex-direction:column;gap:4px}
+.refresh-cycle-meta{display:flex;align-items:center;justify-content:space-between;gap:8px;min-width:0}
+.refresh-cycle-label,.refresh-cycle time{font-size:10px;line-height:1.2;color:var(--muted);font-weight:500;letter-spacing:.05px}
+.refresh-cycle-label{display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.refresh-cycle-led{display:inline-block;flex:none;background:var(--accent);width:5px;height:5px;border-radius:50%}
+.refresh-cycle time{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+.refresh-cycle-track{position:relative;width:100%;height:3px;background:var(--line);overflow:hidden;border-radius:3px}
+.refresh-cycle-fill{display:block;width:0%;height:100%;background:var(--accent);opacity:.74;border-radius:inherit;transition:width .3s ease-out}
+@media(max-width:710px){
+ .refresh-cycle{padding:5px 14px 6px}
+ .refresh-cycle-label,.refresh-cycle time{font-size:9px}
+}
+@media(max-width:400px){
+ .refresh-cycle-label{font-size:0}
+ .refresh-cycle-label::after{content:'Ciclo RSS · 6 h';font-size:9px}
+}
+@media(prefers-reduced-motion:reduce){.refresh-cycle-fill{transition:none}}

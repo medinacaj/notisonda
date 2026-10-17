@@ -4,12 +4,12 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Radar RSS: noticias actualizadas de inteligencia artificial, tecnología, Chile, Venezuela, Latinoamérica y el mundo.">
-  <meta name="theme-color" content="#101c30">
+  <meta name="theme-color" content="#111315">
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' https: data:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests">
   <link rel="icon" href="./favicon.svg" type="image/svg+xml">
   <link rel="manifest" href="./manifest.webmanifest">
-  <link rel="stylesheet" href="./styles.css?v=3.2.1">
+  <link rel="stylesheet" href="./styles.css?v=3.3.0">
   <title>Radar RSS — Actualidad en un solo lugar</title>
 </head>
 <body>
@@ -38,6 +38,15 @@
           <a class="top-external" id="githubLink" href="https://github.com/medinacaj/radar-rss-publico" target="_blank" rel="noopener noreferrer" title="GitHub">GitHub ↗</a>
         </div>
       </header>
+      <div class="refresh-cycle" id="refreshCycle" title="Es una estimación del ciclo programado de seis horas, no la descarga de noticias en tiempo real. GitHub Actions puede ejecutar o publicar con retraso.">
+        <div class="refresh-cycle-meta">
+          <span class="refresh-cycle-label"><span class="refresh-cycle-led" aria-hidden="true"></span>Actualización automática cada 6 h</span>
+          <time id="refreshCycleTime">Calculando próxima revisión…</time>
+        </div>
+        <div class="refresh-cycle-track" id="refreshCycleProgress" role="progressbar" aria-label="Tiempo transcurrido dentro del intervalo de seis horas entre ejecuciones programadas" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+          <span id="refreshCycleFill" class="refresh-cycle-fill"></span>
+        </div>
+      </div>
       <main class="main" id="mainContent">
         <section class="hero" aria-labelledby="heroTitle">
           <div class="hero-text"><div class="eyebrow"><span class="eyebrow-line"></span> TU VENTANA A LA ACTUALIDAD</div>
@@ -190,6 +199,6 @@
     </div>
     <div class="settings-footer"><span>Preferencias del navegador · Radar RSS</span><button type="button" class="dialog-close" id="settingsDone">Guardar y cerrar</button></div>
   </dialog>
-  <script src="./app.js?v=3.2.1" defer></script>
+  <script src="./app.js?v=3.3.0" defer></script>
 </body>
 </html>
