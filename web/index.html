@@ -9,7 +9,7 @@
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' https: data:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests">
   <link rel="icon" href="./favicon.svg" type="image/svg+xml">
   <link rel="manifest" href="./manifest.webmanifest">
-  <link rel="stylesheet" href="./styles.css?v=4.0.0">
+  <link rel="stylesheet" href="./styles.css?v=4.0.1">
   <title>Radar RSS — Actualidad en un solo lugar</title>
 </head>
 <body>
@@ -126,7 +126,7 @@
             </span>
           </div>
           <div id="articleGrid" class="article-grid" aria-live="polite"></div>
-          <div class="load-more-wrap"><button id="loadMore" class="load-more" type="button" hidden>Cargar más noticias <span>↓</span></button></div>
+          <div class="load-more-wrap"><button id="loadMore" class="load-more" type="button" hidden>Cargar más noticias <span class="ui-icon-slot" data-icon="arrow-down" aria-hidden="true"></span></button></div>
         </section>
       </main>
       <footer class="footer"><span>RADAR RSS <span class="footer-separator">·</span> Una aplicación independiente de lectura de fuentes públicas.</span><span>Créditos y derechos de los artículos pertenecen a sus respectivos medios. <a href="#info" id="footerInfo">Cómo funciona</a></span></footer>
@@ -215,6 +215,6 @@
   </dialog>
   <button id="backTop" class="back-to-top" type="button" aria-label="Volver arriba" title="Volver arriba" hidden><span data-icon="arrow-up" class="ui-icon-slot" aria-hidden="true"></span></button>
   <div id="actionToast" class="action-toast" role="status" aria-live="polite" aria-atomic="true" hidden></div>
-  <script src="./app.js?v=4.0.0" defer></script>
+  <script src="./app.js?v=4.0.1" defer></script>
 </body>
 </html>

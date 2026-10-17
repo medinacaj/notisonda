@@ -44,6 +44,7 @@ const VECTOR_PATHS={
   external:'<path d="M12 5H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7M13 3h8v8M10 14 21 3"/>',
   'arrow-right':'<path d="M4 12h16m-7-7 7 7-7 7"/>',
   'arrow-up':'<path d="M12 20V4M5 11l7-7 7 7"/>',
+  'arrow-down':'<path d="M12 4v16M5 13l7 7 7-7"/>',
   check:'<path d="m5 12 5 5L20 7"/>',
   bookmark:'<path d="M6 4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18l-6-4-6 4z"/>',
   share:'<circle cx="18" cy="5" r="2"/><circle cx="6" cy="12" r="2"/><circle cx="18" cy="19" r="2"/><path d="m8 11 8-5M8 13l8 5"/>',
@@ -395,7 +396,7 @@ function openFeedHealth() {
       row.append(head,mk('p','feed-health-error',detail));
       const original=safeURL(source.url||source.xmlUrl||source.xml_url||'');
       if(original){
-        const a=link(original,'Consultar RSS ↗','feed-health-source-link');
+        const a=link(original,'Consultar fuente RSS','feed-health-source-link');a.append(svgIcon('external'));
         row.append(a);
       }
       list.append(row);

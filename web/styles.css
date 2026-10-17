@@ -571,3 +571,6 @@ body.light{--bg:#F7F7F5;--surface:#FFFFFF;--surface2:#F1F2F0;--line:#DDE1DE;--te
 @media(max-width:710px){.main{padding-top:12px}.dashboard-panel{padding:13px}.dashboard-saved-list{grid-template-columns:repeat(2,minmax(0,1fr))}.topic-chip{font-size:11px;padding:8px 11px}}
 @media(max-width:500px){.dashboard-feature .article-card:not(:first-child) .article-action-label{display:none}.dashboard-feature .article-card:not(:first-child) .article-title{font-size:14px}.back-to-top{right:12px;bottom:15px}}
 @media(prefers-reduced-motion:reduce){.article-card{transition:none}.article-card:hover{transform:none}}
+
+/* V4.0.1 — microacciones de lectura sin glifos de sistema */
+.load-more .ui-icon-slot{margin-left:8px}.load-more .ui-icon{width:15px;height:15px}.feed-health-source-link{display:inline-flex;gap:6px;align-items:center}.feed-health-source-link .ui-icon{width:14px;height:14px}
