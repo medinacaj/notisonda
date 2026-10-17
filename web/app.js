@@ -2,6 +2,8 @@
 // Radar RSS: interfaz pública sin autenticación y sin HTML sin sanear de fuentes externas.
 const $ = (id) => document.getElementById(id);
 const format = new Intl.NumberFormat('es-CL');
+// Diseño experimental opt-in: no altera el modo publicado ni las preferencias guardadas.
+const IS_HASHNODE_PREVIEW = new URLSearchParams(location.search).get('preview') === 'hashnode';
 function storeGet(key) { try { return localStorage.getItem(key); } catch { return null; } }
 function initialTheme(){
   const saved=storeGet('radar-theme');
@@ -132,7 +134,7 @@ function categoryLabel(cat) {
 const browserTheme = window.matchMedia?.('(prefers-color-scheme: light)');
 function setTheme(theme) {
   state.theme = ['light','dark','system'].includes(theme) ? theme : 'system';
-  const light=state.theme==='light' || (state.theme==='system' && Boolean(browserTheme?.matches));
+  const light=IS_HASHNODE_PREVIEW || state.theme==='light' || (state.theme==='system' && Boolean(browserTheme?.matches));
   document.body.classList.toggle('light',light);
   $('themeGlyph').replaceChildren(svgIcon(light?'moon':'sun'));
   try{localStorage.setItem('radar-theme',state.theme);}catch{}
@@ -899,5 +901,12 @@ function initHandlers() {
   dialog.addEventListener('click',e=>{if(e.target === dialog) dialog.close();});
   initSettingsHandlers();
   document.addEventListener('keydown',e=>{if(e.key==='/' && !['INPUT','TEXTAREA','SELECT'].includes(document.activeElement.tagName) && !dialog.open && !$('settingsDialog').open && !$('feedHealthDialog').open){e.preventDefault();$('searchInput').focus();}});
+}
+if(IS_HASHNODE_PREVIEW){
+  document.body.classList.add('hashnode-preview');
+  $('stylePreviewNotice').hidden=false;
+  // Referencia disponible solo en tema claro; evitar botón que parezca roto.
+  $('themeToggle').hidden=true;
+  document.querySelector('meta[name="theme-color"]')?.setAttribute('content','#f9fafb');
 }
 hydrateIcons(); initHandlers(); updateScheduleProgress(); boot();
