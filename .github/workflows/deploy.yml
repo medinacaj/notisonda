@@ -1,0 +1,69 @@
+name: Actualizar noticias y publicar
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "web/**"
+      - "scripts/**"
+      - "sources/**"
+      - "requirements.txt"
+      - ".github/workflows/deploy.yml"
+  workflow_dispatch:
+  schedule:
+    # Cada 6 horas (UTC). GitHub puede retrasar ejecuciones programadas.
+    - cron: "17 */6 * * *"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: github-pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - name: Descargar repositorio
+        uses: actions/checkout@v4
+      - name: Instalar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+      - name: Instalar dependencias
+        run: pip install -r requirements.txt
+      - name: Recuperar noticias anteriores
+        uses: actions/cache@v4
+        with:
+          path: |
+            web/data/articles.json
+            web/data/status.json
+          key: radar-history-v1-${{ github.run_id }}
+          restore-keys: |
+            radar-history-v1-
+      - name: Revisar estructura de fuentes
+        run: python -m unittest discover -s tests -v
+      - name: Obtener noticias
+        run: python scripts/collect.py --opml sources/feeds.opml --out web/data --days 45 --workers 8
+      - name: Configurar Pages
+        uses: actions/configure-pages@v5
+      - name: Preparar sitio
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: web
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Publicar GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
