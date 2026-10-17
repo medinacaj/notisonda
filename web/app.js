@@ -6,7 +6,7 @@ function storeGet(key) { try { return localStorage.getItem(key); } catch { retur
 const state = {
   sources: [], categories: [], items: [], health: [], generated: null,
   pageView: 'dashboard', category: 'all', feed: '', mode: 'all', layout: storeGet('radar-layout') === 'list' ? 'list' : 'cards',
-  theme: ['system','light','dark'].includes(storeGet('radar-theme')) ? storeGet('radar-theme') : 'system',
+  theme: ['system','light','dark'].includes(storeGet('radar-theme')) ? storeGet('radar-theme') : 'light',
   search: '', page: 1, ready: false,
   density: storeGet('radar-density') === 'compact' ? 'compact' : 'comfortable',
   columns: ['auto','2','3','4','5','6'].includes(storeGet('radar-columns')) ? storeGet('radar-columns') : 'auto',
