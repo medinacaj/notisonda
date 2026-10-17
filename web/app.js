@@ -45,6 +45,7 @@ const VECTOR_PATHS={
   'arrow-right':'<path d="M4 12h16m-7-7 7 7-7 7"/>',
   'arrow-up':'<path d="M12 20V4M5 11l7-7 7 7"/>',
   'arrow-down':'<path d="M12 4v16M5 13l7 7 7-7"/>',
+  refresh:'<path d="M20 7v5h-5M4 17v-5h5M5.5 9A7.5 7.5 0 0 1 19 7l1 5M4 12l1 5a7.5 7.5 0 0 0 13.5-2"/>',
   check:'<path d="m5 12 5 5L20 7"/>',
   bookmark:'<path d="M6 4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18l-6-4-6 4z"/>',
   share:'<circle cx="18" cy="5" r="2"/><circle cx="6" cy="12" r="2"/><circle cx="18" cy="19" r="2"/><path d="m8 11 8-5M8 13l8 5"/>',
@@ -136,6 +137,7 @@ function applyDisplaySettings() {
   document.body.classList.toggle('hide-images',!state.showImages);
   document.body.classList.toggle('hide-summaries',!state.showSummaries);
   document.body.dataset.columns=state.columns;
+  document.body.classList.toggle('layout-list',state.layout==='list');
   $('columnsSelect').value=state.columns;
   $('columnsSelect').disabled=state.layout==='list';
 }
@@ -657,34 +659,44 @@ function render() {
   document.querySelectorAll('.mode-tab').forEach(button=>button.classList.toggle('active',button.dataset.mode === state.mode));
   document.querySelectorAll('.view-button').forEach(button=>button.classList.toggle('active',button.dataset.view === state.layout));
   $('columnsSelect').disabled=state.layout==='list';
+  document.body.classList.toggle('layout-list',state.layout==='list');
   if(state.pageView==='dashboard')renderDashboard();
 }
-// Programación definida en .github/workflows/deploy.yml: "17 */6 * * *" (UTC).
-// Indicador temporal, NO porcentaje real de descarga o despliegue.
-const RSS_CYCLE_MS=6*60*60*1000;
-const RSS_CRON_OFFSET_MS=17*60*1000;
+// Comprobación LOCAL de publicaciones nuevas: cada 5 min.
+// La recopilación de RSS de origen sigue cada seis horas por GitHub Actions.
+const CHECK_INTERVAL_MS=5*60*1000;
+let nextCheckAt=Date.now()+CHECK_INTERVAL_MS;
+let checkStartedAt=Date.now();
+let checkTimer=null;
+let feedRefreshBusy=false;
 function updateScheduleProgress(){
   const now=Date.now();
-  const start=Math.floor((now-RSS_CRON_OFFSET_MS)/RSS_CYCLE_MS)*RSS_CYCLE_MS+RSS_CRON_OFFSET_MS;
-  const next=start+RSS_CYCLE_MS;
-  const percentage=Math.max(0,Math.min(100,(now-start)*100/RSS_CYCLE_MS));
-  const remaining=Math.max(0,Math.ceil((next-now)/60000));
-  const hours=Math.floor(remaining/60),mins=remaining%60;
-  const eta=hours ? `${hours} h ${mins} min` : `${mins} min`;
-  const nextTime=new Intl.DateTimeFormat('es-CL',{hour:'2-digit',minute:'2-digit'}).format(new Date(next));
-  const label=`Próxima revisión estimada: ${nextTime} · faltan ${eta}`;
+  const elapsed=Math.max(0,now-checkStartedAt);
+  const progress=Math.min(100,100*elapsed/CHECK_INTERVAL_MS);
+  const remaining=Math.max(0,Math.ceil((nextCheckAt-now)/1000));
+  const minute=Math.floor(remaining/60);
+  const second=String(remaining%60).padStart(2,'0');
+  const label=feedRefreshBusy?'Comprobando novedades…':`Próxima comprobación en ${minute}:${second}`;
   $('refreshCycleTime').textContent=label;
-  $('refreshCycleTime').dateTime=new Date(next).toISOString();
-  $('refreshCycleFill').style.width=percentage.toFixed(2)+'%';
-  $('refreshCycleProgress').setAttribute('aria-valuenow',String(Math.round(percentage)));
-  $('refreshCycleProgress').setAttribute('aria-valuetext',label+'. El avance representa tiempo transcurrido, no descarga de noticias.');
+  $('refreshCycleTime').removeAttribute('datetime');
+  $('refreshCycleFill').style.width=progress.toFixed(1)+'%';
+  $('refreshCycleProgress').setAttribute('aria-valuenow',String(Math.round(progress)));
+  $('refreshCycleProgress').setAttribute('aria-valuetext',label+'. Se comprueban datos ya publicados; el origen RSS se recopila aproximadamente cada seis horas.');
+  $('refreshNow').disabled=feedRefreshBusy;
 }
-// Comprueba si GitHub Pages ya publicó datos nuevos sin perder filtros o favoritos.
-// Se consulta el JSON pequeño de estado y solo se recargan artículos si cambió.
-let feedRefreshBusy=false;
+function scheduleNextCheck(){
+  window.clearTimeout(checkTimer);
+  checkStartedAt=Date.now();
+  nextCheckAt=checkStartedAt+CHECK_INTERVAL_MS;
+  checkTimer=window.setTimeout(()=>{void refreshPublishedData();},CHECK_INTERVAL_MS);
+  updateScheduleProgress();
+}
+// Comprueba si GitHub Pages publicó datos nuevos, sin descargar directamente las fuentes.
 async function refreshPublishedData(){
-  if(feedRefreshBusy||!state.ready||document.hidden)return;
+  if(feedRefreshBusy)return;
+  if(!state.ready||document.hidden){scheduleNextCheck();return;}
   feedRefreshBusy=true;
+  updateScheduleProgress();
   try{
     const latestStatus=await dataFetch('./data/status.json?check='+Date.now());
     const availableAt=Date.parse(latestStatus.checked_at||'');
@@ -710,7 +722,10 @@ async function refreshPublishedData(){
   }catch(error){
     // Una comprobación fallida no debe interrumpir la lectura actual.
     console.warn('Comprobación automática RSS:',error);
-  }finally{feedRefreshBusy=false;}
+  }finally{
+    feedRefreshBusy=false;
+    scheduleNextCheck();
+  }
 }
 
 async function dataFetch(path, fallback) {
@@ -759,10 +774,11 @@ function initSocialNavigation(){
 }
 function initHandlers() {
  initSocialNavigation();
-  window.setInterval(updateScheduleProgress,30_000);
-  window.setInterval(refreshPublishedData,5*60_000);
-  window.addEventListener('focus',refreshPublishedData);
-  document.addEventListener('visibilitychange',()=>{if(!document.hidden){updateScheduleProgress();refreshPublishedData();}});
+  window.setInterval(updateScheduleProgress,10_000);
+  scheduleNextCheck();
+  $('refreshNow').addEventListener('click',()=>{void refreshPublishedData();});
+  window.addEventListener('focus',()=>{if(document.visibilityState==='visible'&&Date.now()>=nextCheckAt){void refreshPublishedData();}});
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden){if(Date.now()>=nextCheckAt){void refreshPublishedData();}else{updateScheduleProgress();}}});
   window.addEventListener('hashchange',navigateFromHash);
   $('feedHealthIndicator').addEventListener('click',openFeedHealth);
   $('statusDetails').addEventListener('click',openFeedHealth);
@@ -779,8 +795,8 @@ function initHandlers() {
   document.querySelectorAll('.mode-tab').forEach(button=>button.addEventListener('click',()=>{state.mode=button.dataset.mode;state.page=1;progressiveLoads=0;render();}));
   document.querySelectorAll('.view-button').forEach(button=>button.addEventListener('click',()=>{state.layout=button.dataset.view;state.page=1;savePref('layout',state.layout);applyDisplaySettings();render();}));
   $('columnsSelect').addEventListener('change',e=>setColumns(e.target.value));
-  $('sourceSelect').addEventListener('change',e=>{state.feed=e.target.value;state.page=1;render();});
-  $('searchInput').addEventListener('input',e=>{state.search=e.target.value;state.page=1;render();});
+  $('sourceSelect').addEventListener('change',e=>{state.feed=e.target.value;state.page=1;progressiveLoads=0;render();});
+  $('searchInput').addEventListener('input',e=>{state.search=e.target.value;state.page=1;progressiveLoads=0;render();});
   $('loadMore').addEventListener('click',()=>{state.page+=1;render();});
   $('themeToggle').addEventListener('click',()=>setTheme(document.body.classList.contains('light')?'dark':'light'));
   $('markAllVisible').addEventListener('click',()=>{const visible=applyFilters().slice(0,state.page*state.pageSize);for(const item of visible)state.read.add(item.id);persist('radar-read',state.read);render();});

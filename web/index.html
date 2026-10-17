@@ -9,7 +9,7 @@
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' https: data:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests">
   <link rel="icon" href="./favicon.svg" type="image/svg+xml">
   <link rel="manifest" href="./manifest.webmanifest">
-  <link rel="stylesheet" href="./styles.css?v=4.0.1">
+  <link rel="stylesheet" href="./styles.css?v=4.1.0">
   <title>Radar RSS — Actualidad en un solo lugar</title>
 </head>
 <body>
@@ -38,12 +38,16 @@
           <a class="top-external" id="githubLink" href="https://github.com/medinacaj/radar-rss-publico" target="_blank" rel="noopener noreferrer" title="GitHub">GitHub <span data-icon="external" class="ui-icon-slot" aria-hidden="true"></span></a>
         </div>
       </header>
-      <div class="refresh-cycle" id="refreshCycle" title="Es una estimación del ciclo programado de seis horas, no la descarga de noticias en tiempo real. GitHub Actions puede ejecutar o publicar con retraso.">
+      <div class="refresh-cycle" id="refreshCycle" aria-label="Estado de comprobación automática de novedades" title="El navegador revisa si hay datos nuevos publicados cada 5 minutos. Las fuentes RSS originales se recopilan mediante GitHub Actions cada 6 horas, con posibles retrasos.">
         <div class="refresh-cycle-meta">
-          <span class="refresh-cycle-label"><span class="refresh-cycle-led" aria-hidden="true"></span>Actualización automática cada 6 h</span>
-          <time id="refreshCycleTime">Calculando próxima revisión…</time>
+          <span class="refresh-cycle-label"><span class="refresh-cycle-led" aria-hidden="true"></span>Comprobación de novedades cada 5 min</span>
+          <span class="refresh-cycle-actions">
+            <span class="refresh-cycle-backend" title="Recopilación de fuentes RSS por GitHub Actions, cada 6 horas aproximadamente">RSS de origen: cada 6 h</span>
+            <time id="refreshCycleTime">Próxima comprobación en 5:00</time>
+            <button id="refreshNow" class="refresh-now" type="button" title="Comprobar ahora si GitHub Pages publicó noticias nuevas" aria-label="Comprobar novedades ahora"><span data-icon="refresh" class="ui-icon-slot" aria-hidden="true"></span></button>
+          </span>
         </div>
-        <div class="refresh-cycle-track" id="refreshCycleProgress" role="progressbar" aria-label="Tiempo transcurrido dentro del intervalo de seis horas entre ejecuciones programadas" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+        <div class="refresh-cycle-track" id="refreshCycleProgress" role="progressbar" aria-label="Tiempo transcurrido hasta la próxima comprobación local de novedades, cada cinco minutos" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
           <span id="refreshCycleFill" class="refresh-cycle-fill"></span>
         </div>
       </div>
@@ -102,17 +106,19 @@
             <div class="filter-controls">
               <label class="search-wrap" aria-label="Buscar artículos"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m16 16 5 5"/></svg><input id="searchInput" type="search" placeholder="Buscar noticias..." autocomplete="off"></label>
               <label class="source-filter"><span class="sr-only">Filtrar por fuente</span><select id="sourceSelect"><option value="">Todas las fuentes</option></select></label>
-              <label class="columns-control" for="columnsSelect" title="Columnas de noticias en vista Tarjetas">
-                <span>Columnas</span>
-                <select id="columnsSelect" aria-label="Cantidad de columnas de tarjetas">
-                  <option value="auto">Auto</option>
-                  <option value="2">2</option><option value="3">3</option>
-                  <option value="4">4</option><option value="5">5</option><option value="6">6</option>
-                </select>
-              </label>
-              <div class="layout-switch" role="group" aria-label="Vista">
-                <button type="button" class="view-button active" data-view="cards" title="Tarjetas" aria-label="Vista tarjetas"><span data-icon="grid" class="ui-icon-slot" aria-hidden="true"></span></button>
-                <button type="button" class="view-button" data-view="list" title="Lista" aria-label="Vista lista"><span data-icon="list" class="ui-icon-slot" aria-hidden="true"></span></button>
+              <div class="display-controls" role="group" aria-label="Presentación de las noticias">
+                <label class="columns-control" for="columnsSelect" title="Elegir columnas en vista de tarjetas">
+                  <span>Columnas</span>
+                  <select id="columnsSelect" aria-label="Cantidad de columnas de noticias">
+                    <option value="auto">Auto</option>
+                    <option value="2">2</option><option value="3">3</option>
+                    <option value="4">4</option><option value="5">5</option><option value="6">6</option>
+                  </select>
+                </label>
+                <div class="layout-switch" role="group" aria-label="Vista">
+                  <button type="button" class="view-button active" data-view="cards" title="Mostrar tarjetas" aria-label="Vista de tarjetas"><span data-icon="grid" class="ui-icon-slot" aria-hidden="true"></span></button>
+                  <button type="button" class="view-button" data-view="list" title="Mostrar lista" aria-label="Vista de lista"><span data-icon="list" class="ui-icon-slot" aria-hidden="true"></span></button>
+                </div>
               </div>
             </div>
           </div>
@@ -215,6 +221,6 @@
   </dialog>
   <button id="backTop" class="back-to-top" type="button" aria-label="Volver arriba" title="Volver arriba" hidden><span data-icon="arrow-up" class="ui-icon-slot" aria-hidden="true"></span></button>
   <div id="actionToast" class="action-toast" role="status" aria-live="polite" aria-atomic="true" hidden></div>
-  <script src="./app.js?v=4.0.1" defer></script>
+  <script src="./app.js?v=4.1.0" defer></script>
 </body>
 </html>
