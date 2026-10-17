@@ -9,7 +9,7 @@
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' https: data:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests">
   <link rel="icon" href="./favicon.svg" type="image/svg+xml">
   <link rel="manifest" href="./manifest.webmanifest">
-  <link rel="stylesheet" href="./styles.css?v=4.1.0">
+  <link rel="stylesheet" href="./styles.css?v=4.3.0">
   <title>Radar RSS — Actualidad en un solo lugar</title>
 </head>
 <body>
@@ -107,16 +107,25 @@
               <label class="search-wrap" aria-label="Buscar artículos"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m16 16 5 5"/></svg><input id="searchInput" type="search" placeholder="Buscar noticias..." autocomplete="off"></label>
               <label class="source-filter"><span class="sr-only">Filtrar por fuente</span><select id="sourceSelect"><option value="">Todas las fuentes</option></select></label>
               <div class="display-controls" role="group" aria-label="Presentación de las noticias">
-                <label class="columns-control" for="columnsSelect" title="Elegir columnas en vista de tarjetas">
-                  <span>Columnas</span>
-                  <select id="columnsSelect" aria-label="Cantidad de columnas de noticias">
-                    <option value="auto">Auto</option>
-                    <option value="2">2</option><option value="3">3</option>
-                    <option value="4">4</option><option value="5">5</option><option value="6">6</option>
-                  </select>
-                </label>
                 <div class="layout-switch" role="group" aria-label="Vista">
-                  <button type="button" class="view-button active" data-view="cards" title="Mostrar tarjetas" aria-label="Vista de tarjetas"><span data-icon="grid" class="ui-icon-slot" aria-hidden="true"></span></button>
+                  <div class="cards-view-menu-anchor">
+                    <button type="button" id="cardsViewButton" class="view-button active cards-view-button" data-view="cards" title="Tarjetas y columnas" aria-label="Vista de tarjetas: configurar columnas" aria-haspopup="true" aria-expanded="false" aria-controls="columnsMenu">
+                      <span data-icon="grid" class="ui-icon-slot" aria-hidden="true"></span>
+                      <span id="columnsCurrent" class="columns-current" aria-hidden="true">A</span>
+                    </button>
+                    <div id="columnsMenu" class="columns-menu" aria-label="Cantidad de columnas de tarjetas" hidden>
+                      <div class="columns-menu-title">Tarjetas por fila</div>
+                      <div class="columns-menu-grid" role="group" aria-label="Columnas">
+                        <button type="button" class="columns-option" data-columns="auto" aria-pressed="true">Auto</button>
+                        <button type="button" class="columns-option" data-columns="2" aria-pressed="false">2</button>
+                        <button type="button" class="columns-option" data-columns="3" aria-pressed="false">3</button>
+                        <button type="button" class="columns-option" data-columns="4" aria-pressed="false">4</button>
+                        <button type="button" class="columns-option" data-columns="5" aria-pressed="false">5</button>
+                        <button type="button" class="columns-option" data-columns="6" aria-pressed="false">6</button>
+                      </div>
+                      <p class="columns-menu-note">Se adapta al ancho de tu pantalla.</p>
+                    </div>
+                  </div>
                   <button type="button" class="view-button" data-view="list" title="Mostrar lista" aria-label="Vista de lista"><span data-icon="list" class="ui-icon-slot" aria-hidden="true"></span></button>
                 </div>
               </div>
@@ -138,6 +147,28 @@
       <footer class="footer"><span>RADAR RSS <span class="footer-separator">·</span> Una aplicación independiente de lectura de fuentes públicas.</span><span>Créditos y derechos de los artículos pertenecen a sus respectivos medios. <a href="#info" id="footerInfo">Cómo funciona</a></span></footer>
     </div>
   </div>
+  <dialog id="articleReaderDialog" class="article-reader-dialog" aria-labelledby="readerTitle" aria-describedby="readerNote">
+    <div class="reader-topbar">
+      <span class="reader-eyebrow"><span data-icon="newspaper" class="ui-icon-slot" aria-hidden="true"></span> Vista previa de la noticia</span>
+      <button type="button" id="readerClose" class="reader-close" title="Cerrar lectura" aria-label="Cerrar lectura"><span data-icon="x" class="ui-icon-slot" aria-hidden="true"></span></button>
+    </div>
+    <div class="reader-scroll">
+      <div id="readerCover" class="reader-cover" hidden></div>
+      <div class="reader-body">
+        <p id="readerCategory" class="reader-category"></p>
+        <h2 id="readerTitle" class="reader-title">Noticia</h2>
+        <div id="readerMeta" class="reader-meta"></div>
+        <div class="reader-divider"></div>
+        <div id="readerSummary" class="reader-summary"></div>
+        <p id="readerNote" class="reader-note">Vista previa creada con el extracto disponible en el RSS. Para leer el contenido íntegro, visita el sitio del medio.</p>
+      </div>
+    </div>
+    <div class="reader-actions">
+      <button type="button" id="readerSave" class="reader-secondary"><span data-icon="bookmark" class="ui-icon-slot" aria-hidden="true"></span><span id="readerSaveLabel">Guardar</span></button>
+      <button type="button" id="readerShare" class="reader-secondary"><span data-icon="share" class="ui-icon-slot" aria-hidden="true"></span> Compartir</button>
+      <a id="readerOpenOriginal" class="reader-primary" href="#" target="_blank" rel="noopener noreferrer external" referrerpolicy="no-referrer"><span data-icon="external" class="ui-icon-slot" aria-hidden="true"></span> Abrir noticia completa <span class="reader-open-hint">en otra pestaña</span></a>
+    </div>
+  </dialog>
   <dialog id="feedHealthDialog" class="feed-health-dialog" aria-labelledby="feedHealthTitle">
     <div class="feed-health-header">
       <div><span class="feed-health-kicker">DIAGNÓSTICO · RSS</span><h2 id="feedHealthTitle">Estado de las fuentes</h2><p>Incidencias detectadas durante la última actualización automática.</p></div>
@@ -191,7 +222,7 @@
           </div>
           <div class="settings-divider"></div>
           <label class="setting-toggle"><span><b>Ocultar artículos leídos</b><small>Solo aparecen los que aún no has abierto (excepto en Guardadas).</small></span><input id="settingHideRead" type="checkbox"></label>
-          <label class="setting-toggle"><span><b>Abrir noticias en una pestaña nueva</b><small>Desactívalo si prefieres usar la misma pestaña.</small></span><input id="settingNewTab" type="checkbox"></label>
+          <label class="setting-toggle"><span><b>Abrir el artículo completo en pestaña nueva</b><small>La tarjeta abre primero una vista previa. Este ajuste se aplica al enlace del sitio original.</small></span><input id="settingNewTab" type="checkbox"></label>
           <label class="setting-field wide" for="settingKeywords"><span>Silenciar palabras o temas</span><textarea id="settingKeywords" rows="3" maxlength="600" placeholder="Ej.: fútbol, horóscopo, celebridades"></textarea><small>Separa los términos por comas. Se filtran titulares y resúmenes en tu navegador.</small></label>
         </section>
         <section class="settings-pane" data-settings-pane="sources" aria-label="Fuentes visibles" hidden>
@@ -221,6 +252,6 @@
   </dialog>
   <button id="backTop" class="back-to-top" type="button" aria-label="Volver arriba" title="Volver arriba" hidden><span data-icon="arrow-up" class="ui-icon-slot" aria-hidden="true"></span></button>
   <div id="actionToast" class="action-toast" role="status" aria-live="polite" aria-atomic="true" hidden></div>
-  <script src="./app.js?v=4.1.0" defer></script>
+  <script src="./app.js?v=4.3.0" defer></script>
 </body>
 </html>
