@@ -595,7 +595,7 @@ async function boot() {
 }
 function initHandlers() {
   window.setInterval(updateScheduleProgress,30_000);
-  window.setInterval(refreshPublishedData,4*60_000);
+  window.setInterval(refreshPublishedData,5*60_000);
   window.addEventListener('focus',refreshPublishedData);
   document.addEventListener('visibilitychange',()=>{if(!document.hidden){updateScheduleProgress();refreshPublishedData();}});
   window.addEventListener('hashchange',navigateFromHash);
