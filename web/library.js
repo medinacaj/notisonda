@@ -7,6 +7,8 @@ const ARCHIVE_KEY='radar-saved-archive-v1';
 const FOLDER_KEY='radar-source-folders-v1';
 const TAG_KEY='radar-article-tags-v1';
 const LIMIT=350;
+VECTOR_PATHS.folder='<path d="M3 7a2 2 0 0 1 2-2h5l2 2h7a2 2 0 0 1 2 2v10H3z"/>';
+VECTOR_PATHS['folder-plus']='<path d="M3 7a2 2 0 0 1 2-2h5l2 2h7a2 2 0 0 1 2 2v10H3zM12 11v6M9 14h6"/>';
 const read=(key,fallback)=>{try{return JSON.parse(localStorage.getItem(key)||'null')??fallback;}catch{return fallback;}};
 const write=(key,value)=>{
   try{localStorage.setItem(key,JSON.stringify(value));return true;}
@@ -78,6 +80,7 @@ function toggleBookmark(item){
   if(state.saved.has(item.id)){
     state.saved.delete(item.id);archive.delete(item.id);
   }else{
+    if(archive.size>=LIMIT){actionToast('Máximo de '+LIMIT+' noticias archivadas. Exporta un respaldo y libera espacio antes de seguir.');return;}
     const s=snapshot(item);
     if(!s){actionToast('La noticia no tiene enlace válido.');return;}
     archive.delete(s.id);archive.set(s.id,s);state.saved.add(s.id);
@@ -115,7 +118,7 @@ function renderFolderNav(){
     const wrapper=mk('div','library-folder-row');
     const b=mk('button','nav-link'+(activeFolder===name?' active':''));
     b.type='button';b.setAttribute('aria-current',activeFolder===name?'page':'false');
-    const icon=mk('span','nav-glyph');icon.append(svgIcon('bookmark'));
+    const icon=mk('span','nav-glyph');icon.append(svgIcon('folder'));
     const left=mk('span','nav-left');left.append(icon,mk('span','nav-label',name));
     b.append(left,mk('span','nav-count',String(unread(ids))));
     b.title=ids.length+' fuentes · '+unread(ids)+' sin leer';
@@ -310,7 +313,7 @@ function addTag(){
 }
 function mount(){
   const header=mk('div','folder-group-head');header.append(mk('span','','CARPETAS DE FUENTES'));
-  const add=mk('button');add.type='button';add.title='Crear carpeta';add.setAttribute('aria-label','Crear carpeta');add.append(svgIcon('bookmark'));
+  const add=mk('button');add.type='button';add.title='Crear carpeta';add.setAttribute('aria-label','Crear carpeta');add.append(svgIcon('folder-plus'));
   header.append(add);
   const nav=mk('nav','library-folder-nav');nav.id='libraryFolderNav';nav.setAttribute('aria-label','Carpetas personales de fuentes');
   $('categoryNav').after(header,nav);add.addEventListener('click',createFolder);
@@ -332,6 +335,9 @@ function mount(){
   group.append(mk('span','','Organiza tus fuentes en carpetas personales.'));
   const folderButton=mk('button','settings-secondary','Crear carpeta');folderButton.type='button';group.append(folderButton);
   sourcePane.querySelector('.setting-hint').after(group);folderButton.addEventListener('click',createFolder);
+  // El buscador original conserva una referencia directa a renderSettingsSources.
+  // Decorar después del render sin perder la escucha de búsqueda existente.
+  $('settingsSourceSearch').addEventListener('input',()=>queueMicrotask(decorateSources));
   $('readerSave').addEventListener('click',e=>{
     if(!activeReaderItem)return;
     e.preventDefault();e.stopImmediatePropagation();
