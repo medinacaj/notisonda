@@ -44,6 +44,8 @@ jobs:
           key: radar-history-v1-${{ github.run_id }}
           restore-keys: |
             radar-history-v1-
+      - name: Recuperar historial anterior de Pages
+        run: python scripts/recover_history.py web/data
       - name: Revisar estructura de fuentes
         run: python -m unittest discover -s tests -v
       - name: Validar JavaScript de la interfaz
@@ -52,6 +54,8 @@ jobs:
           node --check web/library.js
       - name: Obtener noticias
         run: python scripts/collect.py --opml sources/feeds.opml --out web/data --days 45 --workers 8
+      - name: Validar JSON antes de publicar
+        run: python scripts/validate_data.py web/data
       - name: Configurar Pages
         uses: actions/configure-pages@v5
       - name: Preparar sitio

@@ -16,6 +16,7 @@ import ipaddress
 import json
 from pathlib import Path
 import re
+import unicodedata
 import socket
 from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
 import xml.etree.ElementTree as ET
@@ -264,6 +265,92 @@ def write_json(path: Path, obj: dict) -> None:
     tmp.replace(path)
 
 
+
+LATEST_COUNT=300
+CHUNK_SIZE=300
+STOPWORDS=set("a al an and as at con de del el en es for from in is la las lo los no of on or para por que se su the to un una with y tras hoy ayer today latest news este esta fue hay says dijo".split())
+
+def story_tokens(title: str) -> frozenset[str]:
+    folded=''.join(c for c in unicodedata.normalize('NFKD',title.lower()) if not unicodedata.combining(c))
+    return frozenset(t for t in re.findall(r'[a-z0-9]+',folded) if len(t)>2 and t not in STOPWORDS)
+
+def story_instant(item: dict) -> datetime | None:
+    raw=item.get('published_at') or item.get('first_seen_at')
+    if not isinstance(raw,str):
+        return None
+    try:
+        return datetime.fromisoformat(raw.replace('Z','+00:00'))
+    except ValueError:
+        return None
+
+def group_related_articles(items: list[dict]) -> list[dict]:
+    """Conservative similarity within 24 h and across independent feed sources."""
+    groups=[]
+    tokens_by_group=[]
+    dates=[]
+    inverted={}
+    for original in items:
+        item=dict(original)
+        tokens=story_tokens(str(item.get('title') or ''))
+        stamp=story_instant(item)
+        best=None
+        if len(tokens)>=5 and stamp:
+            candidates=set()
+            for token in tokens:
+                candidates.update(inverted.get(token,()))
+            for idx in sorted(candidates,reverse=True):
+                old=tokens_by_group[idx]
+                previous=dates[idx]
+                if previous is None or abs((stamp-previous).total_seconds())>86400:
+                    continue
+                if set(item.get('source_ids',())) & set(groups[idx].get('source_ids',())):
+                    continue
+                intersection=len(tokens&old)
+                if intersection>=5 and intersection / max(1,len(tokens|old)) >= .72:
+                    best=idx
+                    break
+        if best is None:
+            groups.append(item)
+            tokens_by_group.append(tokens)
+            dates.append(stamp)
+            if len(tokens)>=5 and stamp:
+                idx=len(groups)-1
+                for token in tokens:
+                    inverted.setdefault(token,[]).append(idx)
+        else:
+            lead=groups[best]
+            for name in ('source_ids','categories'):
+                lead[name]=list(dict.fromkeys([*lead.get(name,[]),*item.get(name,[])]))
+            others=list(lead.get('also_in') or [])
+            seen={x.get('url') for x in others}
+            candidates=[{'id':item.get('id'),'url':item.get('url'),
+                         'publisher':str(item.get('publisher') or item.get('source') or 'Otro medio')[:90]}]
+            candidates += [x for x in item.get('also_in',[]) if isinstance(x,dict)]
+            for alt in candidates:
+                url=alt.get('url')
+                if safe_web_url(url or '') and url!=lead.get('url') and url not in seen:
+                    others.append(alt)
+                    seen.add(url)
+            lead['also_in']=others[:12]
+            if not lead.get('image') and item.get('image'):
+                lead['image']=item['image']
+            if not lead.get('summary') and item.get('summary'):
+                lead['summary']=item['summary']
+    return groups
+
+def publish_partitioned(out: Path, articles: list[dict], generated: str) -> None:
+    latest=articles[:LATEST_COUNT]
+    tail=articles[LATEST_COUNT:]
+    filenames=[]
+    for idx,start in enumerate(range(0,len(tail),CHUNK_SIZE),1):
+        name=f'archive-{idx:02d}.json'
+        filenames.append(name)
+        write_json(out/name,{'version':2,'generated_at':generated,'items':tail[start:start+CHUNK_SIZE]})
+    write_json(out/'latest.json',{'version':2,'generated_at':generated,'items':latest})
+    write_json(out/'meta.json',{'version':2,'generated_at':generated,
+                               'total_articles':len(articles),'latest_count':len(latest),
+                               'archive_files':filenames})
+
 def collect(opml: Path, out: Path, days: int, workers: int, max_per_feed: int) -> dict:
     now = NOW()
     sources = parse_opml(opml)
@@ -317,12 +404,14 @@ def collect(opml: Path, out: Path, days: int, workers: int, max_per_feed: int) -
             item['first_seen_at'] = previous.get('first_seen_at', item['first_seen_at'])
         merged[key] = item
 
-    articles = sorted(merged.values(), key=lambda i: (i.get('published_at') or i.get('first_seen_at') or ''), reverse=True)[:2300]
+    ordered = sorted(merged.values(), key=lambda i: (i.get('published_at') or i.get('first_seen_at') or ''), reverse=True)
+    articles = group_related_articles(ordered[:3500])[:2300]
     states = [fresh_status[x['id']] for x in sources]
     write_json(out / 'sources.json', {'version': 1, 'sources': sources,
                                       'categories': list(dict.fromkeys(s['category'] for s in sources))})
-    write_json(out / 'articles.json', {'version': 1, 'generated_at': iso(now),
+    write_json(out / 'articles.json', {'version': 2, 'generated_at': iso(now),
                                        'total_sources': len(sources), 'items': articles})
+    publish_partitioned(out, articles, iso(now))
     write_json(out / 'status.json', {'version': 1, 'checked_at': iso(now),
                                      'feeds': states, 'errors': sum(s['state'] == 'error' for s in states),
                                      'stale': sum(s['state'] == 'stale' for s in states)})
