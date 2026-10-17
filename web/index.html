@@ -9,7 +9,7 @@
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' https: data:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests">
   <link rel="icon" href="./favicon.svg" type="image/svg+xml">
   <link rel="manifest" href="./manifest.webmanifest">
-  <link rel="stylesheet" href="./styles.css?v=4.3.0">
+  <link rel="stylesheet" href="./styles.css?v=4.4.0">
   <title>Radar RSS — Actualidad en un solo lugar</title>
 </head>
 <body>
@@ -108,24 +108,19 @@
               <label class="source-filter"><span class="sr-only">Filtrar por fuente</span><select id="sourceSelect"><option value="">Todas las fuentes</option></select></label>
               <div class="display-controls" role="group" aria-label="Presentación de las noticias">
                 <div class="layout-switch" role="group" aria-label="Vista">
-                  <div class="cards-view-menu-anchor">
-                    <button type="button" id="cardsViewButton" class="view-button active cards-view-button" data-view="cards" title="Tarjetas y columnas" aria-label="Vista de tarjetas: configurar columnas" aria-haspopup="true" aria-expanded="false" aria-controls="columnsMenu">
-                      <span data-icon="grid" class="ui-icon-slot" aria-hidden="true"></span>
-                      <span id="columnsCurrent" class="columns-current" aria-hidden="true">A</span>
-                    </button>
-                    <div id="columnsMenu" class="columns-menu" aria-label="Cantidad de columnas de tarjetas" hidden>
-                      <div class="columns-menu-title">Tarjetas por fila</div>
-                      <div class="columns-menu-grid" role="group" aria-label="Columnas">
-                        <button type="button" class="columns-option" data-columns="auto" aria-pressed="true">Auto</button>
-                        <button type="button" class="columns-option" data-columns="2" aria-pressed="false">2</button>
-                        <button type="button" class="columns-option" data-columns="3" aria-pressed="false">3</button>
-                        <button type="button" class="columns-option" data-columns="4" aria-pressed="false">4</button>
-                        <button type="button" class="columns-option" data-columns="5" aria-pressed="false">5</button>
-                        <button type="button" class="columns-option" data-columns="6" aria-pressed="false">6</button>
-                      </div>
-                      <p class="columns-menu-note">Se adapta al ancho de tu pantalla.</p>
-                    </div>
-                  </div>
+                  <label id="cardsColumnsControl" class="cards-columns-control" for="columnsSelect" title="Tarjetas por fila: Auto, 2, 3, 4, 5 o 6">
+                    <span data-icon="grid" class="ui-icon-slot" aria-hidden="true"></span>
+                    <span id="columnsCurrent" class="columns-current" aria-hidden="true">Auto</span>
+                    <span data-icon="chevron-down" class="ui-icon-slot columns-chevron" aria-hidden="true"></span>
+                    <select id="columnsSelect" class="columns-overlay-select" aria-label="Cantidad de columnas de tarjetas">
+                      <option value="auto">Auto</option>
+                      <option value="2">2 columnas</option>
+                      <option value="3">3 columnas</option>
+                      <option value="4">4 columnas</option>
+                      <option value="5">5 columnas</option>
+                      <option value="6">6 columnas</option>
+                    </select>
+                  </label>
                   <button type="button" class="view-button" data-view="list" title="Mostrar lista" aria-label="Vista de lista"><span data-icon="list" class="ui-icon-slot" aria-hidden="true"></span></button>
                 </div>
               </div>
@@ -252,6 +247,6 @@
   </dialog>
   <button id="backTop" class="back-to-top" type="button" aria-label="Volver arriba" title="Volver arriba" hidden><span data-icon="arrow-up" class="ui-icon-slot" aria-hidden="true"></span></button>
   <div id="actionToast" class="action-toast" role="status" aria-live="polite" aria-atomic="true" hidden></div>
-  <script src="./app.js?v=4.3.0" defer></script>
+  <script src="./app.js?v=4.4.0" defer></script>
 </body>
 </html>
