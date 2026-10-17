@@ -3,10 +3,22 @@
 const $ = (id) => document.getElementById(id);
 const format = new Intl.NumberFormat('es-CL');
 function storeGet(key) { try { return localStorage.getItem(key); } catch { return null; } }
+function initialTheme(){
+  const saved=storeGet('radar-theme');
+  const flag='radar-editorial-theme-v5';
+  // Versiones anteriores guardaban "system" incluso sin interacción.
+  // Migrar una vez a papel claro, sin alterar selecciones explícitas oscuras.
+  if(saved==='system'&&storeGet(flag)!=='migrated'){
+    try{localStorage.setItem(flag,'migrated');localStorage.setItem('radar-theme','light');}catch{}
+    return 'light';
+  }
+  try{localStorage.setItem(flag,'migrated');}catch{}
+  return ['system','light','dark'].includes(saved)?saved:'light';
+}
 const state = {
   sources: [], categories: [], items: [], health: [], generated: null,
   pageView: 'dashboard', category: 'all', feed: '', mode: 'all', layout: storeGet('radar-layout') === 'list' ? 'list' : 'cards',
-  theme: ['system','light','dark'].includes(storeGet('radar-theme')) ? storeGet('radar-theme') : 'light',
+  theme: initialTheme(),
   search: '', page: 1, ready: false,
   density: storeGet('radar-density') === 'compact' ? 'compact' : 'comfortable',
   columns: ['auto','2','3','4','5','6'].includes(storeGet('radar-columns')) ? storeGet('radar-columns') : 'auto',
