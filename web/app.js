@@ -9,6 +9,7 @@ const state = {
   theme: ['system','light','dark'].includes(storeGet('radar-theme')) ? storeGet('radar-theme') : 'system',
   search: '', page: 1, ready: false,
   density: storeGet('radar-density') === 'compact' ? 'compact' : 'comfortable',
+  columns: ['auto','2','3','4','5','6'].includes(storeGet('radar-columns')) ? storeGet('radar-columns') : 'auto',
   pageSize: [12,24,36,60].includes(Number(storeGet('radar-page-size'))) ? Number(storeGet('radar-page-size')) : 36,
   maxAge: [0,1,7,30,90].includes(Number(storeGet('radar-max-age'))) ? Number(storeGet('radar-max-age')) : 0,
   fontSize: storeGet('radar-font') === 'large' ? 'large' : 'normal',
@@ -82,12 +83,21 @@ function setTheme(theme) {
   $('themeGlyph').textContent=light?'☾':'☀';
   try{localStorage.setItem('radar-theme',state.theme);}catch{}
 }
+function setColumns(value){
+  state.columns=['auto','2','3','4','5','6'].includes(value)?value:'auto';
+  savePref('columns',state.columns);
+  applyDisplaySettings();
+  $('settingColumns').value=state.columns;
+}
 function applyDisplaySettings() {
   document.body.classList.toggle('compact',state.density==='compact');
   document.body.classList.toggle('font-large',state.fontSize==='large');
   document.body.classList.toggle('show-hero',state.showHero);
   document.body.classList.toggle('hide-images',!state.showImages);
   document.body.classList.toggle('hide-summaries',!state.showSummaries);
+  document.body.dataset.columns=state.columns;
+  $('columnsSelect').value=state.columns;
+  $('columnsSelect').disabled=state.layout==='list';
 }
 function downloadText(name,body,mime) {
   const obj=URL.createObjectURL(new Blob([body],{type:mime}));
@@ -148,6 +158,7 @@ function refreshFeedUI() {
 function syncSettings() {
   $('settingTheme').value=state.theme;
   $('settingLayout').value=state.layout;
+  $('settingColumns').value=state.columns;
   $('settingDensity').value=state.density;
   $('settingPageSize').value=String(state.pageSize);
   $('settingAge').value=String(state.maxAge);
@@ -201,7 +212,8 @@ function initSettingsHandlers(){
   document.querySelectorAll('[data-settings-tab]').forEach(el=>el.addEventListener('click',()=>selectedTab(el.dataset.settingsTab)));
   $('settingTheme').addEventListener('change',e=>setTheme(e.target.value));
   browserTheme?.addEventListener?.('change',()=>{if(state.theme==='system')setTheme('system');});
-  $('settingLayout').addEventListener('change',e=>{state.layout=e.target.value;savePref('layout',state.layout);state.page=1;render();});
+  $('settingLayout').addEventListener('change',e=>{state.layout=e.target.value;savePref('layout',state.layout);state.page=1;applyDisplaySettings();render();});
+  $('settingColumns').addEventListener('change',e=>setColumns(e.target.value));
   $('settingDensity').addEventListener('change',e=>{state.density=e.target.value;savePref('density',state.density);applyDisplaySettings();});
   $('settingFont').addEventListener('change',e=>{state.fontSize=e.target.value;savePref('font',state.fontSize);applyDisplaySettings();});
   $('settingPageSize').addEventListener('change',e=>{state.pageSize=Number(e.target.value);savePref('page-size',state.pageSize);state.page=1;render();});
@@ -226,7 +238,7 @@ function initSettingsHandlers(){
     }lines.push('</body></opml>');downloadText('radar-rss-mis-fuentes.opml',lines.join('\n'),'application/xml;charset=utf-8');
   });
   $('exportData').addEventListener('click',()=>{
-    const data={format:'radar-rss-settings-v2',exported_at:new Date().toISOString(),preferences:{theme:state.theme,layout:state.layout,density:state.density,pageSize:state.pageSize,maxAge:state.maxAge,fontSize:state.fontSize,showHero:state.showHero,showImages:state.showImages,showSummaries:state.showSummaries,hideRead:state.hideRead,newTab:state.newTab,sort:state.sort,startMode:state.startMode,mutedKeywords:state.mutedKeywords},hiddenSources:[...state.hiddenSources],saved:[...state.saved],read:[...state.read]};
+    const data={format:'radar-rss-settings-v2',exported_at:new Date().toISOString(),preferences:{theme:state.theme,layout:state.layout,columns:state.columns,density:state.density,pageSize:state.pageSize,maxAge:state.maxAge,fontSize:state.fontSize,showHero:state.showHero,showImages:state.showImages,showSummaries:state.showSummaries,hideRead:state.hideRead,newTab:state.newTab,sort:state.sort,startMode:state.startMode,mutedKeywords:state.mutedKeywords},hiddenSources:[...state.hiddenSources],saved:[...state.saved],read:[...state.read]};
     downloadText('radar-rss-preferencias.json',JSON.stringify(data,null,2),'application/json;charset=utf-8');
     $('dataNotice').textContent='Archivo de respaldo generado.';
   });
@@ -236,7 +248,7 @@ function initSettingsHandlers(){
     try{
       const data=JSON.parse(await file.text());if(data.format!=='radar-rss-settings-v2'||typeof data.preferences!=='object')throw Error('Formato incompatible');
       const p=data.preferences,select=(key,allowed,def)=>allowed.includes(p[key])?p[key]:def;
-      state.theme=select('theme',['system','light','dark'],'system');state.layout=select('layout',['cards','list'],'cards');state.density=select('density',['comfortable','compact'],'comfortable');
+      state.theme=select('theme',['system','light','dark'],'system');state.layout=select('layout',['cards','list'],'cards');state.columns=select('columns',['auto','2','3','4','5','6'],'auto');state.density=select('density',['comfortable','compact'],'comfortable');
       state.pageSize=select('pageSize',[12,24,36,60],36);state.maxAge=select('maxAge',[0,1,7,30,90],0);state.fontSize=select('fontSize',['normal','large'],'normal');
       for(const field of ['showHero','showImages','showSummaries','hideRead','newTab'])if(typeof p[field]==='boolean')state[field]=p[field];
       state.sort=select('sort',['newest','oldest','source'],'newest');state.startMode=select('startMode',['all','unread','saved'],'all');state.mutedKeywords=typeof p.mutedKeywords==='string'?p.mutedKeywords.slice(0,600):'';
@@ -244,7 +256,7 @@ function initSettingsHandlers(){
       for(const [k,key,onlyValid] of [['hiddenSources','radar-hidden-sources',true],['saved','radar-saved',false],['read','radar-read',false]]){
         state[k]=new Set((Array.isArray(data[k])?data[k]:[]).filter(x=>typeof x==='string'&&x.length<150&&(!onlyValid||valid.has(x))).slice(-4000));persist(key,state[k]);
       }
-      for(const [key,value] of [['layout',state.layout],['theme',state.theme],['density',state.density],['font',state.fontSize],['page-size',state.pageSize],['max-age',state.maxAge],['show-hero',state.showHero],['show-images',state.showImages],['show-summaries',state.showSummaries],['hide-read',state.hideRead],['new-tab',state.newTab],['sort',state.sort],['start-mode',state.startMode],['keywords',state.mutedKeywords]])savePref(key,value);
+      for(const [key,value] of [['layout',state.layout],['columns',state.columns],['theme',state.theme],['density',state.density],['font',state.fontSize],['page-size',state.pageSize],['max-age',state.maxAge],['show-hero',state.showHero],['show-images',state.showImages],['show-summaries',state.showSummaries],['hide-read',state.hideRead],['new-tab',state.newTab],['sort',state.sort],['start-mode',state.startMode],['keywords',state.mutedKeywords]])savePref(key,value);
       state.mode=state.startMode;state.page=1;setTheme(state.theme);applyDisplaySettings();refreshFeedUI();syncSettings();selectedTab('data');$('dataNotice').textContent='Preferencias y datos importados correctamente.';
     }catch{$('dataNotice').textContent='No se pudo importar. Utiliza un respaldo JSON generado por Radar RSS.';}
   });
@@ -252,8 +264,8 @@ function initSettingsHandlers(){
   $('clearSaved').addEventListener('click',()=>{if(confirm('¿Vaciar los artículos guardados en este navegador?')){state.saved.clear();persist('radar-saved',state.saved);state.page=1;render();updateDataCounts();$('dataNotice').textContent='Guardadas vaciadas.';}});
   $('resetSettings').addEventListener('click',()=>{
     if(!confirm('¿Restablecer las preferencias? Tus artículos leídos y guardados no se borrarán.'))return;
-    for(const key of ['layout','theme','density','font','page-size','max-age','show-hero','show-images','show-summaries','hide-read','new-tab','sort','start-mode','keywords','hidden-sources']){try{localStorage.removeItem('radar-'+key);}catch{}}
-    state.theme='system';state.layout='cards';state.density='comfortable';state.fontSize='normal';state.pageSize=36;state.maxAge=0;
+    for(const key of ['layout','columns','theme','density','font','page-size','max-age','show-hero','show-images','show-summaries','hide-read','new-tab','sort','start-mode','keywords','hidden-sources']){try{localStorage.removeItem('radar-'+key);}catch{}}
+    state.theme='system';state.layout='cards';state.columns='auto';state.density='comfortable';state.fontSize='normal';state.pageSize=36;state.maxAge=0;
     state.showHero=false;state.showImages=true;state.showSummaries=true;state.hideRead=false;state.newTab=true;state.sort='newest';state.startMode='all';state.mode='all';state.mutedKeywords='';state.hiddenSources.clear();state.page=1;
     setTheme('system');applyDisplaySettings();$('settingsSourceSearch').value='';refreshFeedUI();syncSettings();selectedTab('data');$('dataNotice').textContent='Preferencias restablecidas.';
   });
@@ -469,31 +481,107 @@ function emptyState(filtered) {
     mk('p','',isEmpty ? 'El diseño y las 150 fuentes están preparados. La recopilación debe ejecutarse desde GitHub Actions después de publicar el proyecto.' : 'Prueba otra categoría o fuente, desmarca tus filtros o busca con otros términos.'));
   return el;
 }
-function card(item) {
-  const el=mk('article','article-card'+(state.read.has(item.id) ? ' read-article':'')); el.dataset.articleId=item.id;
-  const cover=mk('a','cover'); cover.href=safeURL(item.url) || '#'; cover.target=state.newTab?'_blank':'_self'; cover.rel='noopener noreferrer external'; cover.referrerPolicy='no-referrer';
-  cover.addEventListener('click',() => markRead(item.id, true));
-  if (safeURL(item.image)) {
-    const img=document.createElement('img'); img.src=item.image; img.alt=''; img.loading='lazy'; img.referrerPolicy='no-referrer';
-    img.addEventListener('error',() => { img.remove(); cover.prepend(mk('div','cover-fallback','RADAR')); },{once:true}); cover.append(img);
-  } else { cover.append(mk('div','cover-fallback', 'RADAR')); }
-  const category=(item.categories || [])[0] || '';
-  // Categoría fuera de la fotografía para mantener las imágenes limpias.
-  const content=mk('div','article-content');
-  const meta=mk('div','article-meta'); meta.append(mk('span','publisher',item.publisher || item.source || 'Fuente RSS'),mk('time','',ageDate(item.published_at)));
-  const title=mk('h3','article-title'); const titleLink=link(item.url,item.title || 'Sin título'); titleLink.target=state.newTab?'_blank':'_self'; titleLink.addEventListener('click',() => markRead(item.id,true)); title.append(titleLink);
-  const excerpt=mk('p','article-excerpt',item.summary || 'Accede a la noticia original para leer el contenido completo.');
-  const bottom=mk('div','article-bottom'); const open=link(item.url,'Leer original ↗','read-link'); open.target=state.newTab?'_blank':'_self'; open.addEventListener('click',()=>markRead(item.id,true));
-  const save=mk('button','save-btn'+(state.saved.has(item.id) ? ' saved' : ''),state.saved.has(item.id)?'★':'☆'); save.type='button'; save.title=state.saved.has(item.id) ? 'Quitar de guardadas' : 'Guardar noticia'; save.setAttribute('aria-label',save.title); save.setAttribute('aria-pressed',String(state.saved.has(item.id)));
-  save.addEventListener('click',() => {if(state.saved.has(item.id))state.saved.delete(item.id);else state.saved.add(item.id);persist('radar-saved',state.saved);render();});
-  const categoryText=mk('span','article-category',categoryLabel(category));
-  bottom.append(open,save); content.append(categoryText,meta,title,excerpt,bottom); el.append(cover,content); return el;
+let actionToastTimer;
+function actionToast(message){
+  const toast=$('actionToast');
+  toast.textContent=message;
+  toast.hidden=false;
+  window.clearTimeout(actionToastTimer);
+  actionToastTimer=window.setTimeout(()=>{toast.hidden=true;},3200);
 }
-function markRead(id, value) {
-  if (value) state.read.add(id); else state.read.delete(id);
+async function shareArticle(item) {
+  const url=safeURL(item.url);
+  if(!url){actionToast('Esta noticia no tiene un enlace válido.');return;}
+  if(typeof navigator.share==='function'){
+    try{
+      await navigator.share({title:item.title||'Noticia',url});
+      return;
+    }catch(error){
+      if(error?.name==='AbortError')return; // El usuario canceló el panel nativo.
+    }
+  }
+  try{
+    if(navigator.clipboard?.writeText) await navigator.clipboard.writeText(url);
+    else {
+      const input=document.createElement('textarea');
+      input.value=url;input.readOnly=true;input.style.position='fixed';input.style.opacity='0';
+      document.body.append(input);input.select();
+      const copied=document.execCommand('copy');input.remove();
+      if(!copied)throw new Error('No se pudo copiar automáticamente');
+    }
+    actionToast('Enlace de la noticia copiado. Ya puedes compartirlo.');
+  }catch {
+    // Fallback visible para navegadores que bloquean el portapapeles.
+    window.prompt('Copia el enlace de la noticia:',url);
+  }
+}
+function articleAction(icon,label,extraClass=''){
+  const button=mk('button','article-action'+(extraClass?' '+extraClass:''));
+  button.type='button';
+  button.title=label;
+  button.setAttribute('aria-label',label);
+  button.append(mk('span','article-action-icon',icon),mk('span','article-action-label',label));
+  button.querySelector('.article-action-icon').setAttribute('aria-hidden','true');
+  return button;
+}
+function card(item) {
+  const isRead=state.read.has(item.id);
+  const el=mk('article','article-card'+(isRead?' read-article':''));el.dataset.articleId=item.id;
+  const cover=mk('a','cover'); cover.href=safeURL(item.url)||'#';cover.target=state.newTab?'_blank':'_self';cover.rel='noopener noreferrer external';cover.referrerPolicy='no-referrer';
+  cover.addEventListener('click',()=>markRead(item.id,true));
+  if(safeURL(item.image)){
+    const img=document.createElement('img');img.src=item.image;img.alt='';img.loading='lazy';img.referrerPolicy='no-referrer';
+    img.addEventListener('error',()=>{img.remove();cover.prepend(mk('div','cover-fallback','RADAR'));},{once:true});cover.append(img);
+  }else{cover.append(mk('div','cover-fallback','RADAR'));}
+  const category=(item.categories||[])[0]||'';
+  const content=mk('div','article-content');
+  const meta=mk('div','article-meta');
+  meta.append(mk('span','publisher',item.publisher||item.source||'Fuente RSS'),mk('time','',ageDate(item.published_at)));
+  const title=mk('h3','article-title');
+  const titleLink=link(item.url,item.title||'Sin título');
+  titleLink.target=state.newTab?'_blank':'_self';titleLink.addEventListener('click',()=>markRead(item.id,true));
+  title.append(titleLink);
+  const excerpt=mk('p','article-excerpt',item.summary||'Accede a la noticia original para leer el contenido completo.');
+  const actions=mk('div','article-actions');
+  actions.setAttribute('role','group');actions.setAttribute('aria-label','Acciones de esta noticia');
+  const read=link(item.url,'','article-action article-open');
+  read.target=state.newTab?'_blank':'_self';read.title='Leer noticia original';read.setAttribute('aria-label','Leer noticia original');
+  read.append(mk('span','article-action-icon','↗'),mk('span','article-action-label','Leer'));
+  read.querySelector('.article-action-icon').setAttribute('aria-hidden','true');
+  read.addEventListener('click',()=>markRead(item.id,true));
+  const share=articleAction('⇧','Compartir','article-share');
+  share.addEventListener('click',()=>{void shareArticle(item);});
+  const saved=state.saved.has(item.id);
+  const save=articleAction(saved?'★':'☆',saved?'Quitar de guardadas':'Guardar','article-save'+(saved?' saved':''));
+  save.setAttribute('aria-pressed',String(saved));
+  save.addEventListener('click',()=>{
+    if(state.saved.has(item.id))state.saved.delete(item.id);else state.saved.add(item.id);
+    persist('radar-saved',state.saved);
+    render();
+    actionToast(state.saved.has(item.id)?'Noticia guardada.':'Noticia quitada de guardadas.');
+  });
+  const mark=articleAction(isRead?'↶':'✓',isRead?'Marcar no leída':'Marcar leída','article-read-toggle');
+  mark.setAttribute('aria-pressed',String(isRead));
+  mark.addEventListener('click',()=>markRead(item.id,!state.read.has(item.id)));
+  actions.append(read,share,save,mark);
+  content.append(mk('span','article-category',categoryLabel(category)),meta,title,excerpt,actions);
+  el.append(cover,content);return el;
+}
+function markRead(id,value){
+  if(value)state.read.add(id);else state.read.delete(id);
   persist('radar-read',state.read);
-  if (state.mode === 'unread') render();
-  else document.querySelectorAll('.article-card').forEach(el => { if(el.dataset.articleId===id) el.classList.add('read-article'); });
+  if(state.mode==='unread'||state.hideRead){render();return;}
+  document.querySelectorAll('.article-card').forEach(el=>{
+    if(el.dataset.articleId!==id)return;
+    el.classList.toggle('read-article',value);
+    const button=el.querySelector('.article-read-toggle');
+    if(!button)return;
+    const label=value?'Marcar no leída':'Marcar leída';
+    button.title=label;button.setAttribute('aria-label',label);button.setAttribute('aria-pressed',String(value));
+    button.querySelector('.article-action-icon').textContent=value?'↶':'✓';
+    button.querySelector('.article-action-label').textContent=label;
+  });
+  $('filterSummary').textContent=`${format.format(applyFilters().slice(0,state.page*state.pageSize).length)} visibles · ${format.format(state.read.size)} leídas`;
 }
 function render() {
   const filtered=applyFilters(), visible=filtered.slice(0,state.page*state.pageSize);
@@ -506,6 +594,7 @@ function render() {
   $('loadMore').hidden=visible.length>=filtered.length;
   document.querySelectorAll('.mode-tab').forEach(button=>button.classList.toggle('active',button.dataset.mode === state.mode));
   document.querySelectorAll('.view-button').forEach(button=>button.classList.toggle('active',button.dataset.view === state.layout));
+  $('columnsSelect').disabled=state.layout==='list';
   if(state.pageView==='dashboard')renderDashboard();
 }
 // Programación definida en .github/workflows/deploy.yml: "17 */6 * * *" (UTC).
@@ -612,7 +701,8 @@ function initHandlers() {
   $('doneFeedHealth').addEventListener('click',()=>feedHealthDialog.close());
   feedHealthDialog.addEventListener('click',e=>{if(e.target===feedHealthDialog)feedHealthDialog.close();});
   document.querySelectorAll('.mode-tab').forEach(button=>button.addEventListener('click',()=>{state.mode=button.dataset.mode;state.page=1;render();}));
-  document.querySelectorAll('.view-button').forEach(button=>button.addEventListener('click',()=>{state.layout=button.dataset.view;state.page=1;try{localStorage.setItem('radar-layout',state.layout);}catch{}render();}));
+  document.querySelectorAll('.view-button').forEach(button=>button.addEventListener('click',()=>{state.layout=button.dataset.view;state.page=1;savePref('layout',state.layout);applyDisplaySettings();render();}));
+  $('columnsSelect').addEventListener('change',e=>setColumns(e.target.value));
   $('sourceSelect').addEventListener('change',e=>{state.feed=e.target.value;state.page=1;render();});
   $('searchInput').addEventListener('input',e=>{state.search=e.target.value;state.page=1;render();});
   $('loadMore').addEventListener('click',()=>{state.page+=1;render();});

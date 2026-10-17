@@ -9,7 +9,7 @@
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' https: data:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests">
   <link rel="icon" href="./favicon.svg" type="image/svg+xml">
   <link rel="manifest" href="./manifest.webmanifest">
-  <link rel="stylesheet" href="./styles.css?v=3.3.0">
+  <link rel="stylesheet" href="./styles.css?v=3.4.0">
   <title>Radar RSS — Actualidad en un solo lugar</title>
 </head>
 <body>
@@ -97,6 +97,14 @@
             <div class="filter-controls">
               <label class="search-wrap" aria-label="Buscar artículos"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m16 16 5 5"/></svg><input id="searchInput" type="search" placeholder="Buscar noticias..." autocomplete="off"></label>
               <label class="source-filter"><span class="sr-only">Filtrar por fuente</span><select id="sourceSelect"><option value="">Todas las fuentes</option></select></label>
+              <label class="columns-control" for="columnsSelect" title="Columnas de noticias en vista Tarjetas">
+                <span>Columnas</span>
+                <select id="columnsSelect" aria-label="Cantidad de columnas de tarjetas">
+                  <option value="auto">Auto</option>
+                  <option value="2">2</option><option value="3">3</option>
+                  <option value="4">4</option><option value="5">5</option><option value="6">6</option>
+                </select>
+              </label>
               <div class="layout-switch" role="group" aria-label="Vista">
                 <button type="button" class="view-button active" data-view="cards" title="Tarjetas" aria-label="Vista tarjetas"><svg viewBox="0 0 20 20" fill="currentColor"><rect x="1" y="1" width="8" height="8" rx="1.4"/><rect x="11" y="1" width="8" height="8" rx="1.4"/><rect x="1" y="11" width="8" height="8" rx="1.4"/><rect x="11" y="11" width="8" height="8" rx="1.4"/></svg></button>
                 <button type="button" class="view-button" data-view="list" title="Lista" aria-label="Vista lista"><svg viewBox="0 0 20 20" fill="currentColor"><rect x="1" y="2" width="18" height="3" rx="1"/><rect x="1" y="9" width="18" height="3" rx="1"/><rect x="1" y="16" width="18" height="3" rx="1"/></svg></button>
@@ -153,6 +161,7 @@
           <div class="setting-grid">
             <label class="setting-field" for="settingTheme"><span>Tema</span><select id="settingTheme"><option value="system">Automático (sistema)</option><option value="dark">Oscuro</option><option value="light">Claro</option></select></label>
             <label class="setting-field" for="settingLayout"><span>Formato</span><select id="settingLayout"><option value="cards">Tarjetas</option><option value="list">Lista</option></select></label>
+            <label class="setting-field" for="settingColumns"><span>Columnas de noticias</span><select id="settingColumns"><option value="auto">Automático (3 por defecto)</option><option value="2">2 columnas</option><option value="3">3 columnas</option><option value="4">4 columnas</option><option value="5">5 columnas</option><option value="6">6 columnas</option></select><small>En pantallas pequeñas se adaptan para conservar la lectura.</small></label>
             <label class="setting-field" for="settingDensity"><span>Espaciado</span><select id="settingDensity"><option value="comfortable">Cómodo</option><option value="compact">Compacto</option></select></label>
             <label class="setting-field" for="settingFont"><span>Texto</span><select id="settingFont"><option value="normal">Normal</option><option value="large">Grande</option></select></label>
           </div>
@@ -199,6 +208,7 @@
     </div>
     <div class="settings-footer"><span>Preferencias del navegador · Radar RSS</span><button type="button" class="dialog-close" id="settingsDone">Guardar y cerrar</button></div>
   </dialog>
-  <script src="./app.js?v=3.3.1" defer></script>
+  <div id="actionToast" class="action-toast" role="status" aria-live="polite" aria-atomic="true" hidden></div>
+  <script src="./app.js?v=3.4.0" defer></script>
 </body>
 </html>

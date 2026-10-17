@@ -396,3 +396,88 @@ body.light .feed-health-status{color:#846122}
  .refresh-cycle-label::after{content:'Ciclo RSS · 6 h';font-size:9px}
 }
 @media(prefers-reduced-motion:reduce){.refresh-cycle-fill{transition:none}}
+
+/* Radar RSS V3.4 — densidad variable, tarjetas más flexibles y acciones para noticias */
+.columns-control{
+  display:flex;align-items:center;gap:7px;border:1px solid var(--line);
+  border-radius:8px;background:var(--surface);color:var(--muted);
+  font-size:11px;padding:4px 7px 4px 10px;white-space:nowrap;
+}
+.columns-control select{border:0;background:transparent;color:var(--text);font-size:12px;font-weight:650;padding:3px 0;min-width:40px;cursor:pointer}
+.columns-control select:disabled{opacity:.45;cursor:not-allowed}
+.columns-control:has(select:disabled){opacity:.6}
+.article-grid:not(.list-view){grid-template-columns:repeat(3,minmax(0,1fr))}
+body[data-columns="2"] .article-grid:not(.list-view){grid-template-columns:repeat(2,minmax(0,1fr))}
+body[data-columns="3"] .article-grid:not(.list-view){grid-template-columns:repeat(3,minmax(0,1fr))}
+body[data-columns="4"] .article-grid:not(.list-view){grid-template-columns:repeat(4,minmax(0,1fr))}
+body[data-columns="5"] .article-grid:not(.list-view){grid-template-columns:repeat(5,minmax(0,1fr))}
+body[data-columns="6"] .article-grid:not(.list-view){grid-template-columns:repeat(6,minmax(0,1fr))}
+.article-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;margin-top:auto;border-top:1px solid var(--line);padding-top:11px}
+.article-action{
+  display:inline-flex;justify-content:center;align-items:center;gap:6px;
+  min-width:0;min-height:32px;padding:5px 7px;border:1px solid var(--line);
+  border-radius:7px;background:var(--surface2);color:var(--text);
+  font-size:11px;font-weight:620;text-align:center;cursor:pointer;
+  line-height:1.25;
+}
+.article-action:hover{border-color:var(--accent);background:var(--hover)}
+.article-action:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.article-action-icon{font-size:16px;line-height:1;flex:none}
+.article-action-label{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.article-open{font-weight:740;color:var(--accent)}
+.article-save.saved,.article-read-toggle[aria-pressed="true"]{border-color:var(--line);color:var(--accent)}
+.article-excerpt{margin-bottom:12px}
+.read-article{opacity:.82}
+.list-view .article-actions{grid-template-columns:repeat(4,minmax(0,1fr));padding-top:8px;margin-top:4px}
+.list-view .article-excerpt{margin-bottom:5px}
+.dashboard-feature .article-actions{grid-template-columns:repeat(2,minmax(0,1fr))}
+.dashboard-feature .article-card:not(:first-child) .article-actions{grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;padding-top:5px}
+.dashboard-feature .article-card:not(:first-child) .article-action{padding:5px 3px}
+.dashboard-feature .article-card:not(:first-child) .article-action-label{display:none}
+body[data-columns="5"] #articleGrid .article-action-label,
+body[data-columns="6"] #articleGrid .article-action-label{display:none}
+body[data-columns="5"] #articleGrid .article-actions,
+body[data-columns="6"] #articleGrid .article-actions{grid-template-columns:repeat(4,minmax(0,1fr));gap:4px}
+body[data-columns="5"] #articleGrid .article-action,
+body[data-columns="6"] #articleGrid .article-action{padding:6px 2px;min-height:30px}
+.action-toast{
+  position:fixed;z-index:1100;right:20px;bottom:22px;max-width:min(390px,calc(100vw - 32px));
+  padding:11px 15px;background:var(--surface);color:var(--text);
+  border:1px solid var(--accent);border-radius:9px;
+  box-shadow:0 12px 32px rgba(0,0,0,.22);font-size:12px;line-height:1.4
+}
+.action-toast[hidden]{display:none!important}
+@media(max-width:1700px){
+  body[data-columns="6"] .article-grid:not(.list-view){grid-template-columns:repeat(5,minmax(0,1fr))}
+}
+@media(max-width:1450px){
+  body[data-columns="5"] .article-grid:not(.list-view),
+  body[data-columns="6"] .article-grid:not(.list-view){grid-template-columns:repeat(4,minmax(0,1fr))}
+}
+@media(max-width:1180px){
+  body[data-columns="4"] .article-grid:not(.list-view),
+  body[data-columns="5"] .article-grid:not(.list-view),
+  body[data-columns="6"] .article-grid:not(.list-view){grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+@media(max-width:950px){
+  body[data-columns="auto"] .article-grid:not(.list-view),
+  body[data-columns="3"] .article-grid:not(.list-view),
+  body[data-columns="4"] .article-grid:not(.list-view),
+  body[data-columns="5"] .article-grid:not(.list-view),
+  body[data-columns="6"] .article-grid:not(.list-view){grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:710px){
+  .filter-controls{flex-wrap:wrap}
+  .columns-control{padding:4px 8px}
+  .dashboard-feature .article-card:not(:first-child) .article-actions{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .dashboard-feature .article-card:not(:first-child) .article-action-label{display:none}
+}
+@media(max-width:500px){
+  body[data-columns] .article-grid:not(.list-view){grid-template-columns:minmax(0,1fr)}
+  body[data-columns="5"] #articleGrid .article-action-label,
+  body[data-columns="6"] #articleGrid .article-action-label{display:inline}
+  body[data-columns="5"] #articleGrid .article-actions,
+  body[data-columns="6"] #articleGrid .article-actions{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .list-view .article-actions{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .list-view .article-action-label{display:none}
+}
