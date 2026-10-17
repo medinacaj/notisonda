@@ -672,3 +672,11 @@ body.radar-hybrid:not(.light) .brand-mark{color:#181b1b}
 @media(prefers-reduced-motion:reduce){
   body.radar-hybrid .article-card{transition:none}
 }
+/* V7: Fuentes alternativas para noticias agrupadas */
+body.radar-hybrid .article-also{font-size:11px;line-height:1.5;color:var(--muted);margin:0 0 10px;overflow-wrap:anywhere}
+body.radar-hybrid .article-also a{color:var(--text);text-decoration:underline;text-decoration-color:var(--line)}
+body.radar-hybrid .article-also a:hover{color:var(--accent)}
+body.radar-hybrid .reader-alternatives{border-top:1px solid var(--line);margin-top:18px;padding-top:13px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+body.radar-hybrid .reader-alternatives strong{flex-basis:100%;font:600 12px var(--font-ui)}
+body.radar-hybrid .reader-alternative-link{display:inline-flex;border:1px solid var(--line);border-radius:9px;padding:7px 10px;background:var(--surface2);color:var(--text);font:600 12px var(--font-ui);text-decoration:none}
+body.radar-hybrid .reader-alternative-link:hover{color:var(--accent);border-color:var(--accent)}

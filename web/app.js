@@ -22,6 +22,7 @@ function initialTheme(){
 }
 const state = {
   sources: [], categories: [], items: [], health: [], generated: null,
+  feedMeta:null,historyLoaded:false,historyLoading:false,
   pageView: 'dashboard', category: 'all', feed: '', mode: 'all', layout: storeGet('radar-layout') === 'list' ? 'list' : 'cards',
   theme: initialTheme(),
   search: '', page: 1, ready: false,
@@ -644,6 +645,12 @@ function openArticleReader(item,event){
   const summary=$('readerSummary');summary.replaceChildren();
   const description=String(item.summary||'').trim();
   summary.append(mk('p','',description||'Esta fuente solo publica un titular o un extracto breve. Abre el medio original para leer la noticia completa.'));
+  const others=Array.isArray(item.also_in)?item.also_in.filter(x=>safeURL(x.url)).slice(0,8):[];
+  if(others.length){
+    const section=mk('div','reader-alternatives');section.append(mk('strong','','También en otros medios'));
+    for(const alt of others)section.append(link(alt.url,alt.publisher||'Otra fuente','reader-alternative-link'));
+    summary.append(section);
+  }
   const url=safeURL(item.url);
   const source=$('readerOpenOriginal');source.href=url||'#';
   source.setAttribute('aria-disabled',String(!url));
@@ -715,7 +722,15 @@ function card(item) {
   mark.setAttribute('aria-pressed',String(isRead));
   mark.addEventListener('click',()=>markRead(item.id,!state.read.has(item.id)));
   actions.append(read,share,save,mark);
-  content.append(mk('span','article-category',categoryLabel(category)),meta,title,excerpt,actions);
+  content.append(mk('span','article-category',categoryLabel(category)),meta,title,excerpt);
+  const others=Array.isArray(item.also_in)?item.also_in.filter(x=>safeURL(x.url)).slice(0,3):[];
+  if(others.length){
+    const line=mk('div','article-also');
+    line.append(mk('span','','También en: '));
+    others.forEach((alt,index)=>{if(index)line.append(document.createTextNode(' · '));line.append(link(alt.url,alt.publisher||'Otro medio'));});
+    content.append(line);
+  }
+  content.append(actions);
   el.append(cover,content);return el;
 }
 function markRead(id,value){
@@ -736,22 +751,54 @@ function markRead(id,value){
 }
 function render() {
   const filtered=applyFilters(), visible=filtered.slice(0,state.page*state.pageSize);
-  $('visibleCount').textContent=`${format.format(filtered.length)} ARTÍCULOS`;
+  $('visibleCount').textContent=`${format.format(filtered.length)} ${hasHistory()?'RECIENTES':'ARTÍCULOS'}`;
   $('filterSummary').textContent=`${format.format(visible.length)} visibles · ${format.format(state.read.size)} leídas`; 
   $('savedCount').textContent=state.saved.size ? String(state.saved.size) : '';
   const grid=$('articleGrid'); grid.className='article-grid'+(state.layout === 'list'?' list-view':'');
   if (!visible.length) grid.replaceChildren(emptyState(filtered));
   else grid.replaceChildren(...visible.map(card));
   $('loadMore').hidden=visible.length>=filtered.length;
+  updateHistoryButton();
   document.querySelectorAll('.mode-tab').forEach(button=>button.classList.toggle('active',button.dataset.mode === state.mode));
   document.querySelectorAll('.view-button').forEach(button=>button.classList.toggle('active',button.dataset.view === state.layout));
   document.body.classList.toggle('layout-list',state.layout==='list');
   syncColumnsControl();
   if(state.pageView==='dashboard')renderDashboard();
 }
-// Comprobación LOCAL de publicaciones nuevas: cada 5 min.
+
+let historyRequest=null;
+function historyFiles(){return (Array.isArray(state.feedMeta?.archive_files)?state.feedMeta.archive_files:[]).filter(x=>/^archive-\d{2}\.json$/.test(x)).slice(0,12);}
+function hasHistory(){return !state.historyLoaded&&historyFiles().length>0;}
+function updateHistoryButton(){
+  if(state.historyLoading){$('loadMore').hidden=false;$('loadMore').disabled=true;$('loadMore').textContent='Cargando historial…';}
+  else if(hasHistory()&&state.pageView==='feed'){
+    $('loadMore').hidden=false;$('loadMore').disabled=false;
+    $('loadMore').replaceChildren(mk('span','','Cargar noticias anteriores'),svgIcon('arrow-down'));
+  }
+}
+async function loadHistory(){
+  if(!hasHistory()||historyRequest)return historyRequest;
+  const manifest=state.feedMeta;
+  state.historyLoading=true;updateHistoryButton();
+  historyRequest=(async()=>{
+    try{
+      const docs=await Promise.all(historyFiles().map(file=>dataFetch('./data/'+file)));
+      if(manifest!==state.feedMeta)return;
+      const items=new Map(state.items.map(x=>[x.id,x]));
+      for(const doc of docs){
+        if(doc.generated_at!==manifest.generated_at||!Array.isArray(doc.items))throw Error('Archivo de historial incompatible');
+        for(const article of doc.items)if(article&&typeof article.id==='string'&&!items.has(article.id))items.set(article.id,article);
+      }
+      state.items=[...items.values()].sort((a,b)=>String(b.published_at||b.first_seen_at||'').localeCompare(String(a.published_at||a.first_seen_at||'')));
+      state.historyLoaded=true;
+    }catch(error){console.warn('Historial RSS:',error);actionToast('No fue posible cargar noticias anteriores.');}
+    finally{state.historyLoading=false;historyRequest=null;render();}
+  })();
+  return historyRequest;
+}
+// Comprobación LOCAL de publicaciones nuevas: cada 15 min.
 // La recopilación de RSS de origen sigue cada seis horas por GitHub Actions.
-const CHECK_INTERVAL_MS=5*60*1000;
+const CHECK_INTERVAL_MS=15*60*1000;
 let nextCheckAt=Date.now()+CHECK_INTERVAL_MS;
 let checkStartedAt=Date.now();
 let checkTimer=null;
@@ -782,37 +829,30 @@ function scheduleNextCheck(){
 async function refreshPublishedData(){
   if(feedRefreshBusy)return;
   if(!state.ready||document.hidden){scheduleNextCheck();return;}
-  feedRefreshBusy=true;
-  updateScheduleProgress();
+  feedRefreshBusy=true;updateScheduleProgress();
   try{
-    const latestStatus=await dataFetch('./data/status.json?check='+Date.now());
-    const availableAt=Date.parse(latestStatus.checked_at||'');
-    const loadedAt=Date.parse(state.generated||'');
-    if(!Number.isFinite(availableAt)|| (Number.isFinite(loadedAt)&&availableAt<=loadedAt))return;
-    const [sources,articles]=await Promise.all([
+    const meta=await dataFetch('./data/meta.json?check='+Date.now());
+    if(!meta.generated_at||meta.generated_at===state.generated)return;
+    const [sources,latest,status]=await Promise.all([
       dataFetch('./data/sources.json?check='+Date.now()),
-      dataFetch('./data/articles.json?check='+Date.now())
+      dataFetch('./data/latest.json?check='+Date.now()),
+      dataFetch('./data/status.json?check='+Date.now())
     ]);
-    const actualAt=Date.parse(articles.generated_at||'');
-    if(!Number.isFinite(actualAt)|| (Number.isFinite(loadedAt)&&actualAt<=loadedAt))return;
+    if(latest.generated_at!==meta.generated_at)return;
     state.sources=Array.isArray(sources.sources)?sources.sources:state.sources;
     state.categories=Array.isArray(sources.categories)?sources.categories:state.categories;
-    state.items=Array.isArray(articles.items)?articles.items:state.items;
-    state.health=Array.isArray(latestStatus.feeds)?latestStatus.feeds:state.health;
-    state.generated=articles.generated_at;
-    $('statArticles').textContent=format.format(state.items.length);
+    state.items=Array.isArray(latest.items)?latest.items:state.items;
+    state.feedMeta=meta;state.historyLoaded=false;
+    state.health=Array.isArray(status.feeds)?status.feeds:state.health;
+    state.generated=meta.generated_at;
+    $('statArticles').textContent=format.format(meta.total_articles||state.items.length);
     $('statSources').textContent=format.format(state.sources.length);
     $('statCategories').textContent=state.categories.length;
     $('statUpdated').textContent=shortDate(state.generated);
     $('lastUpdate').textContent='Actualizado: '+shortDate(state.generated);
     buildNav();fillSelect();updateHeader();statusSummary();render();
-  }catch(error){
-    // Una comprobación fallida no debe interrumpir la lectura actual.
-    console.warn('Comprobación automática RSS:',error);
-  }finally{
-    feedRefreshBusy=false;
-    scheduleNextCheck();
-  }
+  }catch(error){console.warn('Comprobación automática RSS:',error);}
+  finally{feedRefreshBusy=false;scheduleNextCheck();}
 }
 
 async function dataFetch(path, fallback) {
@@ -826,15 +866,16 @@ async function boot() {
   state.mode=state.startMode;
   try {
     const [sources, articles, status] = await Promise.all([
-      dataFetch('./data/sources.json'), dataFetch('./data/articles.json'), dataFetch('./data/status.json')
+      dataFetch('./data/sources.json'), dataFetch('./data/latest.json'), dataFetch('./data/status.json')
     ]);
     state.sources=Array.isArray(sources.sources)?sources.sources:[];
     state.categories=Array.isArray(sources.categories)?sources.categories:[];
     state.items=Array.isArray(articles.items)?articles.items:[];
     state.health=Array.isArray(status.feeds)?status.feeds:[];
     state.generated=articles.generated_at;
+    try{state.feedMeta=await dataFetch('./data/meta.json');}catch{state.feedMeta=null;state.historyLoaded=true;}
     state.ready=true;
-    $('statArticles').textContent=format.format(state.items.length);
+    $('statArticles').textContent=format.format(state.feedMeta?.total_articles||state.items.length);
     $('statSources').textContent=format.format(state.sources.length);
     $('statCategories').textContent=state.categories.length;
     $('statUpdated').textContent=state.generated ? shortDate(state.generated) : '—';
@@ -894,7 +935,7 @@ function initHandlers() {
   });
   $('sourceSelect').addEventListener('change',e=>{state.feed=e.target.value;state.page=1;progressiveLoads=0;render();});
   $('searchInput').addEventListener('input',e=>{state.search=e.target.value;state.page=1;progressiveLoads=0;render();});
-  $('loadMore').addEventListener('click',()=>{state.page+=1;render();});
+  $('loadMore').addEventListener('click',()=>{if(hasHistory()&&state.page*state.pageSize>=applyFilters().length){void loadHistory();return;}state.page+=1;render();});
   $('themeToggle').addEventListener('click',()=>setTheme(document.body.classList.contains('light')?'dark':'light'));
   $('markAllVisible').addEventListener('click',()=>{const visible=applyFilters().slice(0,state.page*state.pageSize);for(const item of visible)state.read.add(item.id);persist('radar-read',state.read);render();});
   const dialog=$('aboutDialog');

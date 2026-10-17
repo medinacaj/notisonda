@@ -12,7 +12,7 @@
   <link rel="stylesheet" href="./styles.css?v=5.0.0">
   <link rel="stylesheet" href="./editorial.css?v=5.0.1">
   <link rel="stylesheet" href="./hashnode-preview.css?v=1.0.0">
-  <link rel="stylesheet" href="./radar-hybrid.css?v=1.0.1">
+  <link rel="stylesheet" href="./radar-hybrid.css?v=1.2.0">
   <link rel="stylesheet" href="./library.css?v=1.0.0">
   <title>Radar RSS — Actualidad en un solo lugar</title>
 </head>
@@ -42,16 +42,16 @@
           <a class="top-external" id="githubLink" href="https://github.com/medinacaj/radar-rss-publico" target="_blank" rel="noopener noreferrer" title="GitHub">GitHub <span data-icon="external" class="ui-icon-slot" aria-hidden="true"></span></a>
         </div>
       </header>
-      <div class="refresh-cycle" id="refreshCycle" aria-label="Estado de comprobación automática de novedades" title="El navegador revisa si hay datos nuevos publicados cada 5 minutos. Las fuentes RSS originales se recopilan mediante GitHub Actions cada 6 horas, con posibles retrasos.">
+      <div class="refresh-cycle" id="refreshCycle" aria-label="Estado de comprobación automática de novedades" title="El navegador revisa si hay datos nuevos publicados cada 15 minutos. Las fuentes RSS originales se recopilan mediante GitHub Actions cada 6 horas, con posibles retrasos.">
         <div class="refresh-cycle-meta">
-          <span class="refresh-cycle-label"><span class="refresh-cycle-led" aria-hidden="true"></span>Comprobación de novedades cada 5 min</span>
+          <span class="refresh-cycle-label"><span class="refresh-cycle-led" aria-hidden="true"></span>Comprobación de novedades cada 15 min</span>
           <span class="refresh-cycle-actions">
             <span class="refresh-cycle-backend" title="Recopilación de fuentes RSS por GitHub Actions, cada 6 horas aproximadamente">RSS de origen: cada 6 h</span>
-            <time id="refreshCycleTime">Próxima comprobación en 5:00</time>
+            <time id="refreshCycleTime">Próxima comprobación en 15:00</time>
             <button id="refreshNow" class="refresh-now" type="button" title="Comprobar ahora si GitHub Pages publicó noticias nuevas" aria-label="Comprobar novedades ahora"><span data-icon="refresh" class="ui-icon-slot" aria-hidden="true"></span></button>
           </span>
         </div>
-        <div class="refresh-cycle-track" id="refreshCycleProgress" role="progressbar" aria-label="Tiempo transcurrido hasta la próxima comprobación local de novedades, cada cinco minutos" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+        <div class="refresh-cycle-track" id="refreshCycleProgress" role="progressbar" aria-label="Tiempo transcurrido hasta la próxima comprobación local de novedades, cada quince minutos" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
           <span id="refreshCycleFill" class="refresh-cycle-fill"></span>
         </div>
       </div>
@@ -259,7 +259,7 @@
   </dialog>
   <button id="backTop" class="back-to-top" type="button" aria-label="Volver arriba" title="Volver arriba" hidden><span data-icon="arrow-up" class="ui-icon-slot" aria-hidden="true"></span></button>
   <div id="actionToast" class="action-toast" role="status" aria-live="polite" aria-atomic="true" hidden></div>
-  <script src="./app.js?v=6.0.0" defer></script>
+  <script src="./app.js?v=7.0.0" defer></script>
   <script src="./library.js?v=1.0.1" defer></script>
 </body>
 </html>
