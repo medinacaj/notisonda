@@ -309,9 +309,38 @@ function updateHeader() {
 }
 // Avisos discretos y descartables. La preferencia solo es local a este navegador.
 function openFeedHealth() {
-  syncSettings();
-  selectedTab('health');
-  $('settingsDialog').showModal();
+  const modal=$('feedHealthDialog');
+  const list=$('feedHealthIssues');
+  const issues=state.health.filter(x=>x.state!=='ok');
+  const ok=state.health.filter(x=>x.state==='ok').length;
+  const errors=issues.filter(x=>x.state==='error').length;
+  const empty=issues.filter(x=>x.state==='empty').length;
+  const stale=issues.filter(x=>x.state==='stale').length;
+  $('feedHealthOverview').textContent=state.health.length
+    ? `${state.health.length} fuentes revisadas · ${ok} correctas · ${errors} con error · ${empty} sin artículos · ${stale} desactualizadas`
+    : 'Todavía no hay datos del último diagnóstico de RSS.';
+  list.replaceChildren();
+  if(!issues.length){
+    list.append(mk('p','feed-health-empty',state.health.length?'No hay incidencias pendientes.':'El diagnóstico estará disponible después de recopilar los feeds.'));
+  }else{
+    for(const source of issues){
+      const row=mk('article','feed-health-item');
+      const head=mk('div','feed-health-item-head');
+      const label=source.state==='error'?'Error de lectura':source.state==='stale'?'Última publicación antigua':'Sin artículos recientes';
+      head.append(mk('strong','',source.name||'Fuente RSS'),mk('span','feed-health-status',label));
+      const detail=source.error || (source.last_published_at
+        ? 'Último artículo publicado: '+shortDate(source.last_published_at)
+        : 'No se dispone de información adicional sobre esta incidencia.');
+      row.append(head,mk('p','feed-health-error',detail));
+      const original=safeURL(source.url||source.xmlUrl||source.xml_url||'');
+      if(original){
+        const a=link(original,'Consultar RSS ↗','feed-health-source-link');
+        row.append(a);
+      }
+      list.append(row);
+    }
+  }
+  if(!modal.open)modal.showModal();
 }
 function showFeedNotice(message, signature, details) {
   const banner=$('statusBanner');
@@ -519,7 +548,11 @@ function initHandlers() {
     try{localStorage.setItem('radar-dismissed-health-notice-v1',banner.dataset.signature||'');}catch{}
     banner.hidden=true;
   });
-  $('dashboardHealthButton').addEventListener('click',()=>{syncSettings();selectedTab('health');$('settingsDialog').showModal();});
+  $('dashboardHealthButton').addEventListener('click',openFeedHealth);
+  const feedHealthDialog=$('feedHealthDialog');
+  $('closeFeedHealth').addEventListener('click',()=>feedHealthDialog.close());
+  $('doneFeedHealth').addEventListener('click',()=>feedHealthDialog.close());
+  feedHealthDialog.addEventListener('click',e=>{if(e.target===feedHealthDialog)feedHealthDialog.close();});
   document.querySelectorAll('.mode-tab').forEach(button=>button.addEventListener('click',()=>{state.mode=button.dataset.mode;state.page=1;render();}));
   document.querySelectorAll('.view-button').forEach(button=>button.addEventListener('click',()=>{state.layout=button.dataset.view;state.page=1;try{localStorage.setItem('radar-layout',state.layout);}catch{}render();}));
   $('sourceSelect').addEventListener('change',e=>{state.feed=e.target.value;state.page=1;render();});
@@ -533,6 +566,6 @@ function initHandlers() {
   $('closeAbout').addEventListener('click',()=>dialog.close()); $('dialogAccept').addEventListener('click',()=>dialog.close());
   dialog.addEventListener('click',e=>{if(e.target === dialog) dialog.close();});
   initSettingsHandlers();
-  document.addEventListener('keydown',e=>{if(e.key==='/' && !['INPUT','TEXTAREA','SELECT'].includes(document.activeElement.tagName) && !dialog.open && !$('settingsDialog').open){e.preventDefault();$('searchInput').focus();}});
+  document.addEventListener('keydown',e=>{if(e.key==='/' && !['INPUT','TEXTAREA','SELECT'].includes(document.activeElement.tagName) && !dialog.open && !$('settingsDialog').open && !$('feedHealthDialog').open){e.preventDefault();$('searchInput').focus();}});
 }
 initHandlers(); boot();

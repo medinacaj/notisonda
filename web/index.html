@@ -9,7 +9,7 @@
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' https: data:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests">
   <link rel="icon" href="./favicon.svg" type="image/svg+xml">
   <link rel="manifest" href="./manifest.webmanifest">
-  <link rel="stylesheet" href="./styles.css">
+  <link rel="stylesheet" href="./styles.css?v=3.2.1">
   <title>Radar RSS — Actualidad en un solo lugar</title>
 </head>
 <body>
@@ -110,6 +110,18 @@
       <footer class="footer"><span>RADAR RSS <span class="footer-separator">·</span> Una aplicación independiente de lectura de fuentes públicas.</span><span>Créditos y derechos de los artículos pertenecen a sus respectivos medios. <a href="#info" id="footerInfo">Cómo funciona</a></span></footer>
     </div>
   </div>
+  <dialog id="feedHealthDialog" class="feed-health-dialog" aria-labelledby="feedHealthTitle">
+    <div class="feed-health-header">
+      <div><span class="feed-health-kicker">DIAGNÓSTICO · RSS</span><h2 id="feedHealthTitle">Estado de las fuentes</h2><p>Incidencias detectadas durante la última actualización automática.</p></div>
+      <button type="button" id="closeFeedHealth" aria-label="Cerrar diagnóstico RSS" title="Cerrar">×</button>
+    </div>
+    <div class="feed-health-body">
+      <p id="feedHealthOverview" class="feed-health-overview"></p>
+      <div id="feedHealthIssues" class="feed-health-issues"></div>
+      <p class="feed-health-note">Un error de RSS no significa que el medio haya dejado de publicar. Las fuentes no se eliminan automáticamente.</p>
+    </div>
+    <div class="feed-health-footer"><button type="button" id="doneFeedHealth">Cerrar diagnóstico</button></div>
+  </dialog>
   <dialog id="aboutDialog" class="about-dialog"><div class="dialog-head"><h2>Acerca de Radar RSS</h2><button type="button" id="closeAbout" aria-label="Cerrar">✕</button></div>
     <p>Radar RSS reúne titulares, extractos breves y enlaces a noticias de medios y blogs externos. Cada artículo enlaza al sitio original y sus derechos siguen perteneciendo a sus respectivos autores.</p>
     <p>Las fuentes se organizan en seis categorías, inicialmente importadas desde OPML. Los contenidos se recopilan mediante GitHub Actions y se publican de forma estática. La frecuencia programada es de aproximadamente seis horas, sujeta a disponibilidad de GitHub y de cada feed.</p>
@@ -178,6 +190,6 @@
     </div>
     <div class="settings-footer"><span>Preferencias del navegador · Radar RSS</span><button type="button" class="dialog-close" id="settingsDone">Guardar y cerrar</button></div>
   </dialog>
-  <script src="./app.js" defer></script>
+  <script src="./app.js?v=3.2.1" defer></script>
 </body>
 </html>

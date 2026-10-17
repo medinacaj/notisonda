@@ -339,3 +339,41 @@ body.light .status-icon{color:#80632B;background:#F8F0DC}
   .status-message{flex-basis:calc(100% - 40px)}
   .status-actions{margin-left:auto}
 }
+
+/* Radar RSS V3.2 · diagnóstico RSS dedicado, distinto de "Acerca de" */
+.feed-health-dialog{
+  width:min(680px,calc(100vw - 26px));max-height:min(88dvh,840px);
+  padding:0;background:var(--surface);border:1px solid var(--line);
+  border-radius:14px;color:var(--text);box-shadow:0 20px 70px rgba(0,0,0,.32);
+  overflow:hidden;
+}
+.feed-health-dialog::backdrop{background:rgba(0,0,0,.68)}
+.feed-health-header{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;padding:21px 22px 16px;border-bottom:1px solid var(--line)}
+.feed-health-kicker{color:var(--accent);font-size:10px;font-weight:750;letter-spacing:1.1px}
+.feed-health-header h2{font-size:22px;letter-spacing:-.45px;line-height:1.2;margin:5px 0 5px}
+.feed-health-header p{font-size:12px;color:var(--muted);line-height:1.5;margin:0}
+#closeFeedHealth{background:var(--surface2);border:1px solid var(--line);color:var(--text);border-radius:7px;width:33px;height:33px;min-width:33px;font-size:22px;cursor:pointer}
+#closeFeedHealth:hover{background:var(--hover)}
+.feed-health-body{padding:15px 22px 17px;max-height:calc(min(88dvh,840px) - 177px);overflow:auto}
+.feed-health-overview{font-size:12px;line-height:1.55;color:var(--muted);margin:0 0 12px}
+.feed-health-issues{display:flex;flex-direction:column;gap:9px}
+.feed-health-item{background:var(--surface2);border:1px solid var(--line);border-radius:9px;padding:12px 13px}
+.feed-health-item-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.feed-health-item-head strong{font-size:13px;line-height:1.4;overflow-wrap:anywhere}
+.feed-health-status{font-size:10px;color:#D8BA82;font-weight:650}
+body.light .feed-health-status{color:#846122}
+.feed-health-error{font-size:12px;color:var(--muted);line-height:1.5;margin:7px 0 0;overflow-wrap:anywhere}
+.feed-health-source-link{display:inline-block;font-size:12px;color:var(--accent);font-weight:650;margin-top:10px}
+.feed-health-source-link:hover{text-decoration:underline}
+.feed-health-note{font-size:11px;color:var(--muted);line-height:1.6;margin:15px 0 0}
+.feed-health-empty{font-size:13px;color:var(--muted);line-height:1.55;margin:8px 0}
+.feed-health-footer{padding:11px 21px;border-top:1px solid var(--line);display:flex;justify-content:flex-end}
+#doneFeedHealth{background:var(--surface2);border:1px solid var(--line);color:var(--text);font-size:12px;font-weight:650;border-radius:8px;padding:9px 14px;cursor:pointer}
+#doneFeedHealth:hover{background:var(--hover)}
+@media(max-width:540px){
+ .feed-health-header{padding:16px 15px 13px}
+ .feed-health-body{padding:12px 15px}
+ .feed-health-footer{padding:10px 15px}
+ .feed-health-header h2{font-size:19px}
+ .feed-health-item-head{align-items:flex-start}
+}
