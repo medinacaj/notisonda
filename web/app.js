@@ -2,8 +2,11 @@
 // Radar RSS: interfaz pública sin autenticación y sin HTML sin sanear de fuentes externas.
 const $ = (id) => document.getElementById(id);
 const format = new Intl.NumberFormat('es-CL');
-// Diseño experimental opt-in: no altera el modo publicado ni las preferencias guardadas.
-const IS_HASHNODE_PREVIEW = new URLSearchParams(location.search).get('preview') === 'hashnode';
+// Comparar referencias anteriores sin sustituir el nuevo estilo principal.
+const PREVIEW_STYLE = new URLSearchParams(location.search).get('preview');
+const IS_HASHNODE_PREVIEW = PREVIEW_STYLE === 'hashnode';
+const IS_SUBSTACK_PREVIEW = PREVIEW_STYLE === 'substack';
+const IS_STYLE_PREVIEW = IS_HASHNODE_PREVIEW || IS_SUBSTACK_PREVIEW;
 function storeGet(key) { try { return localStorage.getItem(key); } catch { return null; } }
 function initialTheme(){
   const saved=storeGet('radar-theme');
@@ -134,10 +137,10 @@ function categoryLabel(cat) {
 const browserTheme = window.matchMedia?.('(prefers-color-scheme: light)');
 function setTheme(theme) {
   state.theme = ['light','dark','system'].includes(theme) ? theme : 'system';
-  const light=IS_HASHNODE_PREVIEW || state.theme==='light' || (state.theme==='system' && Boolean(browserTheme?.matches));
+  const light=IS_STYLE_PREVIEW || state.theme==='light' || (state.theme==='system' && Boolean(browserTheme?.matches));
   document.body.classList.toggle('light',light);
   $('themeGlyph').replaceChildren(svgIcon(light?'moon':'sun'));
-  try{localStorage.setItem('radar-theme',state.theme);}catch{}
+  if(!IS_STYLE_PREVIEW){try{localStorage.setItem('radar-theme',state.theme);}catch{}}
 }
 function setColumns(value){
   state.columns=['auto','2','3','4','5','6'].includes(value)?value:'auto';
@@ -902,11 +905,16 @@ function initHandlers() {
   initSettingsHandlers();
   document.addEventListener('keydown',e=>{if(e.key==='/' && !['INPUT','TEXTAREA','SELECT'].includes(document.activeElement.tagName) && !dialog.open && !$('settingsDialog').open && !$('feedHealthDialog').open){e.preventDefault();$('searchInput').focus();}});
 }
-if(IS_HASHNODE_PREVIEW){
-  document.body.classList.add('hashnode-preview');
+document.body.classList.toggle('radar-hybrid',!IS_STYLE_PREVIEW);
+if(IS_STYLE_PREVIEW){
+  document.body.classList.remove('radar-hybrid');
+  document.body.classList.add(IS_HASHNODE_PREVIEW?'hashnode-preview':'substack-preview');
   $('stylePreviewNotice').hidden=false;
-  // Referencia disponible solo en tema claro; evitar botón que parezca roto.
+  $('stylePreviewName').textContent=IS_HASHNODE_PREVIEW?'Hashnode':'Substack';
+  $('stylePreviewOther').href=IS_HASHNODE_PREVIEW?'?preview=substack':'?preview=hashnode';
+  $('stylePreviewOther').textContent=IS_HASHNODE_PREVIEW?'Comparar Substack':'Comparar Hashnode';
+  // Ambas referencias se previsualizan en su paleta clara original.
   $('themeToggle').hidden=true;
-  document.querySelector('meta[name="theme-color"]')?.setAttribute('content','#f9fafb');
+  document.querySelector('meta[name="theme-color"]')?.setAttribute('content',IS_HASHNODE_PREVIEW?'#f9fafb':'#ffffff');
 }
 hydrateIcons(); initHandlers(); updateScheduleProgress(); boot();

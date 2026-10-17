@@ -12,9 +12,10 @@
   <link rel="stylesheet" href="./styles.css?v=5.0.0">
   <link rel="stylesheet" href="./editorial.css?v=5.0.1">
   <link rel="stylesheet" href="./hashnode-preview.css?v=1.0.0">
+  <link rel="stylesheet" href="./radar-hybrid.css?v=1.0.0">
   <title>Radar RSS — Actualidad en un solo lugar</title>
 </head>
-<body class="light">
+<body class="light radar-hybrid">
   <div class="app-shell">
     <aside class="sidebar" aria-label="Menú de fuentes">
       <a class="brand" id="brandHome" href="#inicio" aria-label="Radar RSS: ir al inicio">
@@ -54,9 +55,12 @@
         </div>
       </div>
       <div id="stylePreviewNotice" class="style-preview-notice" role="status" hidden>
-        <span class="style-preview-label"><strong>VISTA PREVIA</strong> Estilo Hashnode</span>
-        <span class="style-preview-info">Prueba de diseño: el sitio habitual conserva Substack.</span>
-        <a href="./" class="style-preview-exit">Volver al estilo actual <span data-icon="arrow-right" class="ui-icon-slot" aria-hidden="true"></span></a>
+        <span class="style-preview-label"><strong>REFERENCIA</strong> <span id="stylePreviewName">Diseño anterior</span></span>
+        <span class="style-preview-info">Versión de comparación; Radar RSS usa ahora el diseño editorial combinado.</span>
+        <div class="style-preview-links">
+          <a id="stylePreviewOther" href="?preview=hashnode" class="style-preview-other">Ver otra referencia</a>
+          <a href="./" class="style-preview-exit">Volver a Radar RSS <span data-icon="arrow-right" class="ui-icon-slot" aria-hidden="true"></span></a>
+        </div>
       </div>
       <main class="main" id="mainContent">
         <section class="hero" aria-labelledby="heroTitle">
@@ -254,6 +258,6 @@
   </dialog>
   <button id="backTop" class="back-to-top" type="button" aria-label="Volver arriba" title="Volver arriba" hidden><span data-icon="arrow-up" class="ui-icon-slot" aria-hidden="true"></span></button>
   <div id="actionToast" class="action-toast" role="status" aria-live="polite" aria-atomic="true" hidden></div>
-  <script src="./app.js?v=5.1.0" defer></script>
+  <script src="./app.js?v=6.0.0" defer></script>
 </body>
 </html>
