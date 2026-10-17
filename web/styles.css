@@ -296,3 +296,46 @@ body.on-dashboard .stats{margin-bottom:12px}
 }
 @media(prefers-reduced-motion:reduce){.article-card,.nav-link{transition:none!important}.article-card:hover{transform:none!important}}
 
+/* Radar RSS V3.1: incidentes RSS accesibles sin interrumpir la lectura */
+.health-indicator{
+  display:inline-flex;align-items:center;justify-content:center;gap:7px;
+  background:var(--surface);border:1px solid var(--line);border-radius:8px;
+  color:var(--muted);font-size:11px;font-weight:650;padding:7px 9px;white-space:nowrap;
+}
+.health-indicator:hover{border-color:var(--accent);color:var(--text);background:var(--hover)}
+.health-indicator[hidden],.status-banner[hidden],.status-details[hidden]{display:none!important}
+.health-indicator-dot{height:6px;width:6px;border-radius:50%;background:#CCAD77;flex:0 0 6px}
+.health-indicator-count{font-variant-numeric:tabular-nums;color:var(--text)}
+.status-banner,body.light .status-banner{
+  display:flex;align-items:center;flex-wrap:wrap;gap:9px;
+  background:var(--surface);color:var(--muted);
+  border:1px solid var(--line);border-radius:9px;
+  padding:7px 10px;font-size:12px;line-height:1.4;
+  margin-bottom:10px;box-shadow:none;
+}
+.status-icon{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:17px;height:17px;min-width:17px;border-radius:50%;
+  background:rgba(204,173,119,.13);color:#CCAD77;
+  font-size:11px;font-weight:800;
+}
+body.light .status-icon{color:#80632B;background:#F8F0DC}
+.status-message{min-width:0;flex:1 1 200px}
+.status-actions{display:inline-flex;align-items:center;gap:7px;margin-left:auto}
+.status-details,.status-dismiss{
+  color:var(--muted);background:transparent;border:1px solid transparent;
+  border-radius:6px;cursor:pointer;padding:4px 7px;line-height:1.2;
+  font-size:11px;font-weight:650;white-space:nowrap;
+}
+.status-details{color:var(--text);text-decoration:underline;text-underline-offset:2px}
+.status-details:hover,.status-dismiss:hover{background:var(--hover)}
+.status-dismiss{font-size:18px;width:27px;height:27px;display:grid;place-items:center;padding:0}
+@media(max-width:710px){
+  .health-indicator-label{display:none}
+  .health-indicator{min-width:32px;padding:6px}
+}
+@media(max-width:420px){
+  .status-banner,body.light .status-banner{gap:6px;font-size:11px}
+  .status-message{flex-basis:calc(100% - 40px)}
+  .status-actions{margin-left:auto}
+}

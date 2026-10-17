@@ -307,13 +307,47 @@ function updateHeader() {
   $('sectionEyebrow').textContent = state.category === 'all' ? 'SELECCIÓN EDITORIAL' : 'EXPLORAR CATEGORÍA';
   $('feedDescription').textContent = state.category === 'all' ? 'Titulares y novedades de todas las fuentes.' : `Publicaciones seleccionadas de ${name.toLowerCase()}.`;
 }
+// Avisos discretos y descartables. La preferencia solo es local a este navegador.
+function openFeedHealth() {
+  syncSettings();
+  selectedTab('health');
+  $('settingsDialog').showModal();
+}
+function showFeedNotice(message, signature, details) {
+  const banner=$('statusBanner');
+  $('statusMessage').textContent=message;
+  $('statusDetails').hidden=!details;
+  banner.dataset.signature=signature;
+  banner.hidden=Boolean(signature && storeGet('radar-dismissed-health-notice-v1')===signature);
+}
 function statusSummary() {
-  const status = $('statusBanner'); status.hidden=true;
-  if (!state.ready) { status.hidden=false; status.textContent='No fue posible cargar los archivos de noticias. Verifica la publicación de GitHub Pages y vuelve a intentarlo.'; return; }
-  if (!state.generated && !state.items.length) { status.hidden=false; status.textContent='La aplicación está lista, pero la primera recopilación de noticias todavía no se ha ejecutado. En GitHub, abre Actions y ejecuta “Actualizar noticias y publicar”.'; return; }
-  const errors = state.health.filter(x => x.state === 'error').length;
-  const stale = state.health.filter(x => x.state === 'stale').length;
-  if (errors || stale) { status.hidden=false; status.textContent=`Revisión de fuentes: ${errors} con error de lectura y ${stale} con últimas fechas anteriores a 12 meses. No se eliminan automáticamente; se recomienda revisar sus RSS y el sitio editorial.`; }
+  const banner=$('statusBanner');
+  const indicator=$('feedHealthIndicator');
+  banner.hidden=true;
+  indicator.hidden=true;
+  if (!state.ready) {
+    showFeedNotice('No se pudieron cargar las noticias. Comprueba GitHub Pages y vuelve a intentarlo.', 'load-error', false);
+    return;
+  }
+  if (!state.generated && !state.items.length) {
+    showFeedNotice('Sin noticias todavía: falta completar la primera recopilación.', 'awaiting-first-run', false);
+    return;
+  }
+  const issues=state.health.filter(x=>x.state==='error'||x.state==='stale');
+  if (!issues.length) return;
+  const errors=issues.filter(x=>x.state==='error').length;
+  const stale=issues.length-errors;
+  const labels=[];
+  if(errors)labels.push(`${errors} ${errors===1?'fuente con error de lectura':'fuentes con error de lectura'}`);
+  if(stale)labels.push(`${stale} ${stale===1?'fuente desactualizada':'fuentes desactualizadas'}`);
+  // Sin marcas temporales: un refresco normal no vuelve a mostrar el aviso ya cerrado.
+  // Si cambia la lista de feeds afectados, aparece de nuevo.
+  const signature=JSON.stringify(issues.map(x=>[String(x.id||x.url||x.name||''),x.state]).sort((a,b)=>a[0].localeCompare(b[0])||a[1].localeCompare(b[1])));
+  $('feedHealthCount').textContent=String(issues.length);
+  indicator.setAttribute('aria-label',`${issues.length} fuentes RSS requieren revisión. Abrir diagnóstico`);
+  indicator.title=labels.join(' · ')+'. Abrir diagnóstico RSS.';
+  indicator.hidden=false;
+  showFeedNotice(labels.join(' · ')+'.',signature,true);
 }
 function applyFilters() {
   const query=stripAccents(state.search.trim());
@@ -478,6 +512,13 @@ async function boot() {
 }
 function initHandlers() {
   window.addEventListener('hashchange',navigateFromHash);
+  $('feedHealthIndicator').addEventListener('click',openFeedHealth);
+  $('statusDetails').addEventListener('click',openFeedHealth);
+  $('statusDismiss').addEventListener('click',()=>{
+    const banner=$('statusBanner');
+    try{localStorage.setItem('radar-dismissed-health-notice-v1',banner.dataset.signature||'');}catch{}
+    banner.hidden=true;
+  });
   $('dashboardHealthButton').addEventListener('click',()=>{syncSettings();selectedTab('health');$('settingsDialog').showModal();});
   document.querySelectorAll('.mode-tab').forEach(button=>button.addEventListener('click',()=>{state.mode=button.dataset.mode;state.page=1;render();}));
   document.querySelectorAll('.view-button').forEach(button=>button.addEventListener('click',()=>{state.layout=button.dataset.view;state.page=1;try{localStorage.setItem('radar-layout',state.layout);}catch{}render();}));

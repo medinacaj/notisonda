@@ -32,6 +32,7 @@
         <div class="topbar-caption"><strong>Radar RSS</strong><span class="topbar-separator">/</span><span id="topbarSection">Actualidad</span></div>
         <div class="topbar-actions">
           <span class="update-label" id="lastUpdate">Sin sincronizar</span>
+          <button id="feedHealthIndicator" class="health-indicator" type="button" hidden aria-label="Abrir diagnóstico de las fuentes RSS" title="Ver fuentes con incidencias"><span class="health-indicator-dot" aria-hidden="true"></span><span id="feedHealthCount" class="health-indicator-count">0</span><span class="health-indicator-label">fuentes</span></button>
           <button id="settingsButton" class="settings-trigger" type="button" title="Configuración" aria-label="Abrir configuración" aria-haspopup="dialog"><span aria-hidden="true">⚙</span><span class="settings-text">Configuración</span></button>
           <button id="themeToggle" class="icon-button" type="button" aria-label="Cambiar tema" title="Cambiar modo claro u oscuro"><span id="themeGlyph">☀</span></button>
           <a class="top-external" id="githubLink" href="https://github.com/medinacaj/radar-rss-publico" target="_blank" rel="noopener noreferrer" title="GitHub">GitHub ↗</a>
@@ -94,7 +95,14 @@
             </div>
           </div>
           <div class="feed-actions"><button id="markAllVisible" class="settings-secondary" type="button" title="Marca como leídas las noticias que coinciden con los filtros">Marcar visibles como leídas ✓</button><span id="filterSummary" class="filter-summary"></span></div>
-          <div id="statusBanner" class="status-banner" hidden></div>
+          <div id="statusBanner" class="status-banner" role="status" hidden>
+            <span class="status-icon" aria-hidden="true">!</span>
+            <span id="statusMessage" class="status-message"></span>
+            <span class="status-actions">
+              <button id="statusDetails" class="status-details" type="button" hidden>Ver detalles</button>
+              <button id="statusDismiss" class="status-dismiss" type="button" title="Cerrar aviso" aria-label="Cerrar aviso de estado de las fuentes">×</button>
+            </span>
+          </div>
           <div id="articleGrid" class="article-grid" aria-live="polite"></div>
           <div class="load-more-wrap"><button id="loadMore" class="load-more" type="button" hidden>Cargar más noticias <span>↓</span></button></div>
         </section>
