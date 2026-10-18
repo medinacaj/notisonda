@@ -41,6 +41,24 @@ flowchart LR
 - **Resumen personalizado:** escoger todas las secciones, intereses de Mi Radar, Latinoamérica o país; la selección se utiliza también al copiar, compartir o escuchar el resumen.
 - **Privacidad:** las preferencias y búsquedas permanecen en el dispositivo mediante localStorage. No hay sincronización entre navegadores.
 
+## Calidad y experiencia V1.3
+
+- **Guía de primer uso:** ayuda contextual en la portada para configurar Mi Radar, combinar filtros y comparar titulares. Se puede cerrar y volver a abrir; no aparece como ventana emergente ni recopila eventos.
+- **Estadísticas personales:** solo muestra cuántas noticias se guardaron o marcaron como leídas en este navegador. **No** son estadísticas agregadas de visitantes ni implican telemetría.
+- **Rendimiento:** no se construyen las tarjetas del listado cuando se está en la portada o el resumen. El historial se descarga con un máximo de tres fragmentos simultáneos, bajo demanda. Las imágenes de tarjetas siguen usando carga diferida.
+- **Accesibilidad:** al guardar una noticia, el foco vuelve al botón correspondiente tras actualizar el listado; los botones de la guía tienen foco visible y el módulo se adapta a pantallas de 320 px. Esto no sustituye la comprobación con lectores de pantalla y dispositivos físicos.
+- **Auditoría editorial:** `scripts/audit_editorial.py` examina los JSON publicados y deja en el resumen de GitHub Actions posibles titulares duplicados, URLs RSS idénticas, estados anómalos y atribución ausente. La auditoría no modifica noticias ni certifica su veracidad: requiere revisión humana.
+- **Respaldo de datos:** tras una publicación válida, Actions conserva `articles.json`, `status.json`, `sources.json` y `meta.json` en un artefacto llamado `radar-public-data-<ID>` durante **hasta 90 días** (sujeto a la política del repositorio). Esto no es un historial permanente.
+
+### Recuperar un respaldo anterior
+
+1. En **GitHub → Actions → Actualizar noticias y publicar**, identificar la ejecución anterior cuyo respaldo se desea recuperar y copiar su número de ejecución.
+2. Comprobar que esa ejecución conserve un artefacto `radar-public-data-<ID>`. El artefacto es una copia de los **datos públicos**, no de preferencias de visitantes.
+3. En el mismo workflow, abrir **Run workflow**, indicar `restore_run_id` con ese número e iniciar la ejecución manual.
+4. El flujo descarga la copia usando `GITHUB_TOKEN`, comprueba la integridad de identificadores y del estado de feeds y utiliza el respaldo como punto de partida de la siguiente recopilación. Un respaldo corrupto provoca un fallo seguro, sin publicar datos inválidos.
+
+**Limitación:** la recopilación solo conserva un máximo de 45 días o 5.000 artículos, y los artefactos caducan. Para conservación permanente sigue siendo necesario un almacenamiento durable independiente.
+
 ## Cómo publicar un fork en GitHub (una sola vez)
 
 1. Crear un **repositorio público** en GitHub llamado, por ejemplo, `radar-rss-publico`. No añadir archivos iniciales al crearlo si subirás esta carpeta completa.
@@ -146,6 +164,8 @@ radar-rss-publico/
 **V1.1 — implementada parcialmente:** diagnóstico de feeds, vigilancia que abre una incidencia automática si el sitio envejece o acumula fallos, pruebas con Chromium, Firefox y WebKit, historial de hasta 5.000 noticias. Pendientes opcionales: revisión editorial de enlaces inactivos y auditoría asistida con lectores de pantalla reales.
 
 **V1.2 — implementada:** portada Mi Radar, Latinoamérica como navegación agrupada, filtros combinables y búsquedas guardadas, comparador cronológico, resumen segmentado, y pruebas de navegador en móvil y escritorio.
+
+**V1.3 — implementada:** optimización del render del listado y descarga histórica, guía contextual, continuidad de foco y controles táctiles, auditoría editorial orientativa y respaldo recuperable desde Actions. Pendientes de validación física: Safari/iPhone, Android/TalkBack, VoiceOver y pruebas de uso con lectores reales.
 
 **V2 (opcional, sin implementar):** cuentas, sincronización de favoritos entre dispositivos, histórico duradero con base de datos, RSS personalizado, avisos individuales y administración desde un backend. La PWA y la caché sin conexión básica ya existen en V1.
 
