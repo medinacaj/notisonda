@@ -53,7 +53,7 @@
     }
   });
   const display = (name, cls, tag='span') => mk(tag, cls, name);
-  const regionName = { all:'Todos los países', latam:'Latinoamérica', chile:'Chile', venezuela:'Venezuela', region:'Regional' };
+  const regionName = { all:'Todas las noticias', latam:'Latinoamérica', chile:'Chile', venezuela:'Venezuela', region:'Latinoamérica · Región' };
   const navBase = buildNav;
   buildNav = function(...args) {
     navBase(...args);
@@ -120,7 +120,7 @@
       $('feedHeading').textContent = regionName[geo];
       $('topbarSection').textContent = regionName[geo];
       $('sectionEyebrow').textContent = 'COBERTURA REGIONAL';
-      $('feedDescription').textContent = 'Chile, Venezuela y el resto de Latinoamérica en una sola sección.';
+      $('feedDescription').textContent = geo==='latam' ? 'Chile, Venezuela y el resto de Latinoamérica en una sola sección.' : 'Noticias recientes de '+regionName[geo]+'.';
     }
     syncGeoSources();
     if(pendingSearchFeed!==null) {
@@ -190,7 +190,7 @@
   }
   const filterRow=mk('div','v12-filter-bar');filterRow.id='v12FilterBar';
   const geoPicker=makeSelect('v12Geo','Región',[['all','Todos los países'],['latam','Latinoamérica'],['chile','Chile'],['venezuela','Venezuela'],['region','Región']]);
-  const datePicker=makeSelect('v12Date','Antigüedad',[['0','Sin límite'],['1','24 horas'],['7','7 días'],['30','30 días']]);
+  const datePicker=makeSelect('v12Date','Antigüedad',[['0','Sin límite'],['1','24 horas'],['7','7 días'],['30','30 días'],['90','90 días']]);
   filterRow.append(geoPicker.wrap,datePicker.wrap);
   const saveSearch=mk('button','v12-secondary','Guardar búsqueda');saveSearch.type='button';saveSearch.id='v12SaveSearch';
   filterRow.append(saveSearch);
@@ -228,7 +228,7 @@
       const group=mk('span','v12-search-saved');
       const b=mk('button','v12-saved-open',item.label);b.type='button';b.title='Aplicar búsqueda guardada '+item.label;
       b.addEventListener('click',()=>{
-        state.search=item.query;state.feed='';state.maxAge=[0,1,7,30].includes(Number(item.age))?Number(item.age):0;
+        state.search=item.query;state.feed='';state.maxAge=[0,1,7,30,90].includes(Number(item.age))?Number(item.age):0;
         $('searchInput').value=state.search; savePref('max-age',state.maxAge);
         pendingSearchFeed=item.feed||'';
         if(item.category!=='all'&&state.categories.includes(item.category)) {
