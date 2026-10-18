@@ -30,6 +30,7 @@
     briefing: ['all','mine','latam','chile','venezuela','region'].includes(stored?.briefing) || /^cat:/.test(stored?.briefing || '') ? stored.briefing : 'all'
   };
   let geo = 'all';
+  let pendingSearchFeed = null;
   let savedSearches = (Array.isArray(load(SEARCH_KEY, [])) ? load(SEARCH_KEY, []) : [])
     .filter(x => x && typeof x.label === 'string' && typeof x.query === 'string' && GEO.includes(x.geo))
     .slice(0, 12);
@@ -122,6 +123,14 @@
       $('feedDescription').textContent = 'Chile, Venezuela y el resto de Latinoamérica en una sola sección.';
     }
     syncGeoSources();
+    if(pendingSearchFeed!==null) {
+      const feed=pendingSearchFeed;
+      pendingSearchFeed=null;
+      if(feed && [...$('sourceSelect').options].some(option=>option.value===feed)) {
+        state.feed=feed;$('sourceSelect').value=feed;
+      }
+      render();
+    }
     syncSearchForm();
     syncGeoControls();
   };
@@ -221,14 +230,17 @@
       b.addEventListener('click',()=>{
         state.search=item.query;state.feed='';state.maxAge=[0,1,7,30].includes(Number(item.age))?Number(item.age):0;
         $('searchInput').value=state.search; savePref('max-age',state.maxAge);
+        pendingSearchFeed=item.feed||'';
         if(item.category!=='all'&&state.categories.includes(item.category)) {
           geo='all';goTo(item.category);
         } else {geo=item.geo;chooseGeo(geo);}
-        const wanted=item.feed;
-        if(wanted&&[...$('sourceSelect').options].some(o=>o.value===wanted)){
-          state.feed=wanted;$('sourceSelect').value=wanted;
+        state.page=1;syncGeoControls();syncGeoSources();
+        // Cuando la URL cambia, pendingSearchFeed se aplica al reconstruir el selector.
+        // Si la URL no cambió, el selector ya está disponible.
+        if(pendingSearchFeed!==null && [...$('sourceSelect').options].some(o=>o.value===pendingSearchFeed)){
+          state.feed=pendingSearchFeed;$('sourceSelect').value=pendingSearchFeed;pendingSearchFeed=null;
         }
-        state.page=1;syncGeoControls();syncGeoSources();render();
+        render();
         actionToast('Búsqueda cargada.');
       });
       const x=mk('button','v12-search-remove','×');x.type='button';x.title='Eliminar búsqueda';
@@ -342,6 +354,16 @@
     $('briefingView').querySelector('.briefing-head').after(wrap);
   }
   createBriefingOptions();
+  function updateBriefingOptions(){
+    const select=$('v12BriefingScope');
+    if(!select)return;
+    for(const cat of state.categories.filter(c=>!regionalCats().includes(c))){
+      const value='cat:'+cat;
+      if(![...select.options].some(option=>option.value===value))
+        select.append(new Option(categoryLabel(cat),value));
+    }
+    if([...select.options].some(option=>option.value===prefs.briefing))select.value=prefs.briefing;
+  }
   const readerBase=openArticleReader;
   openArticleReader=function(item,event,...rest){
     readerBase(item,event,...rest);
@@ -380,6 +402,7 @@
   const renderBase=render;
   render=function(...args){
     renderBase(...args);
+    updateBriefingOptions();
     syncGeoControls();
   };
   syncGeoControls();renderSearches();updateMine();
