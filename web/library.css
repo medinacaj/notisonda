@@ -89,7 +89,32 @@ body .library-system-folders .nav-label{font-size:12.5px;white-space:nowrap;over
 body .library-system-folders .nav-glyph{color:var(--muted)}
 body .library-system-folders .nav-link.active .nav-glyph{color:var(--accent)}
 body .library-folder-nav{padding:0 0 12px}
-body .library-personal-label{display:block;color:var(--muted);font-weight:690;letter-spacing:.065em;font-size:10px;padding:11px 12px 5px;margin-top:5px;border-top:1px solid var(--line)}
 body .library-folder-nav[hidden]{display:none!important}
 body .library-folder-row .nav-label{font-size:12.5px}
 @media(max-width:950px){body .source-folders-section{margin-top:10px;padding-top:8px}}
+
+/* V7.5: carpetas del catálogo y del usuario comparten lista, iconos y selección. */
+body .source-folders-section .library-folder-nav.library-system-folders{
+  display:flex;flex-direction:column;gap:2px;padding:0 0 12px;
+}
+body .source-folders-section .library-folder-row{
+  display:flex;align-items:center;gap:2px;min-height:40px;margin:1px 0;
+}
+body .source-folders-section .library-folder-row .nav-link{
+  margin:0;padding:9px 12px;min-height:40px;flex:1;min-width:0;
+  border-radius:9px;font-size:12.5px;font-weight:530;
+}
+body .source-folders-section .library-folder-row .nav-link.active{font-weight:700}
+body .source-folders-section .library-folder-row .nav-glyph{color:var(--muted)}
+body .source-folders-section .library-folder-row .nav-link.active .nav-glyph{color:var(--accent)}
+body .source-folders-section .library-folder-row .nav-label{
+  font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+body .source-folders-section .library-folder-delete{
+  width:23px;flex:0 0 23px;height:26px;border:0;border-radius:7px;
+  background:transparent;color:var(--muted);opacity:.6;font-size:14px;cursor:pointer;
+}
+body .source-folders-section .library-folder-delete:hover,
+body .source-folders-section .library-folder-delete:focus-visible{
+  background:var(--hover);color:var(--text);opacity:1;
+}

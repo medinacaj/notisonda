@@ -405,8 +405,8 @@ function buildNav() {
   nav.replaceChildren();
   const core=[{id:'home',label:'Inicio'},{id:'all',label:'Todas las noticias'}];
   const folders=state.categories.map(id=>({id,label:categoryLabel(id)}));
-  const systemFolderNav=document.getElementById('systemFolderNav');
-  if(systemFolderNav)systemFolderNav.replaceChildren();
+  const sourceFolderNav=document.getElementById('libraryFolderNav');
+  if(sourceFolderNav)sourceFolderNav.replaceChildren();
   function addRow(entry,index,parent){
     const active=entry.id==='home'?state.pageView==='dashboard':
       state.pageView==='feed'&&state.category===entry.id;
@@ -427,8 +427,8 @@ function buildNav() {
     parent.append(button);
   }
   core.forEach((entry,index)=>addRow(entry,index,nav));
-  if(systemFolderNav){
-    folders.forEach((entry,index)=>addRow(entry,index+2,systemFolderNav));
+  if(sourceFolderNav){
+    folders.forEach((entry,index)=>addRow(entry,index+2,sourceFolderNav));
   }else if(folders.length){
     // Respaldo visual si el módulo de biblioteca no está disponible.
     const section=mk('section','source-folders-section');
