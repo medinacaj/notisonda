@@ -1,48 +1,23 @@
-# Colección oficial de plugins para el flujo multiagente
+# Plugins y acceso a GitHub desde ChatGPT y Claude (sin CLI)
 
-**Origen vigente:** [openai/plugins](https://github.com/openai/plugins).
-El antiguo repositorio [openai/skills](https://github.com/openai/skills) está marcado como **deprecated**. No hacer una copia masiva de todas las skills ni habilitar plugins sin examinarlos.
+Este proyecto se mantiene desde **interfaces de chat**, no desde Codex CLI. **No ejecutar** scripts de instalación de Codex ni copiar el catálogo completo de plugins al repositorio.
 
-## Instalación en Codex (equipo personal)
+## ChatGPT
+- Usar el acceso a GitHub disponible en esta conversación para inspeccionar Issue, archivos y PR. Algunas conexiones GitHub son solo lectura; confirmar permisos antes de prometer cambios.
+- Instalar o conectar plugins únicamente desde **Configuración → Plugins**, con acción y autorización del usuario. Un archivo de GitHub no instala plugins en ChatGPT.
+- Las habilidades de Superpowers pueden estar disponibles como plugin, pero su instalación en una cuenta/chat no implica que el repositorio las tenga activadas.
+- `CHATGPT.md` proporciona contexto para **pedir que se lea**, no instrucciones que ChatGPT descubra automáticamente.
 
-El repositorio GitHub **no instala** plugins en el ordenador ni en la cuenta ChatGPT. En un equipo con Codex CLI:
+## Claude en navegador
+- En claude.ai, pulsar `+` → `Agregar desde GitHub` y seleccionar el repositorio y los archivos necesarios.
+- `CLAUDE.md` importa `AGENTS.md` automáticamente **solo en entornos que soportan ese mecanismo (por ejemplo Claude Code)**; la conversación normal de Claude requiere seleccionar los archivos relevantes.
+- No usar repositorio entero como contexto si basta con Issue, diff y 2–3 archivos.
 
-```sh
-bash scripts/setup-official-agent-plugins.sh
-```
+## Sobre colecciones y skills
+- [OpenAI Plugins](https://github.com/openai/plugins) es un catálogo para entornos compatibles; no hay una operación desde un chat para instalar todos sus elementos como una única skill.
+- La skill `.agents/skills/coordinating-chatgpt-claude/SKILL.md` permanece como procedimiento portable, **no como instalación activa en ChatGPT Chat**.
+- Evitar plugins externos innecesarios, API keys y cambios automáticos de repositorio.
 
-El instalador registra el catálogo `openai-curated` de OpenAI y solicita únicamente estos plugins:
-
-| Plugin | Uso |
-| --- | --- |
-| `github` | Issues, PR, comentarios, estado CI |
-| `build-web-apps` | Desarrollo web, pruebas y despliegues |
-| `superpowers` | Planificación, depuración, revisión y TDD |
-
-La publicación del catálogo es independiente de la instalación de cada plugin. La autenticación de GitHub u otras aplicaciones puede requerir autorización del usuario.
-
-### Instalación manual
-
-```sh
-codex plugin marketplace add openai/plugins --ref main --sparse .agents/plugins --sparse plugins
-codex plugin marketplace list
-codex plugin add github@openai-curated
-codex plugin add build-web-apps@openai-curated
-codex plugin add superpowers@openai-curated
-```
-
-Si alguno ya existe, no instalarlo de nuevo. Revisar el catálogo y confirmar que cada plugin se encuentra disponible y habilitado antes de utilizarlo.
-
-## Claude Code y ChatGPT
-
-- Para **Claude Code** se mantiene la skill propia `.claude/skills/coordinating-claude-codex/SKILL.md` y el archivo `CLAUDE.md`. Añadir plugins de Codex **no instala nada en Claude**.
-- En **ChatGPT**, instalar plugins requiere la acción explícita del usuario en el directorio. No hay instalación automática a partir de commits de GitHub.
-- El plugin **Superpowers** puede estar instalado en un entorno y no en otro; verificar por separado.
-- Una skill de coordinación **no ejecuta dos modelos** ni establece conexión entre sus servicios. Revisiones cruzadas reales necesitan agentes configurados y autorizados.
-
-## Seguridad y eficiencia
-
-- Preferir la selección anterior a instalar indiscriminadamente el catálogo, ya que algunos plugins requieren credenciales, permisos o dependencias.
-- Mantener `AGENTS.md` como fuente común e incluir en Issues/PR solo la información necesaria.
-- Examinar nuevos plugins, comandos y permisos antes de habilitarlos, especialmente si pueden escribir en GitHub o desplegar sitios.
-- Los comandos de instalación requieren Codex CLI y pueden evolucionar; comprobar la documentación oficial si fallan.
+## Fuentes de ayuda
+- [ChatGPT + GitHub](https://help.openai.com/es-419/articles/11145903-connecting-github-to-chatgpt)
+- [Claude + GitHub](https://support.claude.com/es/articles/10167454-usar-la-integracion-de-github)
