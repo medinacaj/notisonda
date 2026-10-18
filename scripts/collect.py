@@ -228,6 +228,23 @@ def find_image(entry) -> str | None:
     return embedded
 
 
+def clean_google_news_title(title: str, credited_publisher: str) -> str:
+    """Remove Google's trailing ' - Publisher' only when matching the credited outlet.
+
+    Never strip arbitrary hyphenated headlines when source metadata is missing.
+    """
+    if not credited_publisher:
+        return title
+    expected = unicodedata.normalize('NFKC', credited_publisher).strip().casefold()
+    for separator in (' - ', ' — ', ' – '):
+        if separator not in title:
+            continue
+        heading, suffix = title.rsplit(separator, 1)
+        if heading.strip() and unicodedata.normalize('NFKC', suffix).strip().casefold() == expected:
+            return heading.strip()
+    return title
+
+
 def make_item(entry, source: dict, now: datetime) -> dict | None:
     link = safe_web_url(entry.get('link') or '')
     title, _ = extract_html(entry.get('title') or '')
@@ -241,7 +258,8 @@ def make_item(entry, source: dict, now: datetime) -> dict | None:
     if source['is_radar']:
         credited = entry.get('source') or {}
         if isinstance(credited, dict) and credited.get('title'):
-            publisher = str(credited['title'])[:90]
+            publisher = display_name(str(credited['title']))[:90]
+        title = clean_google_news_title(title, publisher)
     clean_link = strip_tracking(link)
     return {
         'id': sha256(clean_link.encode('utf-8')).hexdigest()[:20],
@@ -414,6 +432,13 @@ def collect(opml: Path, out: Path, days: int, workers: int, max_per_feed: int) -
     cutoff = now - timedelta(days=days)
     valid_ids = {x['id'] for x in sources}
     for item in prior_articles + current_items:
+        # Reprocess Google titles already cached/published before this change.
+        if item.get('is_radar') and isinstance(item.get('title'), str):
+            item['title'] = clean_google_news_title(item['title'], str(item.get('publisher') or ''))
+            for alternative in item.get('also_in') or []:
+                if isinstance(alternative, dict) and isinstance(alternative.get('title'), str):
+                    alternative['title'] = clean_google_news_title(
+                        alternative['title'], str(alternative.get('publisher') or ''))
         date_txt = item.get('published_at') or item.get('first_seen_at')
         try:
             dt = datetime.fromisoformat(date_txt.replace('Z', '+00:00'))

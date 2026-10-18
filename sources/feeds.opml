@@ -139,7 +139,7 @@
       <outline text="RADAR — Teletón Venevisión y solidaridad | Venezuela" title="RADAR — Teletón Venevisión y solidaridad | Venezuela" type="rss" xmlUrl="https://news.google.com/rss/search?q=%28%22Telet%C3%B3n+Venevisi%C3%B3n%22+OR+%22Teleton+Venevision%22+OR+%22Telet%C3%B3n+Venezuela%22+OR+%22Unidos+por+Venezuela%22%29+when%3A30d&amp;hl=es-419&amp;gl=VE&amp;ceid=VE%3Aes-419" htmlUrl="https://www.venevision.com/teleton" />
       <outline text="MEDIO — RunRun.es" title="MEDIO — RunRun.es" type="rss" xmlUrl="https://runrun.es/feed/" htmlUrl="https://runrun.es/" />
       <outline text="MEDIO — El Nacional" title="MEDIO — El Nacional" type="rss" xmlUrl="https://www.elnacional.com/feed/" htmlUrl="https://www.elnacional.com/" />
-      <outline text="MEDIO — Efecto Cocuyo" title="MEDIO — Efecto Cocuyo" type="rss" xmlUrl="https://efectococuyo.com/feed/" htmlUrl="https://efectococuyo.com/" />
+      <outline text="MEDIO — Efecto Cocuyo" title="MEDIO — Efecto Cocuyo" type="rss" xmlUrl="https://news.google.com/rss/search?q=site%3Aefectococuyo.com+when%3A30d&amp;hl=es-419&amp;gl=VE&amp;ceid=VE%3Aes-419" htmlUrl="https://efectococuyo.com/" />
       <!-- RSS propio (https://talcualdigital.com/feed/) responde 403 a GitHub Actions desde oct. 2026: se usa la búsqueda de Google Noticias por sitio. -->
       <outline text="MEDIO — TalCual" title="MEDIO — TalCual" type="rss" xmlUrl="https://news.google.com/rss/search?q=site%3Atalcualdigital.com&amp;hl=es-419&amp;gl=VE&amp;ceid=VE%3Aes-419" htmlUrl="https://talcualdigital.com/" />
       <outline text="MEDIO — El Pitazo" title="MEDIO — El Pitazo" type="rss" xmlUrl="https://elpitazo.net/feed/" htmlUrl="https://elpitazo.net/" />
