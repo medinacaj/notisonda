@@ -120,13 +120,16 @@ class PublishGuardTests(unittest.TestCase):
         collect.write_json(root/'sources.json', {'sources':[{'id':'s'}]})
         feeds=[{'id':str(i),'state':'error' if i<failed else 'ok'} for i in range(total)]
         collect.write_json(root/'status.json', {'feeds':feeds})
+        collect.write_json(root/'trends.json', {'topics':[]})
+        (root.parent/'feeds').mkdir(exist_ok=True)
+        (root.parent/'feeds'/'mas-cubierto.xml').write_text('<rss/>')
 
     def test_blocks_publication_when_many_feeds_fail(self):
         import tempfile
         sys.path.insert(0, str(ROOT / 'scripts'))
         import validate_data
         with tempfile.TemporaryDirectory() as tmp:
-            root=Path(tmp)
+            root=Path(tmp)/'data'; root.mkdir()
             self.build(root, failed=3)
             validate_data.check(root)
             self.build(root, failed=5)

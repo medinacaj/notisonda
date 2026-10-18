@@ -28,6 +28,8 @@ except ModuleNotFoundError:
     import feedparser_compat as feedparser
 import requests
 
+from insights import trending_topics, write_feeds
+
 # Agente identificable (convención "compatible" de lectores y buscadores) con enlace de contacto.
 AGENT = "Mozilla/5.0 (compatible; RadarRSS/1.1; +https://github.com/medinacaj/radar-rss-publico)"
 # Feeds de Substack y similares incluyen artículos completos y superan con frecuencia 2,5 MB.
@@ -352,8 +354,13 @@ def group_related_articles(items: list[dict]) -> list[dict]:
                 lead[name]=list(dict.fromkeys([*lead.get(name,[]),*item.get(name,[])]))
             others=list(lead.get('also_in') or [])
             seen={x.get('url') for x in others}
+            # Titular y origen de cada medio: permiten comparar cómo cuenta la historia cada uno.
             candidates=[{'id':item.get('id'),'url':item.get('url'),
-                         'publisher':str(item.get('publisher') or item.get('source') or 'Otro medio')[:90]}]
+                         'publisher':str(item.get('publisher') or item.get('source') or 'Otro medio')[:90],
+                         'title':str(item.get('title') or '')[:250],
+                         'source_id':(item.get('source_ids') or [None])[0],
+                         'category':(item.get('categories') or [None])[0],
+                         'published_at':item.get('published_at')}]
             candidates += [x for x in item.get('also_in',[]) if isinstance(x,dict)]
             for alt in candidates:
                 url=alt.get('url')
@@ -435,12 +442,17 @@ def collect(opml: Path, out: Path, days: int, workers: int, max_per_feed: int) -
 
     ordered = sorted(merged.values(), key=lambda i: (i.get('published_at') or i.get('first_seen_at') or ''), reverse=True)
     articles = group_related_articles(ordered[:3500])[:2300]
+    for article in articles:
+        # Cobertura: cuántas fuentes distintas publicaron la misma historia.
+        article['coverage'] = max(1, len(set(article.get('source_ids') or [])))
     states = [fresh_status[x['id']] for x in sources]
     write_json(out / 'sources.json', {'version': 1, 'sources': sources,
                                       'categories': list(dict.fromkeys(s['category'] for s in sources))})
     write_json(out / 'articles.json', {'version': 2, 'generated_at': iso(now),
                                        'total_sources': len(sources), 'items': articles})
     publish_partitioned(out, articles, iso(now))
+    write_json(out / 'trends.json', trending_topics(articles, now))
+    write_feeds(out.parent / 'feeds', articles, sources, now)
     write_json(out / 'status.json', {'version': 1, 'checked_at': iso(now),
                                      'feeds': states, 'errors': sum(s['state'] == 'error' for s in states),
                                      'stale': sum(s['state'] == 'stale' for s in states)})

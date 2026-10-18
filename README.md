@@ -22,6 +22,16 @@ flowchart LR
 - **Publicación:** `.github/workflows/deploy.yml`, GitHub Actions -> GitHub Pages. El navegador consume JSON generado, sin solicitar RSS externos directamente (evita CORS).
 - **UI:** `web/index.html`, `web/styles.css` y `web/app.js`. Sin frameworks ni compiladores. Tarjetas/lista, filtros por fuente y categoría, búsqueda, modo claro/oscuro, guardadas y sin leer (por navegador).
 
+## Funciones para lectores
+
+- **Lo más cubierto y el radar.** Las historias publicadas por más medios distintos en 24 h, en una lista numerada y en un radar (sector = tema, distancia = antigüedad, tamaño = cobertura). Es una señal de importancia que no depende de clics.
+- **Cómo lo cuenta cada medio.** Al abrir una historia agrupada, los titulares de cada medio, separados por región y fuentes oficiales, sin valoraciones.
+- **Seguimiento de una historia.** Línea de tiempo con las notas relacionadas de los últimos días.
+- **Temas en alza** (`data/trends.json`). Palabras cuyo uso en titulares crece frente a los 7 días anteriores, con mínimos de historias y de fuentes.
+- **Temas que sigo, «Mientras no estabas», Resumen del día** (escuchar, copiar o compartir por WhatsApp) y **atajos de teclado** (`?`). Todo se guarda solo en el navegador.
+- **Modo ligero y lectura sin conexión** (`sw.js`): red primero; sin conexión, la última copia del propio sitio.
+- **Feeds de salida** en `feeds/`: `mas-cubierto.xml` y uno por carpeta.
+
 ## Cómo publicar en GitHub (una sola vez)
 
 1. Crear un **repositorio público** en GitHub llamado, por ejemplo, `radar-rss-publico`. No añadir archivos iniciales al crearlo si subirás esta carpeta completa.

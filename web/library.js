@@ -517,8 +517,8 @@ render=function(){
   updateUnreadCounts();
 };
 const oldOpen=openArticleReader;
-openArticleReader=function(item,e){
-  oldOpen(item,e);
+openArticleReader=function(item,e,...rest){
+  oldOpen(item,e,...rest);
   if(e&&(e.metaKey||e.ctrlKey||e.shiftKey||e.altKey||e.button!==0))return;
   $('libraryTagInput').value='';
   renderTags();
