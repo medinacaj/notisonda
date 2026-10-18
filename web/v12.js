@@ -321,7 +321,8 @@
       if(region.some(cat=>categoryLabel(cat)===label))section.remove();
     }
     if(prefs.mine && !region.some(cat=>myCats().includes(cat)))return;
-    const stories=dashboardEligible().filter(item=>inGeo(item,'latam')).slice(0,4);
+    const visibleIds=new Set([...$('dashboardFeature').querySelectorAll('[data-article-id]'),...$('dashboardRecent').querySelectorAll('[data-article-id]'),...container.querySelectorAll('[data-article-id]')].map(node=>node.dataset.articleId));
+    const stories=dashboardEligible().filter(item=>inGeo(item,'latam')&&!visibleIds.has(item.id)).slice(0,4);
     if(!stories.length)return;
     const panel=mk('section','dashboard-folder v12-region-dashboard');
     const header=mk('button','dashboard-folder-head');header.type='button';
