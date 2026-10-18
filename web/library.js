@@ -93,6 +93,7 @@ function showFolderMenu(kind,id,x,y,anchor){
 }
 function equipFolder(row,button,kind,id){
  row.classList.add('folder-entry');
+ row.dataset.radarSourceIds=JSON.stringify(folderSources(kind,id));
  button.setAttribute('aria-keyshortcuts','Shift+F10');
  button.setAttribute('aria-description','Clic derecho o Shift+F10 para opciones. En pantallas táctiles, mantén pulsado.');
  let touchTimer=null,touchStart=null,blockClickUntil=0;

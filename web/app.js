@@ -907,6 +907,29 @@ async function loadHistory(){
   })();
   return historyRequest;
 }
+
+const NEWS_SNAPSHOT_KEY='radar-last-visible-news-v1';
+function publishNewRSSNews(previousIds=null){
+  // IDs publicados, no acciones de lectura o cambios de filtros.
+  const current=state.items.slice(0,300).filter(item=>item&&typeof item.id==='string'&&item.id);
+  let known=previousIds;
+  if(known===null){
+    try{
+      const stored=JSON.parse(localStorage.getItem(NEWS_SNAPSHOT_KEY)||'null');
+      known=Array.isArray(stored)?new Set(stored.filter(id=>typeof id==='string')):null;
+    }catch{known=null;}
+  }
+  try{localStorage.setItem(NEWS_SNAPSHOT_KEY,JSON.stringify(current.map(item=>item.id)));}
+  catch(error){console.warn('Radar RSS: instantánea local no disponible.',error);}
+  if(!known||!known.size||!current.length)return;
+  const added=current.filter(item=>!known.has(item.id));
+  if(!added.length)return;
+  // Emitir después del render, cuando las carpetas y tarjetas ya están montadas.
+  window.requestAnimationFrame(()=>window.dispatchEvent(new CustomEvent(
+    'radar:news-added',{detail:{items:added}}
+  )));
+}
+
 // Comprobación LOCAL de publicaciones nuevas: cada 15 min.
 // La recopilación de RSS de origen sigue cada seis horas por GitHub Actions.
 const CHECK_INTERVAL_MS=15*60*1000;
@@ -947,6 +970,7 @@ async function refreshPublishedData(){
       dataFetch('./data/status.json?check='+Date.now())
     ]);
     if(latest.generated_at!==meta.generated_at)return;
+    const previousIds=new Set(state.items.map(item=>item.id));
     state.sources=Array.isArray(sources.sources)?sources.sources:state.sources;
     state.categories=Array.isArray(sources.categories)?sources.categories:state.categories;
     state.items=Array.isArray(latest.items)?latest.items:state.items;
@@ -955,6 +979,7 @@ async function refreshPublishedData(){
     state.generated=meta.generated_at;
     $('lastUpdate').textContent='Actualizado: '+shortDate(state.generated);
     buildNav();fillSelect();updateHeader();statusSummary();render();
+    publishNewRSSNews(previousIds);
   }catch(error){console.warn('Comprobación automática RSS:',error);}
   finally{feedRefreshBusy=false;scheduleNextCheck();}
 }
@@ -986,6 +1011,7 @@ async function boot() {
     console.error('Carga de fuentes:',err);
   }
   statusSummary(); navigateFromHash();
+  if(state.ready)publishNewRSSNews();
 }
 let progressiveLoads=0;
 function initSocialNavigation(){
