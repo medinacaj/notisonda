@@ -732,6 +732,7 @@ function dashboardEligible(){
   const words=state.mutedKeywords.split(',').map(w=>stripAccents(w.trim())).filter(w=>w.length>1).slice(0,30);
   return state.items.filter(item=>{
     if(!(item.source_ids||[]).some(id=>!state.hiddenSources.has(id)))return false;
+    if(window.RadarV12 && !window.RadarV12.dashboardMatch(item))return false;
     if(state.maxAge){
       const date=new Date(item.published_at).getTime();
       if(!Number.isFinite(date)||(Date.now()-date)>state.maxAge*86400000)return false;
