@@ -731,3 +731,16 @@ body.radar-hybrid .topbar-refresh .refresh-now:focus-visible{outline:2px solid v
   body.radar-hybrid .topbar-refresh-countdown{gap:2px}
   body.radar-hybrid .topbar-refresh-clock{margin-right:0}
 }
+
+
+/* V7.8.1 — contadores discretos de vistas; sin panel de seguimiento duplicado. */
+body.radar-hybrid .mode-tab{display:inline-flex;align-items:center;justify-content:center;gap:7px;white-space:nowrap}
+body.radar-hybrid .mode-tab-count{
+ display:inline-flex;align-items:center;justify-content:center;min-width:18px;min-height:18px;padding:1px 5px;
+ border-radius:6px;background:var(--surface2);border:1px solid var(--line);color:var(--muted);
+ font-size:10px;font-weight:680;line-height:1.25;font-variant-numeric:tabular-nums;
+}
+body.radar-hybrid .mode-tab.active .mode-tab-count{background:var(--surface);color:var(--text);border-color:var(--line)}
+body.radar-hybrid .sidebar-bottom:has(> #aboutButton:only-child){border-top:1px solid var(--line);padding-top:10px}
+body.radar-hybrid .sidebar-bottom:has(> #aboutButton:only-child) #aboutButton{margin-top:0}
+@media(max-width:560px){body.radar-hybrid .mode-tab{gap:5px;padding-inline:8px}body.radar-hybrid .mode-tab-count{font-size:9px;padding:1px 4px}}

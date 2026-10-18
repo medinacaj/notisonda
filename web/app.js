@@ -333,7 +333,7 @@ function renderSettingsSources() {
 function updateSettingsSourceCount(visibleInSearch) {
   const visible=state.sources.filter(x=>!state.hiddenSources.has(x.id)).length;
   $('settingsSourceCount').textContent=`${visible} de ${state.sources.length} fuentes activas en este navegador · ${visibleInSearch} en esta búsqueda`;
-  $('sidebarSources').textContent=`${visible} de ${state.sources.length} fuentes · ${state.categories.length} categorías`;
+
 }
 function initSettingsHandlers(){
   const dialog=$('settingsDialog');
@@ -560,7 +560,7 @@ function statusSummary() {
   indicator.hidden=false;
   showFeedNotice(labels.join(' · ')+'.',signature,true);
 }
-function applyFilters() {
+function applyFilters(mode=state.mode) {
   const query=stripAccents(state.search.trim());
   const blocked=state.mutedKeywords.split(',').map(w=>stripAccents(w.trim())).filter(w=>w.length>1).slice(0,30);
   const filtered=state.items.filter(item=>{
@@ -568,9 +568,9 @@ function applyFilters() {
     if(!(item.source_ids||[]).some(id=>!state.hiddenSources.has(id)))return false;
     if(state.feed&&!(item.source_ids||[]).includes(state.feed))return false;
     if(state.maxAge){const t=new Date(item.published_at).getTime();if(!Number.isFinite(t)||(Date.now()-t)>state.maxAge*86400000)return false;}
-    if(state.mode==='saved'&&!state.saved.has(item.id))return false;
-    if(state.mode==='unread'&&state.read.has(item.id))return false;
-    if(state.hideRead&&state.mode!=='saved'&&state.read.has(item.id))return false;
+    if(mode==='saved'&&!state.saved.has(item.id))return false;
+    if(mode==='unread'&&state.read.has(item.id))return false;
+    if(state.hideRead&&mode!=='saved'&&state.read.has(item.id))return false;
     const haystack=stripAccents([item.title,item.summary,item.publisher,item.source].join(' '));
     if(query&&!haystack.includes(query))return false;
     if(blocked.some(x=>haystack.includes(x)))return false;
@@ -848,7 +848,23 @@ function render() {
   const filtered=applyFilters(), visible=filtered.slice(0,state.page*state.pageSize);
   $('visibleCount').textContent=`${format.format(filtered.length)} ${hasHistory()?'RECIENTES':'ARTÍCULOS'}`;
   $('filterSummary').textContent=`${format.format(visible.length)} visibles · ${format.format(state.read.size)} leídas`; 
-  $('savedCount').textContent=state.saved.size ? String(state.saved.size) : '';
+  const modeCounts={
+    all:state.mode==='all'?filtered.length:applyFilters('all').length,
+    unread:state.mode==='unread'?filtered.length:applyFilters('unread').length,
+    saved:state.mode==='saved'?filtered.length:applyFilters('saved').length
+  };
+  for(const [mode,id,label] of [
+    ['all','allCount','Todas'],
+    ['unread','unreadCount','Sin leer'],
+    ['saved','savedCount','Guardadas']
+  ]){
+    const count=modeCounts[mode];
+    $(id).textContent=format.format(count);
+    const button=document.querySelector(`.mode-tab[data-mode="${mode}"]`);
+    const basis=mode==='saved'?'guardadas disponibles':(hasHistory()?'noticias recientes cargadas':'noticias disponibles');
+    button.title=`${label}: ${format.format(count)} ${basis}. Los contadores respetan los filtros activos.`;
+    button.setAttribute('aria-label',button.title);
+  }
   const grid=$('articleGrid'); grid.className='article-grid'+(state.layout === 'list'?' list-view':'');
   if (!visible.length) grid.replaceChildren(emptyState(filtered));
   else grid.replaceChildren(...visible.map(card));
@@ -964,7 +980,7 @@ async function boot() {
     try{state.feedMeta=await dataFetch('./data/meta.json');}catch{state.feedMeta=null;state.historyLoaded=true;}
     state.ready=true;
     $('lastUpdate').textContent=state.generated ? `Actualizado: ${shortDate(state.generated)}` : 'Sin sincronizar';
-    $('sidebarSources').textContent=`${state.sources.length} fuentes · ${state.categories.length} categorías`; 
+
   } catch(err) {
     state.ready=false;
     console.error('Carga de fuentes:',err);

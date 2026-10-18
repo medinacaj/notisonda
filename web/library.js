@@ -439,23 +439,23 @@ fillSelect=function(){
   }
 };
 const oldApplyFilters=applyFilters;
-applyFilters=function(){
+applyFilters=function(mode=state.mode){
   // Same filter semantics, with archived saved items, tags, and source folders.
   const blocked=state.mutedKeywords.split(',').map(x=>stripAccents(x.trim())).filter(x=>x.length>1).slice(0,30);
   const query=stripAccents(state.search.trim());
-  const input=state.mode==='saved'?savedNews():state.items;
+  const input=mode==='saved'?savedNews():state.items;
   const filtered=input.filter(item=>{
     if(state.category!=='all'&&!(item.source_ids||[]).some(id=>folderSources('default',state.category).includes(id)))return false;
-    if(state.mode!=='saved'&&!(item.source_ids||[]).some(id=>!state.hiddenSources.has(id)))return false;
+    if(mode!=='saved'&&!(item.source_ids||[]).some(id=>!state.hiddenSources.has(id)))return false;
     if(activeFolder&&!(item.source_ids||[]).some(id=>(folders[activeFolder]||[]).includes(id)))return false;
     if(state.feed&&!(item.source_ids||[]).includes(state.feed))return false;
-    if(state.maxAge&&state.mode!=='saved'){
+    if(state.maxAge&&mode!=='saved'){
       const t=new Date(item.published_at).getTime();
       if(!Number.isFinite(t)||(Date.now()-t)>state.maxAge*86400000)return false;
     }
-    if(state.mode==='saved'&&!state.saved.has(item.id))return false;
-    if(state.mode==='unread'&&state.read.has(item.id))return false;
-    if(state.hideRead&&state.mode!=='saved'&&state.read.has(item.id))return false;
+    if(mode==='saved'&&!state.saved.has(item.id))return false;
+    if(mode==='unread'&&state.read.has(item.id))return false;
+    if(state.hideRead&&mode!=='saved'&&state.read.has(item.id))return false;
     if(activeTag&&!(tags[item.id]||[]).includes(activeTag))return false;
     const text=stripAccents([item.title,item.summary,item.publisher,item.source,...(tags[item.id]||[])].join(' '));
     return(!query||text.includes(query))&&!blocked.some(w=>text.includes(w));
