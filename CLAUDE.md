@@ -12,3 +12,6 @@
 - Reportar hallazgos P0–P3 con archivo:línea y evidencia.
 - No implementar cambios durante un encargo exclusivamente de auditoría.
 - No repetir hallazgos ya resueltos.
+
+## Marco legal-tecnológico
+Leer `docs/ASESOR_LEGAL_TECNOLOGICO.md` en tareas con implicaciones legales, datos, IA, derechos de contenido, seguridad, proveedores, contratos o continuidad. Aplicar solo los controles pertinentes y distinguir requisitos jurídicos verificados de buenas prácticas; registrar evidencia, jurisdicción, riesgo y validación pendiente. Coordinar con `AGENTS.md`.
