@@ -50,7 +50,7 @@ jobs:
             if [ -z "$open_issue" ]; then
               gh issue create --repo "$GH_REPO" --title "$issue_title" --body-file health-report.txt
             else
-              gh issue comment "$open_issue" --repo "$GH_REPO" --body-file health-report.txt
+              gh issue edit "$open_issue" --repo "$GH_REPO" --body-file health-report.txt
             fi
             exit 1
           fi
