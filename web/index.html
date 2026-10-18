@@ -12,7 +12,7 @@
   <link rel="stylesheet" href="./styles.css?v=5.0.0">
   <link rel="stylesheet" href="./editorial.css?v=5.0.1">
   <link rel="stylesheet" href="./hashnode-preview.css?v=1.0.0">
-  <link rel="stylesheet" href="./radar-hybrid.css?v=1.2.0">
+  <link rel="stylesheet" href="./radar-hybrid.css?v=1.3.0">
   <link rel="stylesheet" href="./library.css?v=1.6.0">
   <link rel="stylesheet" href="./sidebar-layout.css?v=1.0.1">
   <title>Radar RSS — Actualidad en un solo lugar</title>
@@ -40,25 +40,15 @@
         <div class="topbar-caption"><strong>Radar RSS</strong><span class="topbar-separator">/</span><span id="topbarSection">Actualidad</span></div>
         <div class="topbar-actions">
           <span class="update-label" id="lastUpdate">Sin sincronizar</span>
+          <div class="topbar-refresh" id="refreshCycle" role="group" aria-label="Comprobación automática de novedades: cada 15 minutos; recopilación de fuentes RSS aproximadamente cada 6 horas" title="Radar RSS comprueba nuevas publicaciones cada 15 minutos. La recopilación de fuentes originales se realiza aproximadamente cada 6 horas.">
+            <span class="topbar-refresh-countdown"><span data-icon="clock" class="ui-icon-slot topbar-refresh-clock" aria-hidden="true"></span><span class="topbar-refresh-prefix">Revisión en </span><span class="topbar-refresh-time" id="refreshCycleTime">15:00</span></span>
+            <button id="refreshNow" class="refresh-now" type="button" title="Comprobar ahora si hay publicaciones nuevas" aria-label="Comprobar novedades ahora"><span data-icon="refresh" class="ui-icon-slot" aria-hidden="true"></span></button>
+          </div>
           <button id="feedHealthIndicator" class="health-indicator" type="button" hidden aria-label="Abrir diagnóstico de las fuentes RSS" title="Ver fuentes con incidencias"><span class="health-indicator-dot" aria-hidden="true"></span><span id="feedHealthCount" class="health-indicator-count">0</span><span class="health-indicator-label">fuentes</span></button>
           <button id="settingsButton" class="settings-trigger" type="button" title="Configuración" aria-label="Abrir configuración" aria-haspopup="dialog"><span data-icon="settings" class="ui-icon-slot" aria-hidden="true"></span><span class="settings-text">Configuración</span></button>
           <button id="themeToggle" class="icon-button" type="button" aria-label="Cambiar tema" title="Cambiar modo claro u oscuro"><span id="themeGlyph"></span></button>
-          <a class="top-external" id="githubLink" href="https://github.com/medinacaj/radar-rss-publico" target="_blank" rel="noopener noreferrer" title="GitHub">GitHub <span data-icon="external" class="ui-icon-slot" aria-hidden="true"></span></a>
         </div>
       </header>
-      <div class="refresh-cycle" id="refreshCycle" aria-label="Estado de comprobación automática de novedades" title="El navegador revisa si hay datos nuevos publicados cada 15 minutos. Las fuentes RSS originales se recopilan mediante GitHub Actions cada 6 horas, con posibles retrasos.">
-        <div class="refresh-cycle-meta">
-          <span class="refresh-cycle-label"><span class="refresh-cycle-led" aria-hidden="true"></span>Comprobación de novedades cada 15 min</span>
-          <span class="refresh-cycle-actions">
-            <span class="refresh-cycle-backend" title="Recopilación de fuentes RSS por GitHub Actions, cada 6 horas aproximadamente">RSS de origen: cada 6 h</span>
-            <time id="refreshCycleTime">Próxima comprobación en 15:00</time>
-            <button id="refreshNow" class="refresh-now" type="button" title="Comprobar ahora si GitHub Pages publicó noticias nuevas" aria-label="Comprobar novedades ahora"><span data-icon="refresh" class="ui-icon-slot" aria-hidden="true"></span></button>
-          </span>
-        </div>
-        <div class="refresh-cycle-track" id="refreshCycleProgress" role="progressbar" aria-label="Tiempo transcurrido hasta la próxima comprobación local de novedades, cada quince minutos" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
-          <span id="refreshCycleFill" class="refresh-cycle-fill"></span>
-        </div>
-      </div>
       <div id="stylePreviewNotice" class="style-preview-notice" role="status" hidden>
         <span class="style-preview-label"><strong>REFERENCIA</strong> <span id="stylePreviewName">Diseño anterior</span></span>
         <span class="style-preview-info">Versión de comparación; Radar RSS usa ahora el diseño editorial combinado.</span>
@@ -271,7 +261,7 @@
   </dialog>
   <button id="backTop" class="back-to-top" type="button" aria-label="Volver arriba" title="Volver arriba" hidden><span data-icon="arrow-up" class="ui-icon-slot" aria-hidden="true"></span></button>
   <div id="actionToast" class="action-toast" role="status" aria-live="polite" aria-atomic="true" hidden></div>
-  <script src="./app.js?v=7.6.0" defer></script>
+  <script src="./app.js?v=7.7.0" defer></script>
   <script src="./library.js?v=1.4.0" defer></script>
   <script src="./sidebar-layout.js?v=1.0.0" defer></script>
 </body>

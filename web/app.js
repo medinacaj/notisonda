@@ -894,18 +894,15 @@ let checkStartedAt=Date.now();
 let checkTimer=null;
 let feedRefreshBusy=false;
 function updateScheduleProgress(){
-  const now=Date.now();
-  const elapsed=Math.max(0,now-checkStartedAt);
-  const progress=Math.min(100,100*elapsed/CHECK_INTERVAL_MS);
-  const remaining=Math.max(0,Math.ceil((nextCheckAt-now)/1000));
+  const remaining=Math.max(0,Math.ceil((nextCheckAt-Date.now())/1000));
   const minute=Math.floor(remaining/60);
   const second=String(remaining%60).padStart(2,'0');
-  const label=feedRefreshBusy?'Comprobando novedades…':`Próxima comprobación en ${minute}:${second}`;
+  const label=feedRefreshBusy?'Comprobando…':`${minute}:${second}`;
   $('refreshCycleTime').textContent=label;
-  $('refreshCycleTime').removeAttribute('datetime');
-  $('refreshCycleFill').style.width=progress.toFixed(1)+'%';
-  $('refreshCycleProgress').setAttribute('aria-valuenow',String(Math.round(progress)));
-  $('refreshCycleProgress').setAttribute('aria-valuetext',label+'. Se comprueban datos ya publicados; el origen RSS se recopila aproximadamente cada seis horas.');
+  const description=feedRefreshBusy?'Comprobando si hay noticias nuevas.':
+    `Próxima comprobación en ${label}. El navegador revisa las publicaciones cada 15 minutos; los feeds RSS se recopilan aproximadamente cada 6 horas.`;
+  $('refreshCycle').setAttribute('aria-label',description);
+  $('refreshCycle').title=description;
   $('refreshNow').disabled=feedRefreshBusy;
 }
 function scheduleNextCheck(){
