@@ -182,7 +182,7 @@ function listFolderSources(){
    $('folderSelectedCount').textContent=folderEditor.selected.size+' fuentes seleccionadas';
   });
   const info=mk('span','folder-source-text');
-  info.append(mk('strong','',source.name),mk('small','',categoryLabel(source.category)));
+  info.append(mk('strong','',sourceLabel(source.name)),mk('small','',categoryLabel(source.category)));
   row.append(input,info);list.append(row);
  }
  $('folderSelectedCount').textContent=folderEditor.selected.size+' fuentes seleccionadas';
@@ -478,7 +478,7 @@ renderDashboard=function(){
     if(safeURL(item.image)){const image=mk('img');image.loading='lazy';image.src=item.image;image.alt='';image.referrerPolicy='no-referrer';cover.append(image);}
     else cover.append(svgIcon('bookmark'));
     const a=link(item.url,item.title||'Sin título','dashboard-saved-title');a.addEventListener('click',e=>openArticleReader(item,e));
-    body.append(a,mk('span','dashboard-saved-meta',item.publisher||item.source||'Fuente RSS'));row.append(cover,body);return row;
+    body.append(a,mk('span','dashboard-saved-meta',sourceLabel(item.publisher||item.source)));row.append(cover,body);return row;
   }));
 };
 const oldCard=card;

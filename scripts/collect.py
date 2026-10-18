@@ -18,6 +18,7 @@ from pathlib import Path
 import re
 import unicodedata
 import socket
+import time
 from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
 import xml.etree.ElementTree as ET
 
@@ -27,9 +28,23 @@ except ModuleNotFoundError:
     import feedparser_compat as feedparser
 import requests
 
-AGENT = "RadarRSS/1.0 (+public static news aggregation; RSS reader)"
-MAX_BYTES = 2_500_000
-HEADERS = {"User-Agent": AGENT, "Accept": "application/rss+xml, application/atom+xml, application/xml, text/xml, */*;q=0.6"}
+# Agente identificable (convención "compatible" de lectores y buscadores) con enlace de contacto.
+AGENT = "Mozilla/5.0 (compatible; RadarRSS/1.1; +https://github.com/medinacaj/radar-rss-publico)"
+# Feeds de Substack y similares incluyen artículos completos y superan con frecuencia 2,5 MB.
+MAX_BYTES = 8_000_000
+HEADERS = {"User-Agent": AGENT,
+           "Accept": "application/rss+xml, application/atom+xml, application/xml;q=0.9, text/xml;q=0.9, */*;q=0.6",
+           "Accept-Language": "es-CL,es;q=0.9,en;q=0.7"}
+RETRY_STATUS = {429, 500, 502, 503, 504}
+RETRY_WAIT_SECONDS = 4
+# Prefijos del OPML que solo organizan las suscripciones. Los que informan al lector
+# (SÁTIRA, OFICIAL, ANÁLISIS, etc.) se conservan a propósito.
+ORGANIZATIONAL_PREFIX = re.compile(r'^\s*(?:MEDIO|REGIONAL)\s*[—–-]\s*')
+
+
+def display_name(name: str) -> str:
+    cleaned = ORGANIZATIONAL_PREFIX.sub('', name or '').strip()
+    return cleaned or (name or '').strip()
 NOW = lambda: datetime.now(timezone.utc)
 
 
@@ -96,6 +111,20 @@ def is_public_host(host: str) -> bool:
 
 
 def get_feed(url: str) -> bytes:
+    """Descarga con un reintento ante errores transitorios (429, 5xx, red)."""
+    try:
+        return _get_feed_once(url)
+    except requests.HTTPError as exc:
+        status = exc.response.status_code if exc.response is not None else None
+        if status not in RETRY_STATUS:
+            raise
+    except (requests.ConnectionError, requests.Timeout):
+        pass
+    time.sleep(RETRY_WAIT_SECONDS)
+    return _get_feed_once(url)
+
+
+def _get_feed_once(url: str) -> bytes:
     target = url
     for _ in range(5):
         parsed = urlsplit(target)
@@ -206,7 +235,7 @@ def make_item(entry, source: dict, now: datetime) -> dict | None:
     if date and date > now + timedelta(days=1):
         date = None  # Fecha futura incoherente: desconocida, no noticia del futuro.
     summary, _ = extract_html(entry.get('summary') or entry.get('description') or '')
-    publisher = source['name']
+    publisher = display_name(source['name'])
     if source['is_radar']:
         credited = entry.get('source') or {}
         if isinstance(credited, dict) and credited.get('title'):

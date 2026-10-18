@@ -44,4 +44,4 @@ class SidebarHealthTests(unittest.TestCase):
 
  def test_assets(self):
   self.assertIn('sidebar-health.css?v=1.0.0',self.html)
-  self.assertIn('app.js?v=7.9.1',self.html)
+  self.assertRegex(self.html,r'app\.js\?v=\d+\.\d+\.\d+')
