@@ -1,0 +1,162 @@
+/* Radar RSS V7.8 — dialog scroll model shared by settings, reader and RSS.
+   This stylesheet is last intentionally; the older previews keep their themes.
+   Header and footer remain visible; only the body content scrolls.
+*/
+
+/* Top-level modal: vertical space defined by viewport, not sibling estimates. */
+.settings-dialog[open]{
+  box-sizing:border-box;
+  display:grid;
+  grid-template-rows:auto minmax(0,1fr) auto;
+  width:min(940px,calc(100vw - 32px));
+  height:min(830px,calc(100dvh - 32px));
+  max-width:940px;
+  max-height:calc(100dvh - 32px);
+  margin:auto;
+  padding:0!important;
+  overflow:hidden;
+}
+.settings-dialog .settings-top{
+  min-width:0;
+  min-height:0;
+}
+.settings-dialog .settings-body{
+  display:grid;
+  grid-template-columns:195px minmax(0,1fr);
+  grid-template-rows:minmax(0,1fr);
+  min-width:0;
+  min-height:0;
+  max-height:none;
+  height:auto;
+  overflow:hidden;
+}
+.settings-dialog .settings-tabs{
+  min-height:0;
+  min-width:0;
+  overflow-x:hidden;
+  overflow-y:auto;
+  overscroll-behavior:contain;
+}
+.settings-dialog .settings-pages{
+  min-width:0;
+  min-height:0;
+  max-height:none;
+  height:auto;
+  overflow-x:hidden;
+  overflow-y:auto;
+  overscroll-behavior:contain;
+  scrollbar-width:thin;
+  scrollbar-color:var(--muted) transparent;
+  scrollbar-gutter:stable;
+  padding-bottom:34px;
+}
+.settings-dialog .settings-pages:focus-visible{
+  outline:2px solid var(--accent);
+  outline-offset:-3px;
+}
+.settings-dialog .settings-footer{
+  position:relative;
+  z-index:1;
+  min-width:0;
+  min-height:0;
+  flex-shrink:0;
+  background:var(--surface2);
+  border-top:1px solid var(--line);
+}
+
+/* Reader has the same structure: toolbar / article / actions. */
+.article-reader-dialog[open]{
+  box-sizing:border-box;
+  display:grid;
+  grid-template-rows:auto minmax(0,1fr) auto;
+  max-height:calc(100dvh - 32px);
+  overflow:hidden;
+}
+.article-reader-dialog .reader-scroll{
+  min-height:0;
+  max-height:none;
+  overflow-x:hidden;
+  overflow-y:auto;
+  overscroll-behavior:contain;
+}
+.article-reader-dialog .reader-actions{
+  min-height:0;
+  position:relative;
+  z-index:1;
+}
+.feed-health-dialog[open]{
+  box-sizing:border-box;
+  display:grid;
+  grid-template-rows:auto minmax(0,1fr) auto;
+  max-height:calc(100dvh - 32px);
+  overflow:hidden;
+}
+.feed-health-dialog .feed-health-body{
+  min-height:0;
+  max-height:none;
+  overflow-x:hidden;
+  overflow-y:auto;
+  overscroll-behavior:contain;
+}
+.feed-health-dialog .feed-health-footer{
+  min-height:0;
+  position:relative;
+  z-index:1;
+}
+.about-dialog[open],
+.folder-manage-dialog[open]{
+  box-sizing:border-box;
+  max-height:calc(100dvh - 32px);
+  overflow-x:hidden;
+  overflow-y:auto;
+  overscroll-behavior:contain;
+}
+
+/* Mobile: tabs are a single horizontal row; the pages are the vertical scroller. */
+@media(max-width:710px){
+  .settings-dialog[open]{
+    width:calc(100vw - 16px);
+    height:calc(100dvh - 16px);
+    max-height:calc(100dvh - 16px);
+    border-radius:12px;
+  }
+  .settings-dialog .settings-body{
+    display:grid;
+    grid-template-columns:minmax(0,1fr);
+    grid-template-rows:auto minmax(0,1fr);
+    max-height:none;
+    min-height:0;
+    overflow:hidden;
+  }
+  .settings-dialog .settings-tabs{
+    display:flex;
+    flex-direction:row;
+    max-height:none;
+    overflow-x:auto;
+    overflow-y:hidden;
+    overscroll-behavior-x:contain;
+    scrollbar-width:thin;
+    flex-wrap:nowrap;
+  }
+  .settings-dialog .settings-pages{
+    max-height:none;
+    min-height:0;
+    padding:17px 16px 26px;
+    overflow-y:auto;
+  }
+  .settings-dialog .settings-footer{padding:10px 15px}
+  .article-reader-dialog[open],
+  .feed-health-dialog[open]{
+    max-height:calc(100dvh - 16px);
+  }
+}
+@media(max-height:520px){
+  .settings-dialog[open]{
+    height:calc(100dvh - 12px);
+    max-height:calc(100dvh - 12px);
+  }
+  .settings-dialog .settings-top{padding-block:9px}
+  .settings-dialog .settings-top p{display:none}
+  .settings-dialog .settings-footer{padding-block:7px}
+  .settings-dialog .settings-pages{padding-bottom:18px}
+}

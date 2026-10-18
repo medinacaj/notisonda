@@ -241,6 +241,8 @@ function selectedTab(name) {
     const active=x.dataset.settingsTab===name;x.classList.toggle('active',active);x.setAttribute('aria-selected',String(active));
   });
   document.querySelectorAll('[data-settings-pane]').forEach(x=>{const active=x.dataset.settingsPane===name;x.classList.toggle('active',active);x.hidden=!active;});
+  const scroll=$('settingsPages');
+  if(scroll)scroll.scrollTop=0;
   if(name==='health')renderFeedHealth();
   if(name==='data')updateDataCounts();
 }
@@ -335,7 +337,10 @@ function updateSettingsSourceCount(visibleInSearch) {
 }
 function initSettingsHandlers(){
   const dialog=$('settingsDialog');
-  $('settingsButton').addEventListener('click',()=>{syncSettings();dialog.showModal();});
+  $('settingsButton').addEventListener('click',()=>{
+    syncSettings();dialog.showModal();
+    $('settingsPages').scrollTop=0;
+  });
   $('closeSettings').addEventListener('click',()=>dialog.close());
   $('settingsDone').addEventListener('click',()=>dialog.close());
   dialog.addEventListener('click',e=>{if(e.target===dialog)dialog.close();});
