@@ -68,6 +68,31 @@ class InsightsTests(unittest.TestCase):
         self.assertEqual(top['label'].split()[0], 'Apagón')  # conserva tildes y mayúsculas
         self.assertFalse(any(t == 'pensiones' for t in terms[:1]))
 
+    def test_trending_requires_four_independent_publishers(self):
+        title = 'Apagón eléctrico afecta a la zona metropolitana'
+        articles = [story(i, title, 1, f'feed-{i % 6}') for i in range(12)]
+        # Seis feeds de dos únicos periódicos NO representan seis editores.
+        catalog = [{'id': f'feed-{i}', 'name': 'MEDIO — Diario Uno' if i < 3 else 'MEDIO — Diario Dos',
+                    'is_radar': False} for i in range(6)]
+        self.assertEqual(insights.trending_topics(articles, NOW, source_catalog=catalog)['topics'], [])
+        catalog = [{'id': f'feed-{i}', 'name': f'MEDIO — Diario {i}',
+                    'is_radar': False} for i in range(6)]
+        topics = insights.trending_topics(articles, NOW, source_catalog=catalog)['topics']
+        self.assertTrue(any('apagon' in t['term'] for t in topics))
+        self.assertTrue(all(t['sources'] >= 4 for t in topics))
+
+    def test_google_radar_uses_attributed_editor_not_query_source(self):
+        title = 'Apagón eléctrico afecta a la zona metropolitana'
+        articles = [story(i, title, 1, f'google-{i}') for i in range(6)]
+        for item in articles:
+            item['publisher'] = 'Diario Único'
+        catalog = [{'id': f'google-{i}', 'name': f'RADAR — Consulta {i}',
+                    'is_radar': True} for i in range(6)]
+        self.assertEqual(insights.trending_topics(articles, NOW, source_catalog=catalog)['topics'], [])
+        for i, item in enumerate(articles):
+            item['publisher'] = f'Diario {i}'
+        self.assertTrue(insights.trending_topics(articles, NOW, source_catalog=catalog)['topics'])
+
     def test_trending_requires_several_sources(self):
         items = [story(i, f'Rumor exclusivo sobre fichaje estelar {i}', 1, 'una-sola-fuente') for i in range(8)]
         self.assertEqual(insights.trending_topics(items, NOW)['topics'], [])
