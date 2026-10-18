@@ -45,6 +45,12 @@ ITEMS = [
      "categories": [CATEGORIES[i % 6]], "coverage": 2, "is_radar": False}
     for i in range(18)
 ]
+ITEMS[0]["also_in"] = [
+    {"id":"noticia-0-alternativa","title":"Otro medio publica una versión del mismo anuncio",
+     "url":"https://example.com/noticias/comparacion","publisher":"Segundo diario",
+     "published_at":STAMP,"category":CATEGORIES[0],"source_id":"medio-1"}
+]
+
 RESPONSES = {
     "sources.json": {"version": 1, "sources": SOURCES, "categories": list(CATEGORIES)},
     "latest.json": {"version": 2, "generated_at": STAMP, "items": ITEMS},
@@ -222,6 +228,44 @@ def main():
                         page.locator("#briefingView:not([hidden])").wait_for(timeout=10000)
                         check_visible_boxes(page, [".briefing-head", ".briefing-actions",
                             ".briefing-sections"], f"resumen {width}px")
+                        # RadarRRS V1.2: navegación regional, favoritos y resúmenes personalizables.
+                        assert page.locator("#v12BriefingScope").count() == 1
+                        page.locator("#v12BriefingScope").select_option("chile")
+                        assert page.locator(".briefing-section").count() >= 1
+                        assert all("Chile" in x for x in page.locator(".briefing-section h2").all_text_contents())
+                        page.locator("#v12BriefingScope").select_option("all")
+                        page.evaluate("location.hash = '#inicio'")
+                        page.locator("#v12MyRadar").wait_for(state="visible")
+                        page.locator("#v12MineToggle").click()
+                        assert page.locator("#v12MineToggle").get_attribute("aria-pressed") == "true"
+                        page.locator("#v12MineCategories button").first.click()
+                        assert page.locator("#v12MineCategories button").first.get_attribute("aria-pressed") == "false"
+                        page.locator("#v12MineToggle").click()
+                        page.evaluate("location.hash = '#region/latinoamerica'")
+                        page.locator("#feedView:not([hidden])").wait_for()
+                        assert page.locator("#feedHeading").inner_text() == "Latinoamérica"
+                        check_visible_boxes(page, ["#v12CountryTabs","#v12FilterBar","#v12Geo","#v12Date"],
+                                            f"V1.2 región {browser_name} {width}px")
+                        page.locator("#v12Geo").select_option("chile")
+                        page.wait_for_url("**/#region/chile")
+                        assert page.locator("#feedHeading").inner_text() == "Chile"
+                        assert page.locator("#articleGrid .article-card").count() > 0
+                        page.locator("#v12Date").select_option("7")
+                        page.locator("#v12SaveSearch").click()
+                        assert page.locator(".v12-saved-open").count() == 1
+                        page.locator(".v12-saved-open").first.click()
+                        assert page.locator("#v12Date").input_value() == "7"
+                        page.locator(".v12-search-remove").first.click()
+                        assert page.locator(".v12-saved-open").count() == 0
+                        page.evaluate("location.hash = '#noticias'")
+                        page.locator('#articleGrid [data-article-id="noticia-0"] .article-title a').first.click()
+                        page.locator("#articleReaderDialog[open]").wait_for()
+                        page.locator("#v12CompareSort").select_option("time")
+                        assert page.locator(".v12-timeline-item").count() == 2
+                        page.locator("#v12CompareSort").select_option("publisher")
+                        assert page.locator(".v12-timeline-item").count() == 0
+                        page.locator("#readerClose").click()
+                        page.locator("#articleReaderDialog[open]").wait_for(state="hidden")
                         print(f"OK [{browser_name}]: {width}px, portada, listado, navegación, búsqueda, configuración, resumen", flush=True)
                     except Exception:
                         print(f"DEBUG [{browser_name}] {width}px: JS={javascript_errors}", flush=True)
