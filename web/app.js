@@ -401,41 +401,41 @@ function initSettingsHandlers(){
   });
 }
 function buildNav() {
-  const nav=$('categoryNav');nav.replaceChildren();
+  const nav=$('categoryNav');
+  nav.replaceChildren();
   const core=[{id:'home',label:'Inicio'},{id:'all',label:'Todas las noticias'}];
-  const categories=state.categories.map(id=>({id,label:categoryLabel(id)}));
-  function appendNavigationItem(entry,index,parent){
+  const folders=state.categories.map(id=>({id,label:categoryLabel(id)}));
+  const systemFolderNav=document.getElementById('systemFolderNav');
+  if(systemFolderNav)systemFolderNav.replaceChildren();
+  function addRow(entry,index,parent){
     const active=entry.id==='home'?state.pageView==='dashboard':
       state.pageView==='feed'&&state.category===entry.id;
-    const button=mk('button','nav-link'+(active?' active':''));
+    const isFolder=index>=2;
+    const button=mk('button','nav-link'+(active?' active':'')+(isFolder?' system-folder-link':''));
     button.type='button';
     button.setAttribute('aria-current',active?'page':'false');
     button.title=entry.label;
+    if(isFolder)button.setAttribute('aria-label','Carpeta de fuentes: '+entry.label);
     const symbol=mk('span','nav-glyph');
-    symbol.append(svgIcon(index===0?'home':index===1?'newspaper':CATEGORY_ICONS[index-2]||'grid'));
+    symbol.append(svgIcon(index===0?'home':index===1?'newspaper':'folder'));
     const left=mk('span','nav-left');
     left.append(symbol,mk('span','nav-label',entry.label));
-    const ids=entry.id==='all'?state.sources.filter(s=>!state.hiddenSources.has(s.id)):
+    const sources=entry.id==='all'?state.sources.filter(s=>!state.hiddenSources.has(s.id)):
       state.sources.filter(s=>s.category===entry.id&&!state.hiddenSources.has(s.id));
-    button.append(left,mk('span','nav-count',entry.id==='home'?'':String(ids.length)));
+    button.append(left,mk('span','nav-count',entry.id==='home'?'':String(sources.length)));
     button.addEventListener('click',()=>goTo(entry.id));
     parent.append(button);
   }
-  core.forEach((entry,index)=>appendNavigationItem(entry,index,nav));
-  if(categories.length){
-    const group=mk('section','category-nav-group');
-    group.setAttribute('aria-label','Categorías del catálogo RSS');
-    const heading=mk('div','category-nav-heading');
-    heading.append(
-      mk('span','category-nav-heading-label','CATEGORÍAS'),
-      mk('span','category-nav-heading-count',String(categories.length))
-    );
-    const list=mk('div','category-nav-list');
-    list.id='categoryNavList';
-    // Las categorías del OPML permanecen visibles; no dependen de localStorage.
-    categories.forEach((entry,index)=>appendNavigationItem(entry,index+2,list));
-    group.append(heading,list);
-    nav.append(group);
+  core.forEach((entry,index)=>addRow(entry,index,nav));
+  if(systemFolderNav){
+    folders.forEach((entry,index)=>addRow(entry,index+2,systemFolderNav));
+  }else if(folders.length){
+    // Respaldo visual si el módulo de biblioteca no está disponible.
+    const section=mk('section','source-folders-section');
+    section.append(mk('div','folder-group-head','CARPETAS DE FUENTES'));
+    const list=mk('div','library-system-folders');
+    folders.forEach((entry,index)=>addRow(entry,index+2,list));
+    section.append(list);nav.append(section);
   }
   renderTopicRail();
 }

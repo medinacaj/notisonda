@@ -76,3 +76,20 @@ body .sidebar-bottom{margin-top:auto;flex-shrink:0}
   body .sidebar{overflow:visible;height:auto;min-height:0;position:relative}
   body .category-nav-group{margin-top:8px;padding-top:9px}
 }
+
+/* V7.4 — Las seis agrupaciones OPML son carpetas de fuentes, no una sección aparte. */
+body .source-folders-section{border-top:1px solid var(--line);margin-top:12px;padding-top:9px;min-width:0}
+body .source-folders-section .folder-group-head{display:flex;align-items:center;gap:9px;justify-content:space-between;padding:6px 12px 10px;font-size:10px;font-weight:750;letter-spacing:.075em;color:var(--muted)}
+body .source-folders-section .folder-group-head>span{flex:1}
+body .source-folders-section .folder-group-head>button{flex:0 0 29px;width:29px;height:29px;border:1px solid var(--line);border-radius:9px;background:var(--surface);color:var(--muted)}
+body .source-folders-section .folder-group-head>button:hover{background:var(--hover);color:var(--text);border-color:var(--ash)}
+body .library-system-folders{display:flex;flex-direction:column;gap:2px}
+body .library-system-folders .nav-link{margin:1px 0;padding:9px 12px;min-height:40px;border-radius:9px}
+body .library-system-folders .nav-label{font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+body .library-system-folders .nav-glyph{color:var(--muted)}
+body .library-system-folders .nav-link.active .nav-glyph{color:var(--accent)}
+body .library-folder-nav{padding:0 0 12px}
+body .library-personal-label{display:block;color:var(--muted);font-weight:690;letter-spacing:.065em;font-size:10px;padding:11px 12px 5px;margin-top:5px;border-top:1px solid var(--line)}
+body .library-folder-nav[hidden]{display:none!important}
+body .library-folder-row .nav-label{font-size:12.5px}
+@media(max-width:950px){body .source-folders-section{margin-top:10px;padding-top:8px}}

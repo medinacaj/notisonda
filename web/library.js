@@ -98,7 +98,10 @@ function unread(ids){
 const oldBuildNav=buildNav;
 buildNav=function(){
   oldBuildNav();
-  const buttons=$('categoryNav').querySelectorAll('.nav-link');
+  const buttons=[
+    ...$('categoryNav').querySelectorAll(':scope > .nav-link'),
+    ...$('systemFolderNav').querySelectorAll('.nav-link')
+  ];
   buttons.forEach((button,index)=>{
     if(index===0)return;
     const ids=index===1
@@ -113,7 +116,9 @@ buildNav=function(){
 function renderFolderNav(){
   const nav=$('libraryFolderNav');nav.replaceChildren();
   const entries=Object.entries(folders);
-  if(!entries.length){nav.append(mk('p','library-empty','Crea una carpeta para agrupar tus fuentes.'));return;}
+  if(!entries.length){nav.hidden=true;return;}
+  nav.hidden=false;
+  nav.append(mk('span','library-personal-label','MIS CARPETAS'));
   entries.forEach(([name,ids])=>{
     const wrapper=mk('div','library-folder-row');
     const b=mk('button','nav-link'+(activeFolder===name?' active':''));
@@ -140,6 +145,9 @@ function createFolder(){
   const name=raw.trim().replace(/\s+/g,' ').slice(0,45);
   if(!name){actionToast('Introduce un nombre para la carpeta.');return;}
   if(Object.keys(folders).some(n=>n.toLocaleLowerCase('es')===name.toLocaleLowerCase('es'))){actionToast('La carpeta ya existe.');return;}
+  if(state.categories.some(id=>categoryLabel(id).toLocaleLowerCase('es')===name.toLocaleLowerCase('es'))){
+    actionToast('Esa carpeta ya existe en el catálogo de fuentes.');return;
+  }
   if(Object.keys(folders).length>=25){actionToast('Máximo de 25 carpetas.');return;}
   if(name==='__proto__')return;
   folders[name]=[];
@@ -255,7 +263,10 @@ card=function(item){
 const oldRead=markRead;
 markRead=function(...args){oldRead(...args);updateUnreadCounts();};
 function updateUnreadCounts(){
-  const buttons=$('categoryNav').querySelectorAll('.nav-link');
+  const buttons=[
+    ...$('categoryNav').querySelectorAll(':scope > .nav-link'),
+    ...$('systemFolderNav').querySelectorAll('.nav-link')
+  ];
   buttons.forEach((btn,i)=>{
     if(i===0)return;
     const ids=i===1?state.sources.map(s=>s.id):state.sources.filter(s=>s.category===state.categories[i-2]).map(s=>s.id);
@@ -312,11 +323,19 @@ function addTag(){
   input.value='';renderTags();refreshTagFilter();render();
 }
 function mount(){
-  const header=mk('div','folder-group-head');header.append(mk('span','','CARPETAS DE FUENTES'));
-  const add=mk('button');add.type='button';add.title='Crear carpeta';add.setAttribute('aria-label','Crear carpeta');add.append(svgIcon('folder-plus'));
-  header.append(add);
+  const section=mk('section','source-folders-section');
+  section.setAttribute('aria-labelledby','sourceFoldersHeading');
+  const header=mk('div','folder-group-head');
+  const heading=mk('span','','CARPETAS DE FUENTES');
+  heading.id='sourceFoldersHeading';header.append(heading);
+  const add=mk('button');add.type='button';add.title='Crear carpeta personal';add.setAttribute('aria-label','Crear carpeta personal');
+  add.append(svgIcon('folder-plus'));header.append(add);
+  const system=mk('nav','library-system-folders');system.id='systemFolderNav';
+  system.setAttribute('aria-label','Carpetas de fuentes predeterminadas');
   const nav=mk('nav','library-folder-nav');nav.id='libraryFolderNav';nav.setAttribute('aria-label','Carpetas personales de fuentes');
-  $('categoryNav').after(header,nav);add.addEventListener('click',createFolder);
+  section.append(header,system,nav);
+  $('categoryNav').after(section);
+  add.addEventListener('click',createFolder);
   const wrapper=mk('label','library-tag-filter-wrap'),filter=mk('select','library-tag-filter');
   filter.id='libraryTagFilter';filter.setAttribute('aria-label','Filtrar por etiqueta');wrapper.append(filter);
   $('sourceSelect').closest('label').after(wrapper);
