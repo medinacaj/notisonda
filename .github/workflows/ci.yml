@@ -1,0 +1,44 @@
+name: Calidad de pull requests
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Descargar código
+        uses: actions/checkout@v4
+      - name: Preparar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+      - name: Preparar Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Instalar dependencias de prueba
+        run: python -m pip install -r requirements.txt
+      - name: Pruebas Python sin recolectar fuentes
+        run: python -m unittest discover -s tests -v
+      - name: Validar sintaxis frontend
+        run: |
+          node --check web/app.js
+          node --check web/library.js
+          node --check web/sidebar-layout.js
+          node --check web/news-effects.js
+          node --check web/features.js
+          node --check web/sw.js
+      - name: Pruebas JavaScript
+        run: |
+          node tests/test_sidebar_behavior.cjs
+          node tests/test_news_effects.cjs
