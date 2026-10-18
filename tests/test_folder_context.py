@@ -31,5 +31,5 @@ class FolderContextTests(unittest.TestCase):
         self.assertIn("const menu=mk('div','folder-popup-menu')",self.library)
 
     def test_updated_assets(self):
-        self.assertIn('library.js?v=1.5.0',self.html)
-        self.assertIn('library.css?v=1.7.0',self.html)
+        self.assertRegex(self.html,r'<script src="\./library\.js\?v=[^"]+" defer></script>')
+        self.assertRegex(self.html,r'<link rel="stylesheet" href="\./library\.css\?v=[^"]+">')

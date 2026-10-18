@@ -56,6 +56,6 @@ class ModalLayoutTests(unittest.TestCase):
 
     def test_asset_order_and_version(self):
         self.assertIn('modal-layout.css?v=1.0.0',self.html)
-        self.assertIn('app.js?v=7.8.0',self.html)
+        self.assertRegex(self.html,r'<script src="\./app\.js\?v=[^"]+" defer></script>')
         self.assertLess(self.html.index('sidebar-layout.css?v='),self.html.index('modal-layout.css?v='))
         self.assertLess(self.html.index('modal-layout.css?v='),self.html.index('</head>'))

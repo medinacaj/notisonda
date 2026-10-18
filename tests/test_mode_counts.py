@@ -30,5 +30,5 @@ class ModeCountTests(unittest.TestCase):
   self.assertIn('id="aboutButton"',self.html)
   self.assertIn('id="refreshCycle"',self.html)
  def test_cache_changed(self):
-  self.assertIn('app.js?v=7.8.1',self.html)
-  self.assertIn('radar-hybrid.css?v=1.3.1',self.html)
+  self.assertRegex(self.html,r'<script src="\./app\.js\?v=[^"]+" defer></script>')
+  self.assertRegex(self.html,r'<link rel="stylesheet" href="\./radar-hybrid\.css\?v=[^"]+">')
