@@ -293,7 +293,7 @@
     let hours = 24;
     let pool = eligible().filter(item => within(item, hours * 3600000));
     if (pool.length < 12) { hours = 48; pool = eligible().filter(item => within(item, hours * 3600000)); }
-    const sections = state.categories.map(cat => ({
+    const sections = state.categories.filter(cat => !window.RadarV12 || window.RadarV12.briefingCategories().includes(cat)).map(cat => ({
       cat, label: categoryLabel(cat),
       // Tema principal de la historia: evita que una nota aparezca en una sección ajena.
       items: pool.filter(x => (x.categories || [])[0] === cat)

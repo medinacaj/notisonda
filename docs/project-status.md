@@ -10,6 +10,9 @@
 - Alertas: `.github/workflows/monitor.yml` (issue única, cierre al recuperarse).
 - Historial: hasta 5.000 noticias; ventana máxima 45 días y almacenamiento no permanente.
 - Tendencias: mínimo cuatro medios independientes.
+- **V1.2 interactiva:** navegación Latinoamérica unificada visualmente y con filtros por país, Mi Radar para elegir categorías, búsqueda guardada y filtros cruzados, comparador cronológico, boletín personalizable.
+- **Privacidad V1.2:** preferencias y búsquedas guardadas solo en este navegador; no hay perfiles ni sincronización.
+- **Pruebas V1.2:** suite Python/Node y recorrido E2E en Chromium, Firefox y WebKit, siete anchos incluidos 320 px.
 
 ## Fuente de verdad
 - [Issues](https://github.com/medinacaj/radar-rss-publico/issues): incidencias sin resolver.

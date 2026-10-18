@@ -2,7 +2,7 @@
 
 **Versión pública operativa · octubre 2026:** recopilación y publicación automáticas, monitoreo, historial paginado, tendencias, lectura responsive y pruebas multiplataforma.
 
-Proyecto web público, gratuito dentro de las cuotas aplicables de GitHub, sin API privada, backend de tiempo completo, claves ni autenticación. Diseñado para iniciar con 150 fuentes y seis categorías procedentes del OPML consolidado del 17-10-2026.
+Proyecto público sin backend ni cuentas. Mantiene 150 fuentes y las seis categorías internas del OPML, pero presenta Latinoamérica como una sección que reúne Chile, Venezuela y la cobertura regional en la navegación.
 
 ## Arquitectura
 
@@ -20,7 +20,7 @@ flowchart LR
 - **Colector:** `scripts/collect.py`, Python + feedparser + requests. Obtiene los feeds con concurrencia limitada, normaliza titulares, extractos, imágenes y fechas, deduplica por URL y retiene artículos hasta 45 días (sujeto al límite de 5.000 artículos y a la disponibilidad del historial). Si un feed falla, mantiene datos antiguos dentro del período de retención gracias a la caché de GitHub Actions.
 - **Vigilancia:** `web/data/status.json`. Registra errores, feeds vacíos y feeds con última publicación fechada hace al menos 365 días. Una fuente no se elimina automáticamente: un feed roto no implica un medio inactivo.
 - **Publicación:** `.github/workflows/deploy.yml`, GitHub Actions -> GitHub Pages. El navegador consume JSON generado, sin solicitar RSS externos directamente (evita CORS).
-- **UI:** `web/index.html`, `web/styles.css` y `web/app.js`. Sin frameworks ni compiladores. Tarjetas/lista, filtros por fuente y categoría, búsqueda, modo claro/oscuro, guardadas y sin leer (por navegador).
+- **UI:** `web/index.html`, `web/app.js` y los módulos `library.js`, `features.js`, `v12.js`. Interfaz sin frameworks con filtros combinables, Mi Radar, búsqueda guardada, vista de lectura, resumen personalizado y modos claro/oscuro.
 
 ## Funciones para lectores
 
@@ -31,6 +31,15 @@ flowchart LR
 - **Temas que sigo, «Mientras no estabas», Resumen del día** (escuchar, copiar o compartir por WhatsApp) y **atajos de teclado** (`?`). Todo se guarda solo en el navegador.
 - **Modo ligero y lectura sin conexión** (`sw.js`): red primero; sin conexión, la última copia del propio sitio.
 - **Feeds de salida** en `feeds/`: `mas-cubierto.xml` y uno por carpeta.
+
+## Interacción y personalización V1.2
+
+- **Latinoamérica:** 54 fuentes distribuidas entre Chile (22), Venezuela (22) y cobertura regional (10). La navegación muestra una sección principal y filtros por país. Los identificadores internos, carpetas y URL de categorías anteriores siguen funcionando.
+- **Mi Radar:** el lector activa un modo personal con intereses por categoría. El contenido destacado, noticias recientes y secciones siguen esas preferencias; se guardan localmente. Desactivar Mi Radar recupera la portada general.
+- **Filtros combinables:** se pueden cruzar región/país, antigüedad, medio RSS, búsqueda textual y estado de lectura; se guardan hasta 12 combinaciones locales y pueden aplicarse o eliminarse. Los resultados dependen de los artículos recopilados, no de una búsqueda web externa.
+- **Comparación:** para las historias agrupadas de dos o más enlaces editoriales, se puede alternar entre medios/regiones y cronología usando las fechas publicadas; el sistema no asigna intenciones ni sesgos a los medios.
+- **Resumen personalizado:** escoger todas las secciones, intereses de Mi Radar, Latinoamérica o país; la selección se utiliza también al copiar, compartir o escuchar el resumen.
+- **Privacidad:** las preferencias y búsquedas permanecen en el dispositivo mediante localStorage. No hay sincronización entre navegadores.
 
 ## Cómo publicar un fork en GitHub (una sola vez)
 
@@ -135,6 +144,8 @@ radar-rss-publico/
 **V1 — implementada:** lector público estático, OPML, búsqueda y filtros, radar de cobertura, tendencias con cuatro medios independientes, feeds públicos, lector, guardadas y preferencias locales, PWA, diseño responsive y despliegue automatizado.
 
 **V1.1 — implementada parcialmente:** diagnóstico de feeds, vigilancia que abre una incidencia automática si el sitio envejece o acumula fallos, pruebas con Chromium, Firefox y WebKit, historial de hasta 5.000 noticias. Pendientes opcionales: revisión editorial de enlaces inactivos y auditoría asistida con lectores de pantalla reales.
+
+**V1.2 — implementada:** portada Mi Radar, Latinoamérica como navegación agrupada, filtros combinables y búsquedas guardadas, comparador cronológico, resumen segmentado, y pruebas de navegador en móvil y escritorio.
 
 **V2 (opcional, sin implementar):** cuentas, sincronización de favoritos entre dispositivos, histórico duradero con base de datos, RSS personalizado, avisos individuales y administración desde un backend. La PWA y la caché sin conexión básica ya existen en V1.
 
