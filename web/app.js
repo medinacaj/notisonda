@@ -37,7 +37,9 @@ const state = {
   startMode: ['all','unread','saved'].includes(storeGet('radar-start-mode')) ? storeGet('radar-start-mode') : 'all',
   mutedKeywords: (storeGet('radar-keywords') || '').slice(0,600),
   hiddenSources: safeStoredSet('radar-hidden-sources'),
-  saved: safeStoredSet('radar-saved'), read: safeStoredSet('radar-read')
+  saved: safeStoredSet('radar-saved'), read: safeStoredSet('radar-read'),
+  lite: storeGet('radar-lite') === 'true',
+  lastVisit: Number(storeGet('radar-last-visit')) || 0, onlyNew: false
 };
 
 const VECTOR_PATHS={
@@ -71,7 +73,19 @@ const VECTOR_PATHS={
   search:'<circle cx="11" cy="11" r="7"/><path d="m16 16 5 5"/>',
   menu:'<path d="M4 6h16M4 12h16M4 18h16"/>',
   more:'<circle cx="5" cy="12" r="1.3" fill="currentColor"/><circle cx="12" cy="12" r="1.3" fill="currentColor"/><circle cx="19" cy="12" r="1.3" fill="currentColor"/>',
-  'bookmark-filled':'<path d="M6 4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18l-6-4-6 4z" fill="currentColor"/>'
+  'bookmark-filled':'<path d="M6 4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18l-6-4-6 4z" fill="currentColor"/>',
+  layers:'<path d="m12 3 9 5-9 5-9-5 9-5Z"/><path d="m3 13 9 5 9-5"/>',
+  trending:'<path d="m3 17 6-6 4 4 8-8"/><path d="M15 7h6v6"/>',
+  radar:'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><path d="M12 12 18.4 5.6"/><circle cx="12" cy="12" r="1" fill="currentColor"/>',
+  volume:'<path d="M11 5 6 9H3v6h3l5 4V5Z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13"/>',
+  pause:'<rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/>',
+  stop:'<rect x="6" y="6" width="12" height="12" rx="2"/>',
+  message:'<path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12Z"/>',
+  copy:'<rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/>',
+  bell:'<path d="M6 8a6 6 0 1 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.9 1.9 0 0 0 3.4 0"/>',
+  keyboard:'<rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M7 14h10"/>',
+  sparkle:'<path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5 18 18M6 18l2.5-2.5M15.5 8.5 18 6"/>',
+  timeline:'<path d="M12 3v18"/><circle cx="12" cy="7" r="2"/><circle cx="12" cy="17" r="2"/><path d="M14 7h6M4 17h6"/>'
 };
 const CATEGORY_ICONS=['brain','cpu','globe','map','flag','compass'];
 function svgIcon(name){
@@ -144,12 +158,48 @@ function shortDate(input) {
   return new Intl.DateTimeFormat('es-CL', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }).format(date);
 }
 function stripAccents(s) { return String(s ?? '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase(); }
-// Quita prefijos del OPML que solo organizan suscripciones (MEDIO, REGIONAL).
-// Los que informan al lector, como SÁTIRA u OFICIAL, se mantienen visibles.
+// Los prefijos del OPML (MEDIO, REGIONAL, OFICIAL, SÁTIRA…) organizan las suscripciones.
+// En pantalla se muestra el nombre limpio y, cuando informa al lector, un sello aparte.
+const SOURCE_PREFIX=/^\s*(MEDIO|REGIONAL|OFICIAL|SÁTIRA|SATIRA|ANÁLISIS|ANALISIS|TENDENCIA|TÉCNICO|TECNICO|VIDEO|IMPACTO|RADAR)\s*[—–-]\s*/i;
+const SOURCE_KINDS={OFICIAL:['Oficial','Fuente oficial: comunicado de un organismo público o empresa'],
+  'SÁTIRA':['Sátira','Medio humorístico: el contenido no es una noticia real'],SATIRA:['Sátira','Medio humorístico: el contenido no es una noticia real'],
+  'ANÁLISIS':['Análisis','Análisis u opinión especializada'],ANALISIS:['Análisis','Análisis u opinión especializada'],
+  VIDEO:['Video','Contenido en video']};
 function sourceLabel(name, fallback='Fuente RSS') {
   const raw=String(name||'').trim();
-  const cleaned=raw.replace(/^(?:MEDIO|REGIONAL)\s*[—–-]\s*/,'').trim();
+  const cleaned=raw.replace(SOURCE_PREFIX,'').trim();
   return cleaned||raw||fallback;
+}
+function sourceKind(...names){
+  for(const name of names){
+    const match=String(name||'').match(SOURCE_PREFIX);
+    const kind=match&&SOURCE_KINDS[match[1].toUpperCase()];
+    if(kind)return {label:kind[0],hint:kind[1],key:kind[0].normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase()};
+  }
+  return null;
+}
+function kindBadge(item){
+  const kind=sourceKind(item.source,item.publisher);
+  if(!kind)return null;
+  const badge=mk('span','source-kind kind-'+kind.key,kind.label);badge.title=kind.hint;
+  return badge;
+}
+// Cobertura: número de fuentes distintas que publicaron la misma historia.
+function coverageOf(item){
+  if(Number.isFinite(item?.coverage)&&item.coverage>0)return item.coverage;
+  const ids=new Set(item?.source_ids||[]);
+  for(const alt of (Array.isArray(item?.also_in)?item.also_in:[]))ids.add(alt.source_id||alt.publisher||alt.url);
+  return Math.max(1,ids.size);
+}
+function storyTime(item){
+  const t=new Date(item?.published_at||item?.first_seen_at||0).getTime();
+  return Number.isFinite(t)?t:0;
+}
+// «Mientras no estabas»: noticias que Radar vio por primera vez después de tu última visita.
+function isNewSinceVisit(item){
+  if(!state.lastVisit)return false;
+  const seen=new Date(item?.first_seen_at||0).getTime();
+  return Number.isFinite(seen)&&seen>state.lastVisit;
 }
 function categoryLabel(cat) {
   const idx = state.categories.indexOf(cat);
@@ -473,10 +523,10 @@ function buildNav() {
 }
 function renderTopicRail(){
  const rail=$('topicRail');rail.replaceChildren();
- const entries=[{id:'home',label:'Inicio'},{id:'all',label:'Todas'},...state.categories.map(id=>({id,label:categoryLabel(id)}))];
+ const entries=[{id:'home',label:'Inicio'},{id:'briefing',label:'Resumen'},{id:'all',label:'Todas'},...state.categories.map(id=>({id,label:categoryLabel(id)}))];
  let current=null;
  entries.forEach(entry=>{
-  const active=entry.id==='home'?state.pageView==='dashboard':state.pageView==='feed'&&state.category===entry.id;
+  const active=entry.id==='home'?state.pageView==='dashboard':entry.id==='briefing'?state.pageView==='briefing':state.pageView==='feed'&&state.category===entry.id;
   const button=mk('button','topic-chip'+(active?' active':''),entry.label);button.type='button';
   button.setAttribute('aria-current',active?'page':'false');
   button.addEventListener('click',()=>goTo(entry.id));rail.append(button);
@@ -519,14 +569,14 @@ function initMobileNav(){
   sync();
 }
 function goTo(target){
-  const hash=target==='home'?'#inicio':target==='all'?'#noticias':'#categoria/'+encodeURIComponent(target);
+  const hash=target==='home'?'#inicio':target==='all'?'#noticias':target==='briefing'?'#resumen':'#categoria/'+encodeURIComponent(target);
   if(window.location.hash===hash)navigateFromHash();
   else window.location.hash=hash;
 }
 function navigateFromHash(){
   closeColumnsMenu();closeCardMenu();setNavOpen(false,false);
   const hash=decodeURIComponent(window.location.hash.slice(1));
-  state.pageView=(!hash||hash==='inicio')?'dashboard':'feed';
+  state.pageView=(!hash||hash==='inicio')?'dashboard':hash==='resumen'?'briefing':'feed';
   state.category=hash.startsWith('categoria/')&&state.categories.includes(hash.slice(10))?hash.slice(10):'all';
   state.feed='';
   state.page=1;progressiveLoads=0;
@@ -534,7 +584,9 @@ function navigateFromHash(){
   updateHeader();buildNav();fillSelect();
   $('dashboardView').hidden=state.pageView!=='dashboard';
   $('feedView').hidden=state.pageView!=='feed';
+  $('briefingView').hidden=state.pageView!=='briefing';
   document.body.classList.toggle('on-dashboard',state.pageView==='dashboard');
+  document.body.classList.toggle('on-briefing',state.pageView==='briefing');
   render();
 }
 function fillSelect() {
@@ -549,7 +601,7 @@ function fillSelect() {
 function updateHeader() {
   const name = state.category === 'all' ? 'Todas las noticias' : categoryLabel(state.category);
   $('feedHeading').textContent = name;
-  $('topbarSection').textContent = state.pageView === 'dashboard' ? 'Inicio' : name;
+  $('topbarSection').textContent = state.pageView === 'dashboard' ? 'Inicio' : state.pageView === 'briefing' ? 'Resumen del día' : name;
   $('sectionEyebrow').textContent = state.category === 'all' ? 'SELECCIÓN EDITORIAL' : 'EXPLORAR CATEGORÍA';
   $('feedDescription').textContent = state.category === 'all' ? 'Titulares y novedades de todas las fuentes.' : `Noticias recientes de ${name}.`;
 }
@@ -653,6 +705,7 @@ function statusSummary() {
   section.hidden=false;
 }
 function applyFilters(mode=state.mode) {
+  // (library.js reemplaza esta función; el filtro «solo nuevas» se aplica en features.js)
   const query=stripAccents(state.search.trim());
   const blocked=state.mutedKeywords.split(',').map(w=>stripAccents(w.trim())).filter(w=>w.length>1).slice(0,30);
   const filtered=state.items.filter(item=>{
@@ -687,13 +740,38 @@ function dashboardEligible(){
     return !words.some(word=>text.includes(word));
   }).sort((a,b)=>new Date(b.published_at||b.first_seen_at||0)-new Date(a.published_at||a.first_seen_at||0));
 }
+// Pulso: noticias por hora en las últimas 24 horas (barras mínimas, sin librerías).
+function activitySpark(items){
+  const now=Date.now(),buckets=new Array(24).fill(0);
+  for(const item of items){
+    const age=(now-storyTime(item))/3600000;
+    if(age>=0&&age<24)buckets[23-Math.floor(age)]++;
+  }
+  const total=buckets.reduce((a,b)=>a+b,0),max=Math.max(1,...buckets);
+  const ns='http://www.w3.org/2000/svg',svg=document.createElementNS(ns,'svg');
+  svg.setAttribute('viewBox','0 0 72 20');svg.setAttribute('width','72');svg.setAttribute('height','20');
+  svg.setAttribute('class','activity-spark');svg.setAttribute('role','img');
+  svg.setAttribute('aria-label',`${total} noticias en las últimas 24 horas`);
+  const title=document.createElementNS(ns,'title');title.textContent=`${total} noticias en las últimas 24 horas (una barra por hora)`;svg.append(title);
+  buckets.forEach((count,i)=>{
+    const h=count?Math.max(2,Math.round(count/max*18)):1;
+    const bar=document.createElementNS(ns,'rect');
+    bar.setAttribute('x',String(i*3));bar.setAttribute('y',String(20-h));bar.setAttribute('width','2');bar.setAttribute('height',String(h));bar.setAttribute('rx','1');
+    if(!count)bar.setAttribute('class','is-empty');
+    svg.append(bar);
+  });
+  return svg;
+}
 function headlineRow(item,className='dashboard-recent-row'){
   const row=mk('div',className+(state.read.has(item.id)?' read-article':''));
   row.dataset.articleId=item.id;
   const title=link(item.url,item.title||'Sin título','dashboard-recent-title');
   title.addEventListener('click',event=>openArticleReader(item,event));
   const info=mk('span','dashboard-recent-meta');
+  const kind=kindBadge(item);if(kind)info.append(kind,document.createTextNode(' '));
   info.append(mk('span','',sourceLabel(item.publisher||item.source)),document.createTextNode(' · '),timeNode(item.published_at));
+  const coverage=coverageOf(item);
+  if(coverage>1)info.append(document.createTextNode(' · '),mk('span','row-coverage',`${coverage} medios`));
   row.append(title,info);
   return row;
 }
@@ -741,7 +819,7 @@ function renderDashboard(){
     const block=mk('section','dashboard-folder');
     const head=mk('button','dashboard-folder-head');head.type='button';
     const icon=mk('span','dashboard-folder-icon');icon.append(svgIcon(CATEGORY_ICONS[i]||'grid'));
-    head.append(icon,mk('h3','',categoryLabel(cat)),mk('span','dashboard-folder-more','Ver todo'),svgIcon('arrow-right'));
+    head.append(icon,mk('h3','',categoryLabel(cat)),activitySpark(items.filter(item=>(item.categories||[]).includes(cat))),mk('span','dashboard-folder-more','Ver todo'),svgIcon('arrow-right'));
     head.setAttribute('aria-label','Ver todas las noticias de '+categoryLabel(cat));
     head.addEventListener('click',()=>goTo(cat));
     const list=mk('div','dashboard-folder-list');
@@ -825,7 +903,46 @@ function syncReaderActions(){
   $('readerSave').classList.toggle('is-saved',saved);
   $('readerSave').setAttribute('aria-pressed',String(saved));
 }
-function openArticleReader(item,event){
+// «Cómo lo cuenta cada medio»: titulares de la misma historia agrupados por región.
+function compareSection(item){
+  const others=Array.isArray(item.also_in)?item.also_in.filter(x=>safeURL(x.url)):[];
+  if(!others.length)return null;
+  const entries=[{publisher:item.publisher||item.source,source:item.source,title:item.title,url:item.url,
+    category:(item.categories||[])[0],published_at:item.published_at,lead:true},...others];
+  const section=mk('section','reader-compare');section.id='readerCompare';
+  section.setAttribute('aria-labelledby','readerCompareTitle');
+  const head=mk('div','reader-compare-head');
+  const h=mk('h3','','Cómo lo cuenta cada medio');h.id='readerCompareTitle';
+  head.append(svgIcon('layers'),h,mk('span','reader-compare-count',`${coverageOf(item)} medios`));
+  section.append(head);
+  const withTitles=entries.filter(x=>String(x.title||'').trim()).length;
+  if(withTitles<2)section.append(mk('p','reader-compare-note','Esta historia se agrupó antes de que Radar guardara los titulares de cada medio; se muestran solo los enlaces.'));
+  const groups=new Map();
+  for(const entry of entries.slice(0,13)){
+    const kind=sourceKind(entry.source,entry.publisher);
+    const key=kind?.label==='Oficial'?'Fuentes oficiales':categoryLabel(entry.category||'')||'Otros medios';
+    if(!groups.has(key))groups.set(key,[]);
+    groups.get(key).push(entry);
+  }
+  for(const [label,list] of groups){
+    const group=mk('div','reader-compare-group');
+    group.append(mk('h4','',label));
+    const ul=mk('ul','');
+    for(const entry of list){
+      const li=mk('li','');
+      const a=link(entry.url,String(entry.title||'').trim()||sourceLabel(entry.publisher,'Ver en el medio'),'reader-compare-link');
+      const meta=mk('span','reader-compare-meta');
+      meta.append(mk('strong','',sourceLabel(entry.publisher,'Otro medio')));
+      if(entry.published_at)meta.append(document.createTextNode(' · '),timeNode(entry.published_at));
+      if(entry.lead)meta.append(mk('span','reader-compare-lead','esta vista previa'));
+      li.append(a,meta);ul.append(li);
+    }
+    group.append(ul);section.append(group);
+  }
+  section.append(mk('p','reader-compare-note','Titulares tal como los publicó cada medio. Radar no valora ni reescribe su contenido.'));
+  return section;
+}
+function openArticleReader(item,event,focusTarget){
   if(event){
     // Ctrl/Cmd/middle-click still opens the original source using native browser behavior.
     if(event.metaKey||event.ctrlKey||event.shiftKey||event.altKey||event.button!==0)return;
@@ -839,7 +956,7 @@ function openArticleReader(item,event){
     mk('strong','',sourceLabel(item.publisher||item.source)),
     mk('span','',ageDate(item.published_at))
   );
-  const cover=$('readerCover');cover.replaceChildren();cover.hidden=!state.showImages||!safeURL(item.image);
+  const cover=$('readerCover');cover.replaceChildren();cover.hidden=!state.showImages||state.lite||!safeURL(item.image);
   if(!cover.hidden){
     const image=mk('img');image.src=item.image;image.alt='Imagen ilustrativa de la noticia';
     image.referrerPolicy='no-referrer';
@@ -849,12 +966,8 @@ function openArticleReader(item,event){
   const summary=$('readerSummary');summary.replaceChildren();
   const description=String(item.summary||'').trim();
   summary.append(mk('p','',description||'Esta fuente solo publica un titular o un extracto breve. Abre el medio original para leer la noticia completa.'));
-  const others=Array.isArray(item.also_in)?item.also_in.filter(x=>safeURL(x.url)).slice(0,8):[];
-  if(others.length){
-    const section=mk('div','reader-alternatives');section.append(mk('strong','','También en otros medios'));
-    for(const alt of others)section.append(link(alt.url,sourceLabel(alt.publisher,'Otra fuente'),'reader-alternative-link'));
-    summary.append(section);
-  }
+  const comparison=compareSection(item);
+  if(comparison)summary.append(comparison);
   const url=safeURL(item.url);
   const source=$('readerOpenOriginal');source.href=url||'#';
   source.setAttribute('aria-disabled',String(!url));
@@ -863,6 +976,10 @@ function openArticleReader(item,event){
   $('readerOpenOriginal').querySelector('.reader-open-hint').textContent=state.newTab?'en otra pestaña':'en esta pestaña';
   syncReaderActions();
   if(!dialog.open)dialog.showModal();
+  dialog.querySelector('.reader-scroll')?.scrollTo?.({top:0});
+  if(focusTarget==='compare'){
+    requestAnimationFrame(()=>{const target=$('readerCompare');if(target){target.scrollIntoView({block:'start'});target.querySelector('h3')?.setAttribute('tabindex','-1');target.querySelector('h3')?.focus({preventScroll:true});}});
+  }
   markRead(item.id,true);
 }
 function initArticleReader(){
@@ -889,7 +1006,7 @@ function initArticleReader(){
 // el resto de acciones vive en un menú "⋯" para no repetir cuatro botones por tarjeta.
 function card(item) {
   const isRead=state.read.has(item.id);
-  const hasImage=Boolean(safeURL(item.image));
+  const hasImage=Boolean(safeURL(item.image))&&!state.lite;
   const el=mk('article','article-card'+(isRead?' read-article':'')+(hasImage?'':' no-cover'));el.dataset.articleId=item.id;
   if(hasImage){
     const cover=mk('a','cover'); cover.href=safeURL(item.url)||'#';cover.target=state.newTab?'_blank':'_self';cover.rel='noopener noreferrer external';cover.referrerPolicy='no-referrer';
@@ -905,17 +1022,26 @@ function card(item) {
   const titleLink=link(item.url,item.title||'Sin título');
   titleLink.addEventListener('click',event=>openArticleReader(item,event));
   title.append(titleLink);
-  content.append(mk('span','article-category',categoryLabel(category)),title);
+  const kicker=mk('div','article-kicker');
+  kicker.append(mk('span','article-category',categoryLabel(category)));
+  if(isNewSinceVisit(item)){const fresh=mk('span','article-new','Nueva');fresh.title='Publicada desde tu última visita';kicker.append(fresh);}
+  content.append(kicker,title);
   const summary=String(item.summary||'').trim();
   if(summary)content.append(mk('p','article-excerpt',summary));
-  const others=Array.isArray(item.also_in)?item.also_in.filter(x=>safeURL(x.url)):[];
-  if(others.length){
-    const also=mk('span','article-also',`También en ${others.length} ${others.length===1?'medio':'medios'}`);
-    also.title=others.slice(0,8).map(x=>sourceLabel(x.publisher,'Otro medio')).join(' · ');
+  const coverage=coverageOf(item);
+  if(coverage>1){
+    const others=Array.isArray(item.also_in)?item.also_in:[];
+    const also=mk('button','article-also'+(coverage>=5?' is-wide':''));also.type='button';
+    also.append(svgIcon('layers'),mk('span','',`${coverage} medios`));
+    also.title='Cubierta por '+coverage+' medios'+(others.length?': '+others.slice(0,8).map(x=>sourceLabel(x.publisher,'Otro medio')).join(' · '):'')+'. Ver cómo lo cuenta cada uno.';
+    also.setAttribute('aria-label',`Cubierta por ${coverage} medios. Comparar titulares`);
+    also.addEventListener('click',()=>openArticleReader(item,null,'compare'));
     content.append(also);
   }
   const footer=mk('div','article-footer');
   const meta=mk('div','article-meta');
+  const kind=kindBadge(item);
+  if(kind)meta.append(kind);
   meta.append(mk('span','publisher',sourceLabel(item.publisher||item.source)),timeNode(item.published_at));
   const actions=mk('div','article-actions');
   actions.setAttribute('role','group');actions.setAttribute('aria-label','Acciones de esta noticia');
@@ -1035,6 +1161,7 @@ function render() {
   document.body.classList.toggle('layout-list',state.layout==='list');
   syncColumnsControl();
   if(state.pageView==='dashboard')renderDashboard();
+  if(state.pageView==='briefing'&&typeof renderBriefing==='function')renderBriefing();
 }
 
 let historyRequest=null;
@@ -1197,7 +1324,8 @@ function initHandlers() {
   $('refreshNow').addEventListener('click',()=>{void refreshPublishedData();});
   window.addEventListener('focus',()=>{if(document.visibilityState==='visible'&&Date.now()>=nextCheckAt){void refreshPublishedData();}});
   document.addEventListener('visibilitychange',()=>{if(!document.hidden){if(Date.now()>=nextCheckAt){void refreshPublishedData();}else{updateScheduleProgress();}}});
-  window.addEventListener('hashchange',navigateFromHash);
+  // Resolver la función en cada cambio: library.js y features.js la amplían después de cargar app.js.
+  window.addEventListener('hashchange',()=>navigateFromHash());
   $('feedHealthIndicator').addEventListener('click',openFeedHealth);
   $('statusDetails').addEventListener('click',openFeedHealth);
   $('statusDismiss').addEventListener('click',()=>{

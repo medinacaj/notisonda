@@ -55,6 +55,8 @@ jobs:
           node --check web/library.js
           node --check web/sidebar-layout.js
           node --check web/news-effects.js
+          node --check web/features.js
+          node --check web/sw.js
           node tests/test_sidebar_behavior.cjs
           node tests/test_news_effects.cjs
       - name: Obtener noticias

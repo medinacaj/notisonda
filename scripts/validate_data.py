@@ -33,6 +33,12 @@ def check(root):
         raise ValueError('Shard content differs from archive')
     if full.get('generated_at')!=meta.get('generated_at') or latest.get('generated_at')!=meta.get('generated_at'):
         raise ValueError('Timestamps do not match')
+    trends=load('trends.json')
+    if not isinstance(trends.get('topics'),list):
+        raise ValueError('trends.json without topics list')
+    feed_dir=root.parent/'feeds'
+    if not (feed_dir/'mas-cubierto.xml').is_file():
+        raise ValueError('Output RSS feeds missing')
     feeds=load('status.json').get('feeds')
     if not load('sources.json').get('sources') or not feeds:
         raise ValueError('RSS status or sources absent')
