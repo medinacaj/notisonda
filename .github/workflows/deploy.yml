@@ -57,6 +57,7 @@ jobs:
           node --check web/news-effects.js
           node --check web/features.js
           node --check web/v12.js
+          node --check web/v13.js
           node --check web/sw.js
           node tests/test_sidebar_behavior.cjs
           node tests/test_news_effects.cjs
@@ -64,6 +65,21 @@ jobs:
         run: python scripts/collect.py --opml sources/feeds.opml --out web/data --days 45 --workers 8
       - name: Validar JSON antes de publicar
         run: python scripts/validate_data.py web/data
+      - name: Preparar auditoría editorial orientativa
+        run: |
+          python scripts/audit_editorial.py web/data --report editorial-audit.md
+          cat editorial-audit.md >> "$GITHUB_STEP_SUMMARY"
+      - name: Resguardar JSON públicos (copia de recuperación de 90 días)
+        uses: actions/upload-artifact@v4
+        with:
+          name: radar-public-data-${{ github.run_id }}
+          path: |
+            web/data/articles.json
+            web/data/sources.json
+            web/data/status.json
+            web/data/meta.json
+          retention-days: 90
+          if-no-files-found: error
       - name: Configurar Pages
         uses: actions/configure-pages@v5
       - name: Preparar sitio
