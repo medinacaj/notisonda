@@ -78,6 +78,21 @@ class UxReviewTests(unittest.TestCase):
         self.assertNotIn('#c9470a', hybrid)
         self.assertIn('--accent:#b8420a', hybrid)
 
+    def test_section_titles_have_clear_hierarchy(self):
+        features = (ROOT / 'web/features.css').read_text(encoding='utf-8')
+        # Portada: título de sección con peso, tipografía y guía visual distintos
+        # de los titulares editoriales; el color sigue el tema elegido.
+        self.assertRegex(features, r'(?s)body\.radar-hybrid \.dashboard-panel-head h2\{[^}]*font:760[^}]*var\(--font-ui\)')
+        self.assertIn('border-inline-start:3px solid var(--accent)', features)
+        self.assertRegex(features, r'(?s)body\.radar-hybrid \.briefing-section-head h2\{[^}]*font:750')
+        self.assertRegex(features, r'(?s)body\.radar-hybrid \.dashboard-folder-head h3\{[^}]*font:750')
+        self.assertIn('body.radar-hybrid .section-heading h1{', features)
+        self.assertIn('@media(max-width:720px)', features)
+        self.assertIn('body.radar-hybrid .dashboard-panel-head h2{font-size:22px}', features)
+        self.assertIn('./features.css?v=1.1.0', self.html)
+        for title in ('Lo más cubierto', 'Temas en alza', 'En portada', 'Últimas publicaciones', 'Por carpeta'):
+            self.assertRegex(self.html, fr'<h2[^>]*>{re.escape(title)}</h2>')
+
     def test_feed_has_level_one_heading(self):
         self.assertIn('<h1 id="feedHeading">', self.html)
 

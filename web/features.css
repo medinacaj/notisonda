@@ -275,3 +275,59 @@ body.radar-hybrid .thread-body{display:grid;gap:2px}
   body.radar-hybrid .since-visit-folders::-webkit-scrollbar{display:none}
   body.radar-hybrid .since-visit-folder{flex:0 0 auto}
 }
+
+/* ---------- Jerarquía visual de secciones ----------
+   Las cabeceras usan sans serif de mayor peso; los titulares conservan
+   su tratamiento editorial. Solo se usan colores de tema claro/oscuro. */
+body.radar-hybrid .dashboard-head h1{
+  font:700 clamp(30px,3vw,36px)/1.16 var(--font-editorial);
+  letter-spacing:-.028em;
+}
+body.radar-hybrid .dashboard-panel-head{
+  flex-wrap:wrap;row-gap:6px;
+  padding-bottom:12px;margin-bottom:17px;
+}
+body.radar-hybrid .dashboard-panel-head h2{
+  margin:0;
+  font:760 clamp(23px,2.1vw,27px)/1.22 var(--font-ui);
+  letter-spacing:-.03em;color:var(--text);
+  border-inline-start:3px solid var(--accent);
+  padding-inline-start:12px;
+}
+body.radar-hybrid .dashboard-panel-head>span{
+  font-size:12px;line-height:1.4;color:var(--muted);
+}
+body.radar-hybrid .section-heading h1{
+  font:750 clamp(28px,2.8vw,34px)/1.2 var(--font-ui);
+  letter-spacing:-.03em;color:var(--text);
+}
+body.radar-hybrid .briefing-head h1{
+  font:650 clamp(32px,3vw,40px)/1.14 var(--font-editorial);
+  letter-spacing:-.025em;
+}
+body.radar-hybrid .briefing-section-head h2{
+  margin:0;flex:1;
+  font:750 20px/1.25 var(--font-ui);color:var(--text);
+  border-inline-start:3px solid var(--accent);
+  padding-inline-start:10px;
+}
+body.radar-hybrid .dashboard-folder-head h3{
+  font:750 17px/1.28 var(--font-ui);
+  letter-spacing:-.012em;color:var(--text);
+}
+body.radar-hybrid .since-visit h2{
+  font:750 19px/1.3 var(--font-ui);color:var(--text);
+}
+@media(max-width:720px){
+  body.radar-hybrid .dashboard-head h1{font-size:29px}
+  body.radar-hybrid .dashboard-panel-head h2{font-size:22px}
+  body.radar-hybrid .dashboard-panel-head>span{
+    flex-basis:100%;margin-inline-start:15px;text-align:start;
+  }
+  body.radar-hybrid .section-heading h1{font-size:27px}
+  body.radar-hybrid .briefing-section-head h2{font-size:19px}
+}
+@media(max-width:530px){
+  body.radar-hybrid .dashboard-panel-head{align-items:flex-start;column-gap:10px}
+  body.radar-hybrid .dashboard-folder-head h3{font-size:16px}
+}
