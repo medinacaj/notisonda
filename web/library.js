@@ -587,7 +587,7 @@ function mount(){
   $('exportData').addEventListener('click',e=>{
     e.preventDefault();e.stopImmediatePropagation();syncArchive();
     const obj={format:'radar-rss-settings-v3',exported_at:new Date().toISOString(),
-      preferences:{theme:state.theme,layout:state.layout,columns:state.columns,density:state.density,pageSize:state.pageSize,maxAge:state.maxAge,fontSize:state.fontSize,showHero:state.showHero,showImages:state.showImages,showSummaries:state.showSummaries,hideRead:state.hideRead,newTab:state.newTab,sort:state.sort,startMode:state.startMode,mutedKeywords:state.mutedKeywords},
+      preferences:{theme:state.theme,layout:state.layout,columns:state.columns,density:state.density,pageSize:state.pageSize,maxAge:state.maxAge,fontSize:state.fontSize,showHero:state.showHero,showImages:state.showImages,showSummaries:state.showSummaries,hideRead:state.hideRead,newTab:state.newTab,sort:state.sort,startMode:state.startMode,mutedKeywords:state.mutedKeywords,sidebarWidth:Number(localStorage.getItem('radar-sidebar-width'))||310},
       saved:[...state.saved],read:[...state.read],hiddenSources:[...state.hiddenSources],
       savedArchive:[...archive.values()],sourceFolders:folders,folderDefaults:defaults,articleTags:tags};
     downloadText('radar-rss-respaldo-completo.json',JSON.stringify(obj,null,2),'application/json;charset=utf-8');
@@ -620,6 +620,10 @@ function mount(){
       archive=new Map((Array.isArray(d.savedArchive)?d.savedArchive:[]).slice(-LIMIT).map(snapshot).filter(Boolean).filter(x=>state.saved.has(x.id)).map(x=>[x.id,x]));
       folders=readFolders(d.sourceFolders);defaults=(d.folderDefaults&&typeof d.folderDefaults==='object'&&!Array.isArray(d.folderDefaults))?d.folderDefaults:Object.create(null);tags=readTags(d.articleTags);
       saveArchive();write(FOLDER_KEY,folders);saveDefaults();write(TAG_KEY,tags);syncArchive();
+      if(Number.isFinite(Number(p.sidebarWidth))&&Number(p.sidebarWidth)>=240&&Number(p.sidebarWidth)<=480){
+        try{localStorage.setItem('radar-sidebar-width',String(Math.round(Number(p.sidebarWidth))));}catch{}
+        window.dispatchEvent(new Event('radar-sidebar-pref-sync'));
+      }
       for(const [key,value] of [['layout',state.layout],['columns',state.columns],['theme',state.theme],['density',state.density],['font',state.fontSize],['page-size',state.pageSize],['max-age',state.maxAge],['show-hero',state.showHero],['show-images',state.showImages],['show-summaries',state.showSummaries],['hide-read',state.hideRead],['new-tab',state.newTab],['sort',state.sort],['start-mode',state.startMode],['keywords',state.mutedKeywords]])savePref(key,value);
       state.mode=state.startMode;state.page=1;
       setTheme(state.theme);applyDisplaySettings();refreshFeedUI();syncSettings();selectedTab('data');

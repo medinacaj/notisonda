@@ -1,0 +1,60 @@
+/* Radar RSS — panel lateral ajustable, alineado con su sistema de apariencia */
+:root{--radar-sidebar-width:310px}
+body.radar-hybrid .app-shell{
+  grid-template-columns:minmax(0,var(--radar-sidebar-width)) minmax(0,1fr);
+}
+body.radar-hybrid .sidebar{min-width:0;width:100%}
+body.radar-hybrid .page{min-width:0}
+body.radar-hybrid .source-folders-section{min-width:0}
+body.radar-hybrid .source-folders-section .folder-entry{min-width:0}
+body.radar-hybrid .source-folders-section .folder-entry>.nav-link{min-width:0}
+body.radar-hybrid .source-folders-section .folder-entry .nav-left{min-width:0;flex:1}
+body.radar-hybrid .source-folders-section .folder-entry .nav-label{min-width:0}
+body.radar-hybrid .source-folders-section .folder-entry .nav-count{flex-shrink:0}
+body.radar-hybrid .source-folders-section .folder-more{flex-shrink:0}
+/* Fixed-position handle remains discoverable when sidebar content scrolls. */
+.sidebar-resize-handle{
+  position:fixed;z-index:40;
+  top:0;left:calc(var(--radar-sidebar-width) - 8px);
+  width:16px;height:100dvh;display:flex;align-items:center;justify-content:center;
+  cursor:col-resize;touch-action:none;user-select:none;
+  color:var(--muted);background:transparent;outline:none;
+}
+.sidebar-resize-handle::before{
+  content:"";position:absolute;top:0;bottom:0;left:7px;
+  width:1px;background:var(--line);transition:background .12s ease,width .12s ease;
+}
+.sidebar-resize-grip{
+  position:relative;z-index:1;width:5px;height:56px;border-radius:20px;
+  background:var(--stone,var(--muted));opacity:.45;
+  box-shadow:0 0 0 4px var(--surface2);transition:opacity .12s ease;
+}
+.sidebar-resize-handle:hover::before,
+.sidebar-resize-handle:focus-visible::before,
+body.sidebar-is-resizing .sidebar-resize-handle::before{
+  left:6px;width:3px;background:var(--accent);
+}
+.sidebar-resize-handle:hover .sidebar-resize-grip,
+.sidebar-resize-handle:focus-visible .sidebar-resize-grip,
+body.sidebar-is-resizing .sidebar-resize-grip{opacity:1;background:var(--accent)}
+.sidebar-resize-handle:focus-visible{outline:2px solid var(--accent);outline-offset:-3px;border-radius:6px}
+body.sidebar-is-resizing,body.sidebar-is-resizing *{cursor:col-resize!important;user-select:none!important}
+.setting-sidebar-width{
+  border:1px solid var(--line);background:var(--surface);
+  border-radius:12px;padding:13px 15px;margin-top:15px;
+}
+.setting-sidebar-width-heading{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.setting-sidebar-width-heading label{font-size:13px;font-weight:680;color:var(--text)}
+.setting-sidebar-width-heading output{font-size:12px;font-weight:700;color:var(--accent);font-variant-numeric:tabular-nums}
+.setting-sidebar-width input[type="range"]{width:100%;display:block;margin:13px 0 10px;accent-color:var(--accent);cursor:pointer}
+.setting-sidebar-width input:disabled{opacity:.45;cursor:not-allowed}
+.setting-sidebar-width-footer{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}
+.setting-sidebar-width-footer small{color:var(--muted);font-size:11px;line-height:1.5;flex:1;min-width:175px}
+.setting-sidebar-width-footer .settings-secondary{font-size:11px;padding:8px 11px;white-space:nowrap}
+@media(max-width:950px){
+  body.radar-hybrid .app-shell{grid-template-columns:minmax(0,1fr)}
+  .sidebar-resize-handle{display:none!important}
+}
+@media(prefers-reduced-motion:reduce){
+  .sidebar-resize-handle::before,.sidebar-resize-grip{transition:none}
+}

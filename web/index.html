@@ -14,6 +14,7 @@
   <link rel="stylesheet" href="./hashnode-preview.css?v=1.0.0">
   <link rel="stylesheet" href="./radar-hybrid.css?v=1.2.0">
   <link rel="stylesheet" href="./library.css?v=1.6.0">
+  <link rel="stylesheet" href="./sidebar-layout.css?v=1.0.0">
   <title>Radar RSS — Actualidad en un solo lugar</title>
 </head>
 <body class="light radar-hybrid">
@@ -31,6 +32,9 @@
         <button type="button" class="minimal-button" id="aboutButton">Sobre el proyecto <span data-icon="info" class="ui-icon-slot" aria-hidden="true"></span></button>
       </div>
     </aside>
+    <div id="sidebarResizeHandle" class="sidebar-resize-handle" role="separator" tabindex="0" aria-label="Cambiar ancho del panel lateral" aria-orientation="vertical" aria-valuemin="240" aria-valuemax="480" aria-valuenow="310" aria-valuetext="310 píxeles" title="Arrastra para ajustar · Flechas para cambiar · Doble clic para restablecer">
+      <span class="sidebar-resize-grip" aria-hidden="true"></span>
+    </div>
     <div class="page">
       <header class="topbar">
         <div class="topbar-caption"><strong>Radar RSS</strong><span class="topbar-separator">/</span><span id="topbarSection">Actualidad</span></div>
@@ -211,6 +215,17 @@
             <label class="setting-field" for="settingDensity"><span>Espaciado</span><select id="settingDensity"><option value="comfortable">Cómodo</option><option value="compact">Compacto</option></select></label>
             <label class="setting-field" for="settingFont"><span>Texto</span><select id="settingFont"><option value="normal">Normal</option><option value="large">Grande</option></select></label>
           </div>
+          <div class="setting-sidebar-width">
+            <div class="setting-sidebar-width-heading">
+              <label for="settingSidebarWidth">Ancho del panel lateral</label>
+              <output id="sidebarWidthValue" for="settingSidebarWidth">310 px</output>
+            </div>
+            <input id="settingSidebarWidth" type="range" min="240" max="480" step="10" value="310">
+            <div class="setting-sidebar-width-footer">
+              <small id="sidebarWidthHelp">Arrastra el borde derecho del menú o utiliza las flechas del teclado. El ajuste se guarda en este navegador.</small>
+              <button type="button" id="resetSidebarWidth" class="settings-secondary">Restablecer ancho</button>
+            </div>
+          </div>
           <div class="settings-divider"></div>
           <label class="setting-toggle"><span><b>Mostrar presentación de inicio</b><small>Activa el encabezado grande. Por defecto, Radar RSS prioriza las noticias.</small></span><input id="settingHero" type="checkbox"></label>
           <label class="setting-toggle"><span><b>Mostrar imágenes</b><small>Ocultar fotografías para una lectura más limpia y rápida.</small></span><input id="settingImages" type="checkbox"></label>
@@ -256,7 +271,8 @@
   </dialog>
   <button id="backTop" class="back-to-top" type="button" aria-label="Volver arriba" title="Volver arriba" hidden><span data-icon="arrow-up" class="ui-icon-slot" aria-hidden="true"></span></button>
   <div id="actionToast" class="action-toast" role="status" aria-live="polite" aria-atomic="true" hidden></div>
-  <script src="./app.js?v=7.5.1" defer></script>
-  <script src="./library.js?v=1.3.0" defer></script>
+  <script src="./app.js?v=7.6.0" defer></script>
+  <script src="./library.js?v=1.4.0" defer></script>
+  <script src="./sidebar-layout.js?v=1.0.0" defer></script>
 </body>
 </html>
