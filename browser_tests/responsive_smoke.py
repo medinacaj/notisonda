@@ -192,6 +192,16 @@ def main():
                         page.goto(base + "#inicio", wait_until="load")
                         page.locator("#dashboardView:not([hidden])").wait_for(timeout=15000)
                         page.locator("#dashboardFeature .article-card").first.wait_for(timeout=15000)
+                        page.locator("#v13Guide").wait_for(state="visible", timeout=10000)
+                        assert page.locator("#v13Guide .v13-guide-action").count() == 3
+                        assert page.locator("#articleGrid .article-card").count() == 0
+                        page.locator(".v13-guide-action").first.click()
+                        expect(page.locator("#v12MineToggle")).to_be_focused()
+                        page.locator("#v13DismissGuide").click()
+                        expect(page.locator("#v13Guide")).to_be_hidden()
+                        page.locator("#v13OpenGuide").click()
+                        expect(page.locator("#v13Guide")).to_be_visible()
+                        page.locator("#v13DismissGuide").click()
                         check_visible_boxes(page, [".topbar", ".topbar-caption", ".topbar-actions",
                             "#dashboardView", ".dashboard-panel-head", "#dashboardFeature",
                             "#dashboardFeature .article-card"], f"portada {width}px")
@@ -203,6 +213,8 @@ def main():
                         page.evaluate("location.hash = '#noticias'")
                         page.locator("#feedView:not([hidden])").wait_for(timeout=10000)
                         page.locator("#articleGrid .article-card").first.wait_for(timeout=10000)
+                        page.locator("#articleGrid .article-card .article-save").first.click()
+                        assert page.evaluate("() => document.activeElement?.classList.contains('article-save')")
                         check_visible_boxes(page, [".topbar", ".topbar-actions", ".filter-bar",
                             ".filter-controls", ".mode-tabs", "#articleGrid",
                             "#articleGrid .article-card"], f"listado {width}px")
@@ -226,6 +238,7 @@ def main():
 
                         page.evaluate("location.hash = '#resumen'")
                         page.locator("#briefingView:not([hidden])").wait_for(timeout=10000)
+                        assert page.locator("#articleGrid .article-card").count() == 0
                         check_visible_boxes(page, [".briefing-head", ".briefing-actions",
                             ".briefing-sections"], f"resumen {width}px")
                         # RadarRRS V1.2: navegación regional, favoritos y resúmenes personalizables.
