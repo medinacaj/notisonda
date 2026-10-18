@@ -38,6 +38,7 @@ jobs:
           node --check web/news-effects.js
           node --check web/features.js
           node --check web/v12.js
+          node --check web/v13.js
           node --check web/sw.js
       - name: Pruebas JavaScript
         run: |

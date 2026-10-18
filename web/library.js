@@ -326,8 +326,16 @@ function toggleBookmark(item){
     archive.delete(s.id);archive.set(s.id,s);state.saved.add(s.id);
   }
   const saved=saveArchive();
+  const restoreFocus=document.activeElement?.classList?.contains('article-save')===true;
   persist('radar-saved',state.saved);
   render();
+  // Guardar vuelve a pintar las tarjetas: devolver el foco al botón equivalente
+  // evita perderse en lectores de pantalla y durante la navegación con teclado.
+  if(restoreFocus){
+    const article=[...document.querySelectorAll('#articleGrid .article-card')].find(el=>el.dataset.articleId===item.id);
+    const button=article?.querySelector('.article-save');
+    if(button)button.focus({preventScroll:true});
+  }
   if(!saved)actionToast('Espacio local insuficiente: exporta un respaldo desde Configuración.');
   else actionToast(state.saved.has(item.id)?'Guardada en tu biblioteca local.':'Quitada de guardadas.');
 }
