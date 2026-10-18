@@ -332,6 +332,8 @@ def write_json(path: Path, obj: dict) -> None:
 
 LATEST_COUNT=300
 CHUNK_SIZE=300
+MAX_ARTICLES=5000
+MAX_CANDIDATES=7500
 STOPWORDS=set("a al an and as at con de del el en es for from in is la las lo los no of on or para por que se su the to un una with y tras hoy ayer today latest news este esta fue hay says dijo".split())
 
 def story_tokens(title: str) -> frozenset[str]:
@@ -476,7 +478,7 @@ def collect(opml: Path, out: Path, days: int, workers: int, max_per_feed: int) -
         merged[key] = item
 
     ordered = sorted(merged.values(), key=lambda i: (i.get('published_at') or i.get('first_seen_at') or ''), reverse=True)
-    articles = group_related_articles(ordered[:3500])[:2300]
+    articles = group_related_articles(ordered[:MAX_CANDIDATES])[:MAX_ARTICLES]
     for article in articles:
         # Cobertura: cuántas fuentes distintas publicaron la misma historia.
         article['coverage'] = max(1, len(set(article.get('source_ids') or [])))

@@ -124,6 +124,26 @@ class PublishGuardTests(unittest.TestCase):
         (root.parent/'feeds').mkdir(exist_ok=True)
         (root.parent/'feeds'/'mas-cubierto.xml').write_text('<rss/>')
 
+    def test_5000_article_archive_and_validator(self):
+        import json
+        import tempfile
+        import validate_data
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp) / 'data'; root.mkdir()
+            self.build(root, failed=0)
+            articles = [{'id': f'item-{i}', 'title': f'Noticia {i}',
+                         'url': f'https://example.com/{i}'} for i in range(5000)]
+            collect.publish_partitioned(root, articles, '2026-10-17T00:00:00Z')
+            collect.write_json(root / 'articles.json',
+                               {'version': 2, 'generated_at': '2026-10-17T00:00:00Z',
+                                'items': articles})
+            metadata = json.loads((root / 'meta.json').read_text(encoding='utf-8'))
+            self.assertEqual(len(metadata['archive_files']), 16)
+            self.assertEqual(metadata['total_articles'], 5000)
+            last = json.loads((root / 'archive-16.json').read_text())['items'][-1]
+            self.assertEqual(last['id'], 'item-4999')
+            validate_data.check(root)
+
     def test_blocks_publication_when_many_feeds_fail(self):
         import tempfile
         sys.path.insert(0, str(ROOT / 'scripts'))

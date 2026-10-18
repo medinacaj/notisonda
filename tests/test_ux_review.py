@@ -93,6 +93,10 @@ class UxReviewTests(unittest.TestCase):
         for title in ('Lo más cubierto', 'Temas en alza', 'En portada', 'Últimas publicaciones', 'Por carpeta'):
             self.assertRegex(self.html, fr'<h2[^>]*>{re.escape(title)}</h2>')
 
+    def test_history_manifest_is_not_silently_truncated(self):
+        self.assertIn('.slice(0,32)', self.app)
+        self.assertIn('function historyFiles()', self.app)
+
     def test_feed_has_level_one_heading(self):
         self.assertIn('<h1 id="feedHeading">', self.html)
 

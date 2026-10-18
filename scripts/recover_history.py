@@ -6,7 +6,7 @@ import sys
 from urllib.request import Request, urlopen
 
 BASE="https://medinacaj.github.io/radar-rss-publico/data/"
-LIMIT=9000000
+LIMIT=20000000
 
 def valid(doc,name):
     key='items' if name=='articles.json' else 'feeds'
