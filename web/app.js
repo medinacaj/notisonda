@@ -1153,10 +1153,17 @@ function render() {
   // Una búsqueda debe cubrir todo el archivo, no solo las 300 noticias recientes.
   if(query.length>=3&&hasHistory()&&!state.historyLoading&&!state.historyFailed)void loadHistory();
   const grid=$('articleGrid'); grid.className='article-grid'+(state.layout === 'list'?' list-view':'');
-  if (!visible.length) grid.replaceChildren(emptyState(filtered));
-  else grid.replaceChildren(...visible.map(card));
-  $('loadMore').hidden=visible.length>=filtered.length;
-  updateHistoryButton();
+  // La portada y el resumen tienen sus propios componentes: no construir
+  // tarjetas ocultas en cada pulsación o actualización de esos paneles.
+  if(state.pageView==='feed'){
+    if (!visible.length) grid.replaceChildren(emptyState(filtered));
+    else grid.replaceChildren(...visible.map(card));
+    $('loadMore').hidden=visible.length>=filtered.length;
+    updateHistoryButton();
+  }else if(grid.childElementCount){
+    grid.replaceChildren();
+    $('loadMore').hidden=true;
+  }
   document.querySelectorAll('.mode-tab').forEach(button=>button.classList.toggle('active',button.dataset.mode === state.mode));
   document.querySelectorAll('.view-button').forEach(button=>button.classList.toggle('active',button.dataset.view === state.layout));
   document.body.classList.toggle('layout-list',state.layout==='list');
@@ -1181,7 +1188,17 @@ async function loadHistory(){
   state.historyLoading=true;updateHistoryButton();
   historyRequest=(async()=>{
     try{
-      const docs=await Promise.all(historyFiles().map(file=>dataFetch('./data/'+file)));
+      // Limitar las descargas simultáneas: 16 fragmentos pueden agotar memoria
+      // y conexiones en móviles; mantener el orden y validar todo antes de aplicar.
+      const files=historyFiles(),docs=new Array(files.length);
+      let next=0;
+      async function worker(){
+        while(next<files.length){
+          const i=next++;
+          docs[i]=await dataFetch('./data/'+files[i]);
+        }
+      }
+      await Promise.all(Array.from({length:Math.min(3,files.length)},()=>worker()));
       if(manifest!==state.feedMeta)return;
       const items=new Map(state.items.map(x=>[x.id,x]));
       for(const doc of docs){
