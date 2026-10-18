@@ -1,0 +1,332 @@
+/* Radar RSS — mejoras de usabilidad (prueba de usuario, oct. 2026).
+   Se carga al final y solo afina el diseño editorial (body.radar-hybrid):
+   menú en cajón para móvil, buscador global, más noticias por pantalla,
+   tarjetas más limpias y mínimos de accesibilidad (texto ≥12 px, objetivos ≥24 px). */
+
+/* ---------- Barra superior: menú, buscador y frescura de los datos ---------- */
+body.radar-hybrid .topbar{gap:14px}
+body.radar-hybrid .menu-toggle,
+body.radar-hybrid .search-toggle,
+body.radar-hybrid .menu-close{display:none}
+body.radar-hybrid .topbar-caption{flex:0 1 auto}
+body.radar-hybrid .topbar-search{flex:1 1 260px;max-width:420px;min-width:0;margin-left:auto}
+body.radar-hybrid .topbar-search .search-wrap{
+  display:flex;align-items:center;gap:8px;width:100%;min-height:38px;padding:0 10px;
+  background:var(--surface2);border:1px solid var(--line);border-radius:10px;color:var(--muted);
+}
+body.radar-hybrid .topbar-search .search-wrap:focus-within{
+  background:var(--surface);border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 18%,transparent);
+}
+body.radar-hybrid .topbar-search .search-wrap svg{flex:0 0 auto}
+body.radar-hybrid .topbar-search input{
+  flex:1;min-width:0;width:100%;border:0;outline:0;background:transparent;
+  color:var(--text);font-size:14px;padding:8px 0;
+}
+body.radar-hybrid .topbar-search input:focus-visible{outline:0}
+body.radar-hybrid .search-shortcut{
+  font:600 12px/1 var(--font-ui);color:var(--muted);border:1px solid var(--line);
+  border-radius:6px;padding:3px 7px;background:var(--surface);
+}
+body.radar-hybrid .topbar-search .search-wrap:focus-within .search-shortcut{display:none}
+body.radar-hybrid .topbar-actions{margin-left:0}
+body.radar-hybrid .topbar-refresh{font-size:12px}
+body.radar-hybrid .topbar-refresh .update-label{white-space:nowrap;color:var(--muted);font-size:12px}
+body.radar-hybrid .topbar-refresh .refresh-now{width:30px;height:30px;min-width:30px}
+@media(max-width:1180px){
+  body.radar-hybrid .settings-text{display:none}
+  body.radar-hybrid .settings-trigger{width:36px;padding:0;justify-content:center}
+}
+@media(max-width:1050px) and (min-width:951px){
+  body.radar-hybrid .topbar-refresh .update-label{display:none}
+}
+
+/* ---------- Menú lateral como cajón en pantallas pequeñas ---------- */
+.sidebar-backdrop{display:none}
+body.radar-hybrid .sidebar-brand-row{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
+@media(max-width:950px){
+  body.radar-hybrid .menu-toggle{
+    display:grid;place-items:center;flex:0 0 auto;width:40px;height:40px;margin-left:-6px;
+    border:1px solid transparent;border-radius:10px;background:transparent;color:var(--text);
+  }
+  body.radar-hybrid .menu-toggle:hover{background:var(--hover);border-color:var(--line)}
+  body.radar-hybrid .menu-toggle .ui-icon{width:22px;height:22px}
+  body.radar-hybrid .topbar{position:sticky;top:0;z-index:30;min-height:56px;flex-wrap:wrap}
+  body.radar-hybrid .sidebar,
+  body.radar-hybrid.light .sidebar{
+    position:fixed;inset:0 auto 0 0;z-index:60;
+    width:min(86vw,330px);height:100dvh;max-height:none;min-height:0;
+    display:flex;flex-direction:column;overflow:hidden;
+    padding:14px 14px 12px;border-right:1px solid var(--line);border-bottom:0;
+    background:var(--surface2);box-shadow:0 18px 60px rgba(0,0,0,.28);
+    transform:translateX(-105%);visibility:hidden;
+    transition:transform .22s ease,visibility 0s linear .22s;
+  }
+  body.radar-hybrid.nav-open .sidebar{transform:none;visibility:visible;transition:transform .22s ease}
+  body.radar-hybrid .sidebar .sidebar-label,
+  body.radar-hybrid .sidebar .sidebar-bottom{display:block}
+  body.radar-hybrid .sidebar .sidebar-navigation{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain}
+  body.radar-hybrid #categoryNav{display:block;overflow:visible}
+  body.radar-hybrid .sidebar .nav-link{width:100%;white-space:normal;padding:11px 12px;font-size:15px}
+  body.radar-hybrid .sidebar .nav-count{display:inline}
+  body.radar-hybrid .menu-close{
+    display:grid;place-items:center;width:40px;height:40px;flex:0 0 auto;
+    border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--text);
+  }
+  body.radar-hybrid .sidebar-backdrop:not([hidden]){
+    display:block;position:fixed;inset:0;z-index:55;background:rgba(15,17,17,.45);
+  }
+  body.nav-open{overflow:hidden}
+}
+@media(max-width:950px) and (prefers-reduced-motion:reduce){
+  body.radar-hybrid .sidebar,body.radar-hybrid.nav-open .sidebar{transition:none}
+}
+
+/* ---------- Fila de secciones (solo móvil y tableta) ---------- */
+body.radar-hybrid .topic-rail{display:none}
+@media(max-width:950px){
+  body.radar-hybrid .topic-rail{
+    display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;
+    margin:0 calc(-1 * var(--rail-bleed,15px)) 14px;padding:2px var(--rail-bleed,15px) 4px;
+    scroll-padding-inline:var(--rail-bleed,15px);
+  }
+  body.radar-hybrid .topic-rail::-webkit-scrollbar{display:none}
+  body.radar-hybrid .topic-chip{
+    flex:0 0 auto;min-height:36px;padding:7px 14px;border-radius:999px;
+    font-size:14px;font-weight:600;white-space:nowrap;
+  }
+  body.radar-hybrid .topic-chip.active{background:var(--text);border-color:var(--text);color:var(--surface)}
+}
+
+/* ---------- Buscador desplegable en móvil ---------- */
+@media(max-width:710px){
+  body.radar-hybrid .search-toggle{display:grid;place-items:center;width:36px;height:36px;padding:0}
+  body.radar-hybrid .search-toggle .ui-icon{width:19px;height:19px}
+  body.radar-hybrid .topbar-search{display:none;order:10;flex:1 0 100%;max-width:none;margin:0 0 10px}
+  body.radar-hybrid.search-open .topbar-search{display:block}
+  body.radar-hybrid.search-open .search-toggle{background:var(--surface2);border-color:var(--ash)}
+  body.radar-hybrid .search-shortcut{display:none}
+  body.radar-hybrid .topbar-caption{flex:1 1 auto}
+  body.radar-hybrid .topbar-refresh .update-label{display:none}
+  body.radar-hybrid .topbar-refresh{border-left:0;padding-left:0}
+  body.radar-hybrid .topbar-actions{gap:6px}
+}
+
+/* ---------- Densidad: más noticias por pantalla ---------- */
+body.radar-hybrid[data-columns="auto"] .article-grid:not(.list-view){
+  grid-template-columns:repeat(auto-fill,minmax(min(100%,290px),1fr));
+}
+@media(max-width:1450px){
+  body.radar-hybrid[data-columns="auto"] .article-grid:not(.list-view){
+    grid-template-columns:repeat(auto-fill,minmax(min(100%,290px),1fr));
+  }
+}
+@media(max-width:720px){
+  body.radar-hybrid[data-columns="auto"] .article-grid:not(.list-view){
+    grid-template-columns:repeat(auto-fill,minmax(min(100%,290px),1fr));
+  }
+}
+body.radar-hybrid .article-grid:not(.list-view) .cover,
+body.radar-hybrid.light .article-grid:not(.list-view) .cover{aspect-ratio:2/1}
+body.radar-hybrid .article-grid{gap:16px}
+body.radar-hybrid .section-heading{margin-bottom:12px;align-items:flex-end}
+body.radar-hybrid .section-heading h2{font-size:26px;margin:2px 0 3px}
+body.radar-hybrid .section-heading p{display:block;margin:0;font-size:14px;color:var(--muted)}
+body.radar-hybrid .section-eyebrow{display:none}
+body.radar-hybrid .filter-bar{margin-bottom:10px;padding-bottom:10px;flex-wrap:wrap;row-gap:10px}
+body.radar-hybrid .feed-actions{margin:0 0 12px;min-height:0}
+body.radar-hybrid .feed-actions #markAllVisible{min-height:32px;padding:5px 11px;font-size:13px}
+body.radar-hybrid .filter-summary{font-size:12px}
+body.radar-hybrid .main>.status-banner{margin-bottom:14px}
+
+/* ---------- Tarjeta: título como acción principal ---------- */
+body.radar-hybrid .article-card{display:flex;flex-direction:column}
+body.radar-hybrid .article-content{display:flex;flex-direction:column;flex:1;padding:14px 15px 10px}
+body.radar-hybrid .article-category{font-size:12px;margin-bottom:2px}
+body.radar-hybrid .article-title,
+body.radar-hybrid.light .article-title{margin:4px 0 8px;font-size:17px;line-height:1.35}
+body.radar-hybrid .article-title a{display:inline}
+body.radar-hybrid .article-title a::after{content:none}
+body.radar-hybrid .article-excerpt{font-size:14px;margin:0 0 10px}
+body.radar-hybrid .article-also{
+  align-self:flex-start;font-size:12px;font-weight:600;color:var(--muted);
+  background:var(--surface2);border:1px solid var(--line);border-radius:999px;padding:2px 9px;margin:0 0 10px;
+  cursor:help;
+}
+body.radar-hybrid .article-footer{
+  margin-top:auto;display:flex;align-items:center;justify-content:space-between;gap:8px;
+  border-top:1px solid var(--line);padding-top:8px;min-width:0;
+}
+body.radar-hybrid .article-footer .article-meta{
+  display:flex;align-items:baseline;gap:8px;min-width:0;margin:0;flex-wrap:nowrap;
+}
+body.radar-hybrid .article-footer .publisher{
+  font-size:13px;font-weight:650;color:var(--text);min-width:0;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+body.radar-hybrid .article-footer time{font-size:12px;color:var(--muted);white-space:nowrap;flex:0 0 auto}
+body.radar-hybrid .article-footer .article-actions,
+body.radar-hybrid .list-view .article-footer .article-actions,
+body.radar-hybrid .dashboard-feature .article-footer .article-actions{
+  display:flex;gap:2px;border:0;padding:0;margin:0;flex:0 0 auto;
+}
+body.radar-hybrid .article-footer .article-action{
+  display:grid;place-items:center;width:36px;height:36px;min-height:36px;padding:0;
+  border-radius:9px;border:1px solid transparent;background:transparent;color:var(--muted);
+}
+body.radar-hybrid .article-footer .article-action .ui-icon{width:19px;height:19px}
+body.radar-hybrid .article-footer .article-action:hover,
+body.radar-hybrid .article-footer .article-action:focus-visible,
+body.radar-hybrid .article-footer .article-more[aria-expanded="true"]{background:var(--surface2);border-color:var(--line);color:var(--text)}
+body.radar-hybrid .article-footer .article-save.saved{color:var(--accent);background:transparent}
+/* Tarjetas sin imagen: compactas, sin bloque gris ni texto de relleno. */
+body.radar-hybrid .article-card.no-cover .cover{display:none}
+body.radar-hybrid .dashboard-feature .article-card.no-cover:not(:first-child),
+body.radar-hybrid .list-view .article-card.no-cover{display:flex;flex-direction:column}
+body.radar-hybrid .read-article .article-title a{color:var(--muted)}
+body.radar-hybrid .read-article{opacity:1}
+
+/* Menú "⋯" de cada tarjeta */
+.card-menu{
+  position:fixed;z-index:80;min-width:212px;padding:6px;
+  background:var(--surface);color:var(--text);border:1px solid var(--line);border-radius:12px;
+  box-shadow:0 14px 40px rgba(0,0,0,.18);display:flex;flex-direction:column;gap:2px;
+}
+.card-menu[hidden]{display:none}
+.card-menu [role="menuitem"]{
+  display:flex;align-items:center;gap:10px;width:100%;min-height:40px;padding:8px 11px;
+  border:0;border-radius:8px;background:transparent;color:inherit;text-align:left;
+  font:500 14px/1.3 var(--font-ui,inherit);text-decoration:none;cursor:pointer;
+}
+.card-menu [role="menuitem"][hidden]{display:none}
+.card-menu [role="menuitem"]:hover,
+.card-menu [role="menuitem"]:focus-visible{background:var(--surface2);outline:2px solid var(--accent);outline-offset:-2px}
+.card-menu .ui-icon{width:18px;height:18px;color:var(--muted)}
+
+/* ---------- Portada ---------- */
+body.radar-hybrid .dashboard-view{display:flex;flex-direction:column;gap:18px}
+body.radar-hybrid .dashboard-view[hidden]{display:none}
+body.radar-hybrid .dashboard-head h1{font-size:28px;margin:2px 0}
+body.radar-hybrid .dashboard-kicker{display:none}
+body.radar-hybrid .dashboard-head p{font-size:14px}
+body.radar-hybrid .dashboard-panel-head>span{font-size:13px}
+body.radar-hybrid .dashboard-feature .article-card:first-child .cover{height:auto;aspect-ratio:2/1}
+body.radar-hybrid .dashboard-recent{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:28px}
+body.radar-hybrid .dashboard-recent-row,
+body.radar-hybrid .dashboard-folder-row{
+  display:flex;flex-direction:column;gap:3px;padding:10px 0;border-bottom:1px solid var(--line);min-width:0;
+}
+body.radar-hybrid .dashboard-recent-title{
+  display:block;font:620 15px/1.4 var(--font-ui);color:var(--text);padding:2px 0;
+}
+body.radar-hybrid .dashboard-recent-title:hover{text-decoration:underline;text-decoration-color:var(--accent);text-underline-offset:3px}
+body.radar-hybrid .read-article .dashboard-recent-title{color:var(--muted)}
+body.radar-hybrid .dashboard-recent-meta{font-size:12px;color:var(--muted)}
+body.radar-hybrid .dashboard-folders{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,320px),1fr));gap:14px}
+body.radar-hybrid .dashboard-folder{
+  border:1px solid var(--line);border-radius:12px;padding:4px 14px 6px;background:var(--surface);min-width:0;
+}
+body.radar-hybrid .dashboard-folder-head{
+  display:flex;align-items:center;gap:9px;width:100%;min-height:44px;padding:8px 0;
+  border:0;border-bottom:1px solid var(--line);background:transparent;color:var(--text);text-align:left;cursor:pointer;
+}
+body.radar-hybrid .dashboard-folder-head h3{margin:0;font:680 16px/1.2 var(--font-ui);flex:1}
+body.radar-hybrid .dashboard-folder-icon .ui-icon{width:18px;height:18px;color:var(--accent)}
+body.radar-hybrid .dashboard-folder-more{font-size:13px;color:var(--muted)}
+body.radar-hybrid .dashboard-folder-head>.ui-icon{width:16px;height:16px;color:var(--muted)}
+body.radar-hybrid .dashboard-folder-head:hover .dashboard-folder-more{color:var(--accent)}
+body.radar-hybrid .dashboard-folder-row:last-child{border-bottom:0}
+body.radar-hybrid .dashboard-folder .dashboard-recent-title{font-size:14px}
+
+/* ---------- Estado de las fuentes: discreto ---------- */
+body.radar-hybrid .sidebar-feed-status .health-indicator-dot{background:var(--muted)}
+body.radar-hybrid .feed-health-tech{margin:4px 0 0;font-size:12px;color:var(--muted);overflow-wrap:anywhere}
+body.radar-hybrid .feed-health-status{font-size:12px}
+
+/* ---------- Accesibilidad: tamaños mínimos ---------- */
+body.radar-hybrid .brand small,
+body.radar-hybrid .sidebar-label,
+body.radar-hybrid .folder-group-head,
+body.radar-hybrid .folder-group-head span,
+body.radar-hybrid .sidebar-feed-status-heading,
+body.radar-hybrid .health-indicator-label,
+body.radar-hybrid .minimal-button,
+body.radar-hybrid .nav-count,
+body.radar-hybrid .article-category,
+body.radar-hybrid .dashboard-feature .article-card:not(:first-child) .article-category,
+body.radar-hybrid .sidebar-bottom .minimal-button,
+body.radar-hybrid .count-label,
+body.radar-hybrid .mode-tab-count,
+body.radar-hybrid .setting-eyebrow,
+body.radar-hybrid .settings-dialog small,
+body.radar-hybrid .footer,
+body.radar-hybrid .footer span,
+body.radar-hybrid .footer a{font-size:12px}
+body.radar-hybrid .sidebar-label,
+body.radar-hybrid .folder-group-head span,
+body.radar-hybrid .sidebar-feed-status-heading,
+body.radar-hybrid .setting-eyebrow{letter-spacing:.06em}
+body.radar-hybrid .footer a,
+body.radar-hybrid #footerInfo{display:inline-block;padding:4px 2px;min-height:24px}
+body.radar-hybrid .reader-alternative-link{min-height:32px;display:inline-flex;align-items:center}
+
+@media(max-width:950px){
+  body.radar-hybrid .main{--rail-bleed:15px}
+}
+@media(max-width:720px){
+  body.radar-hybrid .dashboard-recent{grid-template-columns:minmax(0,1fr)}
+  body.radar-hybrid .dashboard-head{align-items:flex-start}
+  body.radar-hybrid .dashboard-head h1{font-size:24px}
+  body.radar-hybrid .dashboard-head p{display:none}
+  body.radar-hybrid .dashboard-read-all{min-height:36px}
+  body.radar-hybrid .section-heading h2{font-size:23px}
+  body.radar-hybrid .section-heading p{font-size:13px}
+}
+@media(max-width:530px){
+  body.radar-hybrid .article-title,
+  body.radar-hybrid.light .article-title{font-size:17px}
+  body.radar-hybrid .dashboard-head{flex-direction:column;gap:8px}
+  body.radar-hybrid .dashboard-panel{padding:14px}
+  body.radar-hybrid .filter-bar{gap:8px}
+  body.radar-hybrid .mode-tab{min-height:36px}
+  body.radar-hybrid .mode-tab-count{font-size:12px}
+  body.radar-hybrid .filter-controls{width:100%;flex-wrap:wrap}
+  body.radar-hybrid .source-filter{flex:1 1 140px}
+  body.radar-hybrid .source-filter select{width:100%;max-width:none}
+  body.radar-hybrid .feed-actions{flex-wrap:wrap}
+}
+
+/* Tarjetas de distinta altura: sin huecos vacíos en las que no tienen imagen. */
+body.radar-hybrid .article-grid:not(.list-view){align-items:start}
+body.radar-hybrid .article-card.no-cover .article-excerpt{-webkit-line-clamp:4}
+body.radar-hybrid .dashboard-feature{align-items:stretch}
+body.radar-hybrid .dashboard-feature .article-card:not(:first-child) .article-excerpt{display:-webkit-box;-webkit-line-clamp:3;font-size:13px}
+
+/* El listado tiene su propio h1 (la portada usa el suyo). */
+body.radar-hybrid .section-heading h1{
+  color:var(--text);font:670 26px/1.2 var(--font-ui);letter-spacing:-.03em;margin:2px 0 3px;
+}
+/* Todo el título es objetivo táctil, no solo el texto. */
+body.radar-hybrid .article-title a{display:block;padding:2px 0}
+@media(max-width:720px){body.radar-hybrid .section-heading h1{font-size:23px}}
+/* Móvil: filtros en una sola fila; el selector de columnas no aplica a una columna. */
+@media(max-width:530px){
+  body.radar-hybrid .filter-controls{flex-wrap:nowrap;gap:6px}
+  body.radar-hybrid .filter-controls>label{flex:1 1 0;min-width:0}
+  body.radar-hybrid .filter-controls select{width:100%;min-width:0;max-width:none}
+  body.radar-hybrid #cardsColumnsControl{display:none}
+  body.radar-hybrid .display-controls .layout-switch{padding:2px}
+  body.radar-hybrid .section-heading{align-items:flex-start}
+  body.radar-hybrid .count-label{display:none}
+}
+
+/* Sin imagen (por falta de foto o por preferencia): la tarjeta ocupa todo el ancho. */
+body.radar-hybrid .list-view .article-card.no-cover,
+body.radar-hybrid.hide-images .list-view .article-card,
+body.radar-hybrid.hide-images .dashboard-feature .article-card:not(:first-child){display:flex;flex-direction:column;min-height:0}
+body.radar-hybrid .health-row small{color:var(--text);font-size:12px;font-weight:600}
+body.radar-hybrid .health-row span{color:var(--muted);font-size:13px}
+/* Imagen principal de portada contenida en tabletas y pantallas anchas. */
+body.radar-hybrid .dashboard-feature .article-card:first-child .cover{max-height:300px}
+@media(max-width:1150px){
+  body.radar-hybrid .dashboard-feature .article-card:not(:first-child) .cover{aspect-ratio:2/1;max-height:200px}
+}

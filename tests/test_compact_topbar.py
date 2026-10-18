@@ -14,7 +14,9 @@ class CompactTopbarTests(unittest.TestCase):
     def test_compact_single_header(self):
         html=self.html
         self.assertEqual(html.count('id="refreshCycle"'),1)
-        self.assertEqual(html.count('id="refreshCycleTime"'),1)
+        # La cuenta regresiva se reemplazó por «Actualizado hace…» (se confundía con una hora).
+        self.assertNotIn('id="refreshCycleTime"',html)
+        self.assertIn('function freshnessLabel()',self.app)
         self.assertEqual(html.count('id="refreshNow"'),1)
         self.assertLess(html.index('id="refreshCycle"'),html.index('</header>'))
         self.assertNotIn('id="githubLink"',html)

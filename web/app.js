@@ -8,21 +8,18 @@ const IS_HASHNODE_PREVIEW = PREVIEW_STYLE === 'hashnode';
 const IS_SUBSTACK_PREVIEW = PREVIEW_STYLE === 'substack';
 const IS_STYLE_PREVIEW = IS_HASHNODE_PREVIEW || IS_SUBSTACK_PREVIEW;
 function storeGet(key) { try { return localStorage.getItem(key); } catch { return null; } }
+// El tema sigue al sistema operativo salvo que la persona elija uno explícitamente.
+// Versiones anteriores guardaban "light" en cada visita aunque nadie lo eligiera,
+// por eso solo se respeta lo guardado cuando existe la marca de elección explícita.
+const THEME_EXPLICIT_KEY='radar-theme-explicit';
 function initialTheme(){
   const saved=storeGet('radar-theme');
-  const flag='radar-editorial-theme-v5';
-  // Versiones anteriores guardaban "system" incluso sin interacción.
-  // Migrar una vez a papel claro, sin alterar selecciones explícitas oscuras.
-  if(saved==='system'&&storeGet(flag)!=='migrated'){
-    try{localStorage.setItem(flag,'migrated');localStorage.setItem('radar-theme','light');}catch{}
-    return 'light';
-  }
-  try{localStorage.setItem(flag,'migrated');}catch{}
-  return ['system','light','dark'].includes(saved)?saved:'light';
+  if(storeGet(THEME_EXPLICIT_KEY)==='true'&&['system','light','dark'].includes(saved))return saved;
+  return 'system';
 }
 const state = {
   sources: [], categories: [], items: [], health: [], generated: null,
-  feedMeta:null,historyLoaded:false,historyLoading:false,
+  feedMeta:null,historyLoaded:false,historyLoading:false,historyFailed:false,
   pageView: 'dashboard', category: 'all', feed: '', mode: 'all', layout: storeGet('radar-layout') === 'list' ? 'list' : 'cards',
   theme: initialTheme(),
   search: '', page: 1, ready: false,
@@ -71,7 +68,10 @@ const VECTOR_PATHS={
   undo:'<path d="M3 7v6h6M3 13a9 9 0 1 0 3-7"/>',
   info:'<circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7h.01"/>',
   x:'<path d="M18 6 6 18M6 6l12 12"/>',
-  search:'<circle cx="11" cy="11" r="7"/><path d="m16 16 5 5"/>'
+  search:'<circle cx="11" cy="11" r="7"/><path d="m16 16 5 5"/>',
+  menu:'<path d="M4 6h16M4 12h16M4 18h16"/>',
+  more:'<circle cx="5" cy="12" r="1.3" fill="currentColor"/><circle cx="12" cy="12" r="1.3" fill="currentColor"/><circle cx="19" cy="12" r="1.3" fill="currentColor"/>',
+  'bookmark-filled':'<path d="M6 4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18l-6-4-6 4z" fill="currentColor"/>'
 };
 const CATEGORY_ICONS=['brain','cpu','globe','map','flag','compass'];
 function svgIcon(name){
@@ -115,14 +115,27 @@ function link(url, label, className = '') {
   return node;
 }
 function ageDate(input) {
-  if (!input) return 'Fecha no disponible';
+  if (!input) return 'Sin fecha';
   const dt = new Date(input);
-  if (Number.isNaN(dt.getTime())) return 'Fecha no disponible';
-  const days = Math.max(0, (Date.now() - dt.getTime()) / 86400000);
-  if (days < 1) return 'Hoy';
-  if (days < 2) return 'Ayer';
+  if (Number.isNaN(dt.getTime())) return 'Sin fecha';
+  const minutes = Math.max(0, (Date.now() - dt.getTime()) / 60000);
+  if (minutes < 1) return 'Ahora';
+  if (minutes < 60) return `Hace ${Math.floor(minutes)} min`;
+  const hours = minutes / 60;
+  if (hours < 24) return `Hace ${Math.floor(hours)} h`;
+  if (hours < 48) return 'Ayer';
+  const days = hours / 24;
   if (days < 7) return `Hace ${Math.floor(days)} días`;
-  return new Intl.DateTimeFormat('es-CL', { day: '2-digit', month: 'short', year: 'numeric' }).format(dt);
+  return new Intl.DateTimeFormat('es-CL', { day: 'numeric', month: 'short', year: 'numeric' }).format(dt);
+}
+function timeNode(input, className='') {
+  const node = mk('time', className, ageDate(input));
+  const dt = new Date(input || '');
+  if (!Number.isNaN(dt.getTime())) {
+    node.dateTime = dt.toISOString();
+    node.title = new Intl.DateTimeFormat('es-CL', { dateStyle: 'full', timeStyle: 'short' }).format(dt);
+  }
+  return node;
 }
 function shortDate(input) {
   if (!input) return '—';
@@ -143,12 +156,17 @@ function categoryLabel(cat) {
   return idx >= 0 ? (CATEGORY_LABELS[idx] || cat.replace(/^\d+\s*-\s*/, '')) : String(cat || 'Noticias');
 }
 const browserTheme = window.matchMedia?.('(prefers-color-scheme: light)');
-function setTheme(theme) {
+function setTheme(theme, explicit=false) {
   state.theme = ['light','dark','system'].includes(theme) ? theme : 'system';
   const light=IS_STYLE_PREVIEW || state.theme==='light' || (state.theme==='system' && Boolean(browserTheme?.matches));
   document.body.classList.toggle('light',light);
   $('themeGlyph').replaceChildren(svgIcon(light?'moon':'sun'));
-  if(!IS_STYLE_PREVIEW){try{localStorage.setItem('radar-theme',state.theme);}catch{}}
+  $('themeToggle').setAttribute('aria-label',light?'Cambiar a modo oscuro':'Cambiar a modo claro');
+  $('themeToggle').title=light?'Modo oscuro':'Modo claro';
+  if(!IS_STYLE_PREVIEW)document.querySelector('meta[name="theme-color"]')?.setAttribute('content',light?'#ffffff':'#181b1b');
+  if(explicit&&!IS_STYLE_PREVIEW){
+    try{localStorage.setItem('radar-theme',state.theme);localStorage.setItem(THEME_EXPLICIT_KEY,'true');}catch{}
+  }
 }
 function setColumns(value){
   state.columns=['auto','2','3','4','5','6'].includes(value)?value:'auto';
@@ -263,15 +281,16 @@ function renderFeedHealth(){
     empty=state.health.filter(x=>x.state==='empty').length,
     broken=state.health.filter(x=>x.state==='error').length,
     stale=state.health.filter(x=>x.state==='stale').length;
-  $('healthSummary').textContent=`${total} fuentes comprobadas · ${ok} correctas · ${empty} sin artículos · ${broken} con error · ${stale} antiguas`;
+  $('healthSummary').textContent=total?`${ok} de ${total} fuentes se leyeron bien · ${broken} no disponibles · ${empty} sin noticias · ${stale} sin novedades hace más de un año`:'';
   const list=$('healthFeedList');list.replaceChildren();
   const issues=state.health.filter(x=>x.state!=='ok');
   if(!issues.length){list.append(mk('p','setting-hint',total?'Sin incidencias detectadas en la última actualización.':'Aún no hay un diagnóstico disponible.'));return;}
   for(const source of issues){
     const row=mk('div','health-row');
     const heading=mk('strong','',sourceLabel(source.name,'Fuente'));
-    const meta=mk('small','',source.state==='error'?'Error de lectura':source.state==='stale'?'Sin publicar desde hace más de un año':'Feed sin artículos');
-    const detail=mk('span','',source.error|| (source.last_published_at ? 'Último artículo: '+shortDate(source.last_published_at):'Sin fecha de publicación detectada'));
+    const meta=mk('small','',feedProblemLabel(source));
+    const detail=mk('span','',friendlyFeedProblem(source));
+    if(source.error)detail.title='Detalle técnico: '+source.error;
     row.append(heading,meta,detail);list.append(row);
   }
 }
@@ -352,7 +371,7 @@ function initSettingsHandlers(){
   $('settingsDone').addEventListener('click',()=>dialog.close());
   dialog.addEventListener('click',e=>{if(e.target===dialog)dialog.close();});
   document.querySelectorAll('[data-settings-tab]').forEach(el=>el.addEventListener('click',()=>selectedTab(el.dataset.settingsTab)));
-  $('settingTheme').addEventListener('change',e=>setTheme(e.target.value));
+  $('settingTheme').addEventListener('change',e=>setTheme(e.target.value,true));
   browserTheme?.addEventListener?.('change',()=>{if(state.theme==='system')setTheme('system');});
   $('settingLayout').addEventListener('change',e=>{state.layout=e.target.value;savePref('layout',state.layout);state.page=1;applyDisplaySettings();render();});
   $('settingColumns').addEventListener('change',e=>setColumns(e.target.value));
@@ -399,14 +418,14 @@ function initSettingsHandlers(){
         state[k]=new Set((Array.isArray(data[k])?data[k]:[]).filter(x=>typeof x==='string'&&x.length<150&&(!onlyValid||valid.has(x))).slice(-4000));persist(key,state[k]);
       }
       for(const [key,value] of [['layout',state.layout],['columns',state.columns],['theme',state.theme],['density',state.density],['font',state.fontSize],['page-size',state.pageSize],['max-age',state.maxAge],['show-hero',state.showHero],['show-images',state.showImages],['show-summaries',state.showSummaries],['hide-read',state.hideRead],['new-tab',state.newTab],['sort',state.sort],['start-mode',state.startMode],['keywords',state.mutedKeywords]])savePref(key,value);
-      state.mode=state.startMode;state.page=1;setTheme(state.theme);applyDisplaySettings();refreshFeedUI();syncSettings();selectedTab('data');$('dataNotice').textContent='Preferencias y datos importados correctamente.';
+      state.mode=state.startMode;state.page=1;setTheme(state.theme,true);applyDisplaySettings();refreshFeedUI();syncSettings();selectedTab('data');$('dataNotice').textContent='Preferencias y datos importados correctamente.';
     }catch{$('dataNotice').textContent='No se pudo importar. Utiliza un respaldo JSON generado por Radar RSS.';}
   });
   $('clearRead').addEventListener('click',()=>{if(confirm('¿Borrar el historial de lectura de este navegador?')){state.read.clear();persist('radar-read',state.read);state.page=1;render();updateDataCounts();$('dataNotice').textContent='Historial borrado.';}});
   $('clearSaved').addEventListener('click',()=>{if(confirm('¿Vaciar los artículos guardados en este navegador?')){state.saved.clear();persist('radar-saved',state.saved);state.page=1;render();updateDataCounts();$('dataNotice').textContent='Guardadas vaciadas.';}});
   $('resetSettings').addEventListener('click',()=>{
     if(!confirm('¿Restablecer las preferencias? Tus artículos leídos y guardados no se borrarán.'))return;
-    for(const key of ['layout','columns','theme','density','font','page-size','max-age','show-hero','show-images','show-summaries','hide-read','new-tab','sort','start-mode','keywords','hidden-sources','sidebar-width']){try{localStorage.removeItem('radar-'+key);}catch{}}
+    for(const key of ['layout','columns','theme','density','font','page-size','max-age','show-hero','show-images','show-summaries','hide-read','new-tab','sort','start-mode','keywords','hidden-sources','sidebar-width','theme-explicit']){try{localStorage.removeItem('radar-'+key);}catch{}}
     state.theme='system';state.layout='cards';state.columns='auto';state.density='comfortable';state.fontSize='normal';state.pageSize=36;state.maxAge=0;
     state.showHero=false;state.showImages=true;state.showSummaries=true;state.hideRead=false;state.newTab=true;state.sort='newest';state.startMode='all';state.mode='all';state.mutedKeywords='';state.hiddenSources.clear();state.page=1;
     setTheme('system');applyDisplaySettings();$('settingsSourceSearch').value='';refreshFeedUI();syncSettings();selectedTab('data');$('dataNotice').textContent='Preferencias restablecidas.';
@@ -454,13 +473,50 @@ function buildNav() {
 }
 function renderTopicRail(){
  const rail=$('topicRail');rail.replaceChildren();
- const entries=[{id:'all',label:'Todos los temas',icon:'newspaper'},...state.categories.map((id,i)=>({id,label:categoryLabel(id),icon:CATEGORY_ICONS[i]||'grid'}))];
+ const entries=[{id:'home',label:'Inicio'},{id:'all',label:'Todas'},...state.categories.map(id=>({id,label:categoryLabel(id)}))];
+ let current=null;
  entries.forEach(entry=>{
-  const active=state.pageView==='feed'&&state.category===entry.id;
-  const button=mk('button','topic-chip'+(active?' active':''));button.type='button';
-  button.setAttribute('aria-pressed',String(active));button.append(svgIcon(entry.icon),mk('span','',entry.label));
+  const active=entry.id==='home'?state.pageView==='dashboard':state.pageView==='feed'&&state.category===entry.id;
+  const button=mk('button','topic-chip'+(active?' active':''),entry.label);button.type='button';
+  button.setAttribute('aria-current',active?'page':'false');
   button.addEventListener('click',()=>goTo(entry.id));rail.append(button);
+  if(active)current=button;
  });
+ // Mantener visible la sección activa sin mover la página verticalmente.
+ if(current)requestAnimationFrame(()=>{rail.scrollLeft=Math.max(0,current.offsetLeft-rail.offsetLeft-16);});
+}
+// En pantallas de 950 px o menos, el menú lateral es un cajón que se abre con un botón.
+// Cerrado queda inerte (fuera del orden de tabulación); abierto, la página queda inerte.
+const MOBILE_NAV=window.matchMedia('(max-width: 950px)');
+function setNavOpen(open,restoreFocus=true){
+  const sidebar=$('appSidebar'),page=document.querySelector('.page');
+  if(!sidebar||!page)return;
+  const mobile=MOBILE_NAV.matches,wasOpen=document.body.classList.contains('nav-open');
+  const next=mobile&&open;
+  document.body.classList.toggle('nav-open',next);
+  $('menuToggle').setAttribute('aria-expanded',String(next));
+  $('sidebarBackdrop').hidden=!next;
+  sidebar.inert=mobile&&!next;
+  page.inert=next;
+  if(mobile)sidebar.setAttribute('aria-modal',String(next));else sidebar.removeAttribute('aria-modal');
+  if(next&&!wasOpen){
+    (sidebar.querySelector('.nav-link.active')||sidebar.querySelector('.nav-link'))?.focus({preventScroll:true});
+  }else if(!next&&wasOpen&&restoreFocus){
+    $('menuToggle').focus();
+  }
+}
+function initMobileNav(){
+  $('menuToggle').addEventListener('click',()=>setNavOpen(!document.body.classList.contains('nav-open')));
+  $('menuClose').addEventListener('click',()=>setNavOpen(false));
+  $('sidebarBackdrop').addEventListener('click',()=>setNavOpen(false));
+  document.addEventListener('keydown',event=>{
+    if(event.key==='Escape'&&document.body.classList.contains('nav-open')&&!document.querySelector('dialog[open]')){
+      event.preventDefault();setNavOpen(false);
+    }
+  });
+  const sync=()=>setNavOpen(false,false);
+  MOBILE_NAV.addEventListener?.('change',sync);
+  sync();
 }
 function goTo(target){
   const hash=target==='home'?'#inicio':target==='all'?'#noticias':'#categoria/'+encodeURIComponent(target);
@@ -468,12 +524,13 @@ function goTo(target){
   else window.location.hash=hash;
 }
 function navigateFromHash(){
-  closeColumnsMenu();
+  closeColumnsMenu();closeCardMenu();setNavOpen(false,false);
   const hash=decodeURIComponent(window.location.hash.slice(1));
   state.pageView=(!hash||hash==='inicio')?'dashboard':'feed';
   state.category=hash.startsWith('categoria/')&&state.categories.includes(hash.slice(10))?hash.slice(10):'all';
   state.feed='';
   state.page=1;progressiveLoads=0;
+  baseDescription=null;
   updateHeader();buildNav();fillSelect();
   $('dashboardView').hidden=state.pageView!=='dashboard';
   $('feedView').hidden=state.pageView!=='feed';
@@ -494,7 +551,37 @@ function updateHeader() {
   $('feedHeading').textContent = name;
   $('topbarSection').textContent = state.pageView === 'dashboard' ? 'Inicio' : name;
   $('sectionEyebrow').textContent = state.category === 'all' ? 'SELECCIÓN EDITORIAL' : 'EXPLORAR CATEGORÍA';
-  $('feedDescription').textContent = state.category === 'all' ? 'Titulares y novedades de todas las fuentes.' : `Publicaciones seleccionadas de ${name.toLowerCase()}.`;
+  $('feedDescription').textContent = state.category === 'all' ? 'Titulares y novedades de todas las fuentes.' : `Noticias recientes de ${name}.`;
+}
+// Mientras hay una búsqueda, la descripción muestra los resultados; al borrarla se
+// recupera la descripción de la sección (incluidas las de carpetas personales).
+let baseDescription=null;
+function describeSearch(query,count){
+  const node=$('feedDescription');
+  if(query){
+    if(baseDescription===null)baseDescription=node.textContent;
+    node.textContent=`${format.format(count)} ${count===1?'resultado':'resultados'} para «${query}»`+(state.historyLoading?' · buscando en noticias anteriores…':'');
+  }else if(baseDescription!==null){
+    node.textContent=baseDescription;baseDescription=null;
+  }
+}
+// Traducción de errores técnicos del recolector a frases comprensibles.
+function friendlyFeedProblem(source){
+  const raw=String(source?.error||'');
+  if(source?.state==='stale')return 'El medio no publica en su RSS desde hace más de un año.';
+  if(source?.state==='empty')return 'El RSS respondió, pero sin noticias.';
+  if(/\b(401|403)\b|Forbidden/i.test(raw))return 'El medio no permite la lectura automática de su RSS.';
+  if(/\b(404|410)\b|Not Found/i.test(raw))return 'La dirección del RSS ya no existe.';
+  if(/\b429\b/.test(raw))return 'El medio limitó las consultas; se reintentará en la próxima revisión.';
+  if(/\b5\d\d\b/.test(raw))return 'El sitio del medio tuvo un error temporal.';
+  if(/demasiado grande/i.test(raw))return 'El RSS es demasiado pesado para procesarlo.';
+  if(/no válido|interpretables|XML/i.test(raw))return 'El RSS tiene un formato que no se pudo leer.';
+  if(/Timeout|timed out|Connection|SSL|Name or service|resolve/i.test(raw))return 'El sitio no respondió a tiempo.';
+  if(/no público|no autorizado|redirecci/i.test(raw))return 'El RSS redirige a una dirección no permitida.';
+  return 'No se pudo leer en la última revisión.';
+}
+function feedProblemLabel(source){
+  return source.state==='stale'?'Sin novedades':source.state==='empty'?'Sin noticias':'No disponible';
 }
 // Avisos discretos y descartables. La preferencia solo es local a este navegador.
 function openFeedHealth() {
@@ -506,8 +593,8 @@ function openFeedHealth() {
   const empty=issues.filter(x=>x.state==='empty').length;
   const stale=issues.filter(x=>x.state==='stale').length;
   $('feedHealthOverview').textContent=state.health.length
-    ? `${state.health.length} fuentes revisadas · ${ok} correctas · ${errors} con error · ${empty} sin artículos · ${stale} desactualizadas`
-    : 'Todavía no hay datos del último diagnóstico de RSS.';
+    ? `${ok} de ${state.health.length} fuentes se leyeron bien en la última revisión.`+(issues.length?` ${issues.length} no ${issues.length===1?'estuvo disponible':'estuvieron disponibles'}; el resto de las noticias no se ve afectado.`:'')
+    : 'Todavía no hay datos de la última revisión.';
   list.replaceChildren();
   if(!issues.length){
     list.append(mk('p','feed-health-empty',state.health.length?'No hay incidencias pendientes.':'El diagnóstico estará disponible después de recopilar los feeds.'));
@@ -515,12 +602,12 @@ function openFeedHealth() {
     for(const source of issues){
       const row=mk('article','feed-health-item');
       const head=mk('div','feed-health-item-head');
-      const label=source.state==='error'?'Error de lectura':source.state==='stale'?'Última publicación antigua':'Sin artículos recientes';
-      head.append(mk('strong','',sourceLabel(source.name)),mk('span','feed-health-status',label));
-      const detail=source.error || (source.last_published_at
-        ? 'Último artículo publicado: '+shortDate(source.last_published_at)
-        : 'No se dispone de información adicional sobre esta incidencia.');
-      row.append(head,mk('p','feed-health-error',detail));
+      head.append(mk('strong','',sourceLabel(source.name)),mk('span','feed-health-status',feedProblemLabel(source)));
+      row.append(head,mk('p','feed-health-error',friendlyFeedProblem(source)));
+      const extra=[];
+      if(source.last_success_at)extra.push('Última lectura correcta: '+shortDate(source.last_success_at));
+      if(source.error)extra.push('Detalle técnico: '+source.error);
+      if(extra.length)row.append(mk('p','feed-health-tech',extra.join(' · ')));
       const original=safeURL(source.url||source.xmlUrl||source.xml_url||'');
       if(original){
         const a=link(original,'Consultar fuente RSS','feed-health-source-link');a.append(svgIcon('external'));
@@ -546,29 +633,24 @@ function statusSummary() {
   indicator.hidden=true;
   section.hidden=true;
   if (!state.ready) {
-    showFeedNotice('No se pudieron cargar las noticias. Comprueba GitHub Pages y vuelve a intentarlo.', 'load-error', false);
+    showFeedNotice('No se pudieron cargar las noticias. Revisa tu conexión y vuelve a intentarlo en unos minutos.', 'load-error', false);
     return;
   }
   if (!state.generated && !state.items.length) {
-    showFeedNotice('Sin noticias todavía: falta completar la primera recopilación.', 'awaiting-first-run', false);
+    showFeedNotice('Todavía no hay noticias: la primera recopilación aún no termina.', 'awaiting-first-run', false);
     return;
   }
+  // Las fuentes caídas no impiden leer el resto: se informa solo en el menú lateral
+  // (y en Configuración), sin avisos sobre las noticias.
   const issues=state.health.filter(x=>x.state==='error'||x.state==='stale');
   if (!issues.length) return;
-  const errors=issues.filter(x=>x.state==='error').length;
-  const stale=issues.length-errors;
-  const labels=[];
-  if(errors)labels.push(`${errors} ${errors===1?'fuente con error de lectura':'fuentes con error de lectura'}`);
-  if(stale)labels.push(`${stale} ${stale===1?'fuente desactualizada':'fuentes desactualizadas'}`);
-  // Sin marcas temporales: un refresco normal no vuelve a mostrar el aviso ya cerrado.
-  // Si cambia la lista de feeds afectados, aparece de nuevo.
-  const signature=JSON.stringify(issues.map(x=>[String(x.id||x.url||x.name||''),x.state]).sort((a,b)=>a[0].localeCompare(b[0])||a[1].localeCompare(b[1])));
   $('feedHealthCount').textContent=String(issues.length);
-  indicator.setAttribute('aria-label',`${issues.length} fuentes RSS requieren revisión. Abrir diagnóstico`);
-  indicator.title=labels.join(' · ')+'. Abrir diagnóstico RSS.';
+  const label=issues.length===1?'fuente no disponible':'fuentes no disponibles';
+  indicator.querySelector('.health-indicator-label').textContent=label;
+  indicator.setAttribute('aria-label',`${issues.length} ${label}. Ver detalles`);
+  indicator.title='Ver qué fuentes no se pudieron leer en la última revisión';
   indicator.hidden=false;
   section.hidden=false;
-  showFeedNotice(labels.join(' · ')+'.',signature,true);
 }
 function applyFilters(mode=state.mode) {
   const query=stripAccents(state.search.trim());
@@ -605,11 +687,21 @@ function dashboardEligible(){
     return !words.some(word=>text.includes(word));
   }).sort((a,b)=>new Date(b.published_at||b.first_seen_at||0)-new Date(a.published_at||a.first_seen_at||0));
 }
+function headlineRow(item,className='dashboard-recent-row'){
+  const row=mk('div',className+(state.read.has(item.id)?' read-article':''));
+  row.dataset.articleId=item.id;
+  const title=link(item.url,item.title||'Sin título','dashboard-recent-title');
+  title.addEventListener('click',event=>openArticleReader(item,event));
+  const info=mk('span','dashboard-recent-meta');
+  info.append(mk('span','',sourceLabel(item.publisher||item.source)),document.createTextNode(' · '),timeNode(item.published_at));
+  row.append(title,info);
+  return row;
+}
 function renderDashboard(){
   const feature=$('dashboardFeature');
   const recent=$('dashboardRecent');
-  const categories=$('dashboardCategories');
-  if(!feature||!recent||!categories)return;
+  const folders=$('dashboardFolders');
+  if(!feature||!recent||!folders)return;
   const items=dashboardEligible();
   const top=[],seen=new Set();
   for(const item of items){
@@ -633,43 +725,50 @@ function renderDashboard(){
    const title=link(story.url,story.title||'Sin título','dashboard-saved-title');title.target='_blank';title.addEventListener('click',event=>openArticleReader(story,event));
    content.append(title,mk('span','dashboard-saved-meta',sourceLabel(story.publisher||story.source)));row.append(image,content);return row;
   }));
-  const categoryNodes=state.categories.map((cat,i)=>{
-    const shown=state.sources.filter(s=>s.category===cat&&!state.hiddenSources.has(s.id));
-    const count=items.filter(item=>(item.categories||[]).includes(cat)).length;
-    const button=mk('button','dashboard-category');
-    button.type='button'; button.disabled=shown.length===0;
-    const label=mk('span','dashboard-category-label',categoryLabel(cat));
-    const countText=mk('span','dashboard-category-meta',format.format(count)+' noticias · '+shown.length+' fuentes');
-    const symbol=mk('span','dashboard-category-icon');symbol.append(svgIcon(CATEGORY_ICONS[i]||'grid'));
-    const arrow=mk('span','dashboard-category-arrow');arrow.append(svgIcon('arrow-right'));
-    button.append(symbol,label,countText,arrow);
-    button.addEventListener('click',()=>goTo(cat));
-    return button;
-  });
-  categories.replaceChildren(...categoryNodes);
-  const topIds=new Set(top.map(x=>x.id));
-  const last=items.filter(x=>!topIds.has(x.id)).slice(0,6);
+  // Titulares compactos: más noticias por pantalla sin repetir las de portada.
+  const used=new Set(top.map(x=>x.id));
+  const last=items.filter(x=>!used.has(x.id)).slice(0,8);
+  last.forEach(x=>used.add(x.id));
   if(!last.length)recent.replaceChildren(mk('p','dashboard-empty','Todavía no hay más publicaciones.'));
-  else recent.replaceChildren(...last.map(item=>{
-    const row=mk('div','dashboard-recent-row');
-    const title=link(item.url,item.title||'Sin título','dashboard-recent-title');
-    title.target='_blank';
-    title.addEventListener('click',event=>openArticleReader(item,event));
-    const info=mk('span','dashboard-recent-meta',sourceLabel(item.publisher||item.source)+' · '+ageDate(item.published_at));
-    row.append(title,info);
-    return row;
-  }));
-  const errors=state.health.filter(s=>s.state==='error').length;
-  const empty=state.health.filter(s=>s.state==='empty').length;
-  const stale=state.health.filter(s=>s.state==='stale').length;
-  const ok=state.health.filter(s=>s.state==='ok').length;
-  $('dashboardHealthText').textContent=state.health.length
-    ? `${ok} fuentes operativas · ${errors} con error · ${empty} sin artículos · ${stale} desactualizadas. Diagnóstico de la última recopilación.`
-    : 'Aún no hay datos de diagnóstico del recolector.';
+  else recent.replaceChildren(...last.map(item=>headlineRow(item)));
+  const blocks=[];
+  state.categories.forEach((cat,i)=>{
+    const shown=state.sources.some(s=>s.category===cat&&!state.hiddenSources.has(s.id));
+    if(!shown)return;
+    const news=items.filter(item=>(item.categories||[]).includes(cat)&&!used.has(item.id)).slice(0,4);
+    if(!news.length)return;
+    news.forEach(x=>used.add(x.id));
+    const block=mk('section','dashboard-folder');
+    const head=mk('button','dashboard-folder-head');head.type='button';
+    const icon=mk('span','dashboard-folder-icon');icon.append(svgIcon(CATEGORY_ICONS[i]||'grid'));
+    head.append(icon,mk('h3','',categoryLabel(cat)),mk('span','dashboard-folder-more','Ver todo'),svgIcon('arrow-right'));
+    head.setAttribute('aria-label','Ver todas las noticias de '+categoryLabel(cat));
+    head.addEventListener('click',()=>goTo(cat));
+    const list=mk('div','dashboard-folder-list');
+    list.append(...news.map(item=>headlineRow(item,'dashboard-folder-row')));
+    block.append(head,list);blocks.push(block);
+  });
+  folders.replaceChildren(...blocks);
+  folders.closest('.dashboard-panel').hidden=!blocks.length;
 }
 
 function emptyState(filtered) {
   const isEmpty = !state.items.length;
+  if (!isEmpty && state.search.trim() && state.historyLoading) {
+    const el = mk('div','empty-state');
+    const symbol=mk('div','empty-icon');symbol.append(svgIcon('search'));
+    el.append(symbol, mk('h3','','Buscando en noticias anteriores…'), mk('p','','Revisamos el archivo completo de los últimos 45 días.'));
+    return el;
+  }
+  if (!isEmpty && state.search.trim()) {
+    const el = mk('div','empty-state');
+    const symbol=mk('div','empty-icon');symbol.append(svgIcon('search'));
+    const clear=mk('button','settings-secondary','Borrar búsqueda');clear.type='button';
+    clear.addEventListener('click',()=>{$('searchInput').value='';state.search='';state.page=1;render();$('searchInput').focus();});
+    el.append(symbol, mk('h3','',`Sin resultados para «${state.search.trim()}»`),
+      mk('p','',state.category==='all'?'Prueba con otras palabras o revisa la ortografía.':'Prueba en «Todas las noticias» o con otras palabras.'), clear);
+    return el;
+  }
   const el = mk('div','empty-state');
   const symbol=mk('div','empty-icon');symbol.append(svgIcon(isEmpty?'rss':'search'));
   el.append(symbol,
@@ -786,71 +885,118 @@ function initArticleReader(){
     markRead(activeReaderItem.id,true);
   });
 }
+// Tarjeta: el título y la imagen abren la vista previa; Guardar queda a mano y
+// el resto de acciones vive en un menú "⋯" para no repetir cuatro botones por tarjeta.
 function card(item) {
   const isRead=state.read.has(item.id);
-  const el=mk('article','article-card'+(isRead?' read-article':''));el.dataset.articleId=item.id;
-  const cover=mk('a','cover'); cover.href=safeURL(item.url)||'#';cover.target=state.newTab?'_blank':'_self';cover.rel='noopener noreferrer external';cover.referrerPolicy='no-referrer';
-  cover.setAttribute('aria-label','Vista previa: '+(item.title||'Noticia'));
-  cover.addEventListener('click',event=>openArticleReader(item,event));
-  if(safeURL(item.image)){
-    const img=document.createElement('img');img.src=item.image;img.alt='';img.loading='lazy';img.referrerPolicy='no-referrer';
-    img.addEventListener('error',()=>{img.remove();cover.prepend(mk('div','cover-fallback','RADAR'));},{once:true});cover.append(img);
-  }else{cover.append(mk('div','cover-fallback','RADAR'));}
+  const hasImage=Boolean(safeURL(item.image));
+  const el=mk('article','article-card'+(isRead?' read-article':'')+(hasImage?'':' no-cover'));el.dataset.articleId=item.id;
+  if(hasImage){
+    const cover=mk('a','cover'); cover.href=safeURL(item.url)||'#';cover.target=state.newTab?'_blank':'_self';cover.rel='noopener noreferrer external';cover.referrerPolicy='no-referrer';
+    cover.tabIndex=-1;cover.setAttribute('aria-hidden','true');
+    cover.addEventListener('click',event=>openArticleReader(item,event));
+    const img=document.createElement('img');img.src=item.image;img.alt='';img.loading='lazy';img.decoding='async';img.referrerPolicy='no-referrer';
+    img.addEventListener('error',()=>{cover.remove();el.classList.add('no-cover');},{once:true});
+    cover.append(img);el.append(cover);
+  }
   const category=(item.categories||[])[0]||'';
   const content=mk('div','article-content');
-  const meta=mk('div','article-meta');
-  meta.append(mk('span','publisher',sourceLabel(item.publisher||item.source)),mk('time','',ageDate(item.published_at)));
   const title=mk('h3','article-title');
   const titleLink=link(item.url,item.title||'Sin título');
-  titleLink.target='_blank';titleLink.addEventListener('click',event=>openArticleReader(item,event));
+  titleLink.addEventListener('click',event=>openArticleReader(item,event));
   title.append(titleLink);
-  const excerpt=mk('p','article-excerpt',item.summary||'Accede a la noticia original para leer el contenido completo.');
+  content.append(mk('span','article-category',categoryLabel(category)),title);
+  const summary=String(item.summary||'').trim();
+  if(summary)content.append(mk('p','article-excerpt',summary));
+  const others=Array.isArray(item.also_in)?item.also_in.filter(x=>safeURL(x.url)):[];
+  if(others.length){
+    const also=mk('span','article-also',`También en ${others.length} ${others.length===1?'medio':'medios'}`);
+    also.title=others.slice(0,8).map(x=>sourceLabel(x.publisher,'Otro medio')).join(' · ');
+    content.append(also);
+  }
+  const footer=mk('div','article-footer');
+  const meta=mk('div','article-meta');
+  meta.append(mk('span','publisher',sourceLabel(item.publisher||item.source)),timeNode(item.published_at));
   const actions=mk('div','article-actions');
   actions.setAttribute('role','group');actions.setAttribute('aria-label','Acciones de esta noticia');
-  const read=link(item.url,'','article-action article-open');
-  read.target='_blank';read.title='Abrir vista previa';read.setAttribute('aria-label','Leer vista previa de la noticia');
-  const symbol=mk('span','article-action-icon');symbol.setAttribute('aria-hidden','true');symbol.append(svgIcon('external'));
-  read.append(symbol,mk('span','article-action-label','Leer'));
-  read.addEventListener('click',event=>openArticleReader(item,event));
-  const share=articleAction('share','Compartir','article-share');
-  share.addEventListener('click',()=>{void shareArticle(item);});
   const saved=state.saved.has(item.id);
-  const save=articleAction('bookmark',saved?'Quitar de guardadas':'Guardar','article-save'+(saved?' saved':''));
-  save.setAttribute('aria-pressed',String(saved));
+  const save=mk('button','article-action article-save'+(saved?' saved':''));save.type='button';
+  const saveLabel=saved?'Quitar de guardadas':'Guardar para después';
+  save.title=saveLabel;save.setAttribute('aria-label',saveLabel+': '+(item.title||'noticia'));save.setAttribute('aria-pressed',String(saved));
+  save.append(svgIcon(saved?'bookmark-filled':'bookmark'));
   save.addEventListener('click',()=>{
     if(state.saved.has(item.id))state.saved.delete(item.id);else state.saved.add(item.id);
     persist('radar-saved',state.saved);
     render();
     actionToast(state.saved.has(item.id)?'Noticia guardada.':'Noticia quitada de guardadas.');
   });
-  const mark=articleAction(isRead?'undo':'check',isRead?'Marcar no leída':'Marcar leída','article-read-toggle');
-  mark.setAttribute('aria-pressed',String(isRead));
-  mark.addEventListener('click',()=>markRead(item.id,!state.read.has(item.id)));
-  actions.append(read,share,save,mark);
-  content.append(mk('span','article-category',categoryLabel(category)),meta,title,excerpt);
-  const others=Array.isArray(item.also_in)?item.also_in.filter(x=>safeURL(x.url)).slice(0,3):[];
-  if(others.length){
-    const line=mk('div','article-also');
-    line.append(mk('span','','También en: '));
-    others.forEach((alt,index)=>{if(index)line.append(document.createTextNode(' · '));line.append(link(alt.url,sourceLabel(alt.publisher,'Otro medio')));});
-    content.append(line);
-  }
-  content.append(actions);
-  el.append(cover,content);return el;
+  const more=mk('button','article-action article-more');more.type='button';
+  more.title='Más acciones';more.setAttribute('aria-label','Más acciones: '+(item.title||'noticia'));
+  more.setAttribute('aria-haspopup','menu');more.setAttribute('aria-expanded','false');more.setAttribute('aria-controls','cardMenu');
+  more.append(svgIcon('more'));
+  more.addEventListener('click',()=>toggleCardMenu(item,more));
+  actions.append(save,more);
+  footer.append(meta,actions);
+  content.append(footer);
+  el.append(content);return el;
+}
+let cardMenuItem=null,cardMenuAnchor=null;
+function closeCardMenu(restoreFocus=false){
+  const menu=$('cardMenu');
+  if(!menu||menu.hidden)return;
+  menu.hidden=true;
+  cardMenuAnchor?.setAttribute('aria-expanded','false');
+  if(restoreFocus&&cardMenuAnchor?.isConnected)cardMenuAnchor.focus();
+  cardMenuItem=null;cardMenuAnchor=null;
+}
+function toggleCardMenu(item,anchor){
+  const menu=$('cardMenu');
+  if(!menu.hidden&&cardMenuAnchor===anchor){closeCardMenu(true);return;}
+  closeCardMenu();
+  cardMenuItem=item;cardMenuAnchor=anchor;
+  const isRead=state.read.has(item.id);
+  $('cardMenuReadLabel').textContent=isRead?'Marcar como no leída':'Marcar como leída';
+  menu.querySelector('[data-card-action="read"] .ui-icon-slot').replaceChildren(svgIcon(isRead?'undo':'check'));
+  const open=$('cardMenuOpen'),url=safeURL(item.url);
+  open.hidden=!url;open.href=url||'#';
+  menu.hidden=false;anchor.setAttribute('aria-expanded','true');
+  const r=anchor.getBoundingClientRect(),w=menu.offsetWidth,h=menu.offsetHeight;
+  const left=Math.min(Math.max(8,r.right-w),window.innerWidth-w-8);
+  const below=r.bottom+6+h<=window.innerHeight-8;
+  menu.style.left=left+'px';
+  menu.style.top=(below?r.bottom+6:Math.max(8,r.top-h-6))+'px';
+  menu.querySelector('[role="menuitem"]:not([hidden])')?.focus();
+}
+function initCardMenu(){
+  const menu=$('cardMenu');
+  const entries=()=>[...menu.querySelectorAll('[role="menuitem"]:not([hidden])')];
+  menu.addEventListener('click',event=>{
+    const target=event.target.closest('[data-card-action]');
+    if(!target||!cardMenuItem)return;
+    const item=cardMenuItem,action=target.dataset.cardAction;
+    if(action==='share'){closeCardMenu(true);void shareArticle(item);}
+    else if(action==='read'){const next=!state.read.has(item.id);closeCardMenu(true);markRead(item.id,next);actionToast(next?'Marcada como leída.':'Marcada como no leída.');}
+    else if(action==='open'){markRead(item.id,true);closeCardMenu();}
+  });
+  menu.addEventListener('keydown',event=>{
+    const list=entries(),index=list.indexOf(document.activeElement);
+    if(['ArrowDown','ArrowUp','Home','End'].includes(event.key)){
+      event.preventDefault();
+      const next=event.key==='Home'?0:event.key==='End'?list.length-1:(index+(event.key==='ArrowDown'?1:-1)+list.length)%list.length;
+      list[next]?.focus();
+    }else if(event.key==='Escape'){event.preventDefault();closeCardMenu(true);}
+    else if(event.key==='Tab')closeCardMenu();
+  });
+  document.addEventListener('pointerdown',event=>{if(!event.target.closest('#cardMenu,.article-more'))closeCardMenu();});
+  window.addEventListener('resize',()=>closeCardMenu(),{passive:true});
+  window.addEventListener('scroll',()=>closeCardMenu(),{passive:true});
 }
 function markRead(id,value){
   if(value)state.read.add(id);else state.read.delete(id);
   persist('radar-read',state.read);
   if(state.mode==='unread'||state.hideRead){render();return;}
-  document.querySelectorAll('.article-card').forEach(el=>{
-    if(el.dataset.articleId!==id)return;
-    el.classList.toggle('read-article',value);
-    const button=el.querySelector('.article-read-toggle');
-    if(!button)return;
-    const label=value?'Marcar no leída':'Marcar leída';
-    button.title=label;button.setAttribute('aria-label',label);button.setAttribute('aria-pressed',String(value));
-    button.querySelector('.article-action-icon').replaceChildren(svgIcon(value?'undo':'check'));
-    button.querySelector('.article-action-label').textContent=label;
+  document.querySelectorAll('[data-article-id]').forEach(el=>{
+    if(el.dataset.articleId===id)el.classList.toggle('read-article',value);
   });
   $('filterSummary').textContent=`${format.format(applyFilters().slice(0,state.page*state.pageSize).length)} visibles · ${format.format(state.read.size)} leídas`;
 }
@@ -875,6 +1021,10 @@ function render() {
     button.title=`${label}: ${format.format(count)} ${basis}. Los contadores respetan los filtros activos.`;
     button.setAttribute('aria-label',button.title);
   }
+  const query=state.search.trim();
+  describeSearch(query,filtered.length);
+  // Una búsqueda debe cubrir todo el archivo, no solo las 300 noticias recientes.
+  if(query.length>=3&&hasHistory()&&!state.historyLoading&&!state.historyFailed)void loadHistory();
   const grid=$('articleGrid'); grid.className='article-grid'+(state.layout === 'list'?' list-view':'');
   if (!visible.length) grid.replaceChildren(emptyState(filtered));
   else grid.replaceChildren(...visible.map(card));
@@ -912,7 +1062,7 @@ async function loadHistory(){
       }
       state.items=[...items.values()].sort((a,b)=>String(b.published_at||b.first_seen_at||'').localeCompare(String(a.published_at||a.first_seen_at||'')));
       state.historyLoaded=true;
-    }catch(error){console.warn('Historial RSS:',error);actionToast('No fue posible cargar noticias anteriores.');}
+    }catch(error){console.warn('Historial RSS:',error);state.historyFailed=true;actionToast('No fue posible cargar noticias anteriores.');}
     finally{state.historyLoading=false;historyRequest=null;render();}
   })();
   return historyRequest;
@@ -947,16 +1097,17 @@ let nextCheckAt=Date.now()+CHECK_INTERVAL_MS;
 let checkStartedAt=Date.now();
 let checkTimer=null;
 let feedRefreshBusy=false;
+function freshnessLabel(){
+  if(!state.generated)return state.ready?'Sin sincronizar':'Cargando…';
+  const age=ageDate(state.generated);
+  return age==='Ahora'?'Actualizado ahora':'Actualizado '+age.charAt(0).toLowerCase()+age.slice(1);
+}
 function updateScheduleProgress(){
-  const remaining=Math.max(0,Math.ceil((nextCheckAt-Date.now())/1000));
-  const minute=Math.floor(remaining/60);
-  const second=String(remaining%60).padStart(2,'0');
-  const label=feedRefreshBusy?'Comprobando…':`${minute}:${second}`;
-  $('refreshCycleTime').textContent=label;
-  const description=feedRefreshBusy?'Comprobando si hay noticias nuevas.':
-    `Próxima comprobación en ${label}. El navegador revisa las publicaciones cada 15 minutos; los feeds RSS se recopilan aproximadamente cada 6 horas.`;
-  $('refreshCycle').setAttribute('aria-label',description);
+  $('lastUpdate').textContent=feedRefreshBusy?'Buscando novedades…':freshnessLabel();
+  const exact=state.generated?' Última recopilación: '+shortDate(state.generated)+'.':'';
+  const description='Radar RSS busca noticias nuevas cada 15 minutos; los medios se recopilan aproximadamente cada 6 horas.'+exact;
   $('refreshCycle').title=description;
+  $('lastUpdate').title=description;
   $('refreshNow').disabled=feedRefreshBusy;
 }
 function scheduleNextCheck(){
@@ -984,10 +1135,10 @@ async function refreshPublishedData(){
     state.sources=Array.isArray(sources.sources)?sources.sources:state.sources;
     state.categories=Array.isArray(sources.categories)?sources.categories:state.categories;
     state.items=Array.isArray(latest.items)?latest.items:state.items;
-    state.feedMeta=meta;state.historyLoaded=false;
+    state.feedMeta=meta;state.historyLoaded=false;state.historyFailed=false;
     state.health=Array.isArray(status.feeds)?status.feeds:state.health;
     state.generated=meta.generated_at;
-    $('lastUpdate').textContent='Actualizado: '+shortDate(state.generated);
+    updateScheduleProgress();
     buildNav();fillSelect();updateHeader();statusSummary();render();
     publishNewRSSNews(previousIds);
   }catch(error){console.warn('Comprobación automática RSS:',error);}
@@ -1014,7 +1165,7 @@ async function boot() {
     state.generated=articles.generated_at;
     try{state.feedMeta=await dataFetch('./data/meta.json');}catch{state.feedMeta=null;state.historyLoaded=true;}
     state.ready=true;
-    $('lastUpdate').textContent=state.generated ? `Actualizado: ${shortDate(state.generated)}` : 'Sin sincronizar';
+    updateScheduleProgress();
 
   } catch(err) {
     state.ready=false;
@@ -1039,7 +1190,9 @@ function initSocialNavigation(){
 function initHandlers() {
  initSocialNavigation();
  initArticleReader();
-  window.setInterval(updateScheduleProgress,10_000);
+ initMobileNav();
+ initCardMenu();
+  window.setInterval(updateScheduleProgress,30_000);
   scheduleNextCheck();
   $('refreshNow').addEventListener('click',()=>{void refreshPublishedData();});
   window.addEventListener('focus',()=>{if(document.visibilityState==='visible'&&Date.now()>=nextCheckAt){void refreshPublishedData();}});
@@ -1052,7 +1205,6 @@ function initHandlers() {
     try{localStorage.setItem('radar-dismissed-health-notice-v1',banner.dataset.signature||'');}catch{}
     banner.hidden=true;
   });
-  $('dashboardHealthButton').addEventListener('click',openFeedHealth);
   const feedHealthDialog=$('feedHealthDialog');
   $('closeFeedHealth').addEventListener('click',()=>feedHealthDialog.close());
   $('doneFeedHealth').addEventListener('click',()=>feedHealthDialog.close());
@@ -1065,9 +1217,28 @@ function initHandlers() {
     savePref('layout',state.layout);applyDisplaySettings();render();
   });
   $('sourceSelect').addEventListener('change',e=>{state.feed=e.target.value;state.page=1;progressiveLoads=0;render();});
-  $('searchInput').addEventListener('input',e=>{state.search=e.target.value;state.page=1;progressiveLoads=0;render();});
+  $('searchInput').addEventListener('input',e=>{
+    state.search=e.target.value;state.page=1;progressiveLoads=0;
+    // Desde la portada, buscar lleva al listado completo con los resultados.
+    if(state.search.trim()&&state.pageView!=='feed'){goTo('all');return;}
+    render();
+  });
+  // En móvil el buscador se despliega bajo la barra para no ocupar espacio fijo.
+  $('searchToggle').addEventListener('pointerdown',e=>e.preventDefault());
+  $('searchToggle').addEventListener('click',()=>{
+    const open=!document.body.classList.contains('search-open');
+    document.body.classList.toggle('search-open',open);
+    $('searchToggle').setAttribute('aria-expanded',String(open));
+    if(open)$('searchInput').focus();
+  });
+  $('searchInput').addEventListener('blur',()=>{
+    if(!$('searchInput').value.trim()){document.body.classList.remove('search-open');$('searchToggle').setAttribute('aria-expanded','false');}
+  });
+  $('searchInput').addEventListener('keydown',e=>{
+    if(e.key==='Escape'&&e.target.value){e.preventDefault();e.target.value='';state.search='';state.page=1;render();}
+  });
   $('loadMore').addEventListener('click',()=>{if(hasHistory()&&state.page*state.pageSize>=applyFilters().length){void loadHistory();return;}state.page+=1;render();});
-  $('themeToggle').addEventListener('click',()=>setTheme(document.body.classList.contains('light')?'dark':'light'));
+  $('themeToggle').addEventListener('click',()=>setTheme(document.body.classList.contains('light')?'dark':'light',true));
   $('markAllVisible').addEventListener('click',()=>{const visible=applyFilters().slice(0,state.page*state.pageSize);for(const item of visible)state.read.add(item.id);persist('radar-read',state.read);render();});
   const dialog=$('aboutDialog');
   const open=e=>{if(e)e.preventDefault();dialog.showModal();};
@@ -1075,7 +1246,7 @@ function initHandlers() {
   $('closeAbout').addEventListener('click',()=>dialog.close()); $('dialogAccept').addEventListener('click',()=>dialog.close());
   dialog.addEventListener('click',e=>{if(e.target === dialog) dialog.close();});
   initSettingsHandlers();
-  document.addEventListener('keydown',e=>{if(e.key==='/' && !['INPUT','TEXTAREA','SELECT'].includes(document.activeElement.tagName) && !dialog.open && !$('settingsDialog').open && !$('feedHealthDialog').open){e.preventDefault();$('searchInput').focus();}});
+  document.addEventListener('keydown',e=>{if(e.key==='/' && !e.ctrlKey && !e.metaKey && !e.altKey && !['INPUT','TEXTAREA','SELECT'].includes(document.activeElement.tagName) && !document.querySelector('dialog[open]') && !document.body.classList.contains('nav-open')){e.preventDefault();$('searchInput').focus();}});
 }
 document.body.classList.toggle('radar-hybrid',!IS_STYLE_PREVIEW);
 if(IS_STYLE_PREVIEW){
