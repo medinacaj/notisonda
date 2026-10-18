@@ -245,6 +245,21 @@ def clean_google_news_title(title: str, credited_publisher: str) -> str:
     return title
 
 
+
+def normalize_cached_google_titles(item: dict) -> None:
+    """Clean cached Google headlines, even when the grouped lead is a direct RSS."""
+    if item.get('is_radar') and isinstance(item.get('title'), str):
+        item['title'] = clean_google_news_title(item['title'], str(item.get('publisher') or ''))
+    for alternative in item.get('also_in') or []:
+        if not isinstance(alternative, dict) or not isinstance(alternative.get('title'), str):
+            continue
+        # Alternative stories lack is_radar; Google links identify their origin.
+        host = (urlsplit(str(alternative.get('url') or '')).hostname or '').lower()
+        if host == 'news.google.com':
+            alternative['title'] = clean_google_news_title(
+                alternative['title'], str(alternative.get('publisher') or ''))
+
+
 def make_item(entry, source: dict, now: datetime) -> dict | None:
     link = safe_web_url(entry.get('link') or '')
     title, _ = extract_html(entry.get('title') or '')
@@ -432,13 +447,8 @@ def collect(opml: Path, out: Path, days: int, workers: int, max_per_feed: int) -
     cutoff = now - timedelta(days=days)
     valid_ids = {x['id'] for x in sources}
     for item in prior_articles + current_items:
-        # Reprocess Google titles already cached/published before this change.
-        if item.get('is_radar') and isinstance(item.get('title'), str):
-            item['title'] = clean_google_news_title(item['title'], str(item.get('publisher') or ''))
-            for alternative in item.get('also_in') or []:
-                if isinstance(alternative, dict) and isinstance(alternative.get('title'), str):
-                    alternative['title'] = clean_google_news_title(
-                        alternative['title'], str(alternative.get('publisher') or ''))
+        # Reprocess old Google News titles, including alternatives under a direct RSS lead.
+        normalize_cached_google_titles(item)
         date_txt = item.get('published_at') or item.get('first_seen_at')
         try:
             dt = datetime.fromisoformat(date_txt.replace('Z', '+00:00'))
