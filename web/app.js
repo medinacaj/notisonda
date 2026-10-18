@@ -131,6 +131,13 @@ function shortDate(input) {
   return new Intl.DateTimeFormat('es-CL', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }).format(date);
 }
 function stripAccents(s) { return String(s ?? '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase(); }
+// Quita prefijos del OPML que solo organizan suscripciones (MEDIO, REGIONAL).
+// Los que informan al lector, como SÁTIRA u OFICIAL, se mantienen visibles.
+function sourceLabel(name, fallback='Fuente RSS') {
+  const raw=String(name||'').trim();
+  const cleaned=raw.replace(/^(?:MEDIO|REGIONAL)\s*[—–-]\s*/,'').trim();
+  return cleaned||raw||fallback;
+}
 function categoryLabel(cat) {
   const idx = state.categories.indexOf(cat);
   return idx >= 0 ? (CATEGORY_LABELS[idx] || cat.replace(/^\d+\s*-\s*/, '')) : String(cat || 'Noticias');
@@ -262,7 +269,7 @@ function renderFeedHealth(){
   if(!issues.length){list.append(mk('p','setting-hint',total?'Sin incidencias detectadas en la última actualización.':'Aún no hay un diagnóstico disponible.'));return;}
   for(const source of issues){
     const row=mk('div','health-row');
-    const heading=mk('strong','',source.name||'Fuente');
+    const heading=mk('strong','',sourceLabel(source.name,'Fuente'));
     const meta=mk('small','',source.state==='error'?'Error de lectura':source.state==='stale'?'Sin publicar desde hace más de un año':'Feed sin artículos');
     const detail=mk('span','',source.error|| (source.last_published_at ? 'Último artículo: '+shortDate(source.last_published_at):'Sin fecha de publicación detectada'));
     row.append(heading,meta,detail);list.append(row);
@@ -318,7 +325,7 @@ function renderSettingsSources() {
     const label=mk('label','settings-source-row');
     const checkbox=document.createElement('input'); checkbox.type='checkbox'; checkbox.checked=!state.hiddenSources.has(source.id);
     checkbox.setAttribute('aria-label','Mostrar '+source.name);
-    const line=mk('span','settings-source-details'); line.append(mk('span','settings-source-name',source.name),mk('small','',categoryLabel(source.category)));
+    const line=mk('span','settings-source-details'); line.append(mk('span','settings-source-name',sourceLabel(source.name)),mk('small','',categoryLabel(source.category)));
     label.append(checkbox,line); list.append(label);
     checkbox.addEventListener('change',()=>{
       if (checkbox.checked) state.hiddenSources.delete(source.id); else state.hiddenSources.add(source.id);
@@ -509,7 +516,7 @@ function openFeedHealth() {
       const row=mk('article','feed-health-item');
       const head=mk('div','feed-health-item-head');
       const label=source.state==='error'?'Error de lectura':source.state==='stale'?'Última publicación antigua':'Sin artículos recientes';
-      head.append(mk('strong','',source.name||'Fuente RSS'),mk('span','feed-health-status',label));
+      head.append(mk('strong','',sourceLabel(source.name)),mk('span','feed-health-status',label));
       const detail=source.error || (source.last_published_at
         ? 'Último artículo publicado: '+shortDate(source.last_published_at)
         : 'No se dispone de información adicional sobre esta incidencia.');
@@ -624,7 +631,7 @@ function renderDashboard(){
    if(safeURL(story.image)){const img=mk('img');img.src=story.image;img.alt='';img.loading='lazy';img.referrerPolicy='no-referrer';image.append(img);}
    else image.append(svgIcon('bookmark'));
    const title=link(story.url,story.title||'Sin título','dashboard-saved-title');title.target='_blank';title.addEventListener('click',event=>openArticleReader(story,event));
-   content.append(title,mk('span','dashboard-saved-meta',story.publisher||story.source||'Fuente RSS'));row.append(image,content);return row;
+   content.append(title,mk('span','dashboard-saved-meta',sourceLabel(story.publisher||story.source)));row.append(image,content);return row;
   }));
   const categoryNodes=state.categories.map((cat,i)=>{
     const shown=state.sources.filter(s=>s.category===cat&&!state.hiddenSources.has(s.id));
@@ -648,7 +655,7 @@ function renderDashboard(){
     const title=link(item.url,item.title||'Sin título','dashboard-recent-title');
     title.target='_blank';
     title.addEventListener('click',event=>openArticleReader(item,event));
-    const info=mk('span','dashboard-recent-meta',(item.publisher||item.source||'Fuente RSS')+' · '+ageDate(item.published_at));
+    const info=mk('span','dashboard-recent-meta',sourceLabel(item.publisher||item.source)+' · '+ageDate(item.published_at));
     row.append(title,info);
     return row;
   }));
@@ -730,7 +737,7 @@ function openArticleReader(item,event){
   $('readerTitle').textContent=item.title||'Noticia sin título';
   $('readerCategory').textContent=categoryLabel((item.categories||[])[0]||'');
   const meta=$('readerMeta');meta.replaceChildren(
-    mk('strong','',item.publisher||item.source||'Fuente RSS'),
+    mk('strong','',sourceLabel(item.publisher||item.source)),
     mk('span','',ageDate(item.published_at))
   );
   const cover=$('readerCover');cover.replaceChildren();cover.hidden=!state.showImages||!safeURL(item.image);
@@ -746,7 +753,7 @@ function openArticleReader(item,event){
   const others=Array.isArray(item.also_in)?item.also_in.filter(x=>safeURL(x.url)).slice(0,8):[];
   if(others.length){
     const section=mk('div','reader-alternatives');section.append(mk('strong','','También en otros medios'));
-    for(const alt of others)section.append(link(alt.url,alt.publisher||'Otra fuente','reader-alternative-link'));
+    for(const alt of others)section.append(link(alt.url,sourceLabel(alt.publisher,'Otra fuente'),'reader-alternative-link'));
     summary.append(section);
   }
   const url=safeURL(item.url);
@@ -792,7 +799,7 @@ function card(item) {
   const category=(item.categories||[])[0]||'';
   const content=mk('div','article-content');
   const meta=mk('div','article-meta');
-  meta.append(mk('span','publisher',item.publisher||item.source||'Fuente RSS'),mk('time','',ageDate(item.published_at)));
+  meta.append(mk('span','publisher',sourceLabel(item.publisher||item.source)),mk('time','',ageDate(item.published_at)));
   const title=mk('h3','article-title');
   const titleLink=link(item.url,item.title||'Sin título');
   titleLink.target='_blank';titleLink.addEventListener('click',event=>openArticleReader(item,event));
@@ -825,7 +832,7 @@ function card(item) {
   if(others.length){
     const line=mk('div','article-also');
     line.append(mk('span','','También en: '));
-    others.forEach((alt,index)=>{if(index)line.append(document.createTextNode(' · '));line.append(link(alt.url,alt.publisher||'Otro medio'));});
+    others.forEach((alt,index)=>{if(index)line.append(document.createTextNode(' · '));line.append(link(alt.url,sourceLabel(alt.publisher,'Otro medio')));});
     content.append(line);
   }
   content.append(actions);

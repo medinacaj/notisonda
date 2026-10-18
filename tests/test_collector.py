@@ -9,11 +9,43 @@ sys.path.insert(0, str(ROOT / 'scripts'))
 import collect
 
 class ReaderTests(unittest.TestCase):
-    def test_opml_has_150_unique_feeds(self):
+    def test_opml_has_enough_unique_feeds(self):
+        # Sin número fijo: agregar o retirar una fuente no debe romper el despliegue.
         feeds = collect.parse_opml(ROOT / 'sources' / 'feeds.opml')
-        self.assertEqual(len(feeds), 150)
-        self.assertEqual(len(set(x['url'] for x in feeds)), 150)
+        self.assertGreaterEqual(len(feeds), 100)
+        self.assertEqual(len(set(x['url'] for x in feeds)), len(feeds))
+        self.assertEqual(len(set(x['id'] for x in feeds)), len(feeds))
         self.assertEqual(len(set(x['category'] for x in feeds)), 6)
+
+    def test_display_name_keeps_informative_prefixes(self):
+        self.assertEqual(collect.display_name('MEDIO — El Pitazo'), 'El Pitazo')
+        self.assertEqual(collect.display_name('REGIONAL — La Prensa de Monagas'), 'La Prensa de Monagas')
+        self.assertEqual(collect.display_name('SÁTIRA — El Chigüire Bipolar'), 'SÁTIRA — El Chigüire Bipolar')
+        self.assertEqual(collect.display_name('MEDIO —'), 'MEDIO —')
+
+    def test_get_feed_retries_transient_errors_only(self):
+        calls = []
+        def flaky(url):
+            calls.append(url)
+            if len(calls) == 1:
+                raise collect.requests.ConnectionError('reset')
+            return b'<rss/>'
+        original, wait = collect._get_feed_once, collect.RETRY_WAIT_SECONDS
+        collect._get_feed_once, collect.RETRY_WAIT_SECONDS = flaky, 0
+        try:
+            self.assertEqual(collect.get_feed('https://example.com/feed'), b'<rss/>')
+            self.assertEqual(len(calls), 2)
+            calls.clear()
+            def forbidden(url):
+                calls.append(url)
+                response = SimpleNamespace(status_code=403)
+                raise collect.requests.HTTPError('403', response=response)
+            collect._get_feed_once = forbidden
+            with self.assertRaises(collect.requests.HTTPError):
+                collect.get_feed('https://example.com/feed')
+            self.assertEqual(len(calls), 1)  # Un bloqueo deliberado no se reintenta.
+        finally:
+            collect._get_feed_once, collect.RETRY_WAIT_SECONDS = original, wait
 
     def test_reject_unsafe_article_links(self):
         self.assertIsNone(collect.safe_web_url('javascript:alert(1)'))
@@ -77,6 +109,29 @@ class ReaderTests(unittest.TestCase):
             self.assertEqual(result['articles'], 1)
             items = json.loads((base / 'webdata' / 'articles.json').read_text())['items']
             self.assertEqual(len(items[0]['source_ids']), 2)
+
+
+class PublishGuardTests(unittest.TestCase):
+    def build(self, root, failed, total=10):
+        import json, tempfile
+        items=[{'id':f'a{i}','title':f'T{i}','url':f'https://example.com/{i}'} for i in range(60)]
+        collect.publish_partitioned(root, items, '2026-10-17T00:00:00Z')
+        collect.write_json(root/'articles.json', {'version':2,'generated_at':'2026-10-17T00:00:00Z','items':items})
+        collect.write_json(root/'sources.json', {'sources':[{'id':'s'}]})
+        feeds=[{'id':str(i),'state':'error' if i<failed else 'ok'} for i in range(total)]
+        collect.write_json(root/'status.json', {'feeds':feeds})
+
+    def test_blocks_publication_when_many_feeds_fail(self):
+        import tempfile
+        sys.path.insert(0, str(ROOT / 'scripts'))
+        import validate_data
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp)
+            self.build(root, failed=3)
+            validate_data.check(root)
+            self.build(root, failed=5)
+            with self.assertRaises(ValueError):
+                validate_data.check(root)
 
 if __name__ == '__main__':
     unittest.main()

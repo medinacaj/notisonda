@@ -39,4 +39,4 @@ class RSSArrivalTests(unittest.TestCase):
     def test_assets_load_after_library(self):
         self.assertIn('news-effects.css?v=1.0.0',self.html)
         self.assertIn('news-effects.js?v=1.0.0',self.html)
-        self.assertLess(self.html.index('library.js?v=1.6.0'),self.html.index('news-effects.js?v=1.0.0'))
+        self.assertLess(self.html.index('library.js?v='),self.html.index('news-effects.js?v='))
