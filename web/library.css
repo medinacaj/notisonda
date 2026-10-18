@@ -60,3 +60,19 @@ body .columns-selector:focus-within{outline:0}
 body:not(.light) .columns-menu-popup{box-shadow:0 15px 35px rgba(0,0,0,.35)}
 @media(max-width:530px){.columns-menu-popup{right:0;max-width:min(194px,calc(100vw - 24px))}.category-nav-list .nav-link{padding-top:8px;padding-bottom:8px}}
 @media(prefers-reduced-motion:reduce){.category-nav-chevron{transition:none}}
+
+/* V7.3 — categorías siempre visibles y separadas por jerarquía. */
+body .sidebar{overflow-y:auto;overflow-x:hidden;scrollbar-width:thin;scrollbar-color:var(--ash) transparent}
+body .category-nav-group{margin-top:13px;padding-top:12px;border-top:1px solid var(--line)}
+body .category-nav-heading{display:flex;align-items:center;gap:9px;padding:5px 12px 10px;margin:0;color:var(--muted);background:transparent;border:0;min-height:29px;cursor:default}
+body .category-nav-heading-label{color:var(--muted);font-size:10px;font-weight:750;letter-spacing:.08em;flex:1}
+body .category-nav-heading-count{font-size:10px;font-weight:650;font-variant-numeric:tabular-nums;color:var(--muted)}
+body .category-nav-list{display:flex;flex-direction:column;gap:2px}
+body .category-nav-list .nav-link{margin:1px 0;min-height:40px;padding:9px 12px;border-radius:9px}
+body .category-nav-list .nav-label{font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+body .category-nav-list .nav-link:hover{border-color:var(--line)}
+body .sidebar-bottom{margin-top:auto;flex-shrink:0}
+@media(max-width:950px){
+  body .sidebar{overflow:visible;height:auto;min-height:0;position:relative}
+  body .category-nav-group{margin-top:8px;padding-top:9px}
+}

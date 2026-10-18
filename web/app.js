@@ -404,38 +404,39 @@ function buildNav() {
   const nav=$('categoryNav');nav.replaceChildren();
   const core=[{id:'home',label:'Inicio'},{id:'all',label:'Todas las noticias'}];
   const categories=state.categories.map(id=>({id,label:categoryLabel(id)}));
-  const collapsed=storeGet('radar-category-nav-collapsed')==='true'&&!(state.pageView==='feed'&&state.category!=='all');
-  const group=mk('div','category-nav-group');
-  const heading=mk('button','category-nav-heading');
-  heading.type='button';heading.setAttribute('aria-expanded',String(!collapsed));
-  heading.setAttribute('aria-controls','categoryNavList');
-  heading.title=collapsed?'Mostrar categorías del catálogo':'Ocultar categorías del catálogo';
-  const title=mk('span','category-nav-heading-label','CATEGORÍAS');
-  const count=mk('span','category-nav-heading-count',String(categories.length));
-  const indicator=mk('span','category-nav-chevron');indicator.append(svgIcon('chevron-down'));
-  heading.append(title,count,indicator);
-  const list=mk('div','category-nav-list');list.id='categoryNavList';list.hidden=collapsed;
-  heading.addEventListener('click',()=>{
-    const next=!list.hidden;
-    list.hidden=next;
-    heading.setAttribute('aria-expanded',String(!next));
-    heading.title=next?'Mostrar categorías del catálogo':'Ocultar categorías del catálogo';
-    try{localStorage.setItem('radar-category-nav-collapsed',String(next));}catch{}
-  });
-  group.append(heading,list);
-  const choices=[...core,...categories];
-  choices.forEach((cat,i)=>{
-    const active=cat.id==='home'?state.pageView==='dashboard':state.pageView==='feed'&&state.category===cat.id;
+  function appendNavigationItem(entry,index,parent){
+    const active=entry.id==='home'?state.pageView==='dashboard':
+      state.pageView==='feed'&&state.category===entry.id;
     const button=mk('button','nav-link'+(active?' active':''));
-    button.type='button';button.setAttribute('aria-current',active?'page':'false');
-    const symbol=mk('span','nav-glyph');symbol.append(svgIcon(i===0?'home':i===1?'newspaper':CATEGORY_ICONS[i-2]||'grid'));
-    const left=mk('span','nav-left');left.append(symbol,mk('span','nav-label',cat.label));
-    const total=cat.id==='home'?'':(cat.id==='all'?state.sources.filter(x=>!state.hiddenSources.has(x.id)).length:state.sources.filter(x=>x.category===cat.id&&!state.hiddenSources.has(x.id)).length);
-    button.append(left,mk('span','nav-count',String(total)));
-    button.addEventListener('click',()=>goTo(cat.id));
-    (i<2?nav:list).append(button);
-  });
-  if(categories.length)nav.append(group);
+    button.type='button';
+    button.setAttribute('aria-current',active?'page':'false');
+    button.title=entry.label;
+    const symbol=mk('span','nav-glyph');
+    symbol.append(svgIcon(index===0?'home':index===1?'newspaper':CATEGORY_ICONS[index-2]||'grid'));
+    const left=mk('span','nav-left');
+    left.append(symbol,mk('span','nav-label',entry.label));
+    const ids=entry.id==='all'?state.sources.filter(s=>!state.hiddenSources.has(s.id)):
+      state.sources.filter(s=>s.category===entry.id&&!state.hiddenSources.has(s.id));
+    button.append(left,mk('span','nav-count',entry.id==='home'?'':String(ids.length)));
+    button.addEventListener('click',()=>goTo(entry.id));
+    parent.append(button);
+  }
+  core.forEach((entry,index)=>appendNavigationItem(entry,index,nav));
+  if(categories.length){
+    const group=mk('section','category-nav-group');
+    group.setAttribute('aria-label','Categorías del catálogo RSS');
+    const heading=mk('div','category-nav-heading');
+    heading.append(
+      mk('span','category-nav-heading-label','CATEGORÍAS'),
+      mk('span','category-nav-heading-count',String(categories.length))
+    );
+    const list=mk('div','category-nav-list');
+    list.id='categoryNavList';
+    // Las categorías del OPML permanecen visibles; no dependen de localStorage.
+    categories.forEach((entry,index)=>appendNavigationItem(entry,index+2,list));
+    group.append(heading,list);
+    nav.append(group);
+  }
   renderTopicRail();
 }
 function renderTopicRail(){
