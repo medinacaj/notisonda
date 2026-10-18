@@ -24,6 +24,12 @@ ano anos dia dias semana mes meses hora horas minuto vez veces parte caso casos 
 dice dicen dijo afirma asegura anuncia anuncio revela explica advierte confirma pide busca llega deja tiene hace puede podria sera seria estan esta
 gobierno presidente ministro nacional general nuevo nueva mayor primer primera ultimo ultima ultimas ultimos claves clave todo todos toda todas mejor mejores
 noticias noticia video fotos foto minuto directo vivo hoy ayer manana
+enero febrero marzo abril mayo junio julio agosto septiembre setiembre octubre noviembre diciembre
+lunes martes miercoles jueves viernes sabado domingo
+futbol football baloncesto basquet basquetbol basket basketball beisbol baseball tenis deporte deportes deportivo deportiva deportivos deportivas
+partido partidos encuentro encuentros marcador marcadores resultado resultados goles gol victoria victorias derrota derrotas empate empates
+jornada jornadas fecha fechas liga ligas copa copas campeonato campeonatos torneo torneos equipo equipos jugador jugadores jugadora jugadoras
+fichaje fichajes futbolista futbolistas clasificacion clasificaciones clasificado clasificados tabla posiciones temporada temporadas
 sabe analisis opinion columna editorial entrevista resumen claves cronica reportaje especial exclusiva
 chile venezuela latinoamerica america internacional tecnologia inteligencia artificial
 the a an and are as at be by for from has have how in into is it its new of on or that the this to was what when why will with you your
@@ -94,7 +100,7 @@ def trending_topics(articles: list[dict], now: datetime, limit: int = 10) -> dic
                 baseline[term] += 1
     scored = []
     for term, count in current.items():
-        if count < 3 or len(sources[term]) < 3:
+        if count < 4 or len(sources[term]) < 4:
             continue
         daily = baseline[term] / 7
         score = (count - daily) / math.sqrt(daily + 1)
@@ -123,6 +129,15 @@ def trending_topics(articles: list[dict], now: datetime, limit: int = 10) -> dic
             'window_hours': 24, 'baseline_days': 7, 'topics': chosen}
 
 
+PUBLIC_SOURCE_PREFIX = re.compile(r'^\s*(?:MEDIO|REGIONAL)\s*[—–-]\s*', re.IGNORECASE)
+
+
+def public_source_name(name: str) -> str:
+    """Remove internal OPML taxonomy prefixes from public RSS <source> labels."""
+    raw = str(name or '').strip()
+    return PUBLIC_SOURCE_PREFIX.sub('', raw).strip() or raw
+
+
 def _rss(title: str, description: str, link: str, items: list[dict], now: datetime) -> str:
     rows = []
     for item in items:
@@ -136,7 +151,7 @@ def _rss(title: str, description: str, link: str, items: list[dict], now: dateti
             f'<link>{escape(str(item.get("url") or ""))}</link>'
             f'<guid isPermaLink="false">radar-{escape(str(item.get("id") or ""))}</guid>'
             f'<description>{escape(str(item.get("summary") or "") + extra)}</description>'
-            f'<source url="{escape(SITE_URL)}">{escape(str(item.get("publisher") or item.get("source") or ""))}</source>'
+            f'<source url="{escape(SITE_URL)}">{escape(public_source_name(item.get("publisher") or item.get("source") or ""))}</source>'
             f'{pub}</item>')
     return ('<?xml version="1.0" encoding="UTF-8"?>\n<rss version="2.0"><channel>'
             f'<title>{escape(title)}</title><link>{escape(link)}</link>'
