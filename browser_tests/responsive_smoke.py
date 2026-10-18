@@ -251,7 +251,7 @@ def main():
                                             f"V1.2 región {browser_name} {width}px")
                         page.locator("#v12Geo").select_option("chile")
                         page.wait_for_url("**/#region/chile")
-                        assert page.locator("#feedHeading").inner_text() == "Chile"
+                        page.wait_for_function("document.querySelector('#feedHeading')?.textContent === 'Chile'")
                         assert page.locator("#articleGrid .article-card").count() > 0
                         page.locator("#v12Date").select_option("7")
                         page.locator("#sourceSelect").select_option("medio-3")
