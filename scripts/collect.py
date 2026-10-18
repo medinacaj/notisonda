@@ -488,7 +488,7 @@ def collect(opml: Path, out: Path, days: int, workers: int, max_per_feed: int) -
     write_json(out / 'articles.json', {'version': 2, 'generated_at': iso(now),
                                        'total_sources': len(sources), 'items': articles})
     publish_partitioned(out, articles, iso(now))
-    write_json(out / 'trends.json', trending_topics(articles, now))
+    write_json(out / 'trends.json', trending_topics(articles, now, source_catalog=sources))
     write_feeds(out.parent / 'feeds', articles, sources, now)
     write_json(out / 'status.json', {'version': 1, 'checked_at': iso(now),
                                      'feeds': states, 'errors': sum(s['state'] == 'error' for s in states),
