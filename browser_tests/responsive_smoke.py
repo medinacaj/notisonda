@@ -233,6 +233,9 @@ def main():
                         page.locator("#v12BriefingScope").select_option("chile")
                         assert page.locator(".briefing-section").count() >= 1
                         assert all("Chile" in x for x in page.locator(".briefing-section h2").all_text_contents())
+                        page.locator("#v12BriefingScope").select_option("cat:02 - Tecnología")
+                        assert page.locator(".briefing-section").count() == 1
+                        assert "Tecnología" in page.locator(".briefing-section h2").first.inner_text()
                         page.locator("#v12BriefingScope").select_option("all")
                         page.evaluate("location.hash = '#inicio'")
                         page.locator("#v12MyRadar").wait_for(state="visible")
@@ -251,10 +254,13 @@ def main():
                         assert page.locator("#feedHeading").inner_text() == "Chile"
                         assert page.locator("#articleGrid .article-card").count() > 0
                         page.locator("#v12Date").select_option("7")
+                        page.locator("#sourceSelect").select_option("medio-3")
                         page.locator("#v12SaveSearch").click()
                         assert page.locator(".v12-saved-open").count() == 1
+                        page.locator("#sourceSelect").select_option("")
                         page.locator(".v12-saved-open").first.click()
                         assert page.locator("#v12Date").input_value() == "7"
+                        assert page.locator("#sourceSelect").input_value() == "medio-3"
                         page.locator(".v12-search-remove").first.click()
                         assert page.locator(".v12-saved-open").count() == 0
                         page.evaluate("location.hash = '#noticias'")
