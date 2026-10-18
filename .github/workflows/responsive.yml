@@ -1,0 +1,45 @@
+name: Responsividad (navegador real)
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "web/**"
+      - "browser_tests/**"
+      - ".github/workflows/responsive.yml"
+  push:
+    branches: [main]
+    paths:
+      - "web/**"
+      - "browser_tests/**"
+      - ".github/workflows/responsive.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Obtener código
+        uses: actions/checkout@v4
+      - name: Preparar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Instalar Playwright para pruebas (solo CI)
+        run: |
+          python -m pip install "playwright>=1.55,<2"
+          python -m playwright install --with-deps chromium
+      - name: Revisar portada y navegación a múltiples tamaños
+        run: python browser_tests/responsive_smoke.py
+      - name: Guardar capturas para revisión
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: responsive-screenshots
+          path: test-results/responsive/
+          if-no-files-found: ignore
+          retention-days: 7
