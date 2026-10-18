@@ -38,5 +38,5 @@ class CompactTopbarTests(unittest.TestCase):
         self.assertIn('role="group"',self.html)
         self.assertIn('body.radar-hybrid .topbar-refresh',self.css)
         self.assertIn('@media(max-width:430px)',self.css)
-        self.assertIn('radar-hybrid.css?v=1.3.0',self.html)
+        self.assertRegex(self.html,r'<link rel="stylesheet" href="\./radar-hybrid\.css\?v=[^"]+">')
         self.assertRegex(self.html,r'<script src="\./app\.js\?v=[^"]+" defer></script>')
