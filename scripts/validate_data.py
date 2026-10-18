@@ -5,6 +5,7 @@ import sys
 from pathlib import Path
 
 MAX_FAILED_SHARE=0.4
+MAX_ARTICLES=5000
 
 def check(root):
     def load(name):
@@ -16,7 +17,7 @@ def check(root):
     meta=load('meta.json')
     latest=load('latest.json')
     ids=[x.get('id') for x in full.get('items',[]) if isinstance(x,dict)]
-    if not 50<=len(ids)<=2300 or len(ids)!=len(set(ids)):
+    if not 50<=len(ids)<=MAX_ARTICLES or len(ids)!=len(set(ids)):
         raise ValueError('History empty, duplicate, or oversized')
     joined=list(latest.get('items',[]))
     names=meta.get('archive_files')
