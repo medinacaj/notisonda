@@ -1,13 +1,21 @@
 # Estado del proyecto — Radar RSS
 
-Actualización del protocolo: 2026-10-18.
+Última actualización editorial: 2026-10-18.
 
-Este archivo **no sustituye** al estado de GitHub; evita capturas de estado que envejecen y obligan a releer contexto innecesario.
+## Estado operativo
+- Versión pública: https://medinacaj.github.io/radar-rss-publico/
+- Rama estable y publicación: `main` + `.github/workflows/deploy.yml`.
+- Calidad Python/Node: `.github/workflows/ci.yml`.
+- Navegadores: `.github/workflows/responsive.yml` (Chromium, Firefox, WebKit; siete anchos).
+- Alertas: `.github/workflows/monitor.yml` (issue única, cierre al recuperarse).
+- Historial: hasta 5.000 noticias; ventana máxima 45 días y almacenamiento no permanente.
+- Tendencias: mínimo cuatro medios independientes.
 
-- **Tareas activas y pendientes:** pestaña Issues (incluye issue #6 para este protocolo).
-- **Cambios en revisión:** Pull Requests abiertos; consultar el último SHA.
-- **Resultados técnicos:** comprobaciones de GitHub Actions del PR y commits.
-- **Versión publicada:** rama `main` y workflow de publicación correspondiente.
-- **Decisiones:** `docs/decisions.md`.
+## Fuente de verdad
+- [Issues](https://github.com/medinacaj/radar-rss-publico/issues): incidencias sin resolver.
+- [Pull requests](https://github.com/medinacaj/radar-rss-publico/pulls): cambios en revisión.
+- [Actions](https://github.com/medinacaj/radar-rss-publico/actions): evidencia de pruebas y despliegue.
+- `docs/decisions.md`: decisiones técnicas duraderas.
 
-Regla: nunca etiquetar como implementada una característica hasta comprobar que su PR se fusionó. Actualizar este documento solo cuando cambie la forma de controlar el proyecto.
+## Limitaciones reconocidas
+WebKit automatizado no certifica Safari en hardware iOS. La prueba de accesibilidad automatizada no sustituye pruebas con lectores de pantalla reales. Una base de datos sería necesaria para garantizar historial permanente o sincronización entre dispositivos.

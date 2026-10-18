@@ -1,6 +1,6 @@
 # Radar RSS · Lector público de noticias
 
-**Versión inicial funcional para GitHub Pages + GitHub Actions.**
+**Versión pública operativa · octubre 2026:** recopilación y publicación automáticas, monitoreo, historial paginado, tendencias, lectura responsive y pruebas multiplataforma.
 
 Proyecto web público, gratuito dentro de las cuotas aplicables de GitHub, sin API privada, backend de tiempo completo, claves ni autenticación. Diseñado para iniciar con 150 fuentes y seis categorías procedentes del OPML consolidado del 17-10-2026.
 
@@ -32,7 +32,7 @@ flowchart LR
 - **Modo ligero y lectura sin conexión** (`sw.js`): red primero; sin conexión, la última copia del propio sitio.
 - **Feeds de salida** en `feeds/`: `mas-cubierto.xml` y uno por carpeta.
 
-## Cómo publicar en GitHub (una sola vez)
+## Cómo publicar un fork en GitHub (una sola vez)
 
 1. Crear un **repositorio público** en GitHub llamado, por ejemplo, `radar-rss-publico`. No añadir archivos iniciales al crearlo si subirás esta carpeta completa.
 2. Subir **todos los archivos y carpetas**, incluidos `.github/workflows/deploy.yml`, `scripts`, `sources` y `web`. Es importante conservar rutas y estructura.
@@ -40,7 +40,7 @@ flowchart LR
 4. En el repositorio, abrir **Settings → Pages → Build and deployment → Source → GitHub Actions**.
 5. Abrir **Actions → Actualizar noticias y publicar → Run workflow** (si no se ha ejecutado automáticamente por el primer commit). La acción descargará los RSS, generará los JSON y publicará el sitio.
 6. Cuando el flujo termine correctamente, el sitio estará normalmente en `https://TU-USUARIO.github.io/radar-rss-publico/`. GitHub muestra la URL real en Settings → Pages.
-7. En `web/index.html`, sustituir el enlace del botón **Proyecto ↗** por la URL real del repositorio.
+7. Si se distribuye un fork, revisar enlaces de identidad, `SITE_URL` y el origen de recuperación para evitar mezclar datos con la instancia pública original.
 
 **Opción mediante Git local (después de descomprimir):**
 
@@ -55,6 +55,19 @@ git push -u origin main
 
 Requiere tener Git instalado y autenticado. No pegues contraseñas ni tokens en el repositorio.
 
+## Estado de calidad y mantenimiento
+
+- **Sitio:** https://medinacaj.github.io/radar-rss-publico/
+- **PR y estado vivo:** https://github.com/medinacaj/radar-rss-publico/pulls y `/issues`.
+- **CI Python/Node:** `.github/workflows/ci.yml`; se ejecuta en PR y `main`.
+- **Navegadores:** `.github/workflows/responsive.yml` ejecuta siete tamaños en Chromium, Firefox y WebKit usando fixtures RSS y HTTPS local, con capturas descargables en los artifacts de CI. WebKit no equivale a un iPhone físico.
+- **Accesibilidad:** incluye controles automáticos de estructura, idioma, encabezados y nombres accesibles; falta contrastar la experiencia completa con VoiceOver/TalkBack y dispositivos reales.
+- **Supervisión del sitio:** `.github/workflows/monitor.yml` revisa la web tras cada publicación y periódicamente. Una fecha mayor de 18 horas, >=5 RSS con error o una publicación fallida abre una única issue. Al recuperarse, la cierra. Cancelar una publicación reemplazada por otra no se considera incidencia.
+- **Historial:** `latest.json` contiene 300 registros y `archive-XX.json` se descarga bajo demanda. El límite total es 5.000 artículos y 45 días como máximo, no un compromiso de conservación permanente.
+
+### Pruebas adicionales de navegador
+
+GitHub Actions ejecuta automáticamente `python browser_tests/responsive_smoke.py chromium`, `firefox` y `webkit`. El script usa certificados HTTPS temporales para reproducir la política de seguridad (CSP) del sitio público y datos locales, sin consultar medios de terceros.
 ## Prueba local
 
 Requiere Python 3.11+ y acceso a Internet para recopilar noticias:
@@ -76,7 +89,7 @@ Abrir `http://localhost:8000` (no abrir el archivo HTML haciendo doble clic: `fe
 - **Sitio sin noticias después de publicar:** revisar los detalles de `Actions` y `data/status.json`. La aplicación no inventa noticias ni reemplaza automáticamente feeds problemáticos.
 - **URL del proyecto:** cambiar el enlace de GitHub en `web/index.html` después de crear el repositorio.
 
-## Límites de la versión 1
+## Límites conocidos de la arquitectura estática
 
 - Favoritos y leídos solo en `localStorage` del navegador; no se sincronizan entre dispositivos ni entre visitantes.
 - Sin panel para modificar fuentes desde el sitio público. El OPML se administra en el repositorio para prevenir abusos y SSRF.
@@ -119,11 +132,11 @@ radar-rss-publico/
 
 ## Hoja de ruta
 
-**V1 (este entregable):** lector público estático, importación OPML a configuración, monitor básico de feeds, buscador, filtros, diseño de tarjetas/lista y despliegue automatizado.
+**V1 — implementada:** lector público estático, OPML, búsqueda y filtros, radar de cobertura, tendencias con cuatro medios independientes, feeds públicos, lector, guardadas y preferencias locales, PWA, diseño responsive y despliegue automatizado.
 
-**V1.1:** estadísticas de errores y antigüedad de feeds, pruebas periódicas, editor de fuentes solo por Git, reportes de enlaces inactivos y deduplicación semántica opcional.
+**V1.1 — implementada parcialmente:** diagnóstico de feeds, vigilancia que abre una incidencia automática si el sitio envejece o acumula fallos, pruebas con Chromium, Firefox y WebKit, historial de hasta 5.000 noticias. Pendientes opcionales: revisión editorial de enlaces inactivos y auditoría asistida con lectores de pantalla reales.
 
-**V2 (opcional):** usuarios, favoritos sincronizados, base de datos, RSS personalizado, notificaciones, resumen IA bajo demanda, panel administrativo, PWA con caché sin conexión.
+**V2 (opcional, sin implementar):** cuentas, sincronización de favoritos entre dispositivos, histórico duradero con base de datos, RSS personalizado, avisos individuales y administración desde un backend. La PWA y la caché sin conexión básica ya existen en V1.
 
 ## Licencia
 

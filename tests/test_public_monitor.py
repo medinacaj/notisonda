@@ -25,6 +25,10 @@ class MonitorTests(unittest.TestCase):
         self.assertTrue(any("sin actualizar" in x for x in reports), reports)
         self.assertTrue(any("fuentes RSS" in x for x in reports), reports)
 
+    def test_superseded_deploy_does_not_trigger_false_alarm(self):
+        self.assertEqual(assess(*docs(), NOW, 'cancelled'), [])
+        self.assertEqual(assess(*docs(), NOW, 'skipped'), [])
+
     def test_alerts_when_latest_deploy_fails(self):
         self.assertTrue(any("failure" in x for x in assess(*docs(), NOW, "failure")))
 

@@ -24,7 +24,7 @@ def read_json(name: str) -> dict:
 
 def assess(meta: dict, status: dict, now: datetime, deploy_conclusion: str = "") -> list[str]:
     warnings = []
-    if deploy_conclusion and deploy_conclusion not in ("success", "skipped"):
+    if deploy_conclusion and deploy_conclusion not in ("success", "skipped", "cancelled", "neutral"):
         warnings.append(f"Última ejecución de publicación: {deploy_conclusion}")
     generated = meta.get("generated_at")
     checked = status.get("checked_at")
