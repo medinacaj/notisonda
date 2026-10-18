@@ -53,6 +53,7 @@ jobs:
           node --check web/app.js
           node --check web/library.js
           node --check web/sidebar-layout.js
+          node tests/test_sidebar_behavior.cjs
       - name: Obtener noticias
         run: python scripts/collect.py --opml sources/feeds.opml --out web/data --days 45 --workers 8
       - name: Validar JSON antes de publicar

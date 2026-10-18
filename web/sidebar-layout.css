@@ -12,8 +12,10 @@ body.radar-hybrid .source-folders-section .folder-entry .nav-left{min-width:0;fl
 body.radar-hybrid .source-folders-section .folder-entry .nav-label{min-width:0}
 body.radar-hybrid .source-folders-section .folder-entry .nav-count{flex-shrink:0}
 body.radar-hybrid .source-folders-section .folder-more{flex-shrink:0}
+/* The legacy preview themes do not expose a draggable sidebar. */
+.sidebar-resize-handle{display:none}
 /* Fixed-position handle remains discoverable when sidebar content scrolls. */
-.sidebar-resize-handle{
+body.radar-hybrid .sidebar-resize-handle{
   position:fixed;z-index:40;
   top:0;left:calc(var(--radar-sidebar-width) - 8px);
   width:16px;height:100dvh;display:flex;align-items:center;justify-content:center;
@@ -53,7 +55,7 @@ body.sidebar-is-resizing,body.sidebar-is-resizing *{cursor:col-resize!important;
 .setting-sidebar-width-footer .settings-secondary{font-size:11px;padding:8px 11px;white-space:nowrap}
 @media(max-width:950px){
   body.radar-hybrid .app-shell{grid-template-columns:minmax(0,1fr)}
-  .sidebar-resize-handle{display:none!important}
+  body.radar-hybrid .sidebar-resize-handle{display:none!important}
 }
 @media(prefers-reduced-motion:reduce){
   .sidebar-resize-handle::before,.sidebar-resize-grip{transition:none}
