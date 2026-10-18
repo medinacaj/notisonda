@@ -122,9 +122,6 @@ body .source-folders-section .library-folder-delete:focus-visible{
 /* V7.6: Menús idénticos para carpetas OPML y manuales */
 body .source-folders-section .folder-default-row,body .source-folders-section .library-folder-row{display:flex;align-items:center;gap:2px;min-height:40px;margin:1px 0}
 body .source-folders-section .folder-entry>.nav-link{flex:1;min-width:0;margin:0;min-height:40px;padding:9px 8px 9px 12px;border-radius:9px;font-size:12.5px}
-body .source-folders-section .folder-more{display:grid;place-items:center;flex:0 0 26px;width:26px;height:29px;padding:0;border:1px solid transparent;border-radius:8px;background:transparent;color:var(--muted);opacity:.7;cursor:pointer}
-body .source-folders-section .folder-more .ui-icon{width:16px;height:16px}
-body .source-folders-section .folder-more:hover,body .source-folders-section .folder-more:focus-visible{opacity:1;border-color:var(--line);color:var(--text);background:var(--hover)}
 body .source-folders-section .folder-restore[hidden]{display:none!important}
 body .source-folders-section .folder-restore{display:grid;place-items:center;flex:0 0 29px;width:29px;height:29px;border:1px solid var(--line);border-radius:9px;background:var(--surface);color:var(--muted)}
 body .source-folders-section .folder-restore .ui-icon{width:15px;height:15px}
@@ -156,4 +153,20 @@ body .source-folders-section .folder-restore .ui-icon{width:15px;height:15px}
 /* Accesos duplicados; todas las carpetas se navegan desde la barra lateral. */
 body .topic-rail,body .dashboard-panel:has(#dashboardCategories){display:none!important}
 body .dashboard-lower{grid-template-columns:minmax(0,1fr)!important}
-@media(max-width:950px){body .source-folders-section .folder-more{opacity:1}}
+
+/* V7.7: las carpetas usan todo el ancho; opciones por clic derecho, teclado o pulsación larga. */
+body .source-folders-section .folder-entry>.nav-link{
+  flex:1 1 auto;width:100%;min-width:0;
+  padding-inline:12px;
+}
+body .source-folders-section .folder-entry .nav-left{
+  flex:1 1 auto;min-width:0;
+}
+body .source-folders-section .folder-entry .nav-count{
+  flex:0 0 auto;
+}
+@media(pointer:coarse){
+  body .source-folders-section .folder-entry>.nav-link{
+    -webkit-touch-callout:none;
+  }
+}

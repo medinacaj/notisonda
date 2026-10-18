@@ -93,25 +93,51 @@ function showFolderMenu(kind,id,x,y,anchor){
 }
 function equipFolder(row,button,kind,id){
  row.classList.add('folder-entry');
- const options=mk('button','folder-more');options.type='button';
- options.title='Opciones de carpeta';
- options.setAttribute('aria-label','Opciones de '+folderName(kind,id));
- options.setAttribute('aria-haspopup','menu');
- options.append(svgIcon('ellipsis'));
- options.addEventListener('click',e=>{
-  e.stopPropagation();const r=options.getBoundingClientRect();
-  showFolderMenu(kind,id,r.right-205,r.bottom+6,options);
- });
+ button.setAttribute('aria-keyshortcuts','Shift+F10');
+ button.setAttribute('aria-description','Clic derecho o Shift+F10 para opciones. En pantallas táctiles, mantén pulsado.');
+ let touchTimer=null,touchStart=null,blockClickUntil=0;
+ const stopLongPress=()=>{
+  if(touchTimer!==null){window.clearTimeout(touchTimer);touchTimer=null;}
+  touchStart=null;
+ };
  row.addEventListener('contextmenu',e=>{
-  e.preventDefault();showFolderMenu(kind,id,e.clientX,e.clientY,button);
+  e.preventDefault();
+  if(Date.now()<blockClickUntil)return;
+  stopLongPress();
+  showFolderMenu(kind,id,e.clientX,e.clientY,button);
  });
  row.addEventListener('keydown',e=>{
   if(e.key==='ContextMenu'||(e.shiftKey&&e.key==='F10')){
-   e.preventDefault();const r=row.getBoundingClientRect();
-   showFolderMenu(kind,id,r.left+20,r.top+20,button);
+   e.preventDefault();const r=button.getBoundingClientRect();
+   showFolderMenu(kind,id,r.left+20,r.top+22,button);
   }
  });
- row.append(options);
+ button.addEventListener('pointerdown',e=>{
+  if(e.pointerType!=='touch'||!e.isPrimary)return;
+  stopLongPress();
+  touchStart={x:e.clientX,y:e.clientY,pointerId:e.pointerId};
+  touchTimer=window.setTimeout(()=>{
+   if(!touchStart)return;
+   blockClickUntil=Date.now()+1250;
+   const {x,y}=touchStart;
+   stopLongPress();
+   showFolderMenu(kind,id,x,y,button);
+  },550);
+ });
+ button.addEventListener('pointermove',e=>{
+  if(touchStart&&e.pointerId===touchStart.pointerId&&
+      Math.hypot(e.clientX-touchStart.x,e.clientY-touchStart.y)>12)stopLongPress();
+ });
+ for(const eventName of ['pointerup','pointercancel','pointerleave']){
+  button.addEventListener(eventName,stopLongPress);
+ }
+ // La pulsación prolongada abre el menú, no navega a la carpeta.
+ button.addEventListener('click',e=>{
+  if(Date.now()<blockClickUntil){
+   e.preventDefault();e.stopImmediatePropagation();
+   blockClickUntil=0;
+  }
+ },true);
 }
 function equipDefaults(){
  const list=$('libraryFolderNav');
@@ -225,7 +251,6 @@ function runFolderAction(command){
  }
 }
 function installFolderUI(){
- VECTOR_PATHS.ellipsis='<circle cx="5" cy="12" r="1" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1" fill="currentColor" stroke="none"/><circle cx="19" cy="12" r="1" fill="currentColor" stroke="none"/>';
  VECTOR_PATHS['rotate-ccw']='<path d="M3 11a9 9 0 1 1 3 7M3 4v7h7"/>';
  const menu=mk('div','folder-popup-menu');menu.id='folderMenu';menu.hidden=true;
  menu.setAttribute('role','menu');menu.setAttribute('aria-label','Acciones de carpeta');
@@ -235,7 +260,7 @@ function installFolderUI(){
  }
  document.body.append(menu);
  document.addEventListener('pointerdown',event=>{
-  if(!menu.hidden&&!event.target.closest('#folderMenu')&&!event.target.closest('.folder-more'))hideFolderMenu();
+  if(!menu.hidden&&!event.target.closest('#folderMenu'))hideFolderMenu();
  });
  document.addEventListener('keydown',event=>{
   if(menu.hidden)return;
