@@ -57,6 +57,220 @@ function readTags(data){
 }
 tags=readTags(rawTags);
 let activeFolder=null,activeTag='';
+
+const FOLDER_OVERLAY_KEY='radar-default-folders-v1';
+let defaults=(()=>{try{const obj=JSON.parse(localStorage.getItem(FOLDER_OVERLAY_KEY)||'{}');
+ const result=Object.create(null);
+ if(obj&&typeof obj==='object'&&!Array.isArray(obj))
+  for(const [id,v] of Object.entries(obj).slice(0,40)){
+   if(id.length>150||!v||typeof v!=='object')continue;
+   result[id]={name:typeof v.name==='string'?v.name.slice(0,45):'',
+    hidden:v.hidden===true,sources:Array.isArray(v.sources)?v.sources.filter(x=>typeof x==='string').slice(0,160):null};
+  }
+ return result;
+}catch{return Object.create(null);}})();
+const saveDefaults=()=>write(FOLDER_OVERLAY_KEY,defaults);
+const folderName=(kind,id)=>kind==='default'?(defaults[id]?.name||categoryLabel(id)):id;
+const folderSources=(kind,id)=>kind==='default'?(Array.isArray(defaults[id]?.sources)?defaults[id].sources:state.sources.filter(x=>x.category===id).map(x=>x.id)):(folders[id]||[]);
+function folderNameTaken(name,kind,id){
+ const key=name.toLocaleLowerCase('es');
+ return state.categories.some(x=>!(kind==='default'&&x===id)&&folderName('default',x).toLocaleLowerCase('es')===key)
+  ||Object.keys(folders).some(x=>!(kind==='manual'&&x===id)&&x.toLocaleLowerCase('es')===key);
+}
+let folderSelection=null,folderEditor=null;
+function hideFolderMenu(focus=false){
+ const menu=document.getElementById('folderMenu');if(!menu||menu.hidden)return;
+ menu.hidden=true;
+ if(focus&&folderSelection?.anchor?.isConnected)folderSelection.anchor.focus();
+ folderSelection=null;
+}
+function showFolderMenu(kind,id,x,y,anchor){
+ hideFolderMenu();folderSelection={kind,id,anchor};
+ const el=$('folderMenu');el.hidden=false;
+ el.style.left=Math.max(8,Math.min(x,window.innerWidth-el.offsetWidth-8))+'px';
+ el.style.top=Math.max(8,Math.min(y,window.innerHeight-el.offsetHeight-8))+'px';
+ el.querySelector('button')?.focus({preventScroll:true});
+}
+function equipFolder(row,button,kind,id){
+ row.classList.add('folder-entry');
+ const options=mk('button','folder-more');options.type='button';
+ options.title='Opciones de carpeta';
+ options.setAttribute('aria-label','Opciones de '+folderName(kind,id));
+ options.setAttribute('aria-haspopup','menu');
+ options.append(svgIcon('ellipsis'));
+ options.addEventListener('click',e=>{
+  e.stopPropagation();const r=options.getBoundingClientRect();
+  showFolderMenu(kind,id,r.right-205,r.bottom+6,options);
+ });
+ row.addEventListener('contextmenu',e=>{
+  e.preventDefault();showFolderMenu(kind,id,e.clientX,e.clientY,button);
+ });
+ row.addEventListener('keydown',e=>{
+  if(e.key==='ContextMenu'||(e.shiftKey&&e.key==='F10')){
+   e.preventDefault();const r=row.getBoundingClientRect();
+   showFolderMenu(kind,id,r.left+20,r.top+20,button);
+  }
+ });
+ row.append(options);
+}
+function equipDefaults(){
+ const list=$('libraryFolderNav');
+ [...list.querySelectorAll('.system-folder-link')].forEach((button,i)=>{
+  const id=state.categories[i];if(!id)return;
+  const row=mk('div','folder-default-row');
+  button.replaceWith(row);row.append(button);
+  row.hidden=defaults[id]?.hidden===true;
+  button.querySelector('.nav-label').textContent=folderName('default',id);
+  const ids=folderSources('default',id),count=unread(ids);
+  button.querySelector('.nav-count').textContent=String(count);
+  button.title=count+' sin leer · '+ids.length+' fuentes';
+  equipFolder(row,button,'default',id);
+ });
+ $('folderRestore').hidden=!state.categories.some(id=>defaults[id]?.hidden);
+}
+function openFolderEditor(kind,id,create=false,sources=false){
+ hideFolderMenu();
+ folderEditor={kind,id,create,sources,selected:new Set(create?[]:folderSources(kind,id))};
+ const dialog=$('folderDialog');
+ $('folderDialogTitle').textContent=create?'Nueva carpeta de fuentes':
+   sources?'Administrar fuentes · '+folderName(kind,id):'Renombrar carpeta';
+ $('folderNamePane').hidden=sources;
+ $('folderSourcesPane').hidden=!sources;
+ $('folderNameInput').value=create?'':folderName(kind,id);
+ $('folderError').textContent='';
+ if(sources){$('folderSourceSearch').value='';listFolderSources();}
+ dialog.showModal();(sources?$('folderSourceSearch'):$('folderNameInput')).focus();
+}
+function listFolderSources(){
+ if(!folderEditor)return;
+ const filter=stripAccents($('folderSourceSearch').value.trim());
+ const list=$('folderSourceList');list.replaceChildren();
+ for(const source of state.sources.slice().sort((a,b)=>a.name.localeCompare(b.name,'es'))){
+  if(filter&&!stripAccents(source.name+' '+categoryLabel(source.category)).includes(filter))continue;
+  const row=mk('label','folder-source-row-option');
+  const input=mk('input');input.type='checkbox';
+  input.checked=folderEditor.selected.has(source.id);
+  input.addEventListener('change',()=>{
+   if(input.checked)folderEditor.selected.add(source.id);else folderEditor.selected.delete(source.id);
+   $('folderSelectedCount').textContent=folderEditor.selected.size+' fuentes seleccionadas';
+  });
+  const info=mk('span','folder-source-text');
+  info.append(mk('strong','',source.name),mk('small','',categoryLabel(source.category)));
+  row.append(input,info);list.append(row);
+ }
+ $('folderSelectedCount').textContent=folderEditor.selected.size+' fuentes seleccionadas';
+}
+function saveFolderEditor(){
+ const e=folderEditor;if(!e)return;
+ if(e.sources){
+  const ids=[...e.selected];
+  if(e.kind==='default'){
+   const old=defaults[e.id]||{};defaults[e.id]={...old,sources:ids};
+   if(!saveDefaults()){defaults[e.id]=old;return $('folderError').textContent='No se pudieron guardar las fuentes.';}
+  }else{
+   const old=folders[e.id];folders[e.id]=ids;
+   if(!write(FOLDER_KEY,folders)){folders[e.id]=old;return $('folderError').textContent='No se pudieron guardar las fuentes.';}
+  }
+ }else{
+  const name=$('folderNameInput').value.trim().replace(/\s+/g,' ').slice(0,45);
+  if(!name||name==='__proto__'||folderNameTaken(name,e.kind,e.id))
+   return $('folderError').textContent='Elige un nombre diferente al de las carpetas existentes.';
+  if(e.create){
+   if(Object.keys(folders).length>=25)return $('folderError').textContent='Máximo de 25 carpetas.';
+   folders[name]=[];
+   if(!write(FOLDER_KEY,folders)){delete folders[name];return $('folderError').textContent='No se pudo guardar.';}
+  }else if(e.kind==='default'){
+   const old=defaults[e.id]||{};defaults[e.id]={...old,name};
+   if(!saveDefaults()){defaults[e.id]=old;return $('folderError').textContent='No se pudo guardar.';}
+  }else{
+   const old=folders[e.id];delete folders[e.id];folders[name]=old;
+   if(!write(FOLDER_KEY,folders)){delete folders[name];folders[e.id]=old;return $('folderError').textContent='No se pudo guardar.';}
+   if(activeFolder===e.id)window.location.hash='#carpeta/'+encodeURIComponent(name);
+  }
+ }
+ $('folderDialog').close();
+ buildNav();renderSettingsSources();fillSelect();render();
+ if(e.kind==='default'&&state.category===e.id){$('feedHeading').textContent=folderName('default',e.id);$('topbarSection').textContent=folderName('default',e.id);}
+ actionToast('Carpeta actualizada.');
+}
+function deleteFolder(kind,id){
+ hideFolderMenu();
+ const warning=kind==='default'
+  ?'¿Ocultar la carpeta «'+folderName(kind,id)+'»? Solo desaparece de este navegador y podrás restaurarla. Las fuentes y noticias no se borran.'
+  :'¿Eliminar la carpeta «'+folderName(kind,id)+'»? No se borrarán las fuentes ni noticias.';
+ if(!confirm(warning))return;
+ if(kind==='default'){
+  const old=defaults[id]||{};defaults[id]={...old,hidden:true};
+  if(!saveDefaults()){defaults[id]=old;return actionToast('No se pudo guardar.');}
+  if(state.category===id)window.location.hash='#noticias';
+ }else{
+  const old=folders[id];delete folders[id];
+  if(!write(FOLDER_KEY,folders)){folders[id]=old;return actionToast('No se pudo eliminar.');}
+  if(activeFolder===id)window.location.hash='#noticias';
+ }
+ buildNav();render();actionToast('Carpeta retirada de la lista.');
+}
+function runFolderAction(command){
+ if(!folderSelection)return;
+ const {kind,id}=folderSelection;
+ if(command==='rename')openFolderEditor(kind,id);
+ else if(command==='sources')openFolderEditor(kind,id,false,true);
+ else if(command==='delete')deleteFolder(kind,id);
+ else if(command==='read'){
+  const ids=new Set(folderSources(kind,id));let count=0;
+  for(const item of state.items)
+   if(!state.read.has(item.id)&&(item.source_ids||[]).some(s=>ids.has(s))){state.read.add(item.id);count++;}
+  persist('radar-read',state.read);hideFolderMenu();render();
+  actionToast(count+' noticias marcadas como leídas.');
+ }
+}
+function installFolderUI(){
+ VECTOR_PATHS.ellipsis='<circle cx="5" cy="12" r="1" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1" fill="currentColor" stroke="none"/><circle cx="19" cy="12" r="1" fill="currentColor" stroke="none"/>';
+ VECTOR_PATHS['rotate-ccw']='<path d="M3 11a9 9 0 1 1 3 7M3 4v7h7"/>';
+ const menu=mk('div','folder-popup-menu');menu.id='folderMenu';menu.hidden=true;
+ menu.setAttribute('role','menu');menu.setAttribute('aria-label','Acciones de carpeta');
+ for(const [action,label] of [['rename','Renombrar'],['sources','Administrar fuentes'],['read','Marcar como leída'],['delete','Eliminar carpeta']]){
+  const b=mk('button','folder-popup-option',label);b.type='button';b.setAttribute('role','menuitem');
+  b.addEventListener('click',()=>runFolderAction(action));menu.append(b);
+ }
+ document.body.append(menu);
+ document.addEventListener('pointerdown',event=>{
+  if(!menu.hidden&&!event.target.closest('#folderMenu')&&!event.target.closest('.folder-more'))hideFolderMenu();
+ });
+ document.addEventListener('keydown',event=>{
+  if(menu.hidden)return;
+  if(event.key==='Escape'){event.preventDefault();hideFolderMenu(true);}
+  else if(['ArrowDown','ArrowUp'].includes(event.key)){
+   event.preventDefault();const buttons=[...menu.querySelectorAll('button')],i=buttons.indexOf(document.activeElement);
+   buttons[(i+(event.key==='ArrowDown'?1:buttons.length-1))%buttons.length].focus();
+  }else if(event.key==='Tab')hideFolderMenu();
+ });
+ window.addEventListener('resize',()=>hideFolderMenu());
+ const dialog=mk('dialog','folder-manage-dialog');dialog.id='folderDialog';
+ const header=mk('div','folder-dialog-top');
+ const title=mk('h2','');title.id='folderDialogTitle';
+ const x=mk('button','folder-dialog-close','×');x.type='button';x.setAttribute('aria-label','Cerrar');x.addEventListener('click',()=>dialog.close());
+ header.append(title,x);
+ const name=mk('div');name.id='folderNamePane';
+ const input=mk('input','folder-dialog-input');input.id='folderNameInput';input.maxLength=45;
+ input.placeholder='Nombre de carpeta';input.setAttribute('aria-label','Nombre de carpeta');
+ input.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();saveFolderEditor();}});
+ name.append(input);
+ const sources=mk('div');sources.id='folderSourcesPane';sources.hidden=true;
+ const search=mk('input','folder-dialog-input');search.id='folderSourceSearch';search.type='search';
+ search.placeholder='Buscar fuente RSS';search.setAttribute('aria-label','Buscar fuente RSS');
+ search.addEventListener('input',listFolderSources);
+ const count=mk('p','folder-source-count');count.id='folderSelectedCount';
+ const list=mk('div','folder-source-choices');list.id='folderSourceList';
+ sources.append(search,count,list);
+ const err=mk('p','folder-dialog-error');err.id='folderError';
+ const buttons=mk('div','folder-dialog-buttons');
+ const cancel=mk('button','folder-dialog-cancel','Cancelar');cancel.type='button';cancel.addEventListener('click',()=>dialog.close());
+ const save=mk('button','folder-dialog-save','Guardar');save.type='button';save.addEventListener('click',saveFolderEditor);
+ buttons.append(cancel,save);
+ dialog.append(header,name,sources,err,buttons);document.body.append(dialog);
+}
+
 const saveArchive=()=>write(ARCHIVE_KEY,[...archive.values()].slice(-LIMIT));
 const savedNews=()=>{
   const found=new Map(state.items.filter(x=>state.saved.has(x.id)).map(x=>[x.id,x]));
@@ -111,6 +325,7 @@ buildNav=function(){
     const label=button.querySelector('.nav-count');if(label)label.textContent=String(count);
     button.title=count+' sin leer · '+ids.length+' fuentes';
   });
+  equipDefaults();
   renderFolderNav();
 };
 function renderFolderNav(){
@@ -127,32 +342,10 @@ function renderFolderNav(){
     b.append(left,mk('span','nav-count',String(unread(ids))));
     b.title=ids.length+' fuentes · '+unread(ids)+' sin leer';
     b.addEventListener('click',()=>{window.location.hash='#carpeta/'+encodeURIComponent(name);});
-    const del=mk('button','library-folder-delete','×');del.type='button';
-    del.setAttribute('aria-label','Eliminar carpeta '+name);
-    del.addEventListener('click',()=>{
-      if(!confirm('¿Eliminar carpeta «'+name+'»? No se eliminarán las fuentes.'))return;
-      delete folders[name];write(FOLDER_KEY,folders);
-      if(activeFolder===name)window.location.hash='#noticias';
-      else{buildNav();renderSettingsSources();}
-    });
-    wrapper.append(b,del);nav.append(wrapper);
+    wrapper.append(b);equipFolder(wrapper,b,'manual',name);nav.append(wrapper);
   });
 }
-function createFolder(){
-  const raw=prompt('Nombre para la carpeta de fuentes:');
-  if(raw===null)return;
-  const name=raw.trim().replace(/\s+/g,' ').slice(0,45);
-  if(!name){actionToast('Introduce un nombre para la carpeta.');return;}
-  if(Object.keys(folders).some(n=>n.toLocaleLowerCase('es')===name.toLocaleLowerCase('es'))){actionToast('La carpeta ya existe.');return;}
-  if(state.categories.some(id=>categoryLabel(id).toLocaleLowerCase('es')===name.toLocaleLowerCase('es'))){
-    actionToast('Esa carpeta ya existe en el catálogo de fuentes.');return;
-  }
-  if(Object.keys(folders).length>=25){actionToast('Máximo de 25 carpetas.');return;}
-  if(name==='__proto__')return;
-  folders[name]=[];
-  if(!write(FOLDER_KEY,folders)){delete folders[name];actionToast('No se pudo crear la carpeta.');return;}
-  buildNav();renderSettingsSources();actionToast('Carpeta creada. Asigna medios en Configuración → Mis fuentes.');
-}
+function createFolder(){openFolderEditor('manual',null,true);}
 function decorateSources(){
   const elements=[...$('settingsSources').querySelectorAll('.settings-source-row')];
   for(const label of elements){
@@ -186,17 +379,31 @@ navigateFromHash=function(){
   activeFolder=hash.startsWith('carpeta/')&&Object.prototype.hasOwnProperty.call(folders,hash.slice(8))?hash.slice(8):null;
   if(activeFolder)state.mode='all';
   oldNavigate();
+  if(!activeFolder&&state.pageView==='feed'&&state.category!=='all'){
+    const name=folderName('default',state.category);
+    $('topbarSection').textContent=name;$('feedHeading').textContent=name;
+    $('sectionEyebrow').textContent='CARPETA DE FUENTES';
+    $('feedDescription').textContent='Noticias agrupadas de las fuentes de esta carpeta.';
+  }
   if(activeFolder){
     $('topbarSection').textContent=activeFolder;
     $('feedHeading').textContent=activeFolder;
     $('feedDescription').textContent='Noticias de los medios que agrupaste en esta carpeta.';
-    $('sectionEyebrow').textContent='CARPETA PERSONAL';
+    $('sectionEyebrow').textContent='CARPETA DE FUENTES';
   }
   buildNav();
 };
 const oldFillSelect=fillSelect;
 fillSelect=function(){
   oldFillSelect();
+  if(!activeFolder&&state.category!=='all'){
+    const ids=new Set(folderSources('default',state.category)),sel=$('sourceSelect'),current=state.feed;
+    sel.replaceChildren(new Option('Todas las fuentes',''));
+    state.sources.filter(s=>ids.has(s.id)&&!state.hiddenSources.has(s.id))
+      .sort((a,b)=>a.name.localeCompare(b.name,'es')).forEach(s=>sel.append(new Option(s.name,s.id)));
+    sel.value=current&&[...sel.options].some(o=>o.value===current)?current:'';
+    state.feed=sel.value;
+  }
   if(activeFolder){
     for(const option of [...$('sourceSelect').options].slice(1)){
       if(!folders[activeFolder]?.includes(option.value))option.remove();
@@ -213,7 +420,7 @@ applyFilters=function(){
   const query=stripAccents(state.search.trim());
   const input=state.mode==='saved'?savedNews():state.items;
   const filtered=input.filter(item=>{
-    if(state.category!=='all'&&!(item.categories||[]).includes(state.category))return false;
+    if(state.category!=='all'&&!(item.source_ids||[]).some(id=>folderSources('default',state.category).includes(id)))return false;
     if(state.mode!=='saved'&&!(item.source_ids||[]).some(id=>!state.hiddenSources.has(id)))return false;
     if(activeFolder&&!(item.source_ids||[]).some(id=>(folders[activeFolder]||[]).includes(id)))return false;
     if(state.feed&&!(item.source_ids||[]).includes(state.feed))return false;
@@ -270,8 +477,9 @@ function updateUnreadCounts(){
     if(i===0)return;
     const ids=i===1?state.sources.map(s=>s.id):state.sources.filter(s=>s.category===state.categories[i-2]).map(s=>s.id);
     const n=unread(ids);const count=btn.querySelector('.nav-count');
-    if(count)count.textContent=String(n);
-    btn.title=n+' noticias sin leer';
+    const total=i>=2?unread(folderSources('default',state.categories[i-2])):n;
+    if(count)count.textContent=String(total);
+    btn.title=total+' noticias sin leer';
   });
   renderFolderNav();
 }
@@ -322,6 +530,7 @@ function addTag(){
   input.value='';renderTags();refreshTagFilter();render();
 }
 function mount(){
+  installFolderUI();
   const foldersSection=mk('section','source-folders-section');
   foldersSection.setAttribute('aria-labelledby','sourceFoldersHeading');
   const header=mk('div','folder-group-head');
@@ -329,6 +538,15 @@ function mount(){
   heading.id='sourceFoldersHeading';header.append(heading);
   const add=mk('button');add.type='button';add.title='Crear carpeta de fuentes';add.setAttribute('aria-label','Crear carpeta de fuentes');
   add.append(svgIcon('folder-plus'));header.append(add);
+  const restore=mk('button','folder-restore');restore.id='folderRestore';
+  restore.type='button';restore.hidden=true;restore.title='Restaurar carpetas ocultas';
+  restore.setAttribute('aria-label','Restaurar carpetas ocultas');
+  restore.append(svgIcon('rotate-ccw'));header.insertBefore(restore,add);
+  restore.addEventListener('click',()=>{
+    for(const id of state.categories)if(defaults[id]?.hidden)defaults[id].hidden=false;
+    if(!saveDefaults())return actionToast('No se pudieron restaurar.');
+    buildNav();render();
+  });
   const nav=mk('nav','library-folder-nav library-system-folders');
   nav.id='libraryFolderNav';
   nav.setAttribute('aria-label','Carpetas de fuentes del catálogo y creadas por ti');
@@ -371,7 +589,7 @@ function mount(){
     const obj={format:'radar-rss-settings-v3',exported_at:new Date().toISOString(),
       preferences:{theme:state.theme,layout:state.layout,columns:state.columns,density:state.density,pageSize:state.pageSize,maxAge:state.maxAge,fontSize:state.fontSize,showHero:state.showHero,showImages:state.showImages,showSummaries:state.showSummaries,hideRead:state.hideRead,newTab:state.newTab,sort:state.sort,startMode:state.startMode,mutedKeywords:state.mutedKeywords},
       saved:[...state.saved],read:[...state.read],hiddenSources:[...state.hiddenSources],
-      savedArchive:[...archive.values()],sourceFolders:folders,articleTags:tags};
+      savedArchive:[...archive.values()],sourceFolders:folders,folderDefaults:defaults,articleTags:tags};
     downloadText('radar-rss-respaldo-completo.json',JSON.stringify(obj,null,2),'application/json;charset=utf-8');
     $('dataNotice').textContent='Respaldo completo generado con guardadas, etiquetas y carpetas.';
   },true);
@@ -400,8 +618,8 @@ function mount(){
       state.hiddenSources=new Set((Array.isArray(d.hiddenSources)?d.hiddenSources:[]).filter(x=>known.has(x)));
       persist('radar-saved',state.saved);persist('radar-read',state.read);persist('radar-hidden-sources',state.hiddenSources);
       archive=new Map((Array.isArray(d.savedArchive)?d.savedArchive:[]).slice(-LIMIT).map(snapshot).filter(Boolean).filter(x=>state.saved.has(x.id)).map(x=>[x.id,x]));
-      folders=readFolders(d.sourceFolders);tags=readTags(d.articleTags);
-      saveArchive();write(FOLDER_KEY,folders);write(TAG_KEY,tags);syncArchive();
+      folders=readFolders(d.sourceFolders);defaults=(d.folderDefaults&&typeof d.folderDefaults==='object'&&!Array.isArray(d.folderDefaults))?d.folderDefaults:Object.create(null);tags=readTags(d.articleTags);
+      saveArchive();write(FOLDER_KEY,folders);saveDefaults();write(TAG_KEY,tags);syncArchive();
       for(const [key,value] of [['layout',state.layout],['columns',state.columns],['theme',state.theme],['density',state.density],['font',state.fontSize],['page-size',state.pageSize],['max-age',state.maxAge],['show-hero',state.showHero],['show-images',state.showImages],['show-summaries',state.showSummaries],['hide-read',state.hideRead],['new-tab',state.newTab],['sort',state.sort],['start-mode',state.startMode],['keywords',state.mutedKeywords]])savePref(key,value);
       state.mode=state.startMode;state.page=1;
       setTheme(state.theme);applyDisplaySettings();refreshFeedUI();syncSettings();selectedTab('data');
