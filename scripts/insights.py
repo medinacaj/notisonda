@@ -61,13 +61,46 @@ def _instant(item: dict) -> datetime | None:
         return None
 
 
-def trending_topics(articles: list[dict], now: datetime, limit: int = 10) -> dict:
+def independent_publishers(item: dict, catalog: dict[str, dict] | None = None) -> set[str]:
+    """Identify editorial outlets rather than RSS query URLs.
+
+    A Google News RSS query is not a publisher. Count its attributed <source>
+    and alternative article outlets, but not additional queries of the same medium.
+    """
+    catalog = catalog or {}
+    feed_ids = list(dict.fromkeys(item.get('source_ids') or []))
+    observed = {}
+    if feed_ids and item.get('publisher'):
+        observed[feed_ids[0]] = str(item['publisher'])
+    for alt in item.get('also_in') or []:
+        if isinstance(alt, dict) and alt.get('source_id') and alt.get('publisher'):
+            observed[alt['source_id']] = str(alt['publisher'])
+    result = set()
+    for source_id in feed_ids:
+        source = catalog.get(source_id)
+        if source and not source.get('is_radar'):
+            name = public_source_name(str(source.get('name') or '')) or observed.get(source_id)
+        else:
+            name = observed.get(source_id)
+        if not name:
+            if not source:
+                result.add('feed:' + str(source_id))
+            continue
+        normalized = re.sub(r'[^a-z0-9]+', ' ', fold(public_source_name(name))).strip()
+        if normalized and not normalized.startswith(('radar ', 'google noticias')):
+            result.add('medio:' + normalized)
+    return result
+
+
+def trending_topics(articles: list[dict], now: datetime, limit: int = 10,
+                    source_catalog: list[dict] | None = None) -> dict:
     """Temas cuyo número de historias en 24 h supera claramente su promedio diario previo."""
     window_start = now - timedelta(hours=24)
     base_start = now - timedelta(days=8)
     current: Counter = Counter()
     baseline: Counter = Counter()
     sources: dict[str, set] = defaultdict(set)
+    catalog = {source['id']: source for source in (source_catalog or []) if source.get('id')}
     samples: dict[str, list] = defaultdict(list)
     surfaces: dict[str, Counter] = defaultdict(Counter)
     positions: dict[str, list] = defaultdict(list)  # las primeras palabras de un titular suelen nombrar el tema
@@ -93,7 +126,7 @@ def trending_topics(articles: list[dict], now: datetime, limit: int = 10) -> dic
             if when >= window_start:
                 current[term] += 1
                 positions[term].append(first_at.get(term, 9))
-                sources[term].update(item.get('source_ids') or [])
+                sources[term].update(independent_publishers(item, catalog))
                 if len(samples[term]) < 3:
                     samples[term].append(item.get('id'))
             else:
