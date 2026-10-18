@@ -1,0 +1,110 @@
+"""Mejoras de la prueba de usuario: menú móvil, buscador global, tarjetas y accesibilidad."""
+import json
+import re
+import shutil
+import subprocess
+import unittest
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+
+
+def js_function(source, name):
+    """Extrae una función de nivel superior de app.js para probarla aislada en Node."""
+    start = source.index(f'function {name}(')
+    depth, i = 0, source.index('{', start)
+    while True:
+        if source[i] == '{':
+            depth += 1
+        elif source[i] == '}':
+            depth -= 1
+            if depth == 0:
+                return source[start:i + 1]
+        i += 1
+
+
+class UxReviewTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.html = (ROOT / 'web/index.html').read_text(encoding='utf-8')
+        cls.app = (ROOT / 'web/app.js').read_text(encoding='utf-8')
+        cls.css = (ROOT / 'web/ux.css').read_text(encoding='utf-8')
+
+    def test_mobile_drawer(self):
+        self.assertIn('id="menuToggle"', self.html)
+        self.assertIn('aria-controls="appSidebar"', self.html)
+        self.assertIn('id="sidebarBackdrop"', self.html)
+        self.assertIn('id="menuClose"', self.html)
+        self.assertIn("matchMedia('(max-width: 950px)')", self.app)
+        self.assertIn('sidebar.inert=mobile&&!next', self.app)
+        self.assertIn('page.inert=next', self.app)
+        self.assertIn('body.radar-hybrid.nav-open .sidebar', self.css)
+
+    def test_resize_handle_inside_landmark(self):
+        aside = self.html[self.html.index('<aside'):self.html.index('</aside>')]
+        self.assertIn('id="sidebarResizeHandle"', aside)
+
+    def test_search_lives_in_topbar(self):
+        header = self.html[self.html.index('<header class="topbar">'):self.html.index('</header>')]
+        self.assertIn('id="searchInput"', header)
+        self.assertIn('role="search"', header)
+        self.assertEqual(self.html.count('id="searchInput"'), 1)
+        self.assertIn("if(state.search.trim()&&state.pageView!=='feed'){goTo('all');return;}", self.app)
+        # La búsqueda carga el archivo completo y no reintenta en bucle si falla.
+        self.assertIn('query.length>=3&&hasHistory()&&!state.historyLoading&&!state.historyFailed', self.app)
+
+    def test_cards_without_filler(self):
+        self.assertNotIn('Accede a la noticia original', self.app)
+        self.assertNotIn("cover-fallback','RADAR'", self.app)
+        self.assertIn("' no-cover'", self.app)
+        self.assertIn('id="cardMenu"', self.html)
+        self.assertIn('role="menu"', self.html)
+        # library.js reemplaza este botón para archivar guardadas: la clase debe mantenerse.
+        self.assertIn("'article-action article-save'", self.app)
+
+    def test_status_not_over_news(self):
+        self.assertNotIn('dashboardHealthText', self.html)
+        self.assertNotIn("showFeedNotice(labels.join", self.app)
+        main = self.html[self.html.index('<main'):self.html.index('</main>')]
+        self.assertIn('id="statusBanner"', main)
+        self.assertLess(main.index('id="statusBanner"'), main.index('id="dashboardView"'))
+
+    def test_theme_follows_system_by_default(self):
+        self.assertIn("THEME_EXPLICIT_KEY='radar-theme-explicit'", self.app)
+        self.assertIn("return 'system';", js_function(self.app, 'initialTheme'))
+
+    def test_brand_orange_contrast(self):
+        hybrid = (ROOT / 'web/radar-hybrid.css').read_text(encoding='utf-8')
+        self.assertNotIn('#c9470a', hybrid)
+        self.assertIn('--accent:#b8420a', hybrid)
+
+    def test_feed_has_level_one_heading(self):
+        self.assertIn('<h1 id="feedHeading">', self.html)
+
+    @unittest.skipUnless(shutil.which('node'), 'Node no disponible')
+    def test_relative_dates_and_plain_language(self):
+        script = '\n'.join([
+            "const mk=()=>({});",
+            js_function(self.app, 'ageDate'),
+            js_function(self.app, 'friendlyFeedProblem'),
+            "const now=Date.now(),ago=m=>new Date(now-m*60000).toISOString();",
+            "console.log(JSON.stringify({",
+            " m:ageDate(ago(25)),h:ageDate(ago(185)),y:ageDate(ago(60*30)),none:ageDate(null),",
+            " forbidden:friendlyFeedProblem({state:'error',error:'HTTPError: 403 Client Error: Forbidden'}),",
+            " big:friendlyFeedProblem({state:'error',error:'ValueError: Documento RSS demasiado grande'}),",
+            " stale:friendlyFeedProblem({state:'stale'})}));",
+        ])
+        out = json.loads(subprocess.run(['node', '-e', script], capture_output=True, text=True, check=True).stdout)
+        self.assertEqual(out['m'], 'Hace 25 min')
+        self.assertEqual(out['h'], 'Hace 3 h')
+        self.assertEqual(out['y'], 'Ayer')
+        self.assertEqual(out['none'], 'Sin fecha')
+        self.assertEqual(out['forbidden'], 'El medio no permite la lectura automática de su RSS.')
+        self.assertEqual(out['big'], 'El RSS es demasiado pesado para procesarlo.')
+        self.assertIn('más de un año', out['stale'])
+        for text in out.values():
+            self.assertFalse(re.search(r'HTTPError|ValueError', text))
+
+
+if __name__ == '__main__':
+    unittest.main()

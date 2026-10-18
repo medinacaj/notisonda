@@ -627,7 +627,7 @@ function mount(){
       const d=JSON.parse(await file.text());
       if(!['radar-rss-settings-v2','radar-rss-settings-v3'].includes(d.format)||!d.preferences)throw Error('Formato incompatible');
       const p=d.preferences,choose=(key,options,def)=>options.includes(p[key])?p[key]:def;
-      state.theme=choose('theme',['system','light','dark'],'light');
+      state.theme=choose('theme',['system','light','dark'],'system');
       state.layout=choose('layout',['cards','list'],'cards');
       state.columns=choose('columns',['auto','2','3','4','5','6'],'auto');
       state.density=choose('density',['comfortable','compact'],'comfortable');
@@ -652,7 +652,7 @@ function mount(){
       }
       for(const [key,value] of [['layout',state.layout],['columns',state.columns],['theme',state.theme],['density',state.density],['font',state.fontSize],['page-size',state.pageSize],['max-age',state.maxAge],['show-hero',state.showHero],['show-images',state.showImages],['show-summaries',state.showSummaries],['hide-read',state.hideRead],['new-tab',state.newTab],['sort',state.sort],['start-mode',state.startMode],['keywords',state.mutedKeywords]])savePref(key,value);
       state.mode=state.startMode;state.page=1;
-      setTheme(state.theme);applyDisplaySettings();refreshFeedUI();syncSettings();selectedTab('data');
+      setTheme(state.theme,true);applyDisplaySettings();refreshFeedUI();syncSettings();selectedTab('data');
       $('dataNotice').textContent='Respaldo importado correctamente.';
     }catch(err){console.warn('Importación Radar RSS',err);$('dataNotice').textContent='Archivo inválido o incompatible.';}
   },true);
