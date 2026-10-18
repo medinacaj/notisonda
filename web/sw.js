@@ -7,7 +7,7 @@ const SHELL = [
   './', './index.html', './manifest.webmanifest', './favicon.svg', './icon-192.png',
   './styles.css', './editorial.css', './hashnode-preview.css', './radar-hybrid.css', './library.css',
   './sidebar-layout.css', './modal-layout.css', './news-effects.css', './sidebar-health.css', './ux.css', './features.css',
-  './app.js', './library.js', './sidebar-layout.js', './news-effects.js', './features.js',
+  './v12.css', './app.js', './v12.js', './library.js', './sidebar-layout.js', './news-effects.js', './features.js',
   './data/latest.json', './data/sources.json', './data/status.json', './data/meta.json', './data/trends.json',
 ];
 
