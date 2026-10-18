@@ -1,9 +1,14 @@
 @AGENTS.md
 
-# Preferencias de Claude Code
-- En auditorías, revisar el diff del PR antes del repositorio completo.
-- Usar contexto adicional únicamente para validar una hipótesis concreta.
-- Clasificar defectos P0 (crítico), P1 (alto), P2 (medio) o P3 (bajo).
-- Aportar pruebas o pasos de reproducción; evitar recomendaciones estilísticas sin impacto.
-- No implementar cambios si el encargo es exclusivamente una revisión.
-- No repetir diagnósticos ya resueltos en el commit actualizado.
+# Claude: chat y Claude Code
+
+**Para Claude Chat (claude.ai):** este archivo y la directiva `@AGENTS.md` no garantizan lectura automática. Usar `+` → `Agregar desde GitHub` y seleccionar expresamente `AGENTS.md`, `docs/agent-workflow.md` y los archivos pertinentes. Revisar el PR proporcionado; no suponer capacidad de escritura.
+
+**Para Claude Code (opcional):** la primera línea importa las reglas del repositorio. Estas instrucciones también aplican allí.
+
+## Revisiones
+- Leer primero diff y pruebas del SHA actual, no el proyecto completo.
+- Abrir dependencias adicionales solo con causa concreta.
+- Reportar hallazgos P0–P3 con archivo:línea y evidencia.
+- No implementar cambios durante un encargo exclusivamente de auditoría.
+- No repetir hallazgos ya resueltos.

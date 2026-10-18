@@ -1,37 +1,42 @@
-# Flujo multiagente nivel 2 — Claude + Codex
+# Trabajo multiagente desde chats: ChatGPT + Claude
 
-## Etapas
-1. **Issue:** objetivo observable, criterios de aceptación, riesgos y archivos o módulos afectados. No enviar el repositorio entero como prompt.
-2. **Implementador (habitualmente Codex):** crear rama, leer `AGENTS.md`, inspeccionar únicamente los archivos relevantes, modificar y probar. Abrir PR enlazado al issue.
-3. **CI:** comprobar el resultado del workflow sobre el SHA actual. Un chequeo pendiente o no ejecutado no equivale a éxito.
-4. **Revisor independiente (habitualmente Claude Code):** recibir URL/número del PR y SHA; analizar primero su diff, tests y dependencias directas. Publicar hallazgos en el PR. La revisión NO es automática por tener `CLAUDE.md`.
-5. **Corrección:** el implementador aborda P0/P1 y P2 justificados. El revisor vuelve a revisar únicamente el diff incremental y los hallazgos abiertos.
-6. **Integración:** una persona confirma que están satisfechos los criterios y controles, y fusiona. Actualizar el issue.
+Este protocolo funciona **sin Codex CLI y sin terminal**. GitHub es la fuente de verdad. No hay un orquestador automático entre las dos conversaciones.
 
-## Traspaso mínimo (copiar al PR)
-- Issue / objetivo:
-- Commit SHA y archivos afectados:
-- Qué cambió (3 líneas):
-- Pruebas (comando → resultado comprobado):
-- Riesgos / pendientes:
-- Revisión: agente/modelo, fecha, commit revisado y hallazgos:
+## Preparación
+- **ChatGPT:** acceder al repositorio con el plugin/conector GitHub disponible; pedir expresamente `AGENTS.md` y el Issue. Según permisos y modalidad del conector, algunas acciones pueden ser de solo lectura.
+- **Claude (claude.ai):** en el chat pulsar `+` → `Agregar desde GitHub`; seleccionar `AGENTS.md`, los archivos pertinentes y, cuando proceda, el PR/diff. En Projects también puede añadir GitHub como fuente.
+- `AGENTS.md`, `CHATGPT.md`, `CLAUDE.md` y los archivos `SKILL.md` en el repositorio **no se cargan automáticamente en una conversación web**. Deben seleccionarse, compartirse o solicitarse de forma explícita.
 
-## Prompts reutilizables
-**Para implementar:** "Lee AGENTS.md e issue #N. Identifica archivos mínimos, implementa criterios, ejecuta las pruebas adecuadas y deja PR con traspaso conciso. No toques main ni módulos fuera del alcance."
+## Flujo recomendado
+1. Abrir Issue en GitHub con objetivo, criterios de aceptación, límites y referencias. Solo leer los archivos relacionados.
+2. Trabajar desde **ChatGPT en este chat** para analizar e implementar el cambio si el conector de GitHub permite escribir; si no lo permite, preparar parche/PR para aplicar mediante un medio autorizado. Crear rama y PR; nunca editar `main` directamente.
+3. Verificar pruebas en GitHub Actions para el SHA exacto del PR; no atribuir pruebas no ejecutadas.
+4. En **Claude Chat**, agregar desde GitHub el contexto mínimo necesario y pedir revisión del diff y del SHA actual. Claude no queda conectado ni recibe notificaciones automáticamente; compartir manualmente la URL del PR y archivos si hace falta.
+5. Volver a **ChatGPT** con las observaciones de Claude o con un comentario del PR; abordar problemas demostrables.
+6. Tras cambios, revisar únicamente las diferencias nuevas. Validar CI y fusionar con aprobación humana.
 
-**Para revisar:** "Lee AGENTS.md y revisa PR #N en commit SHA. Prioriza diff, tests y archivos dependientes; señala solo defectos reproducibles con P0–P3 y archivo:línea. No modifiques código ni vuelvas a auditar todo el proyecto."
+## Handoff de menos de 200 palabras
+- Repositorio, Issue y PR:
+- SHA revisado:
+- Archivos y cambio:
+- Pruebas ejecutadas (comando, resultado):
+- Hallazgos abiertos, gravedad, archivo/línea:
+- Próxima acción:
 
-## Economía de contexto y tokens
-- La conversación entre herramientas no es una fuente fiable de verdad; usar Issue + PR + commit como memoria durable.
-- Abrir primero `git diff`, manifest y 1–3 archivos vinculados; solo ampliar si existe una causa concreta.
-- Mantener instrucciones compartidas en `AGENTS.md` y especialidades en `CLAUDE.md`, sin copiar información dos veces.
-- No solicitar dos auditorías generales para el mismo SHA. Segunda pasada solo si cambia el código.
-- Priorizar CI determinista para sintaxis, unit tests y formato; usar modelos de razonamiento intensivo en incidencias complejas.
-- Evitar copiar logs completos al agente: adjuntar error, stacktrace mínimo, comando y SHA.
-- Cuando se registren costes, usar datos reales de cada proveedor (no estimaciones como si fueran mediciones).
+## Peticiones reutilizables
 
-## Medición por PR (opcional)
-En el PR registrar: agente implementador, agente revisor, modelo, tokens de entrada/salida o coste **solo si la plataforma lo informa**, número de ciclos de revisión y pruebas fallidas. No publicar datos sensibles. Comparar calidad, coste y tiempo; optimizar a partir de resultados, no de supuestos.
+**En ChatGPT:**
+> Revisa [repo] e Issue #[n]. Lee AGENTS.md y solo los archivos relevantes. Implementa los criterios en una rama y abre PR si tus permisos lo permiten. Verifica las pruebas; prepara un resumen para revisión por Claude con SHA, diff, riesgos y resultados. No edites main directamente.
+
+**En Claude Chat:**
+> Con la integración GitHub, revisa [repo], AGENTS.md y PR #[n] en el SHA [sha]. Busca defectos reales de lógica, seguridad y regresiones. Devuelve hallazgos P0–P3 con archivo:línea y reproducción. No repitas auditorías del repositorio completo. No supongas que puedes editar el PR.
+
+## Optimizar tokens
+- Issue y PR sustituyen transcripciones largas.
+- Primero diff, después tests; leer arquitectura únicamente si es pertinente.
+- No reanalizar todo tras cada corrección; revisar solo deltas y defectos abiertos.
+- No atribuir ahorro medido de tokens sin cifras reportadas por los proveedores.
+- Si un chat no puede abrir enlaces PR, adjuntar/copiar únicamente el diff necesario.
 
 ## Límites
-Este protocolo no habilita automáticamente Claude Code, Codex, revisores en GitHub, tokens API ni protección de ramas. Requieren conexiones/permisos externos. No conceder permisos de escritura a un revisor si solo necesita lectura.
+No hay comunicación automática ChatGPT↔Claude ni instalación de plugins mediante commits. Las integraciones GitHub son permisos separados que el usuario autoriza en cada servicio.

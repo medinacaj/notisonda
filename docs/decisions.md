@@ -1,20 +1,21 @@
 # Decisiones técnicas duraderas
 
 ## ADR-001 — GitHub como memoria compartida
-**Fecha:** 2026-10-18. **Estado:** propuesta en revisión hasta fusionar el PR.
+**Fecha:** 2026-10-18. **Estado:** adoptada.
 
-**Decisión:** Issues describen objetivos; PR contienen el diff, pruebas, revisiones y handoff; commits fijan la versión analizada. No replicar todo en chats separados.
+**Decisión:** los Issues describen tareas; los PR contienen diff, pruebas, revisiones y traspaso; los commits fijan la versión. Los chats no comparten automáticamente memoria.
 
-**Motivo:** Claude y Codex no comparten automáticamente memoria entre productos. El repositorio mantiene trazabilidad y reduce contexto repetido.
+## ADR-002 — Experiencia principal: ChatGPT Chat + Claude Chat
+**Fecha:** 2026-10-18. **Estado:** adoptada.
 
-## ADR-002 — Instrucciones únicas
-**Fecha:** 2026-10-18. **Estado:** propuesta en revisión hasta fusionar el PR.
+**Decisión:** `AGENTS.md` conserva reglas comunes que se consultan bajo demanda. `CHATGPT.md` y `CLAUDE.md` documentan cómo iniciar el trabajo en cada chat. El usuario **no necesita Codex CLI**. No asumir que los archivos del repositorio se cargan solos en las conversaciones web.
 
-**Decisión:** `AGENTS.md` gobierna las instrucciones comunes y `CLAUDE.md` lo importa para Claude Code. La documentación extensa se consulta bajo demanda.
+## ADR-003 — Revisión cruzada controlada
+**Fecha:** 2026-10-18. **Estado:** adoptada.
 
-**Motivo:** evitar reglas contradictorias y consumo innecesario de contexto.
+**Decisión:** ChatGPT propone/implementa con los permisos GitHub disponibles, Claude Chat revisa de forma independiente al aportarle el diff y contexto. CI confirma pruebas; la persona propietaria autoriza la integración. El intercambio entre los dos chats no es automático.
 
-## ADR-003 — Revisión cruzada bajo demanda
-**Fecha:** 2026-10-18. **Estado:** propuesta en revisión hasta fusionar el PR.
+## ADR-004 — Skills portables, sin instalaciones implícitas
+**Fecha:** 2026-10-18. **Estado:** adoptada.
 
-**Decisión:** implementación y auditoría separadas; CI verifica lo mecánico. Claude no queda conectado automáticamente por añadir archivos de instrucciones. La fusión requiere comprobación humana.
+**Decisión:** se conserva una skill opcional `coordinating-chatgpt-claude` para entornos capaces de descubrirla. No se requiere ni se ejecuta un instalador de Codex. Los plugins de ChatGPT y la integración GitHub de Claude necesitan acciones de conexión por separado.

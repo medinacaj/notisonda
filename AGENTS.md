@@ -1,6 +1,6 @@
 # Reglas compartidas para agentes — Radar RSS
 
-Este archivo es la fuente de instrucciones de repositorio tanto para Codex como para Claude Code (mediante `CLAUDE.md`). Leer primero solo este archivo y la tarea actual; ampliar contexto bajo demanda.
+Este archivo recoge reglas compartidas para trabajar desde ChatGPT Chat y Claude Chat a través de GitHub. **Los chats no lo cargan automáticamente:** pedir expresamente leerlo o seleccionarlo mediante la integración GitHub. Leer primero este archivo y la tarea actual; ampliar contexto bajo demanda.
 
 ## Principios
 - GitHub Issues, commits y Pull Requests son la fuente de verdad. No asumir memoria de otras conversaciones.
@@ -42,6 +42,7 @@ El agente revisor inspecciona primero el diff y los tests; luego abre dependenci
 
 ## Información ampliada
 - `docs/architecture.md`: mapa técnico.
-- `docs/agent-workflow.md`: proceso, prompts y optimización de tokens.
+- `docs/agent-workflow.md`: flujo entre ChatGPT y Claude en interfaces de chat, prompts y economía de tokens.
+- `CHATGPT.md` y `CLAUDE.md`: cómo cargar el contexto en cada conversación.
 - `docs/project-status.md`: ubicación de tareas y estados vivos.
 - `docs/decisions.md`: decisiones duraderas.
