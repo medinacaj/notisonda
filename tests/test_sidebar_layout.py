@@ -37,7 +37,9 @@ class SidebarLayoutTests(unittest.TestCase):
         self.assertIn("window.dispatchEvent(new Event('radar-sidebar-pref-sync'))",self.app)
 
     def test_scripts_are_in_correct_order(self):
-        pos=[self.html.index(f'./{name}') for name in
-             ('app.js?v=7.6.0','library.js?v=1.4.0','sidebar-layout.js?v=1.0.0')]
-        self.assertEqual(pos,sorted(pos))
-        self.assertLess(self.html.index('sidebar-layout.css?v=1.0.1'),self.html.index('</head>'))
+        # Verificar el orden de carga sin acoplar las pruebas al número de versión.
+        import re
+        scripts=re.findall(r'<script src="\./([^"?]+\.js)(?:\?v=[^"]+)?" defer></script>',self.html)
+        self.assertEqual(scripts,['app.js','library.js','sidebar-layout.js'])
+        self.assertRegex(self.html,r'<link rel="stylesheet" href="\./sidebar-layout\.css\?v=[^"]+">')
+        self.assertLess(self.html.index('sidebar-layout.css?v='),self.html.index('</head>'))
