@@ -22,6 +22,20 @@ def story(i, title, hours_ago, source, category='04 - Chile'):
 
 
 class InsightsTests(unittest.TestCase):
+    def test_clean_cached_google_alt_with_non_google_lead(self):
+        lead = story(1, 'Cobertura regional del anuncio', 1, 'Diario Directo')
+        lead['is_radar'] = False
+        lead['also_in'] = [
+            {'title': 'Cobertura regional - EL UNIVERSAL',
+             'publisher': 'EL UNIVERSAL', 'url': 'https://news.google.com/rss/articles/sample'},
+            {'title': 'Crónica - Diario Local',
+             'publisher': 'Diario Local', 'url': 'https://example.org/cronica'},
+        ]
+        collect.normalize_cached_google_titles(lead)
+        self.assertEqual(lead['title'], 'Cobertura regional del anuncio')
+        self.assertEqual(lead['also_in'][0]['title'], 'Cobertura regional')
+        self.assertEqual(lead['also_in'][1]['title'], 'Crónica - Diario Local')
+
     def test_grouped_story_keeps_each_outlet_headline(self):
         a = story(1, 'Codelco anuncia nuevo plan de inversión en la mina El Teniente para 2027', 1, 'medio-a')
         b = story(2, 'Codelco anuncia nuevo plan de inversión en la mina El Teniente para 2027 y más', 2, 'medio-b', '05 - Venezuela')
