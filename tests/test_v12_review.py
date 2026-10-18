@@ -1,0 +1,49 @@
+"""Guarda de regresión para la entrega interactiva de Radar RSS V1.2."""
+import unittest
+from pathlib import Path
+
+ROOT=Path(__file__).resolve().parents[1]
+class V12ReviewTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.html=(ROOT/'web/index.html').read_text(encoding='utf8')
+        cls.script=(ROOT/'web/v12.js').read_text(encoding='utf8')
+        cls.css=(ROOT/'web/v12.css').read_text(encoding='utf8')
+        cls.features=(ROOT/'web/features.js').read_text(encoding='utf8')
+        cls.sw=(ROOT/'web/sw.js').read_text(encoding='utf8')
+
+    def test_modules_loaded_after_dependencies_and_cached_for_offline(self):
+        self.assertLess(self.html.index('./features.js?v='),self.html.index('./v12.js?v='))
+        self.assertIn('./v12.css?v=',self.html)
+        self.assertIn("'./v12.css'",self.sw)
+        self.assertIn("'./v12.js'",self.sw)
+
+    def test_regions_preserve_original_opml_sections(self):
+        self.assertIn("regionalCats()",self.script)
+        self.assertIn("categoryLabel(cat)",self.script)
+        self.assertIn("#region/latinoamerica",self.script)
+        self.assertIn("goTo(target)",self.script)
+        self.assertIn("v12-country-tab",self.script)
+
+    def test_personalization_is_local_and_limits_saved_searches(self):
+        self.assertIn("radar-v12-preferences",self.script)
+        self.assertIn("radar-v12-saved-searches",self.script)
+        self.assertIn("localStorage.setItem",self.script)
+        self.assertIn("savedSearches.length>=12",self.script)
+        self.assertIn("window.RadarV12.dashboardMatch", (ROOT/'web/app.js').read_text(encoding='utf8'))
+
+    def test_briefing_uses_same_filtered_source_for_copy_audio_share(self):
+        self.assertIn("window.RadarV12.briefingCategories()",self.features)
+        self.assertIn("briefingText(briefingData(), 3)",self.features)
+        self.assertIn("const data = briefingData();",self.features)
+        self.assertIn("briefingText(data)",self.features)
+
+    def test_accessible_mobile_actions(self):
+        self.assertIn("aria-label",self.script)
+        self.assertIn("aria-pressed",self.script)
+        self.assertIn("v12-myradar",self.css)
+        self.assertIn("@media(max-width:710px)",self.css)
+        self.assertNotIn("innerHTML",self.script)
+
+if __name__=="__main__":
+    unittest.main()
