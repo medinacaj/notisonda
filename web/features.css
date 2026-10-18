@@ -331,3 +331,38 @@ body.radar-hybrid .since-visit h2{
   body.radar-hybrid .dashboard-panel-head{align-items:flex-start;column-gap:10px}
   body.radar-hybrid .dashboard-folder-head h3{font-size:16px}
 }
+
+/* ---------- Cobertura responsiva: teléfono, tablet y escritorio ----------
+   Mantiene las funciones visibles sin depender de overflow-x:hidden global. */
+body.radar-hybrid :is(.dashboard-panel-head,.dashboard-folder-head,.briefing-section-head,.article-footer,.filter-bar){
+  min-width:0;
+}
+body.radar-hybrid :is(.dashboard-panel-head h2,.dashboard-folder-head h3,.briefing-section-head h2,.article-title,.dashboard-recent-title){
+  overflow-wrap:anywhere;
+}
+body.radar-hybrid .mode-tabs{
+  min-width:0;max-width:100%;
+  overflow-x:auto;overscroll-behavior-x:contain;
+  scrollbar-width:thin;
+}
+body.radar-hybrid .mode-tab{flex:0 0 auto}
+@media(min-width:951px) and (max-width:1100px){
+  body.radar-hybrid .topbar{
+    flex-wrap:wrap;row-gap:8px;padding-block:10px;
+  }
+  body.radar-hybrid .topbar-search{
+    order:5;flex:1 0 100%;max-width:none;
+    margin:0;
+  }
+}
+@media(max-width:390px){
+  body.radar-hybrid .topbar{column-gap:6px}
+  body.radar-hybrid .topbar-refresh-countdown{display:none}
+  body.radar-hybrid .topbar-actions{gap:4px}
+  body.radar-hybrid .dashboard-feature .article-card:not(:first-child){
+    grid-template-columns:minmax(0,1fr);
+  }
+  body.radar-hybrid .dashboard-feature .article-card:not(:first-child) .cover{
+    width:100%;height:auto;min-height:0;max-height:none;aspect-ratio:2/1;
+  }
+}
