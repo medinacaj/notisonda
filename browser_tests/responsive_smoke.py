@@ -161,6 +161,9 @@ def main():
                         service_workers="block",
                     )
                     page = context.new_page()
+                    javascript_errors = []
+                    page.on("pageerror", lambda error: javascript_errors.append(str(error)))
+                    page.on("console", lambda msg: javascript_errors.append("console: " + msg.text) if msg.type == "error" else None)
                     page.route("**/data/**", make_route)
                     try:
                         page.goto(base + "#inicio", wait_until="load")
@@ -204,6 +207,8 @@ def main():
                             ".briefing-sections"], f"resumen {width}px")
                         print(f"OK [{browser_name}]: {width}px, portada, listado, navegación, búsqueda, configuración, resumen", flush=True)
                     except Exception:
+                        print(f"DEBUG [{browser_name}] {width}px: JS={javascript_errors}", flush=True)
+                        print("DEBUG document:", page.evaluate("() => ({hash: location.hash, ready: document.readyState, dashboardHidden: document.querySelector('#dashboardView')?.hidden, bodyClass: document.body.className, cardCount: document.querySelectorAll('#dashboardFeature .article-card').length})"), flush=True)
                         page.screenshot(path=str(output / f"fallo-{width}.png"), full_page=False)
                         raise
                     finally:
