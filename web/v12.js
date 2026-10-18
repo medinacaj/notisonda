@@ -71,7 +71,7 @@
     const header = mk('div','v12-region-nav-head');
     const btn = mk('button','nav-link v12-region-main', 'Latinoamérica');
     btn.type = 'button';
-    btn.setAttribute('aria-current',geo === 'latam' && state.pageView === 'feed' ? 'page' : 'false');
+    btn.setAttribute('aria-current',geo !== 'all' && state.pageView === 'feed' ? 'page' : 'false');
     const count = state.sources.filter(src => regionalCats().includes(src.category) && !state.hiddenSources.has(src.id)).length;
     btn.append(display(String(count),'nav-count'));
     btn.addEventListener('click', () => goTo('region'));
@@ -101,19 +101,23 @@
       if (chips[i+3]) chips[i+3].classList.add('v12-hidden-category');
     }
     if (regionalCats().length) {
-      const chip = mk('button','topic-chip v12-region-chip' + (geo==='latam'?' active':''),'Latinoamérica');
-      chip.type='button';chip.setAttribute('aria-current',geo==='latam'?'page':'false');
+      const chip = mk('button','topic-chip v12-region-chip' + (geo!=='all'?' active':''),'Latinoamérica');
+      chip.type='button';chip.setAttribute('aria-current',geo!=='all'?'page':'false');
       chip.addEventListener('click',()=>goTo('region'));
       rail.append(chip);
     }
   };
   const navigateBase = navigateFromHash;
   navigateFromHash = function(...args) {
-    geo = decodeURIComponent(location.hash.slice(1)).startsWith('region/') ? 'latam' : 'all';
+    const slug=decodeURIComponent(location.hash.slice(1));
+    if(slug.startsWith('region/')) {
+      const candidate=slug.slice(7);
+      geo=candidate==='latinoamerica'?'latam':GEO.includes(candidate)?candidate:'latam';
+    } else geo='all';
     navigateBase(...args);
-    if (geo === 'latam') {
-      $('feedHeading').textContent = 'Latinoamérica';
-      $('topbarSection').textContent = 'Latinoamérica';
+    if (geo !== 'all') {
+      $('feedHeading').textContent = regionName[geo];
+      $('topbarSection').textContent = regionName[geo];
       $('sectionEyebrow').textContent = 'COBERTURA REGIONAL';
       $('feedDescription').textContent = 'Chile, Venezuela y el resto de Latinoamérica en una sola sección.';
     }
@@ -133,7 +137,8 @@
   function syncGeoSources() {
     const select = $('sourceSelect');
     if (!select || state.pageView!=='feed' || geo==='all') return;
-    const valid = new Set(state.sources.filter(src=>regionalCats().includes(src.category)&&!state.hiddenSources.has(src.id)).map(x=>x.id));
+    const allowed=geo==='latam'?regionalCats():[catOf(geo)].filter(Boolean);
+    const valid = new Set(state.sources.filter(src=>allowed.includes(src.category)&&!state.hiddenSources.has(src.id)).map(x=>x.id));
     for (const option of [...select.options].slice(1)) if(!valid.has(option.value)) option.remove();
     if(state.feed&&!valid.has(state.feed)){state.feed='';select.value='';}
   }
@@ -143,7 +148,7 @@
     if (date) date.value=String(state.maxAge);
     const regional=$('v12CountryTabs');
     if (regional) {
-      regional.hidden=state.pageView!=='feed'||geo!=='latam';
+      regional.hidden=state.pageView!=='feed'||geo==='all';
       regional.querySelectorAll('[data-v12-geo]').forEach(button=>{
         const selected=button.dataset.v12Geo===geo;
         button.classList.toggle('active',selected);
@@ -153,12 +158,10 @@
   }
   function chooseGeo(value) {
     const next=GEO.includes(value)?value:'all';
-    geo=next; state.feed='';state.page=1;
-    if (state.category!=='all') goTo('all');
-    if(next==='latam' && location.hash!=='#region/latinoamerica') { goTo('region'); return; }
-    if(next==='all' && location.hash.startsWith('#region/')) { goTo('all'); return; }
-    if (location.hash.startsWith('#region/') && next!=='latam') {goTo('all'); geo=next;}
-    fillSelect(); syncGeoSources(); syncGeoControls();render();
+    const hash=next==='all'?'#noticias':'#region/'+(next==='latam'?'latinoamerica':next);
+    state.feed='';state.page=1;
+    if(location.hash===hash){geo=next;fillSelect();syncGeoSources();syncGeoControls();render();}
+    else location.hash=hash;
   }
   const originalGoTo = goTo;
   goTo = function(target) {
@@ -220,12 +223,12 @@
         $('searchInput').value=state.search; savePref('max-age',state.maxAge);
         if(item.category!=='all'&&state.categories.includes(item.category)) {
           geo='all';goTo(item.category);
-        } else {geo=item.geo; if(geo==='latam')goTo('region');else goTo('all');}
+        } else {geo=item.geo;chooseGeo(geo);}
         const wanted=item.feed;
         if(wanted&&[...$('sourceSelect').options].some(o=>o.value===wanted)){
           state.feed=wanted;$('sourceSelect').value=wanted;
         }
-        geo=item.geo;state.page=1;syncGeoControls();syncGeoSources();render();
+        state.page=1;syncGeoControls();syncGeoSources();render();
         actionToast('Búsqueda cargada.');
       });
       const x=mk('button','v12-search-remove','×');x.type='button';x.title='Eliminar búsqueda';
@@ -312,7 +315,7 @@
     const header=mk('button','dashboard-folder-head');header.type='button';
     header.setAttribute('aria-label','Ver noticias de Latinoamérica');
     header.append(display('Latinoamérica','v12-region-dashboard-title','h3'),
-      display('54 fuentes regionales','v12-region-dashboard-count'),
+      display(String(state.sources.filter(src=>regionalCats().includes(src.category)).length)+' fuentes regionales','v12-region-dashboard-count'),
       display('Ver todo →','dashboard-folder-more'));
     header.addEventListener('click',()=>goTo('region'));
     const list=mk('div','dashboard-folder-list');
