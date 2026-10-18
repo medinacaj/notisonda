@@ -64,6 +64,12 @@ def inspect(sources: list[dict], feeds: list[dict], articles: list[dict]) -> dic
             "possible_duplicate_headlines":review[:MAX_EXAMPLES],
             "possible_duplicate_total":len(review)}
 
+def safe_markdown(value: object) -> str:
+    """Escape untrusted headlines/outlet names before GitHub renders them."""
+    text=" ".join(str(value or "").split())[:180]
+    special=set(chr(92)+"`*_{}[]()#+.!|<>-")
+    return "".join(chr(92)+char if char in special else char for char in text)
+
 def markdown(result: dict) -> str:
     lines=["## Revisión editorial orientativa de Radar RSS","",
            "Sin consultas externas. Las coincidencias requieren revisión humana;",
@@ -78,12 +84,12 @@ def markdown(result: dict) -> str:
     if result["possible_duplicate_headlines"]:
         lines.append("### Coincidencias a revisar")
         for row in result["possible_duplicate_headlines"]:
-            title=row["title"].replace("\n"," ")
-            lines.append(f"- {row['stories']} notas · {title} · medios: {', '.join(row['outlets'])}")
+            title=safe_markdown(row["title"])
+            lines.append(f"- {row['stories']} notas · {title} · medios: {', '.join(safe_markdown(outlet) for outlet in row['outlets'])}")
     if result["unavailable_feeds"]:
         lines.append("\n### Feeds a comprobar (sin bajas automáticas)")
         for feed in result["unavailable_feeds"]:
-            lines.append(f"- {feed['name']} ({feed['state']})")
+            lines.append(f"- {safe_markdown(feed['name'])} ({safe_markdown(feed['state'])})")
     return "\n".join(lines)+"\n"
 
 def main() -> None:
