@@ -323,8 +323,8 @@ function addTag(){
   input.value='';renderTags();refreshTagFilter();render();
 }
 function mount(){
-  const section=mk('section','source-folders-section');
-  section.setAttribute('aria-labelledby','sourceFoldersHeading');
+  const foldersSection=mk('section','source-folders-section');
+  foldersSection.setAttribute('aria-labelledby','sourceFoldersHeading');
   const header=mk('div','folder-group-head');
   const heading=mk('span','','CARPETAS DE FUENTES');
   heading.id='sourceFoldersHeading';header.append(heading);
@@ -333,8 +333,8 @@ function mount(){
   const system=mk('nav','library-system-folders');system.id='systemFolderNav';
   system.setAttribute('aria-label','Carpetas de fuentes predeterminadas');
   const nav=mk('nav','library-folder-nav');nav.id='libraryFolderNav';nav.setAttribute('aria-label','Carpetas personales de fuentes');
-  section.append(header,system,nav);
-  $('categoryNav').after(section);
+  foldersSection.append(header,system,nav);
+  $('categoryNav').after(foldersSection);
   add.addEventListener('click',createFolder);
   const wrapper=mk('label','library-tag-filter-wrap'),filter=mk('select','library-tag-filter');
   filter.id='libraryTagFilter';filter.setAttribute('aria-label','Filtrar por etiqueta');wrapper.append(filter);
