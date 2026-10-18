@@ -7,7 +7,10 @@ Only test code depends on Playwright; production has no new dependencies.
 from __future__ import annotations
 
 import json
+import ssl
+import subprocess
 import sys
+import tempfile
 import threading
 from datetime import datetime, timezone
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
@@ -143,10 +146,24 @@ def main():
         raise ValueError(f"Unsupported engine: {browser_name}")
     output = REPORTS / browser_name
     output.mkdir(parents=True, exist_ok=True)
+    # Run over HTTPS like GitHub Pages; WebKit enforces upgrade-insecure-requests
+    # and will otherwise attempt TLS against a plain HTTP test server.
+    tls = tempfile.TemporaryDirectory()
+    cert_dir = Path(tls.name)
+    cert = cert_dir / "cert.pem"
+    key = cert_dir / "key.pem"
+    subprocess.run([
+        "openssl", "req", "-x509", "-newkey", "rsa:2048", "-nodes",
+        "-keyout", str(key), "-out", str(cert), "-days", "1",
+        "-subj", "/CN=localhost", "-addext", "subjectAltName=IP:127.0.0.1,DNS:localhost",
+    ], check=True, capture_output=True)
     server = ThreadingHTTPServer(("127.0.0.1", 0), QuietHandler)
+    tls_context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+    tls_context.load_cert_chain(certfile=str(cert), keyfile=str(key))
+    server.socket = tls_context.wrap_socket(server.socket, server_side=True)
     thread = threading.Thread(target=server.serve_forever, daemon=True)
     thread.start()
-    base = f"http://127.0.0.1:{server.server_port}/"
+    base = f"https://127.0.0.1:{server.server_port}/"
     try:
         with sync_playwright() as p:
             engine = getattr(p, browser_name)
@@ -158,7 +175,7 @@ def main():
                         viewport={"width": width, "height": 812 if mobile else 900},
                         is_mobile=mobile and browser_name != "firefox",
                         has_touch=mobile, device_scale_factor=1,
-                        service_workers="block",
+                        service_workers="block", ignore_https_errors=True,
                     )
                     page = context.new_page()
                     javascript_errors = []
@@ -218,6 +235,7 @@ def main():
     finally:
         server.shutdown()
         server.server_close()
+        tls.cleanup()
 
 if __name__ == "__main__":
     main()
