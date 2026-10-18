@@ -17,7 +17,7 @@ from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import urlsplit
 
-from playwright.sync_api import sync_playwright
+from playwright.sync_api import sync_playwright, expect
 
 ROOT = Path(__file__).resolve().parents[1]
 WEB = ROOT / "web"
@@ -251,7 +251,7 @@ def main():
                                             f"V1.2 región {browser_name} {width}px")
                         page.locator("#v12Geo").select_option("chile")
                         page.wait_for_url("**/#region/chile")
-                        page.wait_for_function("document.querySelector('#feedHeading')?.textContent === 'Chile'")
+                        expect(page.locator("#feedHeading")).to_have_text("Chile", timeout=10000)
                         assert page.locator("#articleGrid .article-card").count() > 0
                         page.locator("#v12Date").select_option("7")
                         page.locator("#sourceSelect").select_option("medio-3")
