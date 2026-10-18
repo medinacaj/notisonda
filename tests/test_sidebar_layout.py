@@ -40,4 +40,4 @@ class SidebarLayoutTests(unittest.TestCase):
         pos=[self.html.index(f'./{name}') for name in
              ('app.js?v=7.6.0','library.js?v=1.4.0','sidebar-layout.js?v=1.0.0')]
         self.assertEqual(pos,sorted(pos))
-        self.assertLess(self.html.index('sidebar-layout.css?v=1.0.0'),self.html.index('</head>'))
+        self.assertLess(self.html.index('sidebar-layout.css?v=1.0.1'),self.html.index('</head>'))
