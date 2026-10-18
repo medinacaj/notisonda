@@ -934,10 +934,6 @@ async function refreshPublishedData(){
     state.feedMeta=meta;state.historyLoaded=false;
     state.health=Array.isArray(status.feeds)?status.feeds:state.health;
     state.generated=meta.generated_at;
-    $('statArticles').textContent=format.format(meta.total_articles||state.items.length);
-    $('statSources').textContent=format.format(state.sources.length);
-    $('statCategories').textContent=state.categories.length;
-    $('statUpdated').textContent=shortDate(state.generated);
     $('lastUpdate').textContent='Actualizado: '+shortDate(state.generated);
     buildNav();fillSelect();updateHeader();statusSummary();render();
   }catch(error){console.warn('Comprobación automática RSS:',error);}
@@ -964,10 +960,6 @@ async function boot() {
     state.generated=articles.generated_at;
     try{state.feedMeta=await dataFetch('./data/meta.json');}catch{state.feedMeta=null;state.historyLoaded=true;}
     state.ready=true;
-    $('statArticles').textContent=format.format(state.feedMeta?.total_articles||state.items.length);
-    $('statSources').textContent=format.format(state.sources.length);
-    $('statCategories').textContent=state.categories.length;
-    $('statUpdated').textContent=state.generated ? shortDate(state.generated) : '—';
     $('lastUpdate').textContent=state.generated ? `Actualizado: ${shortDate(state.generated)}` : 'Sin sincronizar';
     $('sidebarSources').textContent=`${state.sources.length} fuentes · ${state.categories.length} categorías`; 
   } catch(err) {
