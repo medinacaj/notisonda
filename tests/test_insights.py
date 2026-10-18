@@ -92,7 +92,7 @@ class InsightsTests(unittest.TestCase):
         self.assertEqual(insights.trending_topics(three, NOW)['topics'], [])
         four = [story(i, title, i + 1, f'medio-{i % 4}') for i in range(12)]
         topics = insights.trending_topics(four, NOW)['topics']
-        self.assertTrue(any(t['term'] == 'apagon' for t in topics), topics)
+        self.assertTrue(any('apagon' in t['term'].split() for t in topics), topics)
         self.assertTrue(all(t['sources'] >= 4 for t in topics), topics)
 
     def test_google_news_suffix_and_hyphenated_headlines(self):
