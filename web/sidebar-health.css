@@ -1,0 +1,145 @@
+/* Radar RSS · diagnóstico RSS en el pie del menú lateral.
+   La navegación puede desplazarse sin ocultar el acceso al estado.
+*/
+body.radar-hybrid .sidebar{
+  display:flex;
+  flex-direction:column;
+  height:100dvh;
+  min-height:0;
+  overflow:hidden;
+}
+body.radar-hybrid .sidebar>.brand{
+  flex:0 0 auto;
+}
+body.radar-hybrid .sidebar-navigation{
+  display:flex;
+  flex-direction:column;
+  flex:1 1 auto;
+  min-height:0;
+  min-width:0;
+  overflow-x:hidden;
+  overflow-y:auto;
+  overscroll-behavior:contain;
+  scrollbar-width:thin;
+  scrollbar-color:var(--line) transparent;
+  padding-bottom:12px;
+}
+body.radar-hybrid .sidebar-navigation>.sidebar-label,
+body.radar-hybrid .sidebar-navigation>#categoryNav{
+  flex:0 0 auto;
+}
+body.radar-hybrid .sidebar-bottom{
+  display:flex;
+  flex-direction:column;
+  flex:0 0 auto;
+  gap:9px;
+  margin-top:0;
+  min-width:0;
+  padding:12px 6px 2px;
+  border-top:1px solid var(--line);
+  background:var(--surface2);
+}
+body.radar-hybrid .sidebar-feed-status[hidden]{display:none!important}
+body.radar-hybrid .sidebar-feed-status{
+  display:flex;
+  flex-direction:column;
+  min-width:0;
+  gap:6px;
+}
+body.radar-hybrid .sidebar-feed-status-heading{
+  display:block;
+  color:var(--muted);
+  font-size:10px;
+  font-weight:690;
+  letter-spacing:.07em;
+  padding-left:7px;
+}
+body.radar-hybrid .sidebar-health-action[hidden]{display:none!important}
+body.radar-hybrid .sidebar-health-action{
+  display:flex;
+  align-items:center;
+  justify-content:flex-start;
+  gap:7px;
+  width:100%;
+  min-height:36px;
+  padding:7px 10px;
+  border:1px solid var(--line);
+  border-radius:10px;
+  background:var(--surface);
+  color:var(--muted);
+  font-size:11px;
+  font-weight:540;
+  text-align:left;
+  white-space:nowrap;
+}
+body.radar-hybrid .sidebar-health-action:hover,
+body.radar-hybrid .sidebar-health-action:focus-visible{
+  color:var(--text);
+  border-color:var(--accent);
+  background:var(--hover);
+}
+body.radar-hybrid .sidebar-health-action .health-indicator-dot{
+  width:6px;
+  height:6px;
+  flex:0 0 6px;
+}
+body.radar-hybrid .sidebar-health-action .health-indicator-count{
+  color:var(--text);
+  font-size:12px;
+  font-weight:720;
+}
+body.radar-hybrid .sidebar-health-action .health-indicator-label{
+  display:inline;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+body.radar-hybrid .sidebar-health-action .sidebar-health-arrow{
+  display:inline-flex;
+  flex:0 0 14px;
+  margin-left:auto;
+}
+body.radar-hybrid .sidebar-health-action .sidebar-health-arrow .ui-icon{
+  width:14px;
+  height:14px;
+}
+body.radar-hybrid .sidebar-bottom .minimal-button{
+  display:flex;
+  margin:0;
+  padding:7px 8px;
+  gap:9px;
+  font-size:11px;
+  min-height:30px;
+  align-items:center;
+  border-radius:8px;
+}
+body.radar-hybrid .sidebar-bottom .minimal-button:hover{
+  background:var(--hover);
+  color:var(--text);
+}
+@media(max-width:950px){
+  body.radar-hybrid .sidebar,
+  body.radar-hybrid.light .sidebar{
+    height:auto;
+    min-height:0;
+    overflow:visible;
+  }
+  body.radar-hybrid .sidebar-navigation{
+    flex:0 0 auto;
+    overflow:visible;
+    padding-bottom:0;
+  }
+  body.radar-hybrid .sidebar-bottom{
+    display:flex;
+    gap:5px;
+    margin-top:10px;
+    padding:9px 0 0;
+    background:transparent;
+  }
+  body.radar-hybrid .sidebar-feed-status{
+    max-width:300px;
+  }
+}
+@media(prefers-reduced-motion:reduce){
+  body.radar-hybrid .sidebar-health-action{transition:none}
+}

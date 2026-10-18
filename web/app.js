@@ -534,8 +534,10 @@ function showFeedNotice(message, signature, details) {
 function statusSummary() {
   const banner=$('statusBanner');
   const indicator=$('feedHealthIndicator');
+  const section=$('sidebarFeedHealth');
   banner.hidden=true;
   indicator.hidden=true;
+  section.hidden=true;
   if (!state.ready) {
     showFeedNotice('No se pudieron cargar las noticias. Comprueba GitHub Pages y vuelve a intentarlo.', 'load-error', false);
     return;
@@ -558,6 +560,7 @@ function statusSummary() {
   indicator.setAttribute('aria-label',`${issues.length} fuentes RSS requieren revisión. Abrir diagnóstico`);
   indicator.title=labels.join(' · ')+'. Abrir diagnóstico RSS.';
   indicator.hidden=false;
+  section.hidden=false;
   showFeedNotice(labels.join(' · ')+'.',signature,true);
 }
 function applyFilters(mode=state.mode) {

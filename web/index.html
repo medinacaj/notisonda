@@ -17,6 +17,7 @@
   <link rel="stylesheet" href="./sidebar-layout.css?v=1.0.1">
   <link rel="stylesheet" href="./modal-layout.css?v=1.0.0">
   <link rel="stylesheet" href="./news-effects.css?v=1.0.0">
+  <link rel="stylesheet" href="./sidebar-health.css?v=1.0.0">
   <title>Radar RSS — Actualidad en un solo lugar</title>
 </head>
 <body class="light radar-hybrid">
@@ -26,9 +27,20 @@
         <span class="brand-mark" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="5" cy="19" r="3" fill="currentColor"/><path d="M3 11a10 10 0 0 1 10 10M3 3a18 18 0 0 1 18 18" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg></span>
         <span><strong>RADAR <em>RSS</em></strong><small>Tu panorama informativo</small></span>
       </a>
-      <p class="sidebar-label">NAVEGACIÓN</p>
-      <nav id="categoryNav" aria-label="Navegación principal"></nav>
+      <div class="sidebar-navigation" id="sidebarNavigation">
+        <p class="sidebar-label">NAVEGACIÓN</p>
+        <nav id="categoryNav" aria-label="Navegación principal"></nav>
+      </div>
       <div class="sidebar-bottom">
+        <section class="sidebar-feed-status" id="sidebarFeedHealth" aria-label="Estado de las fuentes RSS" hidden>
+          <span class="sidebar-feed-status-heading">ESTADO RSS</span>
+          <button id="feedHealthIndicator" class="health-indicator sidebar-health-action" type="button" hidden aria-label="Abrir diagnóstico de las fuentes RSS" title="Ver fuentes con incidencias">
+            <span class="health-indicator-dot" aria-hidden="true"></span>
+            <span id="feedHealthCount" class="health-indicator-count">0</span>
+            <span class="health-indicator-label">con incidencias</span>
+            <span data-icon="chevron-right" class="ui-icon-slot sidebar-health-arrow" aria-hidden="true"></span>
+          </button>
+        </section>
         <button type="button" class="minimal-button" id="aboutButton">Sobre el proyecto <span data-icon="info" class="ui-icon-slot" aria-hidden="true"></span></button>
       </div>
     </aside>
@@ -44,7 +56,6 @@
             <span class="topbar-refresh-countdown"><span data-icon="clock" class="ui-icon-slot topbar-refresh-clock" aria-hidden="true"></span><span class="topbar-refresh-prefix">Revisión en </span><span class="topbar-refresh-time" id="refreshCycleTime">15:00</span></span>
             <button id="refreshNow" class="refresh-now" type="button" title="Comprobar ahora si hay publicaciones nuevas" aria-label="Comprobar novedades ahora"><span data-icon="refresh" class="ui-icon-slot" aria-hidden="true"></span></button>
           </div>
-          <button id="feedHealthIndicator" class="health-indicator" type="button" hidden aria-label="Abrir diagnóstico de las fuentes RSS" title="Ver fuentes con incidencias"><span class="health-indicator-dot" aria-hidden="true"></span><span id="feedHealthCount" class="health-indicator-count">0</span><span class="health-indicator-label">fuentes</span></button>
           <button id="settingsButton" class="settings-trigger" type="button" title="Configuración" aria-label="Abrir configuración" aria-haspopup="dialog"><span data-icon="settings" class="ui-icon-slot" aria-hidden="true"></span><span class="settings-text">Configuración</span></button>
           <button id="themeToggle" class="icon-button" type="button" aria-label="Cambiar tema" title="Cambiar modo claro u oscuro"><span id="themeGlyph"></span></button>
         </div>
@@ -261,7 +272,7 @@
   </dialog>
   <button id="backTop" class="back-to-top" type="button" aria-label="Volver arriba" title="Volver arriba" hidden><span data-icon="arrow-up" class="ui-icon-slot" aria-hidden="true"></span></button>
   <div id="actionToast" class="action-toast" role="status" aria-live="polite" aria-atomic="true" hidden></div>
-  <script src="./app.js?v=7.9.0" defer></script>
+  <script src="./app.js?v=7.9.1" defer></script>
   <script src="./library.js?v=1.6.0" defer></script>
   <script src="./sidebar-layout.js?v=1.0.0" defer></script>
   <script src="./news-effects.js?v=1.0.0" defer></script>
