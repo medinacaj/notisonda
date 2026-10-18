@@ -7,6 +7,7 @@ Only test code depends on Playwright; production has no new dependencies.
 from __future__ import annotations
 
 import json
+import sys
 import threading
 from datetime import datetime, timezone
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
@@ -101,6 +102,32 @@ def check_header_overlap(page, label):
     if overlaps:
         raise AssertionError(f"{label}: controles superpuestos: {overlaps}")
 
+def check_accessibility_contract(page, label):
+    """Deterministic structural and accessible-name guard; not a full WCAG audit."""
+    failures = page.evaluate("""() => {
+      const issues = [];
+      if (document.documentElement.lang !== 'es') issues.push('Falta idioma español');
+      const ids = [...document.querySelectorAll('[id]')].map(n => n.id);
+      if (ids.length !== new Set(ids).size) issues.push('IDs repetidos');
+      const selectors = ['#menuToggle','#searchToggle','#settingsButton','#themeToggle',
+        '#refreshNow','#loadMore','#markAllVisible'];
+      for (const selector of selectors) {
+        const el = document.querySelector(selector);
+        if (!el) { issues.push('Control ausente ' + selector); continue; }
+        const name = (el.getAttribute('aria-label') || el.getAttribute('title') ||
+          el.textContent || '').trim();
+        if (!name) issues.push('Control sin nombre ' + selector);
+      }
+      for (const id of ['dashboardTitle','briefingTitle','feedHeading']) {
+        if (document.querySelector('#'+id)?.tagName !== 'H1')
+          issues.push('Jerarquía sin H1: '+id);
+      }
+      return issues;
+    }""")
+    if failures:
+        raise AssertionError(f"{label}: {failures}")
+
+
 def make_route(route):
     name = Path(urlsplit(route.request.url).path).name
     payload = RESPONSES.get(name)
@@ -111,20 +138,26 @@ def make_route(route):
                       body=json.dumps(payload, ensure_ascii=False))
 
 def main():
-    REPORTS.mkdir(parents=True, exist_ok=True)
+    browser_name = sys.argv[1] if len(sys.argv) > 1 else "chromium"
+    if browser_name not in ("chromium", "firefox", "webkit"):
+        raise ValueError(f"Unsupported engine: {browser_name}")
+    output = REPORTS / browser_name
+    output.mkdir(parents=True, exist_ok=True)
     server = ThreadingHTTPServer(("127.0.0.1", 0), QuietHandler)
     thread = threading.Thread(target=server.serve_forever, daemon=True)
     thread.start()
     base = f"http://127.0.0.1:{server.server_port}/"
     try:
         with sync_playwright() as p:
-            browser = p.chromium.launch(headless=True, args=["--no-sandbox"])
+            engine = getattr(p, browser_name)
+            browser = engine.launch(headless=True, args=["--no-sandbox"] if browser_name == "chromium" else [])
             try:
                 for width in WIDTHS:
                     mobile = width <= 768
                     context = browser.new_context(
                         viewport={"width": width, "height": 812 if mobile else 900},
-                        is_mobile=mobile, has_touch=mobile, device_scale_factor=1,
+                        is_mobile=mobile and browser_name != "firefox",
+                        has_touch=mobile, device_scale_factor=1,
                         service_workers="block",
                     )
                     page = context.new_page()
@@ -136,9 +169,10 @@ def main():
                         check_visible_boxes(page, [".topbar", ".topbar-caption", ".topbar-actions",
                             "#dashboardView", ".dashboard-panel-head", "#dashboardFeature",
                             "#dashboardFeature .article-card"], f"portada {width}px")
-                        check_header_overlap(page, f"barra superior {width}px")
+                        check_header_overlap(page, f"{browser_name} barra superior {width}px")
+                        check_accessibility_contract(page, f"{browser_name} portada {width}px")
                         if width in (320, 768, 1440):
-                            page.screenshot(path=str(REPORTS / f"portada-{width}.png"), full_page=False)
+                            page.screenshot(path=str(output / f"portada-{width}.png"), full_page=False)
 
                         page.evaluate("location.hash = '#noticias'")
                         page.locator("#feedView:not([hidden])").wait_for(timeout=10000)
@@ -168,9 +202,9 @@ def main():
                         page.locator("#briefingView:not([hidden])").wait_for(timeout=10000)
                         check_visible_boxes(page, [".briefing-head", ".briefing-actions",
                             ".briefing-sections"], f"resumen {width}px")
-                        print(f"OK: {width}px, portada, listado, navegación, búsqueda, configuración, resumen", flush=True)
+                        print(f"OK [{browser_name}]: {width}px, portada, listado, navegación, búsqueda, configuración, resumen", flush=True)
                     except Exception:
-                        page.screenshot(path=str(REPORTS / f"fallo-{width}.png"), full_page=False)
+                        page.screenshot(path=str(output / f"fallo-{width}.png"), full_page=False)
                         raise
                     finally:
                         context.close()
