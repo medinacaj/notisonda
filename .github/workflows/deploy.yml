@@ -6,6 +6,7 @@ on:
     paths:
       - "web/**"
       - "scripts/**"
+      - "tests/**"
       - "sources/**"
       - "requirements.txt"
       - ".github/workflows/deploy.yml"
