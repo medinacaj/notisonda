@@ -15,6 +15,7 @@
 .library-source-row .settings-source-row{min-width:0;flex:1}
 .library-source-folder{max-width:155px;min-width:100px;width:37%;border:1px solid var(--line);border-radius:9px;background:var(--surface);color:var(--text);font-size:11px;padding:7px}
 .library-tag-filter-wrap{display:inline-flex}
+.library-tag-filter-wrap[hidden]{display:none}
 .library-tag-filter{border:1px solid var(--line);border-radius:9px;min-height:36px;max-width:155px;padding:6px 8px;background:var(--surface);color:var(--text);font-size:12px}
 .reader-organize{border-top:1px solid var(--line);padding-top:18px;margin-top:20px}
 .reader-organize strong{display:block;font-size:13px;margin-bottom:9px;color:var(--text)}

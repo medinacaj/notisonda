@@ -231,6 +231,11 @@ body.radar-hybrid .activity-spark{flex:0 0 auto;margin-left:auto}
 body.radar-hybrid .activity-spark rect{fill:var(--accent);opacity:.75}
 body.radar-hybrid .activity-spark rect.is-empty{fill:var(--line);opacity:1}
 body.radar-hybrid .dashboard-folder-head h3{flex:0 1 auto}
+/* Los nombres de carpeta no se cortan a mitad de palabra ("Internacionale/s"):
+   si no caben, el pulso y "Ver todo" bajan a la línea siguiente. */
+body.radar-hybrid .dashboard-folder-head{flex-wrap:wrap;row-gap:4px}
+body.radar-hybrid .dashboard-folder-head :is(h3,.v12-region-dashboard-title){overflow-wrap:break-word}
+body.radar-hybrid .dashboard-folder-more{white-space:nowrap}
 
 /* ---------- Atajos y suscripción ---------- */
 body.radar-hybrid .shortcut-list{display:grid;gap:8px;margin:14px 0 4px}

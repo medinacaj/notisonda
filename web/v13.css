@@ -123,6 +123,7 @@ body.radar-hybrid .article-card .article-cover-placeholder{
     radial-gradient(circle at 85% 18%,color-mix(in srgb,var(--accent) 9%,transparent),transparent 60%),
     linear-gradient(135deg,var(--surface2),var(--surface));
   border-bottom:1px solid var(--line);
+  cursor:pointer;
 }
 body.radar-hybrid .article-card .article-cover-placeholder-inner{
   display:flex;flex-direction:column;align-items:center;justify-content:center;

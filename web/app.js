@@ -1036,7 +1036,10 @@ function card(item) {
     },{once:true});
     cover.append(img);el.append(cover);
   } else if(allowPreview) {
-    el.append(editorialCover(item));
+    // La cubierta tipográfica también abre la vista previa, como una foto.
+    const placeholder=editorialCover(item);
+    placeholder.addEventListener('click',event=>openArticleReader(item,event));
+    el.append(placeholder);
   }
   const category=(item.categories||[])[0]||'';
   const content=mk('div','article-content');

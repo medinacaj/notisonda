@@ -580,6 +580,8 @@ function refreshTagFilter(){
   select.replaceChildren(new Option('Todas las etiquetas',''),...names.map(x=>new Option(x,x)));
   if(activeTag&&!names.includes(activeTag))activeTag='';
   select.value=activeTag;
+  // Sin etiquetas creadas, el filtro no ofrece nada: se oculta para no confundir.
+  select.closest('label').hidden=!names.length;
 }
 function renderTags(){
   const el=$('libraryReaderTags');el.replaceChildren();
