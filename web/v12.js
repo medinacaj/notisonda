@@ -237,35 +237,46 @@
     }
     savedSearches.push(item);if(save(SEARCH_KEY,savedSearches)){renderSearches();actionToast('Búsqueda guardada en este navegador.');}
   });
+  // Evitar repetir en la portada las categorías disponibles en la barra
+  // lateral. La selección opcional vive en Configuración > Lectura y filtros.
   function createMine() {
-    const section=mk('section','v12-myradar');section.id='v12MyRadar';section.setAttribute('aria-labelledby','v12MyRadarTitle');
-    const header=mk('div','v12-myradar-head');
-    const heading=mk('div','');
-    heading.append(display('MI RADAR · PERSONALIZA TU PORTADA','v12-eyebrow'),display('Noticias a tu manera','v12-myradar-title','h2'),
-      display('Elige las secciones que quieres destacar. Tus preferencias permanecen en este navegador.','v12-myradar-intro','p'));
-    const mode=mk('button','v12-primary','Activar Mi Radar');mode.id='v12MineToggle';mode.type='button';
+    const reading=document.querySelector('[data-settings-pane="reading"]');
+    const grid=reading?.querySelector('.setting-grid');
+    if(!reading||!grid)return;
+    const section=mk('section','v12-settings-myradar');
+    section.id='v12MyRadar';
+    section.setAttribute('aria-labelledby','v12MyRadarTitle');
+    const heading=mk('div','v12-settings-myradar-head');
+    const description=mk('div','');
+    const title=display('Personalizar portada','v12-settings-myradar-title','h4');
+    title.id='v12MyRadarTitle';
+    description.append(title,display('Opcional: selecciona qué secciones aparecen en Inicio. Las carpetas de fuentes no cambian.','v12-settings-myradar-hint','p'));
+    const mode=mk('button','v12-secondary','Activar selección');mode.id='v12MineToggle';mode.type='button';
     mode.addEventListener('click',()=>{
       prefs.mine=!prefs.mine;
       if(prefs.mine&&!myCats().length)prefs.categories=state.categories.slice();
       persistPrefs();updateMine();render();
     });
-    header.append(heading,mode);
+    heading.append(description,mode);
+    const details=mk('details','v12-settings-myradar-details');
+    details.id='v12MineDetails';
+    const summary=mk('summary','', 'Elegir categorías de portada');
     const choices=mk('div','v12-myradar-choices');choices.id='v12MineCategories';
-    choices.setAttribute('role','group');choices.setAttribute('aria-label','Categorías de Mi Radar');
-    section.append(header,choices);
-    $('dashboardView').querySelector('.dashboard-head').after(section);
+    choices.setAttribute('role','group');choices.setAttribute('aria-label','Categorías de portada');
+    details.append(summary,choices);
+    section.append(heading,details);
+    grid.after(section);
   }
   function updateMine() {
     const panel=$('v12MyRadar');
     if(!panel)return;
     panel.classList.toggle('is-active',prefs.mine);
     const mode=$('v12MineToggle');
-    mode.textContent=prefs.mine?'Mi Radar activo · Ver todas':'Activar Mi Radar';
+    mode.textContent=prefs.mine?'Usar portada general':'Activar selección';
     mode.setAttribute('aria-pressed',String(prefs.mine));
     const list=$('v12MineCategories');list.replaceChildren();
-    const cats=state.categories;
     const selected=new Set(myCats());
-    const options=[...cats.filter(c=>!regionalCats().includes(c)), 'latam'];
+    const options=[...state.categories.filter(c=>!regionalCats().includes(c)),'latam'];
     options.forEach(cat=>{
       const ids=cat==='latam'?regionalCats():[cat];
       const active=ids.some(id=>selected.has(id));

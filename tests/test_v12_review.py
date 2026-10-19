@@ -31,8 +31,8 @@ class V12ReviewTests(unittest.TestCase):
         self.assertNotIn("folderNav.append(section)",self.script)
         self.assertNotIn("row.classList.add('v12-hidden-category')",self.script)
         self.assertIn("const railBase = renderTopicRail",self.script)
-        self.assertIn("v12.js?v=1.2.2",self.html)
-        self.assertIn("radar-rss-v9",self.sw)
+        self.assertIn("v12.js?v=1.2.3",self.html)
+        self.assertIn("radar-rss-v10",self.sw)
 
     def test_all_news_context_and_coverage_have_separate_responsibilities(self):
         library=(ROOT/'web/library.js').read_text(encoding='utf8')
@@ -49,6 +49,15 @@ class V12ReviewTests(unittest.TestCase):
         self.assertIn("Medios regionales latinoamericanos",self.script)
         self.assertNotIn("Todos los países",self.script)
         self.assertIn("regionGroup.label='Latinoamérica'",self.script)
+
+    def test_home_categories_not_duplicated_in_dashboard(self):
+        self.assertIn("document.querySelector('[data-settings-pane=\"reading\"]')",self.script)
+        self.assertIn("grid.after(section)",self.script)
+        self.assertNotIn("querySelector('.dashboard-head').after(section)",self.script)
+        self.assertIn("v12MineDetails",self.script)
+        guide=(ROOT/'web/v13.js').read_text(encoding="utf8")
+        self.assertIn("selectedTab('reading')",guide)
+        self.assertIn("head.after(panel)",guide)
 
     def test_personalization_is_local_and_limits_saved_searches(self):
         self.assertIn("radar-v12-preferences",self.script)

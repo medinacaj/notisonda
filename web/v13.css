@@ -64,10 +64,9 @@ body.radar-hybrid .article-footer{flex-wrap:wrap;}
 body.radar-hybrid .article-footer .article-meta{flex:1 1 112px;}
 body.radar-hybrid .article-footer .article-actions{margin-left:auto;align-items:center;gap:4px;}
 body.radar-hybrid .article-footer .article-read-toggle{
-  display:inline-flex;gap:5px;align-items:center;justify-content:center;
-  width:auto;height:36px;min-width:110px;padding:4px 8px;
+  display:inline-grid;place-items:center;
+  width:38px;height:38px;min-width:38px;min-height:38px;padding:0;
   background:var(--surface2);color:var(--text);border:1px solid var(--line);
-  font:650 11px/1.25 var(--font-ui);white-space:nowrap;
 }
 body.radar-hybrid .article-footer .article-read-toggle[aria-pressed="true"]{
   color:var(--accent);background:color-mix(in srgb,var(--accent) 10%,var(--surface));
