@@ -19,6 +19,13 @@ class V13Contracts(unittest.TestCase):
         self.assertIn("'./v13.js'",self.sw)
         self.assertIn("'./v13.css'",self.sw)
 
+    def test_home_has_one_clear_navigation_to_all_news(self):
+        self.assertNotIn('Explorar todas las noticias',self.html)
+        self.assertNotIn('class="dashboard-read-all" href="#noticias"',self.html)
+        self.assertIn('id="categoryNav"',self.html)
+        self.assertIn('id="dashboardSavedAll"',self.html)
+        self.assertIn('href="#noticias"',self.html)
+
     def test_onboarding_is_local_accessible_and_reopenable(self):
         for token in ["radar-v13-guide-dismissed","v13GuideTitle",
                       "v13DismissGuide","v13OpenGuide","aria-labelledby"]:
