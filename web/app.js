@@ -1075,10 +1075,18 @@ function card(item) {
     markRead(item.id,next);
     actionToast(next?'Marcada como leída.':'Marcada como no leída.');
   });
+  more.setAttribute('aria-keyshortcuts','Shift+F10');
   el.addEventListener('contextmenu',event=>{
     event.preventDefault();
     closeCardMenu();
     toggleCardMenu(item,more,{x:event.clientX,y:event.clientY});
+  });
+  el.addEventListener('keydown',event=>{
+    if(event.key==='ContextMenu'||(event.shiftKey&&event.key==='F10')){
+      event.preventDefault();
+      closeCardMenu();
+      toggleCardMenu(item,more);
+    }
   });
   actions.append(read,save,more);
   footer.append(meta,actions);
