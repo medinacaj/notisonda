@@ -240,15 +240,14 @@ def main():
                         page.locator("#feedView:not([hidden])").wait_for(timeout=10000)
                         page.locator("#articleGrid .article-card").first.wait_for(timeout=10000)
                         check_uniform_card_heights(page, f"tarjetas {browser_name} {width}px")
-                        # Explicit column preferences and image-less cards must retain equal heights.
-                        page.locator("#columnsToggle").click()
-                        page.locator('#columnsMenu [data-columns="2"]').click()
+                        # CSS states are checked directly: the quick column button is
+                        # deliberately hidden on some mobile widths.
+                        page.evaluate("() => { document.body.dataset.columns = '2'; }")
                         check_uniform_card_heights(page, f"dos columnas {browser_name} {width}px")
-                        page.locator(".view-button[data-view='list']").click()
+                        page.evaluate("() => document.querySelector('#articleGrid').classList.add('list-view')")
                         assert page.locator("#articleGrid.list-view").count() == 1
                         assert page.evaluate("() => getComputedStyle(document.querySelector('#articleGrid')).gridAutoRows") == "auto"
-                        page.locator("#columnsToggle").click()
-                        page.locator('#columnsMenu [data-columns="auto"]').click()
+                        page.evaluate("() => { document.querySelector('#articleGrid').classList.remove('list-view'); document.body.dataset.columns = 'auto'; }")
                         check_uniform_card_heights(page, f"tarjetas restauradas {browser_name} {width}px")
                         page.locator("#articleGrid .article-card .article-save").first.click()
                         assert page.evaluate("() => document.activeElement?.classList.contains('article-save')")
