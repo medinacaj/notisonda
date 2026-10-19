@@ -58,6 +58,15 @@ class V13Contracts(unittest.TestCase):
         self.assertIn("article-read-toggle[aria-pressed",css)
         self.assertIn("@media(prefers-reduced-motion:reduce)",css)
 
+    def test_read_button_remains_icon_only(self):
+        self.assertIn("read.append(svgIcon(isRead?'undo':'check'));",self.app)
+        self.assertNotIn("article-read-label",self.app)
+        self.assertIn("read.title=readLabel",self.app)
+        self.assertIn("read.setAttribute('aria-label'",self.app)
+        self.assertIn("read.setAttribute('aria-pressed'",self.app)
+        css=(ROOT/'web/v13.css').read_text(encoding="utf8")
+        self.assertIn("width:38px;height:38px;min-width:38px",css)
+
     def test_backup_is_retained_and_manual_recovery_checks_integrity(self):
         self.assertIn("retention-days: 90",self.workflow)
         self.assertIn("python scripts/validate_restore.py",self.workflow)
