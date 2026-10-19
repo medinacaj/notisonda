@@ -50,6 +50,15 @@ class V12ReviewTests(unittest.TestCase):
         self.assertNotIn("Todos los países",self.script)
         self.assertIn("regionGroup.label='Latinoamérica'",self.script)
 
+    def test_home_categories_not_duplicated_in_dashboard(self):
+        self.assertIn("document.querySelector('[data-settings-pane=\"reading\"]')",self.script)
+        self.assertIn("grid.after(section)",self.script)
+        self.assertNotIn("querySelector('.dashboard-head').after(section)",self.script)
+        self.assertIn("v12MineDetails",self.script)
+        guide=(ROOT/'web/v13.js').read_text(encoding="utf8")
+        self.assertIn("selectedTab('reading')",guide)
+        self.assertIn("head.after(panel)",guide)
+
     def test_personalization_is_local_and_limits_saved_searches(self):
         self.assertIn("radar-v12-preferences",self.script)
         self.assertIn("radar-v12-saved-searches",self.script)
