@@ -20,3 +20,23 @@ body.radar-hybrid .v13-guide button:focus-visible,body.radar-hybrid .v13-reopen:
  body.radar-hybrid .v13-reopen{width:100%}
 }
 @media(prefers-reduced-motion:reduce){body.radar-hybrid .v13-guide *{transition:none!important}}
+
+
+/* Igualar el tamaño de las tarjetas en todas las filas del listado.
+   La altura de referencia la determina la tarjeta con más contenido visible;
+   no se recortan titulares, los extractos siguen con sus límites existentes.
+   La vista Lista y la portada editorial mantienen sus layouts propios. */
+body.radar-hybrid #articleGrid.article-grid:not(.list-view){
+  grid-auto-rows:1fr;
+  align-items:stretch;
+}
+body.radar-hybrid #articleGrid.article-grid:not(.list-view) > .article-card{
+  align-self:stretch;
+  height:100%;
+}
+body.radar-hybrid #articleGrid.article-grid:not(.list-view) > .article-card .article-content{
+  flex:1 1 auto;
+}
+body.radar-hybrid #articleGrid.article-grid:not(.list-view) > .article-card .article-footer{
+  margin-top:auto;
+}
