@@ -246,7 +246,7 @@ def main():
                         check_uniform_card_heights(page, f"dos columnas {browser_name} {width}px")
                         page.locator(".view-button[data-view='list']").click()
                         assert page.locator("#articleGrid.list-view").count() == 1
-                        assert page.evaluate("getComputedStyle(document.querySelector('#articleGrid')).gridAutoRows") == "auto"
+                        assert page.evaluate("() => getComputedStyle(document.querySelector('#articleGrid')).gridAutoRows") == "auto"
                         page.locator("#columnsToggle").click()
                         page.locator('#columnsMenu [data-columns="auto"]').click()
                         check_uniform_card_heights(page, f"tarjetas restauradas {browser_name} {width}px")
