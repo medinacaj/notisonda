@@ -223,7 +223,7 @@ def main():
                         assert page.locator("#libraryFolderNav .v12-hidden-category").count() == 0
                         assert page.locator("#libraryFolderNav .v12-region-nav").count() == 0
                         actual = page.locator("#libraryFolderNav .system-folder-link .nav-label").all_text_contents()
-                        assert actual == ["Inteligencia Artificial","Tecnología","Mundo","Chile","Venezuela","Latinoamérica"], actual
+                        assert actual == ["Inteligencia Artificial","Tecnología","Internacionales","Chile","Venezuela","Latinoamérica"], actual
                         if width <= 950:
                             page.locator("#menuToggle").click()
                             page.locator("body.nav-open").wait_for(timeout=3000)
