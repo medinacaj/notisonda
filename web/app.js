@@ -1119,7 +1119,8 @@ function toggleCardMenu(item,anchor,point=null){
   const top=atCursor?point.y+4:r.bottom+6;
   menu.style.left=Math.max(8,Math.min(left,window.innerWidth-w-8))+'px';
   menu.style.top=Math.max(8,Math.min(top,window.innerHeight-h-8))+'px';
-  menu.querySelector('[role="menuitem"]:not([hidden])')?.focus();
+  // El foco del menú fijo no debe desplazar la página y cerrarlo inmediatamente.
+  menu.querySelector('[role="menuitem"]:not([hidden])')?.focus({preventScroll:true});
 }
 function initCardMenu(){
   const menu=$('cardMenu');
