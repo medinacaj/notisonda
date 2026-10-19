@@ -36,6 +36,15 @@ class V13Contracts(unittest.TestCase):
         self.assertIn("const restoreFocus=document.activeElement",self.lib)
         self.assertIn("button.focus({preventScroll:true})",self.lib)
 
+    def test_card_height_fix_only_targets_grid_not_editorial_or_list(self):
+        css=(ROOT/'web/v13.css').read_text(encoding='utf8')
+        self.assertIn('#articleGrid.article-grid:not(.list-view)',css)
+        self.assertIn('grid-auto-rows:1fr',css)
+        self.assertIn('> .article-card .article-footer',css)
+        self.assertNotIn('.dashboard-feature .article-card{grid-auto-rows',css)
+        self.assertIn('v13.css?v=1.3.1',self.html)
+        self.assertIn("radar-rss-v6",self.sw)
+
     def test_backup_is_retained_and_manual_recovery_checks_integrity(self):
         self.assertIn("retention-days: 90",self.workflow)
         self.assertIn("python scripts/validate_restore.py",self.workflow)
