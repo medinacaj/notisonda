@@ -237,6 +237,22 @@ def main():
                         assert page.locator("#folderSourceList input[type='checkbox']").count() == len(SOURCES)
                         page.locator("#folderDialog .folder-dialog-close").click()
                         expect(page.locator("#folderDialog")).to_be_hidden()
+                        # «Todas las noticias» tiene el mismo acceso contextual que
+                        # las carpetas, pero nunca ofrece renombrar ni eliminarlas.
+                        all_link=page.locator("#categoryNav > .nav-link").nth(1)
+                        all_link.focus()
+                        all_link.press("Shift+F10")
+                        expect(page.locator("#folderMenu")).to_be_visible()
+                        expect(page.locator('#folderMenu [data-folder-action="read"]')).to_have_text("Marcar todas como leídas")
+                        assert page.locator('#folderMenu [data-folder-action="rename"]:visible').count() == 0
+                        assert page.locator('#folderMenu [data-folder-action="delete"]:visible').count() == 0
+                        assert page.locator('#folderMenu [data-folder-action="sources"]:visible').count() == 1
+                        assert page.locator('#folderMenu [data-folder-action="unread"]:visible').count() == 1
+                        page.locator('#folderMenu [data-folder-action="sources"]').click()
+                        expect(page.locator("#settingsDialog[open]")).to_be_visible()
+                        expect(page.locator('[data-settings-pane="sources"]')).to_be_visible()
+                        page.locator("#closeSettings").click()
+                        expect(page.locator("#settingsDialog")).to_be_hidden()
                         if width <= 950:
                             page.keyboard.press("Escape")
                             page.locator("body:not(.nav-open)").wait_for(timeout=3000)
@@ -276,6 +292,39 @@ def main():
                         check_uniform_card_heights(page, f"tarjetas restauradas {browser_name} {width}px")
                         page.locator("#articleGrid .article-card .article-save").first.click()
                         assert page.evaluate("() => document.activeElement?.classList.contains('article-save')")
+                        # Acceso directo a marcar una noticia, sin depender del menú.
+                        first_card=page.locator("#articleGrid .article-card").first
+                        read_button=first_card.locator(".article-read-toggle")
+                        expect(read_button).to_be_visible()
+                        expect(read_button).to_contain_text("Marcar leída")
+                        initial_unread=int(page.locator("#unreadCount").inner_text().replace(".",""))
+                        initial_nav=int(page.locator("#categoryNav > .nav-link").nth(1).locator(".nav-count").text_content())
+                        read_button.click()
+                        expect(page.locator("#unreadCount")).to_have_text(str(initial_unread-1))
+                        expect(page.locator("#categoryNav > .nav-link").nth(1).locator(".nav-count")).to_have_text(str(initial_nav-1))
+                        expect(page.locator("#articleGrid .article-card").first.locator(".article-read-toggle")).to_have_attribute("aria-pressed","true")
+                        expect(page.locator("#articleGrid .article-card").first.locator(".article-read-toggle")).to_contain_text("Marcar no leída")
+                        expect(page.locator("#filterSummary")).to_contain_text(str(initial_unread-1)+" sin leer")
+                        # El menú contextual debe estar disponible desde cualquier parte de la tarjeta.
+                        page.locator("#articleGrid .article-card").first.locator(".article-title").click(button="right")
+                        expect(page.locator("#cardMenu")).to_be_visible()
+                        expect(page.locator("#cardMenuReadLabel")).to_have_text("Marcar como no leída")
+                        page.locator("#cardMenu [data-card-action='read']").click()
+                        expect(page.locator("#unreadCount")).to_have_text(str(initial_unread))
+                        expect(page.locator("#categoryNav > .nav-link").nth(1).locator(".nav-count")).to_have_text(str(initial_nav))
+                        expect(page.locator("#articleGrid .article-card").first.locator(".article-read-toggle")).to_have_attribute("aria-pressed","false")
+                        first_title=page.locator("#articleGrid .article-card").first.locator(".article-title a")
+                        first_title.focus()
+                        first_title.press("Shift+F10")
+                        expect(page.locator("#cardMenu")).to_be_visible()
+                        page.keyboard.press("Escape")
+                        expect(page.locator("#cardMenu")).to_be_hidden()
+                        if width >= 1024:
+                            first_card=page.locator("#articleGrid .article-card").first
+                            first_card.hover()
+                            page.wait_for_timeout(240)
+                            shadow=first_card.evaluate("(node) => getComputedStyle(node).boxShadow")
+                            assert shadow != "none", (width,browser_name,shadow)
                         check_visible_boxes(page, [".topbar", ".topbar-actions", ".filter-bar",
                             ".filter-controls", ".mode-tabs", "#articleGrid",
                             "#articleGrid .article-card"], f"listado {width}px")
@@ -323,6 +372,14 @@ def main():
                         assert page.locator("#feedHeading").inner_text() == "Latinoamérica"
                         check_visible_boxes(page, ["#v12CountryTabs","#v12FilterBar","#v12Geo","#v12Date"],
                                             f"V1.2 región {browser_name} {width}px")
+                        expect(page.locator("label:has(#v12Geo) .v12-control-label")).to_have_text("Cobertura")
+                        options=page.locator("#v12Geo option").all_text_contents()
+                        assert options == ["Todas las noticias", "Toda Latinoamérica", "Chile",
+                                           "Venezuela", "Medios regionales latinoamericanos"], options
+                        assert page.locator('#v12Geo optgroup[label="Latinoamérica"]').count() == 1
+                        page.locator("#v12Geo").select_option("region")
+                        expect(page.locator("#feedHeading")).to_have_text("Medios regionales de Latinoamérica")
+                        assert page.locator("#articleGrid .article-card").count() > 0
                         page.locator("#v12Geo").select_option("chile")
                         page.wait_for_url("**/#region/chile")
                         expect(page.locator("#feedHeading")).to_have_text("Chile", timeout=10000)
@@ -346,6 +403,19 @@ def main():
                         assert page.locator(".v12-timeline-item").count() == 0
                         page.locator("#readerClose").click()
                         page.locator("#articleReaderDialog[open]").wait_for(state="hidden")
+                        # Una acción de lectura global confirma antes de modificar
+                        # el estado y actualiza los contadores de todas las carpetas.
+                        if width <= 950:
+                            page.locator("#menuToggle").click()
+                            page.locator("body.nav-open").wait_for()
+                        all_link=page.locator("#categoryNav > .nav-link").nth(1)
+                        all_link.focus()
+                        all_link.press("Shift+F10")
+                        page.once("dialog",lambda dialog: dialog.accept())
+                        page.locator('#folderMenu [data-folder-action="read"]').click()
+                        expect(page.locator("#unreadCount")).to_have_text("0")
+                        expect(page.locator("#folderMenu")).to_be_hidden()
+                        assert page.locator("#libraryFolderNav .system-folder-link").count() == len(CATEGORIES)
                         print(f"OK [{browser_name}]: {width}px, portada, listado, navegación, búsqueda, configuración, resumen", flush=True)
                     except Exception:
                         print(f"DEBUG [{browser_name}] {width}px: JS={javascript_errors}", flush=True)

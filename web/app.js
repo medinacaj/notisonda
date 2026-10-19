@@ -104,11 +104,11 @@ const CATEGORY_LABELS = ['Inteligencia Artificial', 'Tecnología', 'Internaciona
 function safeStoredSet(key) {
   try {
     const data = JSON.parse(storeGet(key) || '[]');
-    return new Set(Array.isArray(data) ? data.filter(x => typeof x === 'string').slice(-4000) : []);
+    return new Set(Array.isArray(data) ? data.filter(x => typeof x === 'string').slice(key === 'radar-read' ? -5000 : -4000) : []);
   } catch { return new Set(); }
 }
 function persist(key, values) {
-  try { localStorage.setItem(key, JSON.stringify([...values].slice(-4000))); } catch { /* modo privado o almacenamiento bloqueado */ }
+  try { localStorage.setItem(key, JSON.stringify([...values].slice(key === 'radar-read' ? -5000 : -4000))); } catch { /* modo privado o almacenamiento bloqueado */ }
 }
 function safeURL(raw) {
   try { const u = new URL(raw); return ['https:', 'http:'].includes(u.protocol) ? u.href : null; }
@@ -1062,7 +1062,33 @@ function card(item) {
   more.setAttribute('aria-haspopup','menu');more.setAttribute('aria-expanded','false');more.setAttribute('aria-controls','cardMenu');
   more.append(svgIcon('more'));
   more.addEventListener('click',()=>toggleCardMenu(item,more));
-  actions.append(save,more);
+  // La acción de lectura es visible sin abrir el menú de tres puntos.
+  const read=mk('button','article-action article-read-toggle');
+  read.type='button';
+  const readLabel=isRead?'Marcar como no leída':'Marcar como leída';
+  read.title=readLabel;
+  read.setAttribute('aria-label',readLabel+': '+(item.title||'noticia'));
+  read.setAttribute('aria-pressed',String(isRead));
+  read.append(svgIcon(isRead?'undo':'check'),mk('span','article-read-label',isRead?'Marcar no leída':'Marcar leída'));
+  read.addEventListener('click',()=>{
+    const next=!state.read.has(item.id);
+    markRead(item.id,next);
+    actionToast(next?'Marcada como leída.':'Marcada como no leída.');
+  });
+  more.setAttribute('aria-keyshortcuts','Shift+F10');
+  el.addEventListener('contextmenu',event=>{
+    event.preventDefault();
+    closeCardMenu();
+    toggleCardMenu(item,more,{x:event.clientX,y:event.clientY});
+  });
+  el.addEventListener('keydown',event=>{
+    if(event.key==='ContextMenu'||(event.shiftKey&&event.key==='F10')){
+      event.preventDefault();
+      closeCardMenu();
+      toggleCardMenu(item,more);
+    }
+  });
+  actions.append(read,save,more);
   footer.append(meta,actions);
   content.append(footer);
   el.append(content);return el;
@@ -1076,7 +1102,7 @@ function closeCardMenu(restoreFocus=false){
   if(restoreFocus&&cardMenuAnchor?.isConnected)cardMenuAnchor.focus();
   cardMenuItem=null;cardMenuAnchor=null;
 }
-function toggleCardMenu(item,anchor){
+function toggleCardMenu(item,anchor,point=null){
   const menu=$('cardMenu');
   if(!menu.hidden&&cardMenuAnchor===anchor){closeCardMenu(true);return;}
   closeCardMenu();
@@ -1088,11 +1114,13 @@ function toggleCardMenu(item,anchor){
   open.hidden=!url;open.href=url||'#';
   menu.hidden=false;anchor.setAttribute('aria-expanded','true');
   const r=anchor.getBoundingClientRect(),w=menu.offsetWidth,h=menu.offsetHeight;
-  const left=Math.min(Math.max(8,r.right-w),window.innerWidth-w-8);
-  const below=r.bottom+6+h<=window.innerHeight-8;
-  menu.style.left=left+'px';
-  menu.style.top=(below?r.bottom+6:Math.max(8,r.top-h-6))+'px';
-  menu.querySelector('[role="menuitem"]:not([hidden])')?.focus();
+  const atCursor=point&&point.x>0&&point.y>0;
+  const left=atCursor?point.x: r.right-w;
+  const top=atCursor?point.y+4:r.bottom+6;
+  menu.style.left=Math.max(8,Math.min(left,window.innerWidth-w-8))+'px';
+  menu.style.top=Math.max(8,Math.min(top,window.innerHeight-h-8))+'px';
+  // El foco del menú fijo no debe desplazar la página y cerrarlo inmediatamente.
+  menu.querySelector('[role="menuitem"]:not([hidden])')?.focus({preventScroll:true});
 }
 function initCardMenu(){
   const menu=$('cardMenu');
@@ -1116,21 +1144,31 @@ function initCardMenu(){
   });
   document.addEventListener('pointerdown',event=>{if(!event.target.closest('#cardMenu,.article-more'))closeCardMenu();});
   window.addEventListener('resize',()=>closeCardMenu(),{passive:true});
-  window.addEventListener('scroll',()=>closeCardMenu(),{passive:true});
+  // Cerrar solo cuando la persona inicia el desplazamiento. Un evento scroll
+  // causado por foco/Playwright puede ocurrir entre abrir el menú y pulsar una acción.
+  window.addEventListener('wheel',()=>closeCardMenu(),{passive:true});
+  document.addEventListener('touchmove',()=>closeCardMenu(),{passive:true});
 }
 function markRead(id,value){
+  const original=state.read.has(id);
   if(value)state.read.add(id);else state.read.delete(id);
+  if(original===value)return;
+  const active=document.activeElement;
+  const returnFocus=active?.classList?.contains('article-read-toggle')===true;
   persist('radar-read',state.read);
-  if(state.mode==='unread'||state.hideRead){render();return;}
-  document.querySelectorAll('[data-article-id]').forEach(el=>{
-    if(el.dataset.articleId===id)el.classList.toggle('read-article',value);
-  });
-  $('filterSummary').textContent=`${format.format(applyFilters().slice(0,state.page*state.pageSize).length)} visibles · ${format.format(state.read.size)} leídas`;
+  // Renderiza tarjetas, pestañas, filtros y contadores desde un único estado.
+  // La biblioteca restaura los indicadores de las seis carpetas en su wrapper.
+  render();
+  if(returnFocus){
+    const target=[...document.querySelectorAll('#articleGrid .article-card, #dashboardFeature .article-card')]
+      .find(el=>el.dataset.articleId===id)?.querySelector('.article-read-toggle');
+    (target||$('articleGrid').querySelector('.article-read-toggle')||document.querySelector('.mode-tab.active'))?.focus({preventScroll:true});
+  }
 }
 function render() {
   const filtered=applyFilters(), visible=filtered.slice(0,state.page*state.pageSize);
   $('visibleCount').textContent=`${format.format(filtered.length)} ${hasHistory()?'RECIENTES':'ARTÍCULOS'}`;
-  $('filterSummary').textContent=`${format.format(visible.length)} visibles · ${format.format(state.read.size)} leídas`; 
+  $('filterSummary').textContent=`${format.format(visible.length)} visibles · ${format.format(applyFilters('unread').length)} sin leer con estos filtros`; 
   const modeCounts={
     all:state.mode==='all'?filtered.length:applyFilters('all').length,
     unread:state.mode==='unread'?filtered.length:applyFilters('unread').length,

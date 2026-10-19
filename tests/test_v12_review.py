@@ -31,8 +31,24 @@ class V12ReviewTests(unittest.TestCase):
         self.assertNotIn("folderNav.append(section)",self.script)
         self.assertNotIn("row.classList.add('v12-hidden-category')",self.script)
         self.assertIn("const railBase = renderTopicRail",self.script)
-        self.assertIn("v12.js?v=1.2.1",self.html)
-        self.assertIn("radar-rss-v7",self.sw)
+        self.assertIn("v12.js?v=1.2.2",self.html)
+        self.assertIn("radar-rss-v9",self.sw)
+
+    def test_all_news_context_and_coverage_have_separate_responsibilities(self):
+        library=(ROOT/'web/library.js').read_text(encoding='utf8')
+        self.assertIn("if(kind==='all')",library)
+        self.assertIn("Marcar todas como leídas",library)
+        self.assertIn("Mostrar solo las no leídas",library)
+        self.assertIn("void markAllNewsRead()",library)
+        self.assertIn("await loadHistory()",library)
+        app=(ROOT/'web/app.js').read_text(encoding='utf8')
+        self.assertIn("key === 'radar-read' ? -5000 : -4000",app)
+        self.assertIn("setNavOpen(false,false)",library)
+        self.assertIn("Cobertura",self.script)
+        self.assertIn("Todas las noticias",self.script)
+        self.assertIn("Medios regionales latinoamericanos",self.script)
+        self.assertNotIn("Todos los países",self.script)
+        self.assertIn("regionGroup.label='Latinoamérica'",self.script)
 
     def test_personalization_is_local_and_limits_saved_searches(self):
         self.assertIn("radar-v12-preferences",self.script)

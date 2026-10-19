@@ -42,8 +42,21 @@ class V13Contracts(unittest.TestCase):
         self.assertIn('grid-auto-rows:1fr',css)
         self.assertIn('> .article-card .article-footer',css)
         self.assertNotIn('.dashboard-feature .article-card{grid-auto-rows',css)
-        self.assertIn('v13.css?v=1.3.1',self.html)
-        self.assertIn("radar-rss-v7",self.sw)
+        self.assertIn('v13.css?v=1.3.2',self.html)
+        self.assertIn("radar-rss-v9",self.sw)
+
+    def test_card_read_action_is_visible_and_syncs_values(self):
+        self.assertIn("article-action article-read-toggle",self.app)
+        self.assertIn("Marcar leída",self.app)
+        self.assertIn("addEventListener('contextmenu'",self.app)
+        self.assertIn("toggleCardMenu(item,more,{x:event.clientX,y:event.clientY})",self.app)
+        self.assertIn("render();",self.app)
+        self.assertIn("sin leer con estos filtros",self.app)
+        self.assertIn("aria-keyshortcuts','Shift+F10'",self.app)
+        css=(ROOT/'web/v13.css').read_text(encoding='utf8')
+        self.assertIn("#articleGrid .article-card:hover",css)
+        self.assertIn("article-read-toggle[aria-pressed",css)
+        self.assertIn("@media(prefers-reduced-motion:reduce)",css)
 
     def test_backup_is_retained_and_manual_recovery_checks_integrity(self):
         self.assertIn("retention-days: 90",self.workflow)

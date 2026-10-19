@@ -53,7 +53,7 @@
     }
   });
   const display = (name, cls, tag='span') => mk(tag, cls, name);
-  const regionName = { all:'Todas las noticias', latam:'Latinoamérica', chile:'Chile', venezuela:'Venezuela', region:'Latinoamérica · Región' };
+  const regionName = { all:'Todas las noticias', latam:'Latinoamérica', chile:'Chile', venezuela:'Venezuela', region:'Medios regionales de Latinoamérica' };
   // Las carpetas del lector pertenecen al módulo library.js:
   // nunca sustituir ni ocultar sus entradas, nombres y opciones.
   // Latinoamérica agrupada se ofrece solo en filtros/chips de noticias.
@@ -153,7 +153,18 @@
     wrap.append(select);return {wrap,select};
   }
   const filterRow=mk('div','v12-filter-bar');filterRow.id='v12FilterBar';
-  const geoPicker=makeSelect('v12Geo','Región',[['all','Todos los países'],['latam','Latinoamérica'],['chile','Chile'],['venezuela','Venezuela'],['region','Región']]);
+  // La clasificación es por cobertura de los medios del OPML, no por regiones
+  // administrativas ni por todos los países del mundo.
+  const geoPicker=makeSelect('v12Geo','Cobertura',[['all','Todas las noticias']]);
+  const regionGroup=document.createElement('optgroup');
+  regionGroup.label='Latinoamérica';
+  for(const [value,label] of [
+    ['latam','Toda Latinoamérica'],
+    ['chile','Chile'],
+    ['venezuela','Venezuela'],
+    ['region','Medios regionales latinoamericanos']
+  ])regionGroup.append(new Option(label,value));
+  geoPicker.select.append(regionGroup);
   const datePicker=makeSelect('v12Date','Antigüedad',[['0','Sin límite'],['1','24 horas'],['7','7 días'],['30','30 días'],['90','90 días']]);
   filterRow.append(geoPicker.wrap,datePicker.wrap);
   const saveSearch=mk('button','v12-secondary','Guardar búsqueda');saveSearch.type='button';saveSearch.id='v12SaveSearch';
@@ -161,8 +172,8 @@
   const savedPanel=mk('div','v12-saved-searches');savedPanel.id='v12SavedSearches';
   savedPanel.setAttribute('aria-label','Búsquedas guardadas');
   const tabs=mk('div','v12-country-tabs');tabs.id='v12CountryTabs';tabs.setAttribute('role','group');
-  tabs.setAttribute('aria-label','Filtrar noticias latinoamericanas por país');
-  for(const [code,name] of [['latam','Todo Latinoamérica'],['chile','Chile'],['venezuela','Venezuela'],['region','Región']]) {
+  tabs.setAttribute('aria-label','Filtrar por cobertura de medios latinoamericanos');
+  for(const [code,name] of [['latam','Toda Latinoamérica'],['chile','Chile'],['venezuela','Venezuela'],['region','Medios regionales']]) {
     const button=mk('button','v12-country-tab',name);
     button.type='button';button.dataset.v12Geo=code;
     button.addEventListener('click',()=>chooseGeo(code));
