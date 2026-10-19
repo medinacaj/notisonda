@@ -83,7 +83,7 @@
     if (geo !== 'all') {
       $('feedHeading').textContent = regionName[geo];
       $('topbarSection').textContent = regionName[geo];
-      $('sectionEyebrow').textContent = 'COBERTURA REGIONAL';
+      $('sectionEyebrow').textContent = 'REGIÓN';
       $('feedDescription').textContent = geo==='latam' ? 'Chile, Venezuela y el resto de Latinoamérica en una sola sección.' : 'Noticias recientes de '+regionName[geo]+'.';
     }
     syncGeoSources();
@@ -155,7 +155,7 @@
   const filterRow=mk('div','v12-filter-bar');filterRow.id='v12FilterBar';
   // La clasificación es por cobertura de los medios del OPML, no por regiones
   // administrativas ni por todos los países del mundo.
-  const geoPicker=makeSelect('v12Geo','Cobertura',[['all','Todas las noticias']]);
+  const geoPicker=makeSelect('v12Geo','Región',[['all','Todas las noticias']]);
   const regionGroup=document.createElement('optgroup');
   regionGroup.label='Latinoamérica';
   for(const [value,label] of [
@@ -361,10 +361,10 @@
       published_at:item.published_at,category:(item.categories||[])[0]},...(item.also_in||[])].filter(x=>x&&safeURL(x.url));
     if(original.length<2)return;
     const controls=mk('div','v12-compare-tools');
-    const select=makeSelect('v12CompareSort','Comparar coberturas',[
-      ['publisher','Agrupar por medio y región'],['time','Ordenar cronológicamente']]);
+    const select=makeSelect('v12CompareSort','Ordenar',[
+      ['publisher','Por medio'],['time','Por hora de publicación']]);
     controls.append(select.wrap);
-    const summary=display(original.length+' publicaciones enlazadas · Sin evaluación editorial','v12-compare-summary');
+    const summary=display(original.length+' versiones de esta noticia','v12-compare-summary');
     controls.append(summary);
     compare.querySelector('.reader-compare-head').after(controls);
     const originals=[...compare.querySelectorAll('.reader-compare-group')];

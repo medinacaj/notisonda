@@ -514,7 +514,7 @@ function buildNav() {
   }else if(folders.length){
     // Respaldo visual si el módulo de biblioteca no está disponible.
     const section=mk('section','source-folders-section');
-    section.append(mk('div','folder-group-head','CARPETAS DE FUENTES'));
+    section.append(mk('div','folder-group-head','TEMAS'));
     const list=mk('div','library-system-folders');
     folders.forEach((entry,index)=>addRow(entry,index+2,list));
     section.append(list);nav.append(section);
@@ -523,7 +523,7 @@ function buildNav() {
 }
 function renderTopicRail(){
  const rail=$('topicRail');rail.replaceChildren();
- const entries=[{id:'home',label:'Inicio'},{id:'briefing',label:'Resumen'},{id:'all',label:'Todas'},...state.categories.map(id=>({id,label:categoryLabel(id)}))];
+ const entries=[{id:'home',label:'Inicio'},{id:'briefing',label:'Resumen del día'},{id:'all',label:'Todas las noticias'},...state.categories.map(id=>({id,label:categoryLabel(id)}))];
  let current=null;
  entries.forEach(entry=>{
   const active=entry.id==='home'?state.pageView==='dashboard':entry.id==='briefing'?state.pageView==='briefing':state.pageView==='feed'&&state.category===entry.id;
@@ -1061,7 +1061,7 @@ function card(item) {
   if(coverage>1){
     const others=Array.isArray(item.also_in)?item.also_in:[];
     const also=mk('button','article-also'+(coverage>=5?' is-wide':''));also.type='button';
-    also.append(svgIcon('layers'),mk('span','',`${coverage} medios`));
+    also.append(svgIcon('layers'),mk('span','',`Publicada en ${coverage} medios`));
     also.title='Cubierta por '+coverage+' medios'+(others.length?': '+others.slice(0,8).map(x=>sourceLabel(x.publisher,'Otro medio')).join(' · '):'')+'. Ver cómo lo cuenta cada uno.';
     also.setAttribute('aria-label',`Cubierta por ${coverage} medios. Comparar titulares`);
     also.addEventListener('click',()=>openArticleReader(item,null,'compare'));
@@ -1196,7 +1196,7 @@ function markRead(id,value){
 function render() {
   const filtered=applyFilters(), visible=filtered.slice(0,state.page*state.pageSize);
   $('visibleCount').textContent=`${format.format(filtered.length)} ${hasHistory()?'RECIENTES':'ARTÍCULOS'}`;
-  $('filterSummary').textContent=`${format.format(visible.length)} visibles · ${format.format(applyFilters('unread').length)} sin leer con estos filtros`; 
+  $('filterSummary').textContent=`Mostrando ${format.format(visible.length)} de ${format.format(filtered.length)} · ${format.format(applyFilters('unread').length)} sin leer`; 
   const modeCounts={
     all:state.mode==='all'?filtered.length:applyFilters('all').length,
     unread:state.mode==='unread'?filtered.length:applyFilters('unread').length,

@@ -90,7 +90,7 @@ class UxReviewTests(unittest.TestCase):
         self.assertIn('@media(max-width:720px)', features)
         self.assertIn('body.radar-hybrid .dashboard-panel-head h2{font-size:22px}', features)
         self.assertIn('./features.css?v=1.2.1', self.html)
-        for title in ('Lo más cubierto', 'Temas en alza', 'En portada', 'Últimas publicaciones', 'Por carpeta'):
+        for title in ('Lo que más medios publican', 'Temas en alza', 'En portada', 'Últimas publicaciones', 'Por carpeta'):
             self.assertRegex(self.html, fr'<h2[^>]*>{re.escape(title)}</h2>')
 
     def test_history_manifest_is_not_silently_truncated(self):

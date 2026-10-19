@@ -613,9 +613,9 @@ function mount(){
   const foldersSection=mk('section','source-folders-section');
   foldersSection.setAttribute('aria-labelledby','sourceFoldersHeading');
   const header=mk('div','folder-group-head');
-  const heading=mk('span','','CARPETAS DE FUENTES');
+  const heading=mk('span','','TEMAS');
   heading.id='sourceFoldersHeading';header.append(heading);
-  const add=mk('button');add.type='button';add.title='Crear carpeta de fuentes';add.setAttribute('aria-label','Crear carpeta de fuentes');
+  const add=mk('button');add.type='button';add.title='Crear un tema propio con las fuentes que elijas';add.setAttribute('aria-label','Crear carpeta de fuentes');
   add.append(svgIcon('folder-plus'));header.append(add);
   const restore=mk('button','folder-restore');restore.id='folderRestore';
   restore.type='button';restore.hidden=true;restore.title='Restaurar carpetas ocultas';

@@ -58,7 +58,7 @@ class V13Contracts(unittest.TestCase):
         self.assertIn("addEventListener('contextmenu'",self.app)
         self.assertIn("toggleCardMenu(item,more,{x:event.clientX,y:event.clientY})",self.app)
         self.assertIn("render();",self.app)
-        self.assertIn("sin leer con estos filtros",self.app)
+        self.assertIn("sin leer`;",self.app)
         self.assertIn("aria-keyshortcuts','Shift+F10'",self.app)
         css=(ROOT/'web/v13.css').read_text(encoding='utf8')
         self.assertIn("#articleGrid .article-card:hover",css)

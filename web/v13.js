@@ -37,7 +37,7 @@
   addAction('Combina filtros','Selecciona país, medio y antigüedad',()=>{
     goTo('all');
     // El cambio de hash es asíncrono; esperar al evento evita enfocar un control oculto.
-    const focus=()=>{$('v12Geo')?.focus({preventScroll:true});};
+    const focus=()=>{window.RadarFilters?.open();$('v12Geo')?.focus({preventScroll:true});};
     if(state.pageView==='feed')focus();
     else window.addEventListener('hashchange',focus,{once:true});
   });

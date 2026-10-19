@@ -160,6 +160,14 @@ def check_accessibility_contract(page, label):
         raise AssertionError(f"{label}: {failures}")
 
 
+def open_filters(page):
+    """Los filtros avanzados viven en un panel plegable (V1.4)."""
+    toggle = page.locator("#filtersToggle")
+    if toggle.get_attribute("aria-expanded") != "true":
+        toggle.click()
+    expect(page.locator("#filtersPanel")).to_be_visible()
+
+
 def make_route(route):
     name = Path(urlsplit(route.request.url).path).name
     payload = RESPONSES.get(name)
@@ -257,6 +265,18 @@ def main():
                         if width <= 950:
                             page.keyboard.press("Escape")
                             page.locator("body:not(.nav-open)").wait_for(timeout=3000)
+                        # V1.4: en el móvil la lista numerada va antes que el mapa, que se abre a pedido.
+                        if width <= 720:
+                            expect(page.locator("#radarFigure")).to_be_hidden()
+                            first_story = page.locator("#coveredList li").first.bounding_box()
+                            map_toggle = page.locator("#radarMapToggle")
+                            assert first_story["y"] < map_toggle.bounding_box()["y"], (first_story, width)
+                            map_toggle.click()
+                            expect(page.locator("#radarFigure")).to_be_visible()
+                            map_toggle.click()
+                        else:
+                            expect(page.locator("#radarMapToggle")).to_be_hidden()
+                            expect(page.locator("#radarFigure")).to_be_visible()
                         page.locator("#v13Guide").wait_for(state="visible", timeout=10000)
                         assert page.locator("#v13Guide .v13-guide-action").count() == 3
                         assert page.locator("#articleGrid .article-card").count() == 0
@@ -291,6 +311,15 @@ def main():
                         all_news.click()
                         page.locator("#feedView:not([hidden])").wait_for(timeout=10000)
                         page.locator("#articleGrid .article-card").first.wait_for(timeout=10000)
+                        # V1.4: filtros plegados por defecto y pista de acciones visible.
+                        expect(page.locator("#filtersPanel")).to_be_hidden()
+                        expect(page.locator("#sourceSelect")).to_be_hidden()
+                        expect(page.locator("#cardHint")).to_be_visible()
+                        open_filters(page)
+                        check_visible_boxes(page, ["#filtersPanel", "#sourceSelect", "#v12Geo",
+                            "#markAllVisible"], f"filtros {width}px")
+                        page.locator("#filtersToggle").click()
+                        expect(page.locator("#filtersPanel")).to_be_hidden()
                         # Validar imágenes RSS/OG sin alterar la sección de carpetas.
                         expect(page.locator("#articleGrid .article-card .cover img").first).to_have_js_property("naturalWidth", 400)
                         assert page.locator("#articleGrid .article-card.no-cover").count() > 0
@@ -415,9 +444,10 @@ def main():
                         page.evaluate("location.hash = '#region/latinoamerica'")
                         page.locator("#feedView:not([hidden])").wait_for()
                         assert page.locator("#feedHeading").inner_text() == "Latinoamérica"
+                        open_filters(page)
                         check_visible_boxes(page, ["#v12CountryTabs","#v12FilterBar","#v12Geo","#v12Date"],
                                             f"V1.2 región {browser_name} {width}px")
-                        expect(page.locator("label:has(#v12Geo) .v12-control-label")).to_have_text("Cobertura")
+                        expect(page.locator("label:has(#v12Geo) .v12-control-label")).to_have_text("Región")
                         options=page.locator("#v12Geo option").all_text_contents()
                         assert options == ["Todas las noticias", "Toda Latinoamérica", "Chile",
                                            "Venezuela", "Medios regionales latinoamericanos"], options

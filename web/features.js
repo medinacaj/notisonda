@@ -38,7 +38,7 @@
     const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
     if (stored === null && connection && (connection.saveData || ['slow-2g', '2g'].includes(connection.effectiveType))) {
       state.lite = true;
-      setTimeout(() => actionToast('Modo ligero activado por tu conexión. Puedes cambiarlo en Configuración.'), 1200);
+      setTimeout(() => actionToast('Ahorro de datos activado por tu conexión. Puedes cambiarlo en Configuración.'), 1200);
     }
     applyLite();
     $('settingLite').addEventListener('change', event => {
@@ -82,13 +82,15 @@
     [0.25, 0.5, 0.75, 1].forEach(f => svg.append(svgEl('circle', { r: R * f, class: 'radar-ring' })));
     const edge = svgEl('text', { x: 0, y: -R - 6, class: 'radar-ring-label', 'text-anchor': 'middle' });
     edge.textContent = 'hace 24 h'; svg.append(edge);
+    // Las etiquetas se dibujan sobre los puntos (con halo) para que nunca queden tapadas.
+    const labels = svgEl('g', { class: 'radar-labels', 'aria-hidden': 'true' });
     cats.forEach((cat, i) => {
       const a = -Math.PI / 2 + i * slice;
       svg.append(svgEl('line', { x1: 0, y1: 0, x2: Math.cos(a) * R, y2: Math.sin(a) * R, class: 'radar-spoke' }));
       const mid = a + slice / 2;
       const text = svgEl('text', { x: Math.cos(mid) * (R - 22), y: Math.sin(mid) * (R - 22) + 4, class: 'radar-sector-label', 'text-anchor': 'middle' });
       text.textContent = SHORT_LABELS[i] || categoryLabel(cat).slice(0, 10);
-      svg.append(text);
+      labels.append(text);
     });
     if (!state.lite && !reduceMotion?.matches) {
       const sweep = svgEl('g', { class: 'radar-sweep' });
@@ -116,12 +118,12 @@
       g.addEventListener('click', () => { hideTip(); openArticleReader(item); });
       dots.append(g);
     }
-    svg.append(dots);
+    svg.append(dots, labels);
     svg.append(svgEl('circle', { r: 4, class: 'radar-center' }));
     const strong = stories.filter(x => coverageOf(x) >= 3).length;
     svg.setAttribute('aria-label', `Radar de las últimas 24 horas: ${stories.length} historias, ${strong} publicadas por tres o más medios. La lista numerada a continuación contiene las principales.`);
     stage.replaceChildren(svg);
-    $('radarCaption').textContent = 'Cada punto es una historia: más cerca del centro, más reciente; más grande, más medios la publicaron.';
+    $('radarCaption').textContent = 'Cada punto es una historia · Centro = más reciente · Más grande = más medios';
   }
   let coveredKey = '';
   function renderCovered() {

@@ -39,6 +39,7 @@
   <link rel="stylesheet" href="./features.css?v=1.2.1">
   <link rel="stylesheet" href="./v12.css?v=1.2.1">
   <link rel="stylesheet" href="./v13.css?v=1.3.5">
+  <link rel="stylesheet" href="./v14.css?v=1.4.0">
   <title>Radar RSS — Actualidad en un solo lugar</title>
 </head>
 <body class="light radar-hybrid">
@@ -57,7 +58,7 @@
       </div>
       <div class="sidebar-bottom">
         <section class="sidebar-feed-status" id="sidebarFeedHealth" aria-label="Estado de las fuentes RSS" hidden>
-          <span class="sidebar-feed-status-heading">ESTADO RSS</span>
+          <span class="sidebar-feed-status-heading">ESTADO DE LAS FUENTES</span>
           <button id="feedHealthIndicator" class="health-indicator sidebar-health-action" type="button" hidden aria-label="Abrir diagnóstico de las fuentes RSS" title="Ver qué fuentes no se pudieron leer">
             <span class="health-indicator-dot" aria-hidden="true"></span>
             <span id="feedHealthCount" class="health-indicator-count">0</span>
@@ -117,7 +118,7 @@
 
         <section id="dashboardView" class="dashboard-view" aria-labelledby="dashboardTitle" hidden>
           <div class="dashboard-head">
-            <div><span class="dashboard-kicker">PORTADA · RADAR RSS</span><h1 id="dashboardTitle">Tu panorama informativo</h1><p>Noticias recientes y categorías, sin ruido visual.</p></div>
+            <div><span class="dashboard-kicker">PORTADA · RADAR RSS</span><h1 id="dashboardTitle">Tu panorama informativo</h1><p id="dashboardIntro">Titulares de cientos de medios, actualizados cada ~6 horas. Abre una noticia para ver un resumen antes de ir al sitio del medio.</p></div>
           </div>
           <section class="since-visit" id="sinceVisit" aria-labelledby="sinceVisitTitle" hidden>
             <div class="since-visit-text"><span class="since-visit-icon" aria-hidden="true" data-icon="sparkle"></span><div><h2 id="sinceVisitTitle">Mientras no estabas</h2><p id="sinceVisitText"></p></div></div>
@@ -125,7 +126,7 @@
             <div class="since-visit-actions"><button type="button" id="sinceVisitShow" class="since-visit-primary">Ver solo las nuevas</button><button type="button" id="sinceVisitDismiss" class="since-visit-dismiss" aria-label="Ocultar aviso de novedades"><span data-icon="x" class="ui-icon-slot" aria-hidden="true"></span></button></div>
           </section>
           <section class="dashboard-panel radar-panel" aria-labelledby="radarTitle">
-            <div class="dashboard-panel-head"><h2 id="radarTitle">Lo más cubierto</h2><span>Historias publicadas por más medios en las últimas 24 horas</span></div>
+            <div class="dashboard-panel-head"><h2 id="radarTitle">Lo que más medios publican</h2><span>Las historias que más medios publicaron en las últimas 24 horas</span></div>
             <div class="radar-layout">
               <figure class="radar-figure" id="radarFigure">
                 <div class="radar-stage" id="radarStage"></div>
@@ -286,34 +287,39 @@
         <button type="button" class="settings-tab" data-settings-tab="reading" aria-selected="false"><span data-icon="newspaper" class="ui-icon-slot" aria-hidden="true"></span> <span>Lectura y filtros</span></button>
         <button type="button" class="settings-tab" data-settings-tab="sources" aria-selected="false"><span data-icon="rss" class="ui-icon-slot" aria-hidden="true"></span> <span>Mis fuentes</span></button>
         <button type="button" class="settings-tab" data-settings-tab="data" aria-selected="false"><span data-icon="bookmark" class="ui-icon-slot" aria-hidden="true"></span> <span>Datos y privacidad</span></button>
-        <button type="button" class="settings-tab" data-settings-tab="health" aria-selected="false"><span data-icon="clock" class="ui-icon-slot" aria-hidden="true"></span> <span>Estado de RSS</span></button>
+        <button type="button" class="settings-tab" data-settings-tab="health" aria-selected="false"><span data-icon="clock" class="ui-icon-slot" aria-hidden="true"></span> <span>Estado de las fuentes</span></button>
       </nav>
       <div class="settings-pages" id="settingsPages" tabindex="0" role="region" aria-label="Contenido de configuración, desplazable">
         <section class="settings-pane active" data-settings-pane="appearance" aria-label="Apariencia">
-          <h3>Apariencia</h3><p class="setting-hint">Personaliza cómo ves las noticias en todos los dispositivos desde cada navegador.</p>
+          <h3>Apariencia</h3><p class="setting-hint">Lo esencial para leer cómodo. Los ajustes se guardan en este navegador.</p>
           <div class="setting-grid">
             <label class="setting-field" for="settingTheme"><span>Tema</span><select id="settingTheme"><option value="system">Automático (sistema)</option><option value="dark">Oscuro</option><option value="light">Claro</option></select></label>
-            <label class="setting-field" for="settingLayout"><span>Formato</span><select id="settingLayout"><option value="cards">Tarjetas</option><option value="list">Lista</option></select></label>
-            <label class="setting-field" for="settingColumns"><span>Columnas de noticias</span><select id="settingColumns"><option value="auto">Automático (3 por defecto)</option><option value="2">2 columnas</option><option value="3">3 columnas</option><option value="4">4 columnas</option><option value="5">5 columnas</option><option value="6">6 columnas</option></select><small>En pantallas pequeñas se adaptan para conservar la lectura.</small></label>
-            <label class="setting-field" for="settingDensity"><span>Espaciado</span><select id="settingDensity"><option value="comfortable">Cómodo</option><option value="compact">Compacto</option></select></label>
-            <label class="setting-field" for="settingFont"><span>Texto</span><select id="settingFont"><option value="normal">Normal</option><option value="large">Grande</option></select></label>
-          </div>
-          <div class="setting-sidebar-width">
-            <div class="setting-sidebar-width-heading">
-              <label for="settingSidebarWidth">Ancho del panel lateral</label>
-              <output id="sidebarWidthValue" for="settingSidebarWidth">310 px</output>
-            </div>
-            <input id="settingSidebarWidth" type="range" min="240" max="480" step="10" value="310">
-            <div class="setting-sidebar-width-footer">
-              <small id="sidebarWidthHelp">Arrastra el borde derecho del menú o utiliza las flechas del teclado. El ajuste se guarda en este navegador.</small>
-              <button type="button" id="resetSidebarWidth" class="settings-secondary">Restablecer ancho</button>
-            </div>
+            <label class="setting-field" for="settingFont"><span>Tamaño del texto</span><select id="settingFont"><option value="normal">Normal</option><option value="large">Grande</option></select></label>
           </div>
           <div class="settings-divider"></div>
-          <label class="setting-toggle"><span><b>Modo ligero</b><small>Para conexiones lentas: no descarga imágenes ni animaciones. Se activa solo si tu navegador indica ahorro de datos.</small></span><input id="settingLite" type="checkbox"></label>
-          <label class="setting-toggle"><span><b>Mostrar presentación de inicio</b><small>Activa el encabezado grande. Por defecto, Radar RSS prioriza las noticias.</small></span><input id="settingHero" type="checkbox"></label>
           <label class="setting-toggle"><span><b>Mostrar imágenes</b><small>Ocultar fotografías para una lectura más limpia y rápida.</small></span><input id="settingImages" type="checkbox"></label>
           <label class="setting-toggle"><span><b>Mostrar resúmenes</b><small>Ver u ocultar los extractos de cada artículo.</small></span><input id="settingSummaries" type="checkbox"></label>
+          <label class="setting-toggle"><span><b>Ahorro de datos</b><small>Para conexiones lentas: no descarga imágenes ni animaciones. Se activa solo si tu navegador indica ahorro de datos.</small></span><input id="settingLite" type="checkbox"></label>
+          <details class="settings-advanced" id="settingsAdvancedLayout">
+            <summary>Más opciones de diseño</summary>
+            <div class="setting-grid">
+              <label class="setting-field" for="settingLayout"><span>Formato</span><select id="settingLayout"><option value="cards">Tarjetas</option><option value="list">Lista</option></select></label>
+              <label class="setting-field" for="settingColumns"><span>Columnas de noticias</span><select id="settingColumns"><option value="auto">Automático (3 por defecto)</option><option value="2">2 columnas</option><option value="3">3 columnas</option><option value="4">4 columnas</option><option value="5">5 columnas</option><option value="6">6 columnas</option></select><small>En pantallas pequeñas se adaptan para conservar la lectura.</small></label>
+              <label class="setting-field" for="settingDensity"><span>Espaciado</span><select id="settingDensity"><option value="comfortable">Cómodo</option><option value="compact">Compacto</option></select></label>
+            </div>
+            <div class="setting-sidebar-width">
+              <div class="setting-sidebar-width-heading">
+                <label for="settingSidebarWidth">Ancho del panel lateral</label>
+                <output id="sidebarWidthValue" for="settingSidebarWidth">310 px</output>
+              </div>
+              <input id="settingSidebarWidth" type="range" min="240" max="480" step="10" value="310">
+              <div class="setting-sidebar-width-footer">
+                <small id="sidebarWidthHelp">Arrastra el borde derecho del menú o utiliza las flechas del teclado. El ajuste se guarda en este navegador.</small>
+                <button type="button" id="resetSidebarWidth" class="settings-secondary">Restablecer ancho</button>
+              </div>
+            </div>
+            <label class="setting-toggle"><span><b>Mostrar presentación de inicio</b><small>Activa el encabezado grande. Por defecto, Radar RSS prioriza las noticias.</small></span><input id="settingHero" type="checkbox"></label>
+          </details>
         </section>
         <section class="settings-pane" data-settings-pane="reading" aria-label="Lectura y filtros" hidden>
           <h3>Lectura y filtros</h3><p class="setting-hint">Controla qué noticias aparecen primero y cuáles prefieres evitar.</p>
@@ -335,7 +341,7 @@
           <div id="settingsCategories" class="settings-category-actions"></div>
           <div id="settingsSources" class="settings-source-list" role="group" aria-label="Seleccionar fuentes visibles"></div>
           <p class="setting-admin">Para añadir o eliminar fuentes <strong>para todos los visitantes</strong>, hay que actualizar <a href="https://github.com/medinacaj/radar-rss-publico/blob/main/sources/feeds.opml" rel="noopener noreferrer" target="_blank">el OPML del repositorio</a>. Los cambios de este panel son personales.</p>
-          <button type="button" id="exportOPML" class="settings-secondary">Descargar OPML de mis fuentes visibles</button>
+          <button type="button" id="exportOPML" class="settings-secondary">Exportar mis fuentes (archivo OPML para otros lectores RSS)</button>
         </section>
         <section class="settings-pane" data-settings-pane="data" aria-label="Datos y privacidad" hidden>
           <h3>Datos y privacidad</h3><p class="setting-hint">No se solicita cuenta. Tus favoritos, lecturas y preferencias se almacenan en este navegador.</p>
@@ -345,7 +351,7 @@
           <p class="setting-admin">Importar o exportar es manual. No existe sincronización entre dispositivos, cuentas ni envío de preferencias a GitHub.</p>
         </section>
         <section class="settings-pane" data-settings-pane="health" aria-label="Estado de las fuentes RSS" hidden>
-          <h3>Estado de RSS</h3><p class="setting-hint">Medios que no se pudieron leer en la última revisión automática. Que un medio no esté disponible no significa que haya dejado de publicar.</p>
+          <h3>Estado de las fuentes</h3><p class="setting-hint">Medios que no se pudieron leer en la última revisión automática. Que un medio no esté disponible no significa que haya dejado de publicar.</p>
           <div id="healthSummary" class="health-summary"></div><div id="healthFeedList" class="health-list"></div>
           <p class="setting-admin">El intervalo de actualización del servidor está definido en <a href="https://github.com/medinacaj/radar-rss-publico/blob/main/.github/workflows/deploy.yml" rel="noopener noreferrer" target="_blank">GitHub Actions</a> (aproximadamente cada seis horas). Un visitante no puede cambiarlo desde la web pública.</p>
         </section>
@@ -360,12 +366,13 @@
   </div>
   <button id="backTop" class="back-to-top" type="button" aria-label="Volver arriba" title="Volver arriba" hidden><span data-icon="arrow-up" class="ui-icon-slot" aria-hidden="true"></span></button>
   <div id="actionToast" class="action-toast" role="status" aria-live="polite" aria-atomic="true" hidden></div>
-  <script src="./app.js?v=8.2.4" defer></script>
-  <script src="./library.js?v=1.7.3" defer></script>
+  <script src="./app.js?v=8.2.5" defer></script>
+  <script src="./library.js?v=1.7.4" defer></script>
   <script src="./sidebar-layout.js?v=1.0.0" defer></script>
   <script src="./news-effects.js?v=1.0.0" defer></script>
-  <script src="./features.js?v=1.0.0" defer></script>
-  <script src="./v12.js?v=1.2.3" defer></script>
-  <script src="./v13.js?v=1.3.1" defer></script>
+  <script src="./features.js?v=1.0.1" defer></script>
+  <script src="./v12.js?v=1.2.4" defer></script>
+  <script src="./v13.js?v=1.3.2" defer></script>
+  <script src="./v14.js?v=1.4.0" defer></script>
 </body>
 </html>

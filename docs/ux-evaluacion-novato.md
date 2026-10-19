@@ -37,19 +37,34 @@ Fecha: 2026-10-19 · Base: `6349c19` (main) · Rama: `claude/website-ui-ux-evalu
 | 11 | Baja | **Nombres inconsistentes**: «Resumen» (chips) / «Resumen del día» (menú); «Todas» / «Todas las noticias». | Unificar las etiquetas. |
 | 12 | Baja | **Comparador de la vista previa**: el selector «Comparar coberturas · Agrupar por medio y región» y el texto «7 publicaciones enlazadas · Sin evaluación editorial» son jerga. | «Cómo lo cuenta cada medio» basta; mover el selector a un control discreto «Agrupar: medio / región». |
 
-## Corregido en esta rama
-1. **Hacer clic en una cubierta sin foto no hacía nada** (la foto real sí abría la
-   vista previa). Ahora la cubierta tipográfica también abre la vista previa
-   (`web/app.js`, `web/v13.css`).
-2. **El filtro «Todas las etiquetas» aparecía vacío** si la persona no había creado
-   etiquetas: era un control sin opciones. Ahora se oculta hasta que existe al menos
-   una etiqueta (`web/library.js`, `web/library.css`).
-3. **En «Por carpeta», los títulos se cortaban a mitad de palabra**
-   («Internacionale/s», «Latinoaméric/a») y «Ver todo» se partía. Ahora el título
-   conserva las palabras completas y el pulso y «Ver todo» bajan de línea si no
-   caben (`web/features.css`).
+## Aplicado en esta rama
 
-Además se actualizaron las versiones de los recursos en `web/index.html` y las dos pruebas que las fijan.
+Primera tanda (correcciones rápidas):
+- La cubierta sin foto abre la vista previa al hacer clic, igual que una foto (`app.js`, `v13.css`).
+- El filtro «Todas las etiquetas» se oculta mientras no haya etiquetas (`library.js`, `library.css`).
+- Los títulos de «Por carpeta» ya no se cortan a mitad de palabra (`features.css`).
+
+Segunda tanda: las 12 recomendaciones. Casi todo vive en una capa nueva,
+`web/v14.js` + `web/v14.css`, que se carga después de v13. El resto son cambios de texto en los archivos existentes.
+
+| # | Estado | Qué cambió |
+|---|---|---|
+| 1 | Hecho | En ≤ 720 px, la lista numerada va antes que el mapa. La primera historia pasa de ~1040 px a ~600 px en 390×844. La guía de bienvenida se compacta a tres botones de una línea. |
+| 2 | Hecho | El mapa se abre con «Ver mapa de las últimas 24 horas» en el móvil. La leyenda queda arriba, en una línea corta, y las etiquetas de sector se dibujan sobre los puntos, con halo. |
+| 3 | Hecho | Botón «Filtros (n)» con panel plegable (fuente, etiqueta, región, antigüedad, guardar búsqueda, «Quitar filtros» y «Marcar visibles como leídas»). El panel arranca cerrado y recuerda su estado. Las fuentes se muestran sin prefijos («ABC \| Última hora», «OpenAI News (oficial)») y ordenadas alfabéticamente. «Combina filtros» de la guía abre el panel. El resumen ahora dice «Mostrando 36 de 90 · 90 sin leer». |
+| 4 | Hecho | «Carpetas de fuentes» → «Temas»; el selector «Cobertura» → «Región»; la etiqueta de las tarjetas «6 medios» → «Publicada en 6 medios»; «Lo más cubierto» → «Lo que más medios publican»; «Modo ligero» → «Ahorro de datos»; «Estado RSS» → «Estado de las fuentes». OPML solo aparece en el botón de exportar, con una explicación. |
+| 5 | Hecho | Pista descartable sobre la lista: «En cada noticia: ✓ márcala como leída · 🔖 guárdala para después · ⋯ más opciones». Los botones siguen siendo solo icono, como exige el contrato v13. |
+| 6 | Parcial | En ≤ 720 px las cubiertas pasan de 16:9 a 5:2 (de ~533 a ~475 px por tarjeta). No se redujo a una franja: el contrato de alturas uniformes (`grid-auto-rows:1fr`) iguala cada tarjeta a la más alta, así que una franja solo dejaría espacio vacío. |
+| 7 | Hecho | Sin historial de lectura, la pestaña «Sin leer» no muestra el número. El número sigue en el DOM y reaparece con la primera noticia leída. |
+| 8 | Hecho | La portada dice «Titulares de N fuentes, actualizados cada ~6 horas. Abre una noticia para ver un resumen antes de ir al sitio del medio». También se ve en el móvil. |
+| 9 | Hecho | Apariencia muestra Tema, Tamaño del texto, Imágenes, Resúmenes y Ahorro de datos. Formato, columnas, espaciado, ancho del panel y presentación de inicio quedan en «Más opciones de diseño». |
+| 10 | Parcial | En el móvil, el botón de tema se oculta (sigue en Configuración) y los botones de la cabecera miden 44 px en pantallas táctiles. «Actualizado…» sigue oculto en el móvil: no cabe a 320–390 px. |
+| 11 | Hecho | Los chips dicen «Resumen del día» y «Todas las noticias», igual que el menú. |
+| 12 | Hecho | El comparador muestra «Ordenar: Por medio / Por hora de publicación» y «N versiones de esta noticia». |
+
+Pruebas: se actualizaron las aserciones que fijaban los textos antiguos, se añadió
+`tests/test_v14_novice.py` y `browser_tests/responsive_smoke.py` ahora comprueba
+el panel de filtros, la pista y el mapa en el móvil.
 
 ## Validación pendiente
 - Repetir el recorrido con los datos reales publicados (fotos, volumen y errores RSS reales).

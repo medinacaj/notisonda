@@ -31,7 +31,7 @@ class V12ReviewTests(unittest.TestCase):
         self.assertNotIn("folderNav.append(section)",self.script)
         self.assertNotIn("row.classList.add('v12-hidden-category')",self.script)
         self.assertIn("const railBase = renderTopicRail",self.script)
-        self.assertIn("v12.js?v=1.2.3",self.html)
+        self.assertIn("v12.js?v=1.2.4",self.html)
         self.assertIn("radar-rss-v12",self.sw)
 
     def test_all_news_context_and_coverage_have_separate_responsibilities(self):
@@ -44,7 +44,7 @@ class V12ReviewTests(unittest.TestCase):
         app=(ROOT/'web/app.js').read_text(encoding='utf8')
         self.assertIn("key === 'radar-read' ? -5000 : -4000",app)
         self.assertIn("setNavOpen(false,false)",library)
-        self.assertIn("Cobertura",self.script)
+        self.assertIn("'v12Geo','Región'",self.script)
         self.assertIn("Todas las noticias",self.script)
         self.assertIn("Medios regionales latinoamericanos",self.script)
         self.assertNotIn("Todos los países",self.script)
