@@ -40,3 +40,53 @@ body.radar-hybrid #articleGrid.article-grid:not(.list-view) > .article-card .art
 body.radar-hybrid #articleGrid.article-grid:not(.list-view) > .article-card .article-footer{
   margin-top:auto;
 }
+
+
+/* Noticia interactiva: indicación de foco y hover sin tocar altura uniforme. */
+@media(hover:hover) and (pointer:fine){
+ body.radar-hybrid #articleGrid .article-card:hover,
+ body.radar-hybrid .dashboard-feature .article-card:hover{
+   border-color:var(--accent);
+   box-shadow:0 8px 22px rgba(25,30,28,.13);
+   transform:translateY(-2px);
+ }
+}
+body.radar-hybrid #articleGrid .article-card:focus-within,
+body.radar-hybrid .dashboard-feature .article-card:focus-within{
+  border-color:var(--accent);
+  box-shadow:0 0 0 2px color-mix(in srgb,var(--accent) 24%,transparent);
+}
+body.radar-hybrid #articleGrid .article-card,
+body.radar-hybrid .dashboard-feature .article-card{
+  transition:border-color .16s ease,box-shadow .16s ease,transform .16s ease;
+}
+body.radar-hybrid .article-footer{flex-wrap:wrap;}
+body.radar-hybrid .article-footer .article-meta{flex:1 1 112px;}
+body.radar-hybrid .article-footer .article-actions{margin-left:auto;align-items:center;gap:4px;}
+body.radar-hybrid .article-footer .article-read-toggle{
+  display:inline-flex;gap:5px;align-items:center;justify-content:center;
+  width:auto;height:36px;min-width:110px;padding:4px 8px;
+  background:var(--surface2);color:var(--text);border:1px solid var(--line);
+  font:650 11px/1.25 var(--font-ui);white-space:nowrap;
+}
+body.radar-hybrid .article-footer .article-read-toggle[aria-pressed="true"]{
+  color:var(--accent);background:color-mix(in srgb,var(--accent) 10%,var(--surface));
+  border-color:color-mix(in srgb,var(--accent) 28%,var(--line));
+}
+body.radar-hybrid .article-footer .article-read-toggle:hover,
+body.radar-hybrid .article-footer .article-read-toggle:focus-visible{
+  border-color:var(--accent);color:var(--accent);outline-offset:2px;
+}
+body.radar-hybrid .article-footer .article-read-toggle .ui-icon{
+  width:15px;height:15px;flex:0 0 auto;
+}
+@media(max-width:420px){
+ body.radar-hybrid .article-footer .article-meta{flex:1 1 100%;}
+ body.radar-hybrid .article-footer .article-actions{width:100%;justify-content:flex-end;}
+}
+@media(prefers-reduced-motion:reduce){
+ body.radar-hybrid #articleGrid .article-card,
+ body.radar-hybrid .dashboard-feature .article-card{transition:none!important}
+ body.radar-hybrid #articleGrid .article-card:hover,
+ body.radar-hybrid .dashboard-feature .article-card:hover{transform:none}
+}
