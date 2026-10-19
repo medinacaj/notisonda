@@ -127,6 +127,7 @@ body .source-folders-section .folder-restore{display:grid;place-items:center;fle
 body .source-folders-section .folder-restore .ui-icon{width:15px;height:15px}
 .folder-popup-menu[hidden]{display:none!important}
 .folder-popup-menu{position:fixed;z-index:250;min-width:210px;padding:7px;border:1px solid var(--line);border-radius:14px;background:var(--surface);color:var(--text);box-shadow:0 15px 35px rgba(0,0,0,.18)}
+.folder-popup-option[hidden]{display:none!important}
 .folder-popup-option{display:block;width:100%;padding:11px 12px;text-align:left;border:0;border-radius:9px;background:transparent;color:var(--text);font:550 13px var(--font-ui)}
 .folder-popup-option:hover,.folder-popup-option:focus-visible{background:var(--hover);color:var(--text)}
 .folder-popup-option:last-child{border-top:1px solid var(--line);margin-top:4px}
