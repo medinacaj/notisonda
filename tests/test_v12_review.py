@@ -25,6 +25,15 @@ class V12ReviewTests(unittest.TestCase):
         self.assertIn("goTo(target)",self.script)
         self.assertIn("v12-country-tab",self.script)
 
+    def test_original_source_folder_navigation_not_replaced(self):
+        # La agrupación regional es un filtro; no debe ocultar las carpetas OPML.
+        self.assertNotIn("const navBase = buildNav",self.script)
+        self.assertNotIn("folderNav.append(section)",self.script)
+        self.assertNotIn("row.classList.add('v12-hidden-category')",self.script)
+        self.assertIn("const railBase = renderTopicRail",self.script)
+        self.assertIn("v12.js?v=1.2.1",self.html)
+        self.assertIn("radar-rss-v7",self.sw)
+
     def test_personalization_is_local_and_limits_saved_searches(self):
         self.assertIn("radar-v12-preferences",self.script)
         self.assertIn("radar-v12-saved-searches",self.script)
