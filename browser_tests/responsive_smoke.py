@@ -218,6 +218,28 @@ def main():
                         page.goto(base + "#inicio", wait_until="load")
                         page.locator("#dashboardView:not([hidden])").wait_for(timeout=15000)
                         page.locator("#dashboardFeature .article-card").first.wait_for(timeout=15000)
+                        # Las seis carpetas originales deben seguir accesibles y administrables.
+                        assert page.locator("#libraryFolderNav .system-folder-link").count() == len(CATEGORIES)
+                        assert page.locator("#libraryFolderNav .v12-hidden-category").count() == 0
+                        assert page.locator("#libraryFolderNav .v12-region-nav").count() == 0
+                        actual = page.locator("#libraryFolderNav .system-folder-link .nav-label").all_text_contents()
+                        assert actual == ["Inteligencia Artificial","Tecnología","Mundo","Chile","Venezuela","Latinoamérica"], actual
+                        if width <= 950:
+                            page.locator("#menuToggle").click()
+                            page.locator("body.nav-open").wait_for(timeout=3000)
+                        folder = page.locator("#libraryFolderNav .system-folder-link").nth(3)
+                        expect(folder).to_be_visible()
+                        folder.focus()
+                        folder.press("Shift+F10")
+                        expect(page.locator("#folderMenu")).to_be_visible()
+                        page.locator('#folderMenu [role="menuitem"]', has_text="Administrar fuentes").click()
+                        expect(page.locator("#folderDialog[open]")).to_be_visible()
+                        assert page.locator("#folderSourceList input[type='checkbox']").count() == len(SOURCES)
+                        page.locator("#folderDialog .folder-dialog-close").click()
+                        expect(page.locator("#folderDialog")).to_be_hidden()
+                        if width <= 950:
+                            page.keyboard.press("Escape")
+                            page.locator("body:not(.nav-open)").wait_for(timeout=3000)
                         page.locator("#v13Guide").wait_for(state="visible", timeout=10000)
                         assert page.locator("#v13Guide .v13-guide-action").count() == 3
                         assert page.locator("#articleGrid .article-card").count() == 0
