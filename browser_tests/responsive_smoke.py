@@ -239,6 +239,10 @@ def main():
                         page.evaluate("location.hash = '#noticias'")
                         page.locator("#feedView:not([hidden])").wait_for(timeout=10000)
                         page.locator("#articleGrid .article-card").first.wait_for(timeout=10000)
+                        # La imagen entregada por RSS u OG se trata como una URL
+                        # normal; no debe romper las tarjetas que carecen de foto.
+                        expect(page.locator("#articleGrid .article-card .cover img").first).to_have_js_property("naturalWidth", 400)
+                        assert page.locator("#articleGrid .article-card.no-cover").count() > 0
                         check_uniform_card_heights(page, f"tarjetas {browser_name} {width}px")
                         # CSS states are checked directly: the quick column button is
                         # deliberately hidden on some mobile widths.
