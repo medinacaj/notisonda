@@ -47,7 +47,7 @@ class V13Contracts(unittest.TestCase):
 
     def test_card_read_action_is_visible_and_syncs_values(self):
         self.assertIn("article-action article-read-toggle",self.app)
-        self.assertIn("Marcar leída",self.app)
+        self.assertIn("Marcar como leída",self.app)
         self.assertIn("addEventListener('contextmenu'",self.app)
         self.assertIn("toggleCardMenu(item,more,{x:event.clientX,y:event.clientY})",self.app)
         self.assertIn("render();",self.app)
