@@ -216,16 +216,196 @@ def strip_tracking(link: str) -> str:
 
 
 def find_image(entry) -> str | None:
-    for key in ('media_content', 'media_thumbnail', 'links'):
-        for item in entry.get(key, []) or []:
-            image = item.get('url') or item.get('href')
+    """Prefer explicit RSS/Atom image data and never treat audio/video as images."""
+    for key in ('media_content', 'media_thumbnail', 'enclosures', 'links'):
+        for part in entry.get(key, []) or []:
+            if not isinstance(part, dict):
+                continue
+            image = part.get('url') or part.get('href')
+            mediatype = str(part.get('type') or '').lower()
+            medium = str(part.get('medium') or '').lower()
             if not safe_web_url(image or ''):
                 continue
-            mediatype = item.get('type', '')
-            if key != 'links' or mediatype.startswith('image/'):
-                return image
-    _, embedded = extract_html(entry.get('summary') or entry.get('description') or '')
-    return embedded
+            if medium in ('audio', 'video') or mediatype.startswith(('audio/', 'video/')):
+                continue
+            if key == 'media_content' and medium not in ('', 'image') and not mediatype.startswith('image/'):
+                continue
+            if key in ('enclosures', 'links') and not mediatype.startswith('image/'):
+                continue
+            return image
+    for html in [entry.get('summary') or entry.get('description') or '',
+                 *[part.get('value', '') for part in (entry.get('content') or []) if isinstance(part, dict)]]:
+        _, embedded = extract_html(html)
+        if embedded:
+            return embedded
+    return None
+
+
+class PageImageMeta(HTMLParser):
+    """Read only metadata explicitly labelled as an article's preview image."""
+    def __init__(self):
+        super().__init__(convert_charrefs=True)
+        self.images = {}
+
+    def handle_starttag(self, tag, attrs):
+        if tag.lower() != 'meta':
+            return
+        part = {str(k).lower(): str(v or '').strip() for k, v in attrs if k}
+        kind = (part.get('property') or part.get('name') or '').casefold()
+        if kind in ('og:image:secure_url', 'og:image', 'twitter:image', 'twitter:image:src'):
+            self.images.setdefault(kind, part.get('content', ''))
+
+
+def find_page_image(html: str, page_url: str) -> str | None:
+    """Resolve OG/Twitter metadata, rejecting relative links outside the page origin."""
+    from urllib.parse import urljoin
+    parsed = PageImageMeta()
+    try:
+        parsed.feed(html)
+    except (ValueError, TypeError):
+        return None
+    page_host = (urlsplit(page_url).hostname or '').lower()
+    for key in ('og:image:secure_url', 'og:image', 'twitter:image', 'twitter:image:src'):
+        value = parsed.images.get(key, '').strip()
+        if not value or value.startswith('//'):
+            # Protocol-relative URLs may point to a third-party CDN; use HTTPS.
+            value = 'https:' + value if value.startswith('//') else ''
+        if not value:
+            continue
+        image = urljoin(page_url, value)
+        if safe_web_url(image):
+            return image
+    return None
+
+
+# Conservador: solo páginas recientes sin imagen; no hacer scraping exhaustivo.
+MAX_PAGE_IMAGE_CHECKS = 36
+MAX_PAGE_IMAGE_PER_HOST = 2
+PAGE_IMAGE_WORKERS = 4
+PAGE_HTML_LIMIT = 256_000
+ROBOTS_TEXT_LIMIT = 64_000
+IMAGE_RETRY_HOURS = 36
+
+
+def page_image_host(page_url: str) -> str | None:
+    try:
+        parsed = urlsplit(page_url or '')
+        host = (parsed.hostname or '').lower()
+        if parsed.scheme != 'https' or parsed.port not in (None, 443) or not safe_web_url(page_url):
+            return None
+        if not host or host in ('news.google.com', 'www.google.com') or host.endswith('.google.com'):
+            return None
+        # No solicitar endpoints numéricos, privados ni internos.
+        try:
+            ipaddress.ip_address(host)
+            return None
+        except ValueError:
+            return host
+    except ValueError:
+        return None
+
+
+def read_bounded_response(url: str, *, accept: str, limit: int) -> tuple[str, str] | None:
+    """Never follow redirects or read an unbounded response from a publisher."""
+    response = requests.get(url, headers={'User-Agent': AGENT, 'Accept': accept},
+                            stream=True, allow_redirects=False, timeout=(2.5, 4.5))
+    try:
+        if response.status_code != 200:
+            return None
+        kind = response.headers.get('Content-Type', '').split(';')[0].lower().strip()
+        if kind not in ('text/html', 'application/xhtml+xml', 'text/plain'):
+            return None
+        blocks, total = [], 0
+        for part in response.iter_content(chunk_size=8192):
+            total += len(part)
+            if total > limit:
+                break
+            blocks.append(part)
+        return kind, b''.join(blocks).decode(response.encoding or 'utf-8', 'replace')
+    finally:
+        response.close()
+
+
+def page_image_allowed(page_url: str, host: str) -> bool:
+    """Honor public robots.txt; deny on unknown robots status or invalid targets."""
+    from urllib.robotparser import RobotFileParser
+    robots_url = 'https://' + host + '/robots.txt'
+    if not is_public_host(host):
+        return False
+    try:
+        response = requests.get(robots_url, headers={'User-Agent': AGENT},
+                                stream=True, allow_redirects=False, timeout=(2.5, 4.5))
+        try:
+            if response.status_code in (404, 410):
+                return True
+            if response.status_code != 200:
+                return False
+            data = bytearray()
+            for chunk in response.iter_content(chunk_size=8192):
+                data.extend(chunk)
+                if len(data) > ROBOTS_TEXT_LIMIT:
+                    return False
+        finally:
+            response.close()
+        robot = RobotFileParser()
+        robot.parse(data.decode('utf-8', 'replace').splitlines())
+        return robot.can_fetch('RadarRSS', page_url)
+    except (requests.RequestException, ValueError, UnicodeError):
+        return False
+
+
+def lookup_original_image(page_url: str) -> str | None:
+    """Resolve the publisher's OG image only when access is public and permitted."""
+    host = page_image_host(page_url)
+    if not host or not page_image_allowed(page_url, host) or not is_public_host(host):
+        return None
+    try:
+        page = read_bounded_response(page_url, accept='text/html, application/xhtml+xml',
+                                     limit=PAGE_HTML_LIMIT)
+        if not page or page[0] not in ('text/html', 'application/xhtml+xml'):
+            return None
+        return find_page_image(page[1], page_url)
+    except (requests.RequestException, ValueError, UnicodeError):
+        return None
+
+
+def recover_missing_images(articles: list[dict], now: datetime) -> dict[str, int]:
+    """Best-effort image enrichment. Failures must never block RSS publication."""
+    queued, per_host = [], {}
+    for article in articles[:LATEST_COUNT]:
+        if article.get('image'):
+            continue
+        host = page_image_host(str(article.get('url') or ''))
+        if not host:
+            continue
+        stamp = story_instant(article)
+        # Do not repeatedly revisit old articles or hammer any one publication.
+        if stamp is None or not now - timedelta(days=3) <= stamp <= now + timedelta(days=1):
+            continue
+        last = story_instant({'first_seen_at': article.get('image_checked_at')})
+        if last and now - last < timedelta(hours=IMAGE_RETRY_HOURS):
+            continue
+        if per_host.get(host, 0) >= MAX_PAGE_IMAGE_PER_HOST:
+            continue
+        per_host[host] = per_host.get(host, 0) + 1
+        queued.append(article)
+        if len(queued) == MAX_PAGE_IMAGE_CHECKS:
+            break
+    recovered = 0
+    if queued:
+        with ThreadPoolExecutor(max_workers=PAGE_IMAGE_WORKERS) as pool:
+            futures = {pool.submit(lookup_original_image, article['url']): article for article in queued}
+            for future in as_completed(futures):
+                article = futures[future]
+                try:
+                    image = future.result()
+                    article['image_checked_at'] = iso(now)
+                    if image:
+                        article['image'] = image
+                        recovered += 1
+                except Exception:
+                    article['image_checked_at'] = iso(now)
+    return {'checked': len(queued), 'recovered': recovered}
 
 
 def clean_google_news_title(title: str, credited_publisher: str) -> str:
@@ -472,6 +652,8 @@ def collect(opml: Path, out: Path, days: int, workers: int, max_per_feed: int) -
                 item['published_at'] = previous['published_at']
             if not item.get('image') and previous.get('image'):
                 item['image'] = previous['image']
+            if not item.get('image_checked_at') and previous.get('image_checked_at'):
+                item['image_checked_at'] = previous['image_checked_at']
             if not item.get('summary') and previous.get('summary'):
                 item['summary'] = previous['summary']
             item['first_seen_at'] = previous.get('first_seen_at', item['first_seen_at'])
@@ -479,6 +661,10 @@ def collect(opml: Path, out: Path, days: int, workers: int, max_per_feed: int) -
 
     ordered = sorted(merged.values(), key=lambda i: (i.get('published_at') or i.get('first_seen_at') or ''), reverse=True)
     articles = group_related_articles(ordered[:MAX_CANDIDATES])[:MAX_ARTICLES]
+    image_stats = recover_missing_images(articles, now)
+    print('Imágenes originales: '
+          f"{image_stats['recovered']} recuperadas de "
+          f"{image_stats['checked']} páginas consultadas", flush=True)
     for article in articles:
         # Cobertura: cuántas fuentes distintas publicaron la misma historia.
         article['coverage'] = max(1, len(set(article.get('source_ids') or [])))
