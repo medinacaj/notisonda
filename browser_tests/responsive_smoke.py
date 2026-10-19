@@ -260,7 +260,11 @@ def main():
                         assert page.locator("#v13Guide .v13-guide-action").count() == 3
                         assert page.locator("#articleGrid .article-card").count() == 0
                         page.locator(".v13-guide-action").first.click()
+                        expect(page.locator("#settingsDialog")).to_be_visible()
                         expect(page.locator("#v12MineToggle")).to_be_focused()
+                        expect(page.locator('[data-settings-pane="reading"]')).to_be_visible()
+                        page.locator("#closeSettings").click()
+                        expect(page.locator("#settingsDialog")).to_be_hidden()
                         page.locator("#v13DismissGuide").click()
                         expect(page.locator("#v13Guide")).to_be_hidden()
                         page.locator("#v13OpenGuide").click()
@@ -296,14 +300,17 @@ def main():
                         first_card=page.locator("#articleGrid .article-card").first
                         read_button=first_card.locator(".article-read-toggle")
                         expect(read_button).to_be_visible()
-                        expect(read_button).to_contain_text("Marcar leída")
+                        expect(read_button).to_have_attribute("title","Marcar como leída")
+                        assert read_button.locator("svg").count() == 1
+                        assert read_button.locator("span").count() == 0
+                        assert read_button.inner_text() == ""
                         initial_unread=int(page.locator("#unreadCount").inner_text().replace(".",""))
                         initial_nav=int(page.locator("#categoryNav > .nav-link").nth(1).locator(".nav-count").text_content())
                         read_button.click()
                         expect(page.locator("#unreadCount")).to_have_text(str(initial_unread-1))
                         expect(page.locator("#categoryNav > .nav-link").nth(1).locator(".nav-count")).to_have_text(str(initial_nav-1))
                         expect(page.locator("#articleGrid .article-card").first.locator(".article-read-toggle")).to_have_attribute("aria-pressed","true")
-                        expect(page.locator("#articleGrid .article-card").first.locator(".article-read-toggle")).to_contain_text("Marcar no leída")
+                        expect(page.locator("#articleGrid .article-card").first.locator(".article-read-toggle")).to_have_attribute("title","Marcar como no leída")
                         expect(page.locator("#filterSummary")).to_contain_text(str(initial_unread-1)+" sin leer")
                         # El menú contextual debe estar disponible desde cualquier parte de la tarjeta.
                         page.locator("#articleGrid .article-card").first.locator(".article-title").click(button="right")
@@ -361,12 +368,22 @@ def main():
                         assert "Tecnología" in page.locator(".briefing-section h2").first.inner_text()
                         page.locator("#v12BriefingScope").select_option("all")
                         page.evaluate("location.hash = '#inicio'")
-                        page.locator("#v12MyRadar").wait_for(state="visible")
+                        page.locator("#dashboardView:not([hidden])").wait_for()
+                        # No duplicar categorías en Inicio: ajustes opcionales y plegados.
+                        assert page.locator("#dashboardView #v12MyRadar").count() == 0
+                        assert page.locator('#v12MyRadar').count() == 1
+                        page.locator("#settingsButton").click()
+                        page.locator('[data-settings-tab="reading"]').click()
+                        expect(page.locator("#v12MyRadar")).to_be_visible()
+                        assert page.locator("#v12MineDetails").get_attribute("open") is None
                         page.locator("#v12MineToggle").click()
                         assert page.locator("#v12MineToggle").get_attribute("aria-pressed") == "true"
+                        page.locator("#v12MineDetails summary").click()
+                        expect(page.locator("#v12MineCategories button").first).to_be_visible()
                         page.locator("#v12MineCategories button").first.click()
                         assert page.locator("#v12MineCategories button").first.get_attribute("aria-pressed") == "false"
                         page.locator("#v12MineToggle").click()
+                        page.locator("#closeSettings").click()
                         page.evaluate("location.hash = '#region/latinoamerica'")
                         page.locator("#feedView:not([hidden])").wait_for()
                         assert page.locator("#feedHeading").inner_text() == "Latinoamérica"
