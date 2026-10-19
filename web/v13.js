@@ -27,9 +27,11 @@
     button.addEventListener('click',callback);
     steps.append(button);
   }
-  addAction('Personaliza Mi Radar','Elige los temas que quieres destacar',()=>{
+  addAction('Ajusta tu portada','Elige tus temas desde Configuración',()=>{
+    $('settingsButton')?.click();
+    selectedTab('reading');
     const target=$('v12MyRadar');
-    target?.scrollIntoView({block:'center',behavior:'auto'});
+    target?.scrollIntoView({block:'nearest',behavior:'auto'});
     $('v12MineToggle')?.focus({preventScroll:true});
   });
   addAction('Combina filtros','Selecciona país, medio y antigüedad',()=>{
@@ -62,8 +64,8 @@
     panel.scrollIntoView({block:'nearest',behavior:'auto'});
     steps.querySelector('button')?.focus({preventScroll:true});
   });
-  const my=$('v12MyRadar');
-  if(my)my.after(panel);else head.after(panel);
+  // La guía pertenece solo a Inicio, no al panel de configuración.
+  head.after(panel);
   head.append(open);
   panel.hidden=seen();
   open.hidden=!panel.hidden;
