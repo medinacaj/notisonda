@@ -42,6 +42,13 @@ flowchart LR
 - **Menú contextual de Todas las noticias:** clic derecho, Shift+F10 o pulsación larga para marcar todas las noticias publicadas de fuentes activas como leídas (cargando antes el historial y solicitando confirmación), ver pendientes, abrir el listado o gestionar fuentes. Las carpetas específicas mantienen por separado sus opciones de renombrar, administrar y eliminar; el botón general no es una carpeta editable.
 - **Privacidad:** las preferencias y búsquedas permanecen en el dispositivo mediante localStorage. No hay sincronización entre navegadores.
 
+## Tarjetas editoriales y estados de lectura
+
+- **Sin fotografía:** cuando la fuente RSS no publica foto, la URL es inválida o la fotografía original no carga, la cuadrícula usa una cubierta **tipográfica identificada como «Sin fotografía disponible»**, sin imagen inventada ni copia de fotografías ajenas. El modo ligero, la opción «Ocultar imágenes» y la vista Lista omiten la cubierta adicional.
+- **Sin descripción:** el colector busca primero el resumen RSS y, si no contiene texto, intenta el campo `description`, el subtítulo y el cuerpo Atom ya entregado por el mismo feed. El texto se limpia y acorta; si la fuente no proporciona contenido útil, no se inventa una descripción. La tarjeta conserva el título, medio y acciones.
+- **Sombras por lectura:** las noticias sin leer tienen una elevación suave más visible; las leídas, una sombra más discreta. La distinción se complementa con el contraste del título y el estado del botón. Las transiciones respetan la preferencia de movimiento reducido.
+- **Diseño:** se mantiene la altura uniforme solicitada en la cuadrícula; la vista Lista conserva su diseño compacto y la noticia destacada de portada conserva su jerarquía.
+
 ## Imágenes originales en noticias
 
 El colector prioriza los campos multimedia de RSS/Atom, incluidos `media:thumbnail`, adjuntos de tipo `image/*` y fotografías incrustadas en el contenido RSS. Si un artículo reciente aún no dispone de foto, el proceso de publicación puede obtener su imagen de previsualización mediante `og:image` o `twitter:image` **en la página original del medio**.
