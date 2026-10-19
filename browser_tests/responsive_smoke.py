@@ -298,7 +298,7 @@ def main():
                         expect(read_button).to_be_visible()
                         expect(read_button).to_contain_text("Marcar leída")
                         initial_unread=int(page.locator("#unreadCount").inner_text().replace(".",""))
-                        initial_nav=int(page.locator("#categoryNav > .nav-link").nth(1).locator(".nav-count").inner_text())
+                        initial_nav=int(page.locator("#categoryNav > .nav-link").nth(1).locator(".nav-count").text_content())
                         read_button.click()
                         expect(page.locator("#unreadCount")).to_have_text(str(initial_unread-1))
                         expect(page.locator("#categoryNav > .nav-link").nth(1).locator(".nav-count")).to_have_text(str(initial_nav-1))
