@@ -1020,7 +1020,7 @@ function editorialCover(item) {
 // el resto de acciones vive en un menú "⋯" para no repetir cuatro botones por tarjeta.
 function card(item) {
   const isRead=state.read.has(item.id);
-  const hasImage=Boolean(safeURL(item.image))&&!state.lite;
+  const hasImage=Boolean(safeURL(item.image))&&!state.lite&&state.showImages;
   const el=mk('article','article-card '+(isRead?'read-article':'unread-card')+(hasImage?'':' no-cover'));el.dataset.articleId=item.id;
   const allowPreview=!state.lite&&state.showImages;
   if(hasImage){
