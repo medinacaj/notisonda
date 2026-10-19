@@ -37,8 +37,12 @@ ITEMS = [
     {"id": f"noticia-{i}", "title": (
         "Titular de referencia con palabras extensas para verificar el ajuste "
         f"responsivo de la lectura en pantallas de diferentes dimensiones {i}"
-    ), "url": f"https://example.com/noticias/{i}", "image": None,
-     "summary": "Resumen informativo de ejemplo para comprobar distribución de tarjetas.",
+        if i % 4 != 1 else f"Noticia breve número {i}"
+    ), "url": f"https://example.com/noticias/{i}",
+     "image": "https://example.com/radar-fixture-cover.svg" if i % 3 == 0 else None,
+     "summary": ("Resumen amplio " * 25 if i % 5 == 0 else
+                 "Resumen corto." if i % 5 == 1 else
+                 "Resumen informativo de ejemplo para comprobar distribución de tarjetas."),
      "published_at": STAMP, "first_seen_at": STAMP,
      "publisher": SOURCES[i % 6]["name"], "source": SOURCES[i % 6]["name"],
      "source_ids": [SOURCES[i % 6]["id"]],
@@ -67,6 +71,24 @@ class QuietHandler(SimpleHTTPRequestHandler):
 
     def log_message(self, *args):
         pass
+
+def check_uniform_card_heights(page, label):
+    """All cards in the grid, not merely each row, share a common height."""
+    result = page.evaluate("""() => {
+      const grid = document.querySelector('#articleGrid');
+      if (!grid || grid.classList.contains('list-view')) return {error:'not in cards view'};
+      const cards = [...grid.querySelectorAll(':scope > .article-card')];
+      const heights = cards.map(card => card.getBoundingClientRect().height);
+      return {heights, gridAutoRows: getComputedStyle(grid).gridAutoRows,
+              hasImage: cards.some(x => x.querySelector('.cover')),
+              hasNoImage: cards.some(x => !x.querySelector('.cover'))};
+    }""")
+    values=result.get("heights", [])
+    if len(values) < 6 or not result["hasImage"] or not result["hasNoImage"]:
+        raise AssertionError(f"{label}: fixture does not cover mixed news: {result}")
+    if max(values) - min(values) > 2:
+        raise AssertionError(f"{label}: irregular card heights: {result}")
+
 
 def check_visible_boxes(page, selectors, label):
     findings = page.evaluate("""selectors => {
@@ -188,6 +210,10 @@ def main():
                     page.on("pageerror", lambda error: javascript_errors.append(str(error)))
                     page.on("console", lambda msg: javascript_errors.append("console: " + msg.text) if msg.type == "error" else None)
                     page.route("**/data/**", make_route)
+                    page.route("https://example.com/radar-fixture-cover.svg",
+                               lambda route: route.fulfill(
+                                   status=200, content_type="image/svg+xml",
+                                   body='<svg xmlns="http://www.w3.org/2000/svg" width="400" height="200"><rect width="400" height="200" fill="#cccccc"/></svg>'))
                     try:
                         page.goto(base + "#inicio", wait_until="load")
                         page.locator("#dashboardView:not([hidden])").wait_for(timeout=15000)
@@ -213,6 +239,17 @@ def main():
                         page.evaluate("location.hash = '#noticias'")
                         page.locator("#feedView:not([hidden])").wait_for(timeout=10000)
                         page.locator("#articleGrid .article-card").first.wait_for(timeout=10000)
+                        check_uniform_card_heights(page, f"tarjetas {browser_name} {width}px")
+                        # Explicit column preferences and image-less cards must retain equal heights.
+                        page.locator("#columnsToggle").click()
+                        page.locator('#columnsMenu [data-columns="2"]').click()
+                        check_uniform_card_heights(page, f"dos columnas {browser_name} {width}px")
+                        page.locator(".view-button[data-view='list']").click()
+                        assert page.locator("#articleGrid.list-view").count() == 1
+                        assert page.evaluate("getComputedStyle(document.querySelector('#articleGrid')).gridAutoRows") == "auto"
+                        page.locator("#columnsToggle").click()
+                        page.locator('#columnsMenu [data-columns="auto"]').click()
+                        check_uniform_card_heights(page, f"tarjetas restauradas {browser_name} {width}px")
                         page.locator("#articleGrid .article-card .article-save").first.click()
                         assert page.evaluate("() => document.activeElement?.classList.contains('article-save')")
                         check_visible_boxes(page, [".topbar", ".topbar-actions", ".filter-bar",
