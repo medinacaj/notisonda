@@ -104,11 +104,11 @@ const CATEGORY_LABELS = ['Inteligencia Artificial', 'Tecnología', 'Internaciona
 function safeStoredSet(key) {
   try {
     const data = JSON.parse(storeGet(key) || '[]');
-    return new Set(Array.isArray(data) ? data.filter(x => typeof x === 'string').slice(-4000) : []);
+    return new Set(Array.isArray(data) ? data.filter(x => typeof x === 'string').slice(key === 'radar-read' ? -5000 : -4000) : []);
   } catch { return new Set(); }
 }
 function persist(key, values) {
-  try { localStorage.setItem(key, JSON.stringify([...values].slice(-4000))); } catch { /* modo privado o almacenamiento bloqueado */ }
+  try { localStorage.setItem(key, JSON.stringify([...values].slice(key === 'radar-read' ? -5000 : -4000))); } catch { /* modo privado o almacenamiento bloqueado */ }
 }
 function safeURL(raw) {
   try { const u = new URL(raw); return ['https:', 'http:'].includes(u.protocol) ? u.href : null; }
