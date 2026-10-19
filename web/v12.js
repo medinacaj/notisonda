@@ -54,45 +54,9 @@
   });
   const display = (name, cls, tag='span') => mk(tag, cls, name);
   const regionName = { all:'Todas las noticias', latam:'Latinoamérica', chile:'Chile', venezuela:'Venezuela', region:'Latinoamérica · Región' };
-  const navBase = buildNav;
-  buildNav = function(...args) {
-    navBase(...args);
-    const folderNav = $('libraryFolderNav');
-    if (!folderNav) return;
-    const links = [...folderNav.querySelectorAll('.system-folder-link')];
-    const cats = state.categories;
-    for (let i = 0; i < cats.length; i++) {
-      if (!regionalCats().includes(cats[i])) continue;
-      const row = links[i]?.closest('.folder-entry') || links[i];
-      if (row) row.classList.add('v12-hidden-category');
-    }
-    if (!regionalCats().length) return;
-    const section = mk('section', 'v12-region-nav');
-    section.setAttribute('aria-label','Noticias de Latinoamérica');
-    const header = mk('div','v12-region-nav-head');
-    const btn = mk('button','nav-link v12-region-main', 'Latinoamérica');
-    btn.type = 'button';
-    btn.setAttribute('aria-current',geo !== 'all' && state.pageView === 'feed' ? 'page' : 'false');
-    const count = state.sources.filter(src => regionalCats().includes(src.category) && !state.hiddenSources.has(src.id)).length;
-    btn.append(display(String(count),'nav-count'));
-    btn.addEventListener('click', () => goTo('region'));
-    const toggle = mk('button','v12-region-expand','▾');
-    toggle.type='button'; toggle.setAttribute('aria-label','Mostrar países de Latinoamérica');
-    toggle.setAttribute('aria-expanded',String(state.pageView==='feed'&&(geo!=='all'||regionalCats().includes(state.category))));
-    const options = mk('div','v12-region-subnav');
-    function setExpanded(open) { options.hidden=!open; toggle.setAttribute('aria-expanded',String(open)); }
-    toggle.addEventListener('click',()=>setExpanded(options.hidden));
-    for (const [label,target] of [['Todos','region'],['Chile',catOf('chile')],['Venezuela',catOf('venezuela')],['Región',catOf('region')]]) {
-      if (!target) continue;
-      const child = mk('button','v12-country-link',label); child.type='button';
-      child.setAttribute('aria-current',target===state.category || (target==='region'&&geo==='latam')?'page':'false');
-      child.addEventListener('click',()=>goTo(target));
-      options.append(child);
-    }
-    setExpanded(state.pageView==='feed'&&(geo!=='all'||regionalCats().includes(state.category)));
-    header.append(btn,toggle);section.append(header,options);
-    folderNav.append(section);
-  };
+  // Las carpetas del lector pertenecen al módulo library.js:
+  // nunca sustituir ni ocultar sus entradas, nombres y opciones.
+  // Latinoamérica agrupada se ofrece solo en filtros/chips de noticias.
   const railBase = renderTopicRail;
   renderTopicRail = function(...args) {
     railBase(...args);
