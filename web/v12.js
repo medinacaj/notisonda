@@ -159,7 +159,7 @@
   const regionGroup=document.createElement('optgroup');
   regionGroup.label='Latinoamérica';
   for(const [value,label] of [
-    ['latam','Toda Latinoamérica (54 fuentes)'],
+    ['latam','Toda Latinoamérica'],
     ['chile','Chile'],
     ['venezuela','Venezuela'],
     ['region','Medios regionales latinoamericanos']
