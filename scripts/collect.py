@@ -602,7 +602,7 @@ def publish_partitioned(out: Path, articles: list[dict], generated: str) -> None
                                'total_articles':len(articles),'latest_count':len(latest),
                                'archive_files':filenames})
 
-def collect(opml: Path, out: Path, days: int, workers: int, max_per_feed: int) -> dict:
+def collect(opml: Path, out: Path, days: int, workers: int, max_per_feed: int, *, image_fallback: bool = False) -> dict:
     now = NOW()
     sources = parse_opml(opml)
     if not sources:
@@ -661,10 +661,11 @@ def collect(opml: Path, out: Path, days: int, workers: int, max_per_feed: int) -
 
     ordered = sorted(merged.values(), key=lambda i: (i.get('published_at') or i.get('first_seen_at') or ''), reverse=True)
     articles = group_related_articles(ordered[:MAX_CANDIDATES])[:MAX_ARTICLES]
-    image_stats = recover_missing_images(articles, now)
-    print('Imágenes originales: '
-          f"{image_stats['recovered']} recuperadas de "
-          f"{image_stats['checked']} páginas consultadas", flush=True)
+    if image_fallback:
+        image_stats = recover_missing_images(articles, now)
+        print('Imágenes originales: '
+              f"{image_stats['recovered']} recuperadas de "
+              f"{image_stats['checked']} páginas consultadas", flush=True)
     for article in articles:
         # Cobertura: cuántas fuentes distintas publicaron la misma historia.
         article['coverage'] = max(1, len(set(article.get('source_ids') or [])))
@@ -692,6 +693,8 @@ if __name__ == '__main__':
     parser.add_argument('--days', type=int, default=45)
     parser.add_argument('--workers', type=int, default=8)
     parser.add_argument('--max-per-feed', type=int, default=12)
+    parser.add_argument('--image-fallback', action='store_true',
+                        help='Recuperar imágenes OG de un máximo de 36 noticias recientes (respetando robots.txt)')
     opts = parser.parse_args()
     collect(opts.opml, opts.out, min(max(opts.days, 1), 365), min(max(opts.workers, 1), 12),
-            min(max(opts.max_per_feed, 1), 50))
+            min(max(opts.max_per_feed, 1), 50), image_fallback=opts.image_fallback)
