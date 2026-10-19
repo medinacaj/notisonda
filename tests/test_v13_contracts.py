@@ -19,6 +19,13 @@ class V13Contracts(unittest.TestCase):
         self.assertIn("'./v13.js'",self.sw)
         self.assertIn("'./v13.css'",self.sw)
 
+    def test_home_has_one_clear_navigation_to_all_news(self):
+        self.assertNotIn('Explorar todas las noticias',self.html)
+        self.assertNotIn('class="dashboard-read-all" href="#noticias"',self.html)
+        self.assertIn('id="categoryNav"',self.html)
+        self.assertIn('id="dashboardSavedAll"',self.html)
+        self.assertIn("target===\'all\'?\'#noticias\'",self.app)
+
     def test_onboarding_is_local_accessible_and_reopenable(self):
         for token in ["radar-v13-guide-dismissed","v13GuideTitle",
                       "v13DismissGuide","v13OpenGuide","aria-labelledby"]:
@@ -43,7 +50,7 @@ class V13Contracts(unittest.TestCase):
         self.assertIn('> .article-card .article-footer',css)
         self.assertNotIn('.dashboard-feature .article-card{grid-auto-rows',css)
         self.assertIn('v13.css?v=1.3.3',self.html)
-        self.assertIn("radar-rss-v10",self.sw)
+        self.assertIn("radar-rss-v11",self.sw)
 
     def test_card_read_action_is_visible_and_syncs_values(self):
         self.assertIn("article-action article-read-toggle",self.app)

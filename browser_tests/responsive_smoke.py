@@ -278,7 +278,16 @@ def main():
                         if width in (320, 768, 1440):
                             page.screenshot(path=str(output / f"portada-{width}.png"), full_page=False)
 
-                        page.evaluate("location.hash = '#noticias'")
+                        # Evitar el CTA duplicado de Inicio, sin retirar acciones
+                        # distintas como Ver mis guardadas o la navegación responsive.
+                        assert page.locator("#dashboardView .dashboard-head .dashboard-read-all").count() == 0
+                        assert page.locator("#dashboardSavedAll").count() == 1
+                        if width <= 950:
+                            page.locator("#menuToggle").click()
+                            page.locator("body.nav-open").wait_for(timeout=3000)
+                        all_news=page.locator("#categoryNav > .nav-link").nth(1)
+                        expect(all_news).to_be_visible()
+                        all_news.click()
                         page.locator("#feedView:not([hidden])").wait_for(timeout=10000)
                         page.locator("#articleGrid .article-card").first.wait_for(timeout=10000)
                         # Validar imágenes RSS/OG sin alterar la sección de carpetas.
