@@ -1144,7 +1144,10 @@ function initCardMenu(){
   });
   document.addEventListener('pointerdown',event=>{if(!event.target.closest('#cardMenu,.article-more'))closeCardMenu();});
   window.addEventListener('resize',()=>closeCardMenu(),{passive:true});
-  window.addEventListener('scroll',()=>closeCardMenu(),{passive:true});
+  // Cerrar solo cuando la persona inicia el desplazamiento. Un evento scroll
+  // causado por foco/Playwright puede ocurrir entre abrir el menú y pulsar una acción.
+  window.addEventListener('wheel',()=>closeCardMenu(),{passive:true});
+  document.addEventListener('touchmove',()=>closeCardMenu(),{passive:true});
 }
 function markRead(id,value){
   const original=state.read.has(id);
