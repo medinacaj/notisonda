@@ -369,14 +369,26 @@ def lookup_original_image(page_url: str) -> str | None:
         return None
 
 
-def recover_missing_images(articles: list[dict], now: datetime) -> dict[str, int]:
-    """Best-effort image enrichment. Failures must never block RSS publication."""
+def recover_missing_images(articles: list[dict], now: datetime,
+                           sources: list[dict] | None = None) -> dict[str, int]:
+    """Best-effort enrichment confined to hosts advertised by registered sources."""
+    catalog = {}
+    for source in sources or []:
+        hosts = set()
+        for value in (source.get('website'), source.get('url')):
+            host = page_image_host(str(value or ''))
+            if host:
+                hosts.add(host.removeprefix('www.'))
+        catalog[source.get('id')] = hosts
     queued, per_host = [], {}
     for article in articles[:LATEST_COUNT]:
         if article.get('image'):
             continue
         host = page_image_host(str(article.get('url') or ''))
         if not host:
+            continue
+        publisher_hosts = set().union(*(catalog.get(sid, set()) for sid in (article.get('source_ids') or [])))
+        if sources is not None and host.removeprefix('www.') not in publisher_hosts:
             continue
         stamp = story_instant(article)
         # Do not repeatedly revisit old articles or hammer any one publication.
@@ -662,7 +674,7 @@ def collect(opml: Path, out: Path, days: int, workers: int, max_per_feed: int, *
     ordered = sorted(merged.values(), key=lambda i: (i.get('published_at') or i.get('first_seen_at') or ''), reverse=True)
     articles = group_related_articles(ordered[:MAX_CANDIDATES])[:MAX_ARTICLES]
     if image_fallback:
-        image_stats = recover_missing_images(articles, now)
+        image_stats = recover_missing_images(articles, now, sources)
         print('Imágenes originales: '
               f"{image_stats['recovered']} recuperadas de "
               f"{image_stats['checked']} páginas consultadas", flush=True)
