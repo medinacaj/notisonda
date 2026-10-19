@@ -22,7 +22,7 @@ class V12ReviewTests(unittest.TestCase):
         self.assertIn("regionalCats()",self.script)
         self.assertIn("categoryLabel(cat)",self.script)
         self.assertIn("#region/latinoamerica",self.script)
-        self.assertIn("goTo(target)",self.script)
+        self.assertIn("goTo = function(target)",self.script)
         self.assertIn("v12-country-tab",self.script)
 
     def test_original_source_folder_navigation_not_replaced(self):
