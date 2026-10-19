@@ -1069,7 +1069,7 @@ function card(item) {
   read.title=readLabel;
   read.setAttribute('aria-label',readLabel+': '+(item.title||'noticia'));
   read.setAttribute('aria-pressed',String(isRead));
-  read.append(svgIcon(isRead?'undo':'check'),mk('span','article-read-label',isRead?'Marcar no leída':'Marcar leída'));
+  read.append(svgIcon(isRead?'undo':'check'));
   read.addEventListener('click',()=>{
     const next=!state.read.has(item.id);
     markRead(item.id,next);
