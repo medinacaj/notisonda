@@ -62,6 +62,8 @@ Segunda tanda: las 12 recomendaciones. Casi todo vive en una capa nueva,
 | 11 | Hecho | Los chips dicen «Resumen del día» y «Todas las noticias», igual que el menú. |
 | 12 | Hecho | El comparador muestra «Ordenar: Por medio / Por hora de publicación» y «N versiones de esta noticia». |
 
+«Restablecer preferencias» también borra las claves locales `radar-v14-*`.
+
 Pruebas: se actualizaron las aserciones que fijaban los textos antiguos, se añadió
 `tests/test_v14_novice.py` y `browser_tests/responsive_smoke.py` ahora comprueba
 el panel de filtros, la pista y el mapa en el móvil.

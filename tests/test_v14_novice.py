@@ -56,6 +56,9 @@ class V14NoviceTests(unittest.TestCase):
         self.assertIn("HINT_KEY='radar-v14-card-hint-dismissed'", self.script)
         self.assertIn("state.read.size===0", self.script)
         self.assertNotIn('fetch(', self.script)
+        # «Restablecer preferencias» también borra las claves de V1.4.
+        app = (ROOT / 'web/app.js').read_text(encoding='utf8')
+        self.assertIn("'v14-filters-open','v14-card-hint-dismissed'", app)
 
 
 if __name__ == '__main__':
