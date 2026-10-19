@@ -292,6 +292,39 @@ def main():
                         check_uniform_card_heights(page, f"tarjetas restauradas {browser_name} {width}px")
                         page.locator("#articleGrid .article-card .article-save").first.click()
                         assert page.evaluate("() => document.activeElement?.classList.contains('article-save')")
+                        # Acceso directo a marcar una noticia, sin depender del menú.
+                        first_card=page.locator("#articleGrid .article-card").first
+                        read_button=first_card.locator(".article-read-toggle")
+                        expect(read_button).to_be_visible()
+                        expect(read_button).to_contain_text("Marcar leída")
+                        initial_unread=int(page.locator("#unreadCount").inner_text().replace(".",""))
+                        initial_nav=int(page.locator("#categoryNav > .nav-link").nth(1).locator(".nav-count").inner_text())
+                        read_button.click()
+                        expect(page.locator("#unreadCount")).to_have_text(str(initial_unread-1))
+                        expect(page.locator("#categoryNav > .nav-link").nth(1).locator(".nav-count")).to_have_text(str(initial_nav-1))
+                        expect(page.locator("#articleGrid .article-card").first.locator(".article-read-toggle")).to_have_attribute("aria-pressed","true")
+                        expect(page.locator("#articleGrid .article-card").first.locator(".article-read-toggle")).to_contain_text("Marcar no leída")
+                        expect(page.locator("#filterSummary")).to_contain_text(str(initial_unread-1)+" sin leer")
+                        # El menú contextual debe estar disponible desde cualquier parte de la tarjeta.
+                        page.locator("#articleGrid .article-card").first.locator(".article-title").click(button="right")
+                        expect(page.locator("#cardMenu")).to_be_visible()
+                        expect(page.locator("#cardMenuReadLabel")).to_have_text("Marcar como no leída")
+                        page.locator("#cardMenu [data-card-action='read']").click()
+                        expect(page.locator("#unreadCount")).to_have_text(str(initial_unread))
+                        expect(page.locator("#categoryNav > .nav-link").nth(1).locator(".nav-count")).to_have_text(str(initial_nav))
+                        expect(page.locator("#articleGrid .article-card").first.locator(".article-read-toggle")).to_have_attribute("aria-pressed","false")
+                        first_title=page.locator("#articleGrid .article-card").first.locator(".article-title a")
+                        first_title.focus()
+                        first_title.press("Shift+F10")
+                        expect(page.locator("#cardMenu")).to_be_visible()
+                        page.keyboard.press("Escape")
+                        expect(page.locator("#cardMenu")).to_be_hidden()
+                        if width >= 1024:
+                            first_card=page.locator("#articleGrid .article-card").first
+                            first_card.hover()
+                            page.wait_for_timeout(240)
+                            shadow=first_card.evaluate("(node) => getComputedStyle(node).boxShadow")
+                            assert shadow != "none", (width,browser_name,shadow)
                         check_visible_boxes(page, [".topbar", ".topbar-actions", ".filter-bar",
                             ".filter-controls", ".mode-tabs", "#articleGrid",
                             "#articleGrid .article-card"], f"listado {width}px")
