@@ -2,7 +2,7 @@
 
 **Versión pública operativa · octubre 2026:** recopilación y publicación automáticas, monitoreo, historial paginado, tendencias, lectura responsive y pruebas multiplataforma.
 
-Proyecto público sin backend ni cuentas. Mantiene 150 fuentes y las seis categorías internas del OPML, pero presenta Latinoamérica como una sección que reúne Chile, Venezuela y la cobertura regional en la navegación.
+Proyecto público sin backend ni cuentas. Mantiene 150 fuentes y las seis carpetas del OPML, accesibles y editables. El listado ofrece una vista conjunta de Latinoamérica sin ocultar ni modificar las carpetas de fuentes.
 
 ## Arquitectura
 
@@ -34,11 +34,12 @@ flowchart LR
 
 ## Interacción y personalización V1.2
 
-- **Latinoamérica:** 54 fuentes distribuidas entre Chile (22), Venezuela (22) y cobertura regional (10). La navegación muestra una sección principal y filtros por país. Los identificadores internos, carpetas y URL de categorías anteriores siguen funcionando.
+- **Latinoamérica:** 54 fuentes distribuidas entre Chile (22), Venezuela (22) y cobertura regional (10). El filtro **Cobertura** permite ver todas las noticias o las fuentes latinoamericanas en conjunto, Chile, Venezuela o medios regionales. No equivale a un listado de todos los países ni a regiones administrativas de Chile. Las seis carpetas RSS originales y sus menús se mantienen intactos.
 - **Mi Radar:** el lector activa un modo personal con intereses por categoría. El contenido destacado, noticias recientes y secciones siguen esas preferencias; se guardan localmente. Desactivar Mi Radar recupera la portada general.
-- **Filtros combinables:** se pueden cruzar región/país, antigüedad, medio RSS, búsqueda textual y estado de lectura; se guardan hasta 12 combinaciones locales y pueden aplicarse o eliminarse. Los resultados dependen de los artículos recopilados, no de una búsqueda web externa.
+- **Filtros combinables:** se pueden cruzar cobertura de fuentes, antigüedad, medio RSS, búsqueda textual y estado de lectura; se guardan hasta 12 combinaciones locales y pueden aplicarse o eliminarse. Los resultados dependen de los artículos recopilados, no de una búsqueda web externa.
 - **Comparación:** para las historias agrupadas de dos o más enlaces editoriales, se puede alternar entre medios/regiones y cronología usando las fechas publicadas; el sistema no asigna intenciones ni sesgos a los medios.
-- **Resumen personalizado:** escoger todas las secciones, intereses de Mi Radar, Latinoamérica o país; la selección se utiliza también al copiar, compartir o escuchar el resumen.
+- **Resumen personalizado:** escoger todas las secciones, intereses de Mi Radar, Latinoamérica o fuentes de un país; la selección se utiliza también al copiar, compartir o escuchar el resumen.
+- **Menú contextual de Todas las noticias:** clic derecho, Shift+F10 o pulsación larga para marcar todas las noticias publicadas de fuentes activas como leídas (cargando antes el historial y solicitando confirmación), ver pendientes, abrir el listado o gestionar fuentes. Las carpetas específicas mantienen por separado sus opciones de renombrar, administrar y eliminar; el botón general no es una carpeta editable.
 - **Privacidad:** las preferencias y búsquedas permanecen en el dispositivo mediante localStorage. No hay sincronización entre navegadores.
 
 ## Imágenes originales en noticias
