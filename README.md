@@ -41,6 +41,14 @@ flowchart LR
 - **Resumen personalizado:** escoger todas las secciones, intereses de Mi Radar, Latinoamérica o país; la selección se utiliza también al copiar, compartir o escuchar el resumen.
 - **Privacidad:** las preferencias y búsquedas permanecen en el dispositivo mediante localStorage. No hay sincronización entre navegadores.
 
+## Imágenes originales en noticias
+
+El colector prioriza los campos multimedia de RSS/Atom, incluidos `media:thumbnail`, adjuntos de tipo `image/*` y fotografías incrustadas en el contenido RSS. Si un artículo reciente aún no dispone de foto, el proceso de publicación puede obtener su imagen de previsualización mediante `og:image` o `twitter:image` **en la página original del medio**.
+
+El enriquecimiento se habilita únicamente en el proceso programado mediante `--image-fallback`; los tests y las ejecuciones locales normales permanecen desconectados. Límite: **36 artículos recientes por ejecución**, **2 por dominio**, **4 consultas simultáneas**, con tiempo de espera, tamaño de respuesta y redirecciones restringidos. Antes de cada consulta se comprueba que el dominio esté registrado en el catálogo RSS, sea público y lo permita `robots.txt`. Las comprobaciones fallidas se registran para evitar reintentos durante 36 horas.
+
+Las imágenes se **enlazan al editor original** (no se descargan, republican ni guardan fotografías de terceros en GitHub). Algunos editores no ofrecen fotografía, no permiten la consulta, bloquean enlaces externos o devuelven una imagen no disponible: esas tarjetas permanecen deliberadamente sin foto, con la misma altura que el resto. No se inventan imágenes por IA ni se utilizan fotografías de archivo sin relación con la noticia. El titular y enlace siguen atribuidos al medio de origen.
+
 ## Calidad y experiencia V1.3
 
 - **Guía de primer uso:** ayuda contextual en la portada para configurar Mi Radar, combinar filtros y comparar titulares. Se puede cerrar y volver a abrir; no aparece como ventana emergente ni recopila eventos.
