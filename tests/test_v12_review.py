@@ -41,6 +41,8 @@ class V12ReviewTests(unittest.TestCase):
         self.assertIn("Mostrar solo las no leídas",library)
         self.assertIn("void markAllNewsRead()",library)
         self.assertIn("await loadHistory()",library)
+        app=(ROOT/'web/app.js').read_text(encoding='utf8')
+        self.assertIn("key === 'radar-read' ? -5000 : -4000",app)
         self.assertIn("setNavOpen(false,false)",library)
         self.assertIn("Cobertura",self.script)
         self.assertIn("Todas las noticias",self.script)
