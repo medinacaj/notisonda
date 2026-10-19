@@ -66,6 +66,23 @@ class ReaderTests(unittest.TestCase):
         self.assertIsNone(result['published_at'])
 
 
+    def test_fallback_excerpt_from_atom_body_without_invention(self):
+        article={'summary':'<img src="https://medio.test/a.jpg">',
+                 'content':[{'value':'<p>La noticia incluye datos públicos del evento.</p>'}]}
+        self.assertEqual(collect.readable_summary(article,'Titular'),
+                         'La noticia incluye datos públicos del evento.')
+        title_only={'summary':'<p>Titular</p>'}
+        self.assertEqual(collect.readable_summary(title_only,'Titular'),'')
+        self.assertEqual(collect.readable_summary({},'Titular'),'')
+        self.assertEqual(collect.readable_summary({'subtitle':'Dato breve'},'Titular'),'Dato breve')
+
+    def test_make_item_uses_content_when_rss_summary_missing(self):
+        source={'id':'a','name':'Medio','category':'03 - Internacionales','is_radar':False}
+        entry={'link':'https://medio.test/original','title':'Titular',
+               'content':[{'value':'<section>Extracto publicado en el contenido Atom.</section>'}]}
+        item=collect.make_item(entry,source,datetime(2026,10,19,tzinfo=timezone.utc))
+        self.assertEqual(item['summary'],'Extracto publicado en el contenido Atom.')
+
     def test_rss_xml_parser_without_network(self):
         xml = b"""<?xml version='1.0'?><rss version='2.0'><channel><title>Test</title>
         <item><title>Ultima noticia</title><link>https://example.net/post</link>

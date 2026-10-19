@@ -1003,19 +1003,40 @@ function initArticleReader(){
     markRead(activeReaderItem.id,true);
   });
 }
+// Los medios que no envían fotografías reciben una cubierta editorial
+// claramente tipográfica: nunca se presenta una ilustración como foto real.
+function editorialCover(item) {
+  const tile=mk('div','article-cover-placeholder');
+  tile.setAttribute('aria-hidden','true');
+  const wrap=mk('div','article-cover-placeholder-inner');
+  const source=sourceLabel(item.publisher||item.source,'Medio de noticias');
+  const sourceName=mk('span','article-cover-publisher',source);
+  const note=mk('span','article-cover-note','Sin fotografía disponible');
+  wrap.append(svgIcon('newspaper'),sourceName,note);
+  tile.append(wrap);
+  return tile;
+}
 // Tarjeta: el título y la imagen abren la vista previa; Guardar queda a mano y
 // el resto de acciones vive en un menú "⋯" para no repetir cuatro botones por tarjeta.
 function card(item) {
   const isRead=state.read.has(item.id);
-  const hasImage=Boolean(safeURL(item.image))&&!state.lite;
-  const el=mk('article','article-card'+(isRead?' read-article':'')+(hasImage?'':' no-cover'));el.dataset.articleId=item.id;
+  const hasImage=Boolean(safeURL(item.image))&&!state.lite&&state.showImages;
+  const el=mk('article','article-card '+(isRead?'read-article':'unread-card')+(hasImage?'':' no-cover'));el.dataset.articleId=item.id;
+  const allowPreview=!state.lite&&state.showImages;
   if(hasImage){
     const cover=mk('a','cover'); cover.href=safeURL(item.url)||'#';cover.target=state.newTab?'_blank':'_self';cover.rel='noopener noreferrer external';cover.referrerPolicy='no-referrer';
     cover.tabIndex=-1;cover.setAttribute('aria-hidden','true');
     cover.addEventListener('click',event=>openArticleReader(item,event));
     const img=document.createElement('img');img.src=item.image;img.alt='';img.loading='lazy';img.decoding='async';img.referrerPolicy='no-referrer';
-    img.addEventListener('error',()=>{cover.remove();el.classList.add('no-cover');},{once:true});
+    img.addEventListener('error',()=>{
+      cover.remove();
+      el.classList.add('no-cover');
+      if(allowPreview && !el.querySelector('.article-cover-placeholder'))
+        el.prepend(editorialCover(item));
+    },{once:true});
     cover.append(img);el.append(cover);
+  } else if(allowPreview) {
+    el.append(editorialCover(item));
   }
   const category=(item.categories||[])[0]||'';
   const content=mk('div','article-content');
@@ -1028,7 +1049,11 @@ function card(item) {
   if(isNewSinceVisit(item)){const fresh=mk('span','article-new','Nueva');fresh.title='Publicada desde tu última visita';kicker.append(fresh);}
   content.append(kicker,title);
   const summary=String(item.summary||'').trim();
-  if(summary)content.append(mk('p','article-excerpt',summary));
+  if(summary&&state.showSummaries){
+    content.append(mk('p','article-excerpt',summary));
+  }else if(!summary){
+    el.classList.add('no-excerpt');
+  }
   const coverage=coverageOf(item);
   if(coverage>1){
     const others=Array.isArray(item.also_in)?item.also_in:[];

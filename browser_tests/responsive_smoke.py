@@ -42,6 +42,7 @@ ITEMS = [
      "image": "https://example.com/radar-fixture-cover.svg" if i % 3 == 0 else None,
      "summary": ("Resumen amplio " * 25 if i % 5 == 0 else
                  "Resumen corto." if i % 5 == 1 else
+                 "" if i % 7 == 2 else
                  "Resumen informativo de ejemplo para comprobar distribución de tarjetas."),
      "published_at": STAMP, "first_seen_at": STAMP,
      "publisher": SOURCES[i % 6]["name"], "source": SOURCES[i % 6]["name"],
@@ -293,6 +294,19 @@ def main():
                         # Validar imágenes RSS/OG sin alterar la sección de carpetas.
                         expect(page.locator("#articleGrid .article-card .cover img").first).to_have_js_property("naturalWidth", 400)
                         assert page.locator("#articleGrid .article-card.no-cover").count() > 0
+                        assert page.locator("#articleGrid .article-card.unread-card").count() >= 1
+                        assert page.locator("#articleGrid .article-card.no-excerpt").count() >= 1
+                        placeholders=page.locator("#articleGrid .article-card.no-cover .article-cover-placeholder")
+                        expect(placeholders.first).to_be_visible()
+                        assert placeholders.first.locator(".article-cover-publisher").inner_text()
+                        expect(placeholders.first.locator(".article-cover-note")).to_have_text("Sin fotografía disponible")
+                        assert placeholders.first.locator("img").count() == 0
+                        assert page.locator("#articleGrid .article-card.no-excerpt .article-excerpt").count() == 0
+                        # La elevación de Apple distingue pendientes y leídas
+                        # sin alterar alturas ni usar fotos ajenas inventadas.
+                        shadow_unread=page.locator("#articleGrid .article-card.unread-card").first.evaluate(
+                            "(node) => getComputedStyle(node).boxShadow")
+                        assert shadow_unread != "none", shadow_unread
                         check_uniform_card_heights(page, f"tarjetas {browser_name} {width}px")
                         # CSS states are checked directly: the quick column button is
                         # deliberately hidden on some mobile widths.
@@ -320,6 +334,11 @@ def main():
                         expect(page.locator("#categoryNav > .nav-link").nth(1).locator(".nav-count")).to_have_text(str(initial_nav-1))
                         expect(page.locator("#articleGrid .article-card").first.locator(".article-read-toggle")).to_have_attribute("aria-pressed","true")
                         expect(page.locator("#articleGrid .article-card").first.locator(".article-read-toggle")).to_have_attribute("title","Marcar como no leída")
+                        assert page.locator("#articleGrid .article-card").first.evaluate(
+                            "(node) => node.classList.contains('read-article')")
+                        shadow_read=page.locator("#articleGrid .article-card").first.evaluate(
+                            "(node) => getComputedStyle(node).boxShadow")
+                        assert shadow_read != shadow_unread, (shadow_read,shadow_unread)
                         expect(page.locator("#filterSummary")).to_contain_text(str(initial_unread-1)+" sin leer")
                         # El menú contextual debe estar disponible desde cualquier parte de la tarjeta.
                         page.locator("#articleGrid .article-card").first.locator(".article-title").click(button="right")

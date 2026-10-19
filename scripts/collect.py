@@ -452,6 +452,25 @@ def normalize_cached_google_titles(item: dict) -> None:
                 alternative['title'], str(alternative.get('publisher') or ''))
 
 
+def readable_summary(entry, title: str) -> str:
+    """RSS summary/description, then Atom content or subtitle; never invent text."""
+    candidates = [
+        entry.get('summary'),
+        entry.get('description'),
+        entry.get('subtitle'),
+        *[part.get('value') for part in (entry.get('content') or [])
+          if isinstance(part, dict)]
+    ]
+    normalized_title = re.sub(r'\\s+', ' ', title).casefold().strip()
+    for candidate in candidates:
+        if not isinstance(candidate, str):
+            continue
+        summary, _ = extract_html(candidate)
+        if summary and summary.casefold().strip() != normalized_title:
+            return summary
+    return ''
+
+
 def make_item(entry, source: dict, now: datetime) -> dict | None:
     link = safe_web_url(entry.get('link') or '')
     title, _ = extract_html(entry.get('title') or '')
@@ -460,7 +479,7 @@ def make_item(entry, source: dict, now: datetime) -> dict | None:
     date = entry_date(entry)
     if date and date > now + timedelta(days=1):
         date = None  # Fecha futura incoherente: desconocida, no noticia del futuro.
-    summary, _ = extract_html(entry.get('summary') or entry.get('description') or '')
+    summary = readable_summary(entry, title)
     publisher = display_name(source['name'])
     if source['is_radar']:
         credited = entry.get('source') or {}

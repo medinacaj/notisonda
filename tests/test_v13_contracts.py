@@ -49,8 +49,8 @@ class V13Contracts(unittest.TestCase):
         self.assertIn('grid-auto-rows:1fr',css)
         self.assertIn('> .article-card .article-footer',css)
         self.assertNotIn('.dashboard-feature .article-card{grid-auto-rows',css)
-        self.assertIn('v13.css?v=1.3.3',self.html)
-        self.assertIn("radar-rss-v11",self.sw)
+        self.assertIn('v13.css?v=1.3.4',self.html)
+        self.assertIn("radar-rss-v12",self.sw)
 
     def test_card_read_action_is_visible_and_syncs_values(self):
         self.assertIn("article-action article-read-toggle",self.app)
@@ -73,6 +73,26 @@ class V13Contracts(unittest.TestCase):
         self.assertIn("read.setAttribute('aria-pressed'",self.app)
         css=(ROOT/'web/v13.css').read_text(encoding="utf8")
         self.assertIn("width:38px;height:38px;min-width:38px",css)
+
+    def test_missing_photos_are_labeled_not_invented(self):
+        self.assertIn("function editorialCover(item)",self.app)
+        self.assertIn("Sin fotografía disponible",self.app)
+        self.assertIn("article-cover-placeholder",self.app)
+        self.assertIn("el.classList.add('no-excerpt')",self.app)
+        self.assertIn("state.showImages",self.app)
+        self.assertIn("img.addEventListener('error'",self.app)
+        self.assertNotIn("images.unsplash.com",self.app)
+
+    def test_read_and_unread_get_distinct_subtle_elevations(self):
+        self.assertIn("'unread-card'",self.app)
+        css=(ROOT/'web/v13.css').read_text(encoding="utf8")
+        self.assertIn(".article-card.unread-card",css)
+        self.assertIn(".article-card.read-article",css)
+        self.assertIn("box-shadow:0 1px 2px",css)
+        self.assertIn(".article-card.no-excerpt",css)
+        self.assertIn(".article-cover-placeholder",css)
+        self.assertIn("@media(hover:hover) and (pointer:fine)",css)
+        self.assertIn("@media(prefers-reduced-motion:reduce)",css)
 
     def test_backup_is_retained_and_manual_recovery_checks_integrity(self):
         self.assertIn("retention-days: 90",self.workflow)
