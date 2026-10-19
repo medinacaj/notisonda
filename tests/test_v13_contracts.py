@@ -24,7 +24,7 @@ class V13Contracts(unittest.TestCase):
         self.assertNotIn('class="dashboard-read-all" href="#noticias"',self.html)
         self.assertIn('id="categoryNav"',self.html)
         self.assertIn('id="dashboardSavedAll"',self.html)
-        self.assertIn('href="#noticias"',self.html)
+        self.assertIn("target===\'all\'?\'#noticias\'",self.app)
 
     def test_onboarding_is_local_accessible_and_reopenable(self):
         for token in ["radar-v13-guide-dismissed","v13GuideTitle",
