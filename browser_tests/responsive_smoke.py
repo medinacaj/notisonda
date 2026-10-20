@@ -315,7 +315,10 @@ def main():
                             semanticColor:style.getPropertyValue('--topic-ink').trim()
                           };
                         }""")
-                        assert identity["borderTopWidth"] == identity["borderBottomWidth"] == "1px", identity
+                        # Separador INFERIOR editorial entre noticias, nunca barra
+                        # cromática decorativa encima de cada tarjeta.
+                        assert identity["borderTopWidth"] == "0px", identity
+                        assert identity["borderBottomWidth"] == "1px", identity
                         assert identity["labelColor"] != "rgb(98, 107, 120)", identity
                         folder=page.locator("#dashboardFolders .dashboard-folder[data-topic]").first
                         if folder.count():
