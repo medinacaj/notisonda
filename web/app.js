@@ -878,7 +878,7 @@ function emptyState(filtered) {
   const symbol=mk('div','empty-icon');symbol.append(svgIcon(isEmpty?'rss':'search'));
   el.append(symbol,
     mk('h3','',isEmpty ? 'Esperando las primeras noticias' : 'No hay noticias con estos filtros'),
-    mk('p','',isEmpty ? 'El diseño y las 150 fuentes están preparados. La recopilación debe ejecutarse desde GitHub Actions después de publicar el proyecto.' : 'Prueba otra categoría o fuente, desmarca tus filtros o busca con otros términos.'));
+    mk('p','',isEmpty ? 'Aún no se han cargado noticias. Revisa el estado de las fuentes RSS o vuelve a intentarlo después de la próxima actualización.' : 'Prueba otra categoría o fuente, desmarca tus filtros o busca con otros términos.'));
   return el;
 }
 let actionToastTimer;
