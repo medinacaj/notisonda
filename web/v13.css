@@ -22,12 +22,10 @@ body.radar-hybrid .v13-guide button:focus-visible,body.radar-hybrid .v13-reopen:
 @media(prefers-reduced-motion:reduce){body.radar-hybrid .v13-guide *{transition:none!important}}
 
 
-/* Igualar el tamaño de las tarjetas en todas las filas del listado.
-   La altura de referencia la determina la tarjeta con más contenido visible;
-   no se recortan titulares, los extractos siguen con sus límites existentes.
-   La vista Lista y la portada editorial mantienen sus layouts propios. */
+/* Cada FILA mantiene tarjetas iguales entre sí; filas distintas ya no
+   heredan la altura de la noticia más extensa de toda la página. */
 body.radar-hybrid #articleGrid.article-grid:not(.list-view){
-  grid-auto-rows:1fr;
+  grid-auto-rows:auto;
   align-items:stretch;
 }
 body.radar-hybrid #articleGrid.article-grid:not(.list-view) > .article-card{
@@ -39,6 +37,43 @@ body.radar-hybrid #articleGrid.article-grid:not(.list-view) > .article-card .art
 }
 body.radar-hybrid #articleGrid.article-grid:not(.list-view) > .article-card .article-footer{
   margin-top:auto;
+}
+/* Imagen real menos dominante, sin alterar la proporción de la portada ni Lista. */
+body.radar-hybrid #articleGrid.article-grid:not(.list-view) > .article-card > .cover{
+  width:100%;height:clamp(112px,11vw,148px);
+  min-height:0;aspect-ratio:auto;overflow:hidden;flex:0 0 auto;
+}
+body.radar-hybrid #articleGrid.article-grid:not(.list-view) > .article-card > .cover img{
+  display:block;width:100%;height:100%;object-fit:cover;
+}
+body.radar-hybrid #articleGrid.article-grid:not(.list-view) > .article-card .article-content{
+  padding:11px 13px 8px;
+}
+body.radar-hybrid #articleGrid.article-grid:not(.list-view) > .article-card .article-category{
+  margin-bottom:0;font-size:11px;
+}
+body.radar-hybrid #articleGrid.article-grid:not(.list-view) > .article-card .article-title{
+  margin:3px 0 7px;line-height:1.3;
+  -webkit-line-clamp:3;
+}
+body.radar-hybrid #articleGrid.article-grid:not(.list-view) > .article-card .article-excerpt{
+  font-size:12.5px;line-height:1.45;margin:0 0 7px;-webkit-line-clamp:2;
+}
+body.radar-hybrid #articleGrid.article-grid:not(.list-view) > .article-card .article-footer{
+  padding-top:5px;gap:5px;
+}
+body.radar-hybrid #articleGrid.article-grid:not(.list-view) > .article-card.no-excerpt .article-title{
+  margin-bottom:6px;-webkit-line-clamp:3;
+}
+@media(max-width:600px){
+  body.radar-hybrid #articleGrid.article-grid:not(.list-view) > .article-card > .cover{
+    height:148px;
+  }
+}
+@media(max-width:365px){
+  body.radar-hybrid #articleGrid.article-grid:not(.list-view) > .article-card > .cover{
+    height:132px;
+  }
 }
 
 
@@ -117,8 +152,8 @@ body.radar-hybrid .dashboard-feature .article-card.read-article{
    una imagen genérica, y nunca se carga en modo ligero o sin imágenes. */
 body.radar-hybrid .article-card .article-cover-placeholder{
   display:flex;align-items:center;justify-content:center;overflow:hidden;
-  aspect-ratio:16/9;min-height:0;
-  padding:16px;
+  height:76px;max-height:76px;min-height:0;aspect-ratio:auto;
+  padding:9px 12px;flex:0 0 auto;
   background:
     radial-gradient(circle at 85% 18%,color-mix(in srgb,var(--accent) 9%,transparent),transparent 60%),
     linear-gradient(135deg,var(--surface2),var(--surface));
@@ -126,17 +161,17 @@ body.radar-hybrid .article-card .article-cover-placeholder{
 }
 body.radar-hybrid .article-card .article-cover-placeholder-inner{
   display:flex;flex-direction:column;align-items:center;justify-content:center;
-  gap:7px;text-align:center;max-width:100%;min-width:0;
+  gap:3px;text-align:center;max-width:100%;min-width:0;
 }
 body.radar-hybrid .article-card .article-cover-placeholder .ui-icon{
-  width:30px;height:30px;color:var(--muted);opacity:.75;
+  width:17px;height:17px;color:var(--muted);opacity:.75;
 }
 body.radar-hybrid .article-card .article-cover-publisher{
-  font:720 clamp(14px,1.35vw,20px)/1.25 var(--font-ui);
+  font:700 13px/1.2 var(--font-ui);
   color:var(--text);max-width:100%;overflow-wrap:anywhere;
 }
 body.radar-hybrid .article-card .article-cover-note{
-  color:var(--muted);font:520 11px/1.25 var(--font-ui);
+  color:var(--muted);font:500 10px/1.2 var(--font-ui);
 }
 body.radar-hybrid .list-view .article-card.no-cover .article-cover-placeholder{display:none}
 body.radar-hybrid .article-card.no-excerpt .article-title{
