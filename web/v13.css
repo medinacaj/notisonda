@@ -897,10 +897,7 @@ body.radar-hybrid .topic-chip[data-topic].active{
 }
 body.radar-hybrid .topic-chip[data-topic]:hover{color:var(--topic-ink)}
 
-/* Portada: las seis carpetas tienen una firma visual pequeña pero distinta. */
-body.radar-hybrid .dashboard-folder[data-topic]{
- border-top:3px solid var(--topic-ink);
-}
+/* Portada: identificar carpetas con iconografía y texto, sin bandas de color. */
 body.radar-hybrid .dashboard-folder[data-topic] .dashboard-folder-icon{
  color:var(--topic-ink);
  background:var(--topic-tint);
@@ -913,35 +910,13 @@ body.radar-hybrid .dashboard-folder[data-topic] .dashboard-folder-head:hover{
  color:var(--topic-ink);
 }
 
-/* Las etiquetas de noticias revelan su sección sin teñir cada tarjeta. */
+/* Categorías identificadas mediante metadatos tipográficos, no bordes decorativos. */
 body.radar-hybrid .dashboard-feature .article-card[data-topic] .article-category,
 body.radar-hybrid #articleGrid .article-card[data-topic] .article-category{
  color:var(--topic-ink);
 }
-body.radar-hybrid .dashboard-feature .article-card[data-topic],
-body.radar-hybrid #articleGrid.article-grid:not(.list-view)>.article-card[data-topic]{
- border-top:3px solid var(--topic-ink);
-}
-/* La vista lista es informativa: usar una señal más pequeña. */
-body.radar-hybrid #articleGrid.list-view>.article-card[data-topic]{
- border-left:3px solid var(--topic-ink);
-}
 
-/* Distintos niveles editoriales sin recuadros saturados ni titulares coloreados. */
-body.radar-hybrid .dashboard-panel-head h2::before{
- content:"";
- display:inline-block;
- width:7px;height:7px;
- border-radius:50%;
- background:var(--editorial-ink);
- vertical-align:middle;
- margin:0 9px 3px 0;
-}
-body.radar-hybrid #dashboardRecentTitle::before{background:var(--accent-secondary)}
-body.radar-hybrid #dashboardSavedPanel .dashboard-panel-head h2::before{background:var(--editorial-amber)}
-body.radar-hybrid #dashboardFoldersTitle::before{background:var(--editorial-violet)}
-body.radar-hybrid #radarTitle::before{background:var(--accent-secondary)}
-body.radar-hybrid #trendsTitle::before{background:var(--editorial-amber)}
+/* Jerarquía editorial mediante tipografía; sin puntos decorativos en los títulos. */
 body.radar-hybrid .dashboard-head .dashboard-kicker{
  color:var(--accent-secondary);
 }
@@ -976,11 +951,6 @@ body.radar-hybrid .settings-reading-action:nth-child(3){
 }
 body.radar-hybrid .settings-reading-action:nth-child(3):hover{
  border-color:var(--editorial-amber);
-}
-/* El borde de tarjetas no se pinta coral por defecto: es contenido, no un botón. */
-body.radar-hybrid #articleGrid .article-card:not([data-topic]),
-body.radar-hybrid .dashboard-feature .article-card:not([data-topic]){
- border-top-color:var(--line);
 }
 @media(prefers-reduced-motion:reduce){
  body.radar-hybrid .dashboard-folder[data-topic],
