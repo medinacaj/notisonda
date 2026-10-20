@@ -620,7 +620,7 @@ function updateSourceCounts(){
   const sourceNames=new Map(state.sources.map(source=>[source.id,sourceLabel(source.name)]));
   for(const option of [...select.options].slice(1)){
     const amount=counts.get(option.value)||0;
-    option.textContent=`${sourceNames.get(option.value)||option.textContent.replace(/ \\(\\d+\\)$/,'')} (${format.format(amount)})`;
+    option.textContent=`${sourceNames.get(option.value)||option.textContent} (${format.format(amount)})`;
     option.title=`${format.format(amount)} noticias con los filtros actuales`;
   }
 }
