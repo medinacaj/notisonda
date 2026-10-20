@@ -1,4 +1,4 @@
-# RadarRRS — Sistema editorial V11 · Mesa de noticias
+# RadarRRS — Sistema editorial V11.1 · Bento Grid funcional
 
 ## Objetivo de producto
 RadarRRS es un **portal público de noticias** y un lector de fuentes RSS, no un panel técnico. Deben verse primero las noticias. Las herramientas avanzadas se muestran a demanda.
@@ -10,19 +10,19 @@ RadarRRS es un **portal público de noticias** y un lector de fuentes RSS, no un
 3. Más opciones: antigüedad, guardar búsqueda y marcar noticias visibles como leídas. El menú se expande **en flujo**, no flotando sobre los resultados.
 4. Configuración > Apariencia: tema, tamaño de letra, imágenes y resúmenes como opciones principales. Columnas, espaciado, formato y panel lateral se mantienen en opciones avanzadas. No incluir controles que solo activan presentaciones promocionales.
 
-## Sistema V11 — Rediseño ESTRUCTURAL verificable
+## Sistema V11.1 — Bento Grid, rediseño estructural
 
-A diferencia de V6 a V10, V11 modifica **la composición y la navegación**, no únicamente los tokens de color y tipografía:
+No consiste en cambiar solamente la paleta: **se modifica el HTML y la cuadrícula CSS** para variar el tamaño de los módulos con contenido real.
 
-- **Eliminado el sidebar permanente en escritorio:** el contenido usa el ancho disponible. El catálogo completo de fuentes y las herramientas de carpetas siguen en un menú desplegable mediante el botón superior; accesible con ratón, teclado, Escape, foco e indicador `aria-expanded`.
-- **Navegación principal horizontal en todas las pantallas:** Inicio, Resumen, Todas y las seis categorías aparecen en una franja propia debajo de la barra superior. Permite entrar sin abrir el menú detallado.
-- **Portada de tipo redacción:** `newsroom-lead` coloca en escritorio **En portada** (3 noticias en filas horizontales, fotografías pequeñas a la izquierda y titulares) junto a **Últimas publicaciones** (8 titulares tipo teletipo). En tablet/móvil se convierte en una sola columna o dos columnas de titulares, sin ventanas o copys promocionales.
-- **Categorías por carpeta:** matriz de 3 columnas en escritorio, 2 en tablet y 1 en móvil. Contraste por contenido, no barras coloreadas.
-- **RSS intacto:** quedan funcionales las noticias, búsqueda, fuentes, 6 carpetas, acciones de marcar leída, guardar, menús contextuales, resumen, filtros, vista lista, columnas y configuración.
-- **Apariencia:** se conserva Ink & Paper V10, solo como capa visual. El cambio de identidad se valida por estructura del DOM, coordenadas de las columnas, orientación de tarjetas y menú oculto por defecto, además de colores.
-- **Preferencia de ancho de menú:** disponible dentro de Configuración en escritorio; el menú ya no ocupa permanentemente parte de la portada.
+- **Portada:** cuadrícula exterior 8/4: a la izquierda, un Bento de 12 columnas con **noticia principal 7 columnas y 2 filas**, y dos noticias secundarias de 5 columnas y una fila cada una; a la derecha, los titulares recientes en módulo compacto. Las fotografías de fuentes RSS conservan prioridad.
+- **Descubrimiento:** segundo Bento 8/4: carpetas con anchos 7/5 alternados y columna lateral para radar y tendencias. Sin bloques decorativos ni encabezados publicitarios.
+- **Jerarquía real:** noticia principal más grande; secundarios reducidos; últimas publicaciones como hilo de titulares; radar accesible sin competir con la portada.
+- **Responsive:** en pantallas intermedias las áreas se apilan; en móvil, la noticia principal pasa a ancho completo y las secundarias muestran miniatura junto al texto. Las carpetas pasan a 2/1 columnas.
+- **Navegación:** franja de categorías horizontal global; catálogo de fuentes/carpeta accesible desde el menú bajo demanda en cualquier pantalla, con Escape y control de foco. No restaurar sidebar fijo sin requerimiento del usuario.
+- **Aspecto:** fondo hueso, papel blanco, bordes finos y acentos cromáticos solo donde comunican información; no bordes coloreados superiores ni sombras de tarjeta. La geometría Bento (7/5 y 8/4) aporta jerarquía.
+- **Integridad:** conservar 6 carpetas y sus fuentes, filtros, vista lista, guardadas, marcar leída, resúmenes, contraste por categoría en metadatos y menús contextuales.
 
-Prohibido volver a introducir un sidebar fijo y una cuadrícula homogénea de tarjetas como única estructura de Inicio en una revisión que se anuncie como rediseño.
+Las pruebas Playwright deben comprobar columnas, spans, alturas, disposición móvil, barra de navegación y accesibilidad; no basta con inspeccionar colores CSS.
 
 ## V9.2 — Nada de encabezados promocionales en Inicio
 
