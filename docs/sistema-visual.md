@@ -1,4 +1,4 @@
-# RadarRRS — Sistema editorial V7 · Neutro
+# RadarRRS — Sistema editorial V8 · Ligero
 
 ## Objetivo de producto
 RadarRRS es un **portal público de noticias** y un lector de fuentes RSS, no un panel técnico. Deben verse primero las noticias. Las herramientas avanzadas se muestran a demanda.
@@ -10,21 +10,20 @@ RadarRRS es un **portal público de noticias** y un lector de fuentes RSS, no un
 3. Más opciones: antigüedad, guardar búsqueda y marcar noticias visibles como leídas. El menú se expande **en flujo**, no flotando sobre los resultados.
 4. Configuración > Apariencia: tema, tamaño de letra, imágenes y resúmenes como opciones principales. Columnas, espaciado, formato, panel lateral e inicio decorativo se encuentran en un bloque plegable.
 
-## Sistema V7 — Editorial neutro de bajo cansancio visual
+## Sistema V8 — Luminoso, coral y lavanda
 
-Se elimina la identidad de bloques azul noche y cian de V6. La interfaz debe producir contraste con la **tipografía, tamaños, espacios y fotografías**, no con fondos fuertes.
+La paleta verde/petróleo de V7 ha sido retirada. Tampoco se vuelve a un único azul dominante.
 
-- **Paleta clara**: fondo `#f7f7f5`, superficies `#fff`, texto principal `#1f2424`, secundarios `#646d6b`, líneas `#e1e5e1`.
-- **Acento único y moderado**: petróleo `#1f5e5b`, reservado para enlaces, controles activos, navegación seleccionada y estados de foco.
-- **Oscuro accesible**: fondo `#181c1a`, superficie `#242a27`, texto `#f0f2ef`, acento `#87ccba`.
-- **Navegación**: superficie gris humo claro, sin bloque de color; elemento activo blanco, borde fino y línea lateral petróleo.
-- **Cabecera**: blanca, con buscador suave y controles secundarios discretos.
-- **Portada**: encabezado sin color de fondo ni gradiente; título editorial de tinta oscura y divisor fuerte.
-- **Tarjetas**: superficie blanca, sombra fina, fotografía protagonista y título editorial legible. Las leídas y no leídas se distinguen sin recurrir a grandes masas cromáticas.
-- **Contraste visual**: cambios de peso, alineación y densidad; no repetir el color de acento en cada contenedor.
-- **Móvil**: sidebar tipo cajón, una columna y controles avanzados plegados. Se conservan carpeta, búsqueda, fecha, vista lista, lectura y preferencias.
+- **Base clara**: fondo `#fbfafc`, tarjetas `#ffffff`, texto `#282631`, líneas `#e8e5ed`.
+- **Coral suave** `#a7465d`: acciones primarias, elementos activos y foco. Evitar usarlo como fondo de secciones.
+- **Lavanda** `#7163a5`: etiquetas informativas, categoría de noticias y señales editoriales secundarias. No duplicar el color de acciones.
+- **Modo oscuro**: fondo `#1c1a23`, tarjetas `#292630`, coral `#eca0af`, lavanda `#c5b9f4`.
+- **Navegación y cabecera**: neutras y aireadas, sin grandes franjas de color ni bloques reiterativos.
+- **Portada**: sólo masthead editorial, noticias y secciones de cobertura; **no contiene “Empieza con Radar RSS”**.
+- **Ayuda de uso**: las tres herramientas “Personalizar temas”, “Combinar filtros” y “Comparar titulares” se agrupan en **Configuración → Lectura y filtros → Herramientas de lectura**. No presentar un bloque de bienvenida en Inicio.
+- **Tarjetas**: imágenes auténticas, sombras suaves y jerarquía tipográfica; resúmenes y controles siguen disponibles.
 
-No restaurar la banda azul saturada, ni cambiar de nuevo toda la interfaz a un único color llamativo. Los acentos deben permanecer localizados.
+Regla de mantenimiento: evitar volver a colorear todos los componentes con un mismo acento. El contraste debe proceder mayormente de la fotografía, la tipografía y la composición.
 
 ## Reglas visuales
 
@@ -49,7 +48,7 @@ El proyecto tiene CSS modular. **No fusionar todos los archivos en uno**: los m�
 | `radar-hybrid.css` | Identidad de RadarRRS, barra lateral, cabecera y adaptaciones generales. |
 | `ux.css` | Utilidades de interacción y navegación. No definir tamaños especiales de tarjetas de portada. |
 | `features.css` | Radar informativo, tendencias, historial y herramientas específicas. |
-| `v13.css` | **Definición final** de tarjetas uniformes, identidad visual V7 neutra, controles avanzados y portada responsive. |
+| `v13.css` | **Definición final** de tarjetas uniformes, identidad visual V8 coral/lavanda, controles avanzados y portada responsive. |
 
 Antes de añadir un selector, buscarlo en las hojas cargadas **después** del módulo actual. Modificar su regla canónica, en vez de crear más reglas al final de otro archivo. Evitar `!important` salvo una corrección de compatibilidad justificada.
 
@@ -58,7 +57,7 @@ Antes de añadir un selector, buscarlo en las hojas cargadas **después** del m�
 Para publicar cualquier cambio visual:
 - Ejecutar pruebas Python y JavaScript.
 - Ejecutar `browser_tests/responsive_smoke.py` en Chromium, Firefox y WebKit, con anchos 320, 375, 390, 430, 768, 1024 y 1440 px.
-- Verificar que Inicio muestra **En portada antes que el radar**, masthead neutro, sidebar gris claro y tarjetas de alturas uniformes por fila.
+- Verificar que Inicio muestra **En portada antes que el radar**, masthead neutro, sidebar claro y tarjetas de alturas uniformes por fila.
 - Confirmar que `Más opciones` abre y cierra por ratón, teclado y Escape; que fecha, guardar búsqueda y marcar visibles funcionan y no tapan el listado.
 - Confirmar la reversibilidad Lista ↔ Tarjetas también en móvil.
 - Verificar Apariencia básica y su bloque avanzado, sin pérdida de preferencias.

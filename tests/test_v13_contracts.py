@@ -26,11 +26,16 @@ class V13Contracts(unittest.TestCase):
         self.assertIn('id="dashboardSavedAll"',self.html)
         self.assertIn("target===\'all\'?\'#noticias\'",self.app)
 
-    def test_onboarding_is_local_accessible_and_reopenable(self):
-        for token in ["radar-v13-guide-dismissed","v13GuideTitle",
-                      "v13DismissGuide","v13OpenGuide","aria-labelledby"]:
+    def test_onboarding_actions_are_only_in_reading_settings(self):
+        for token in ["v13GuideTitle","aria-labelledby",
+                      "settings-reading-help","settings-reading-action",
+                      "Personalizar temas","Combinar filtros","Comparar titulares"]:
             self.assertIn(token,self.js)
-        self.assertIn("localStorage.setItem",self.js)
+        self.assertIn("'[data-settings-pane=\"reading\"]'",self.js)
+        self.assertNotIn("head.after(panel)",self.js)
+        self.assertNotIn("v13DismissGuide",self.js)
+        self.assertNotIn("v13OpenGuide",self.js)
+        self.assertNotIn("Empieza con Radar RSS",self.js)
         self.assertNotIn("fetch(",self.js)
         self.assertNotIn("sendBeacon",self.js)
 
@@ -54,10 +59,10 @@ class V13Contracts(unittest.TestCase):
         self.assertIn('height:76px;max-height:76px',css)
         self.assertIn('body.radar-hybrid.compact #articleGrid',css)
         self.assertNotIn('.dashboard-feature .article-card{grid-auto-rows',css)
-        self.assertIn('v13.css?v=3.0.0',self.html)
+        self.assertIn('v13.css?v=4.0.0',self.html)
         self.assertIn('Portada editorial V5.3',css)
         self.assertIn('grid-template-columns:repeat(3,minmax(0,1fr))',css)
-        self.assertIn("radar-rss-v19",self.sw)
+        self.assertIn("radar-rss-v20",self.sw)
 
     def test_card_read_action_is_visible_and_syncs_values(self):
         self.assertIn("article-action article-read-toggle",self.app)

@@ -1,31 +1,33 @@
-/* RadarRRS V7 — sistema editorial neutro, sin superficies saturadas.
-   El color petróleo identifica acciones y selección, no estructura ni fondos. */
+/* RadarRRS V8 — editorial luminoso con acentos coral y lavanda.
+   Las superficies permanecen neutras: el color sólo señala funciones y categorías. */
 body.radar-hybrid,
 body.radar-hybrid.light{
-  color-scheme:light;
-  --bg:#f7f7f5;--surface:#ffffff;--surface2:#f0f1ee;
-  --line:#e1e5e1;--text:#1f2424;--muted:#646d6b;--dim:#79807e;
-  --accent:#1f5e5b;--blue:#1f5e5b;--hover:#ecefea;
-  --card:#ffffff;--shadow:rgba(29,41,35,.065);
-  --paper:#ffffff;--ink:#1f2424;--charcoal:#1f2424;
-  --stone:#6c7471;--ash:#acb3ae;--mist:#e1e5e1;
-  --cloud:#f0f1ee;--signal:#1f5e5b;
-  --font-ui:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
-  --font-editorial:"Iowan Old Style",Charter,"Palatino Linotype",Georgia,serif;
-  background:var(--bg);color:var(--text);
-  font-family:var(--font-ui);font-size:14px;line-height:1.55;
-  font-feature-settings:"kern" on,"liga" on;
+ color-scheme:light;
+ --bg:#fbfafc;--surface:#ffffff;--surface2:#f5f3f8;
+ --line:#e8e5ed;--text:#282631;--muted:#676575;--dim:#817e8e;
+ --accent:#a7465d;--blue:#a7465d;--hover:#f5eef4;
+ --card:#ffffff;--shadow:rgba(48,37,61,.075);
+ --paper:#ffffff;--ink:#282631;--charcoal:#282631;
+ --stone:#737080;--ash:#bab5c4;--mist:#e8e5ed;
+ --cloud:#f5f3f8;--signal:#a7465d;
+ --accent-secondary:#7163a5;--accent-soft:#f2eff9;
+ --font-ui:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+ --font-editorial:"Iowan Old Style",Charter,"Palatino Linotype",Georgia,serif;
+ background:var(--bg);color:var(--text);
+ font-family:var(--font-ui);font-size:14px;line-height:1.55;
+ font-feature-settings:"kern" on,"liga" on;
 }
 body.radar-hybrid:not(.light){
-  color-scheme:dark;
-  --bg:#181c1a;--surface:#242a27;--surface2:#2e3631;
-  --line:#414b44;--text:#f0f2ef;--muted:#b9c5be;--dim:#9aaca0;
-  --accent:#87ccba;--blue:#87ccba;--hover:#343f38;
-  --card:#242a27;--shadow:rgba(0,0,0,.19);
-  --paper:#242a27;--ink:#f0f2ef;--charcoal:#f0f2ef;
-  --stone:#b9c5be;--ash:#738679;--mist:#414b44;
-  --cloud:#2e3631;--signal:#87ccba;
-  background:var(--bg);color:var(--text);
+ color-scheme:dark;
+ --bg:#1c1a23;--surface:#292630;--surface2:#332f3b;
+ --line:#47414e;--text:#f2eef4;--muted:#c7c0cf;--dim:#aaa2b3;
+ --accent:#eca0af;--blue:#eca0af;--hover:#3c3341;
+ --card:#292630;--shadow:rgba(0,0,0,.22);
+ --paper:#292630;--ink:#f2eef4;--charcoal:#f2eef4;
+ --stone:#c7c0cf;--ash:#82788d;--mist:#47414e;
+ --cloud:#332f3b;--signal:#eca0af;
+ --accent-secondary:#c5b9f4;--accent-soft:#3b3549;
+ background:var(--bg);color:var(--text);
 }
 body.radar-hybrid .page{background:var(--bg)}
 body.radar-hybrid .app-shell{grid-template-columns:228px minmax(0,1fr)}

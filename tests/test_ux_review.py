@@ -73,15 +73,17 @@ class UxReviewTests(unittest.TestCase):
         self.assertIn("THEME_EXPLICIT_KEY='radar-theme-explicit'", self.app)
         self.assertIn("return 'system';", js_function(self.app, 'initialTheme'))
 
-    def test_neutral_editorial_brand_colors(self):
+    def test_fresh_coral_lilac_editorial_brand(self):
         hybrid = (ROOT / 'web/radar-hybrid.css').read_text(encoding='utf-8')
-        self.assertNotIn('--accent:#1167b7', hybrid)
-        self.assertIn('--accent:#1f5e5b', hybrid)
-        self.assertIn('--bg:#f7f7f5', hybrid)
-        self.assertIn('--bg:#181c1a', hybrid)
+        self.assertNotIn('--accent:#1f5e5b', hybrid)
+        self.assertIn('--accent:#a7465d', hybrid)
+        self.assertIn('--accent-secondary:#7163a5', hybrid)
+        self.assertIn('--bg:#fbfafc', hybrid)
+        self.assertIn('--bg:#1c1a23', hybrid)
         newsroom = (ROOT / 'web/v13.css').read_text(encoding='utf-8')
         self.assertIn('background:var(--surface2);color:var(--text)', newsroom)
         self.assertIn('border-bottom:2px solid var(--text)', newsroom)
+        self.assertIn('.settings-reading-help',newsroom)
         self.assertNotIn('background:#102641', newsroom)
 
     def test_section_titles_have_clear_hierarchy(self):
