@@ -90,7 +90,8 @@ class UxReviewTests(unittest.TestCase):
         self.assertNotIn('border-left:3px solid var(--topic-ink)',newsroom)
         self.assertNotIn('.dashboard-panel-head h2::before{',newsroom)
         self.assertNotIn('background:#102641', newsroom)
-        self.assertIn('border-bottom:2px solid var(--text)', newsroom)
+        self.assertNotIn('.dashboard-head{', newsroom)
+        self.assertNotIn('border-bottom:2px solid var(--text)', newsroom)
         app = (ROOT / 'web/app.js').read_text(encoding='utf-8')
         self.assertIn('button.dataset.topic=String(topic+1)',app)
         self.assertIn('el.dataset.topic=String(topic+1)',app)
@@ -107,7 +108,7 @@ class UxReviewTests(unittest.TestCase):
         self.assertIn('body.radar-hybrid .section-heading h1{', features)
         self.assertIn('@media(max-width:720px)', features)
         self.assertIn('body.radar-hybrid .dashboard-panel-head h2{font-size:22px}', features)
-        self.assertIn('./features.css?v=1.2.1', self.html)
+        self.assertIn('./features.css?v=1.2.2', self.html)
         for title in ('Lo más cubierto', 'Temas en alza', 'En portada', 'Últimas publicaciones', 'Por carpeta'):
             self.assertRegex(self.html, fr'<h2[^>]*>{re.escape(title)}</h2>')
 

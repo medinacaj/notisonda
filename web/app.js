@@ -28,7 +28,6 @@ const state = {
   pageSize: [12,24,36,60].includes(Number(storeGet('radar-page-size'))) ? Number(storeGet('radar-page-size')) : 36,
   maxAge: [0,1,7,30,90].includes(Number(storeGet('radar-max-age'))) ? Number(storeGet('radar-max-age')) : 0,
   fontSize: storeGet('radar-font') === 'large' ? 'large' : 'normal',
-  showHero: storeGet('radar-show-hero') === 'true',
   showImages: storeGet('radar-show-images') !== 'false',
   showSummaries: storeGet('radar-show-summaries') !== 'false',
   hideRead: storeGet('radar-hide-read') === 'true',
@@ -297,7 +296,6 @@ function initColumnsMenu(){
 function applyDisplaySettings() {
   document.body.classList.toggle('compact',state.density==='compact');
   document.body.classList.toggle('font-large',state.fontSize==='large');
-  document.body.classList.toggle('show-hero',state.showHero);
   document.body.classList.toggle('hide-images',!state.showImages);
   document.body.classList.toggle('hide-summaries',!state.showSummaries);
   document.body.dataset.columns=state.columns;
@@ -371,7 +369,6 @@ function syncSettings() {
   $('settingPageSize').value=String(state.pageSize);
   $('settingAge').value=String(state.maxAge);
   $('settingFont').value=state.fontSize;
-  $('settingHero').checked=state.showHero;
   $('settingImages').checked=state.showImages;
   $('settingSummaries').checked=state.showSummaries;
   $('settingSort').value=state.sort;
@@ -429,7 +426,7 @@ function initSettingsHandlers(){
   $('settingFont').addEventListener('change',e=>{state.fontSize=e.target.value;savePref('font',state.fontSize);applyDisplaySettings();});
   $('settingPageSize').addEventListener('change',e=>{state.pageSize=Number(e.target.value);savePref('page-size',state.pageSize);state.page=1;render();});
   $('settingAge').addEventListener('change',e=>{state.maxAge=Number(e.target.value);savePref('max-age',state.maxAge);state.page=1;render();});
-  for(const [id,key,field] of [['settingHero','show-hero','showHero'],['settingImages','show-images','showImages'],['settingSummaries','show-summaries','showSummaries']]){
+  for(const [id,key,field] of [['settingImages','show-images','showImages'],['settingSummaries','show-summaries','showSummaries']]){
     $(id).addEventListener('change',e=>{state[field]=e.target.checked;savePref(key,state[field]);applyDisplaySettings();});
   }
   $('settingHideRead').addEventListener('change',e=>{state.hideRead=e.target.checked;savePref('hide-read',state.hideRead);state.page=1;render();});
@@ -449,7 +446,7 @@ function initSettingsHandlers(){
     }lines.push('</body></opml>');downloadText('radar-rss-mis-fuentes.opml',lines.join('\n'),'application/xml;charset=utf-8');
   });
   $('exportData').addEventListener('click',()=>{
-    const data={format:'radar-rss-settings-v2',exported_at:new Date().toISOString(),preferences:{theme:state.theme,layout:state.layout,columns:state.columns,density:state.density,pageSize:state.pageSize,maxAge:state.maxAge,fontSize:state.fontSize,showHero:state.showHero,showImages:state.showImages,showSummaries:state.showSummaries,hideRead:state.hideRead,newTab:state.newTab,sort:state.sort,startMode:state.startMode,mutedKeywords:state.mutedKeywords},hiddenSources:[...state.hiddenSources],saved:[...state.saved],read:[...state.read]};
+    const data={format:'radar-rss-settings-v2',exported_at:new Date().toISOString(),preferences:{theme:state.theme,layout:state.layout,columns:state.columns,density:state.density,pageSize:state.pageSize,maxAge:state.maxAge,fontSize:state.fontSize,showImages:state.showImages,showSummaries:state.showSummaries,hideRead:state.hideRead,newTab:state.newTab,sort:state.sort,startMode:state.startMode,mutedKeywords:state.mutedKeywords},hiddenSources:[...state.hiddenSources],saved:[...state.saved],read:[...state.read]};
     downloadText('radar-rss-preferencias.json',JSON.stringify(data,null,2),'application/json;charset=utf-8');
     $('dataNotice').textContent='Archivo de respaldo generado.';
   });
@@ -461,13 +458,13 @@ function initSettingsHandlers(){
       const p=data.preferences,select=(key,allowed,def)=>allowed.includes(p[key])?p[key]:def;
       state.theme=select('theme',['system','light','dark'],'system');state.layout=select('layout',['cards','list'],'cards');state.columns=select('columns',['auto','2','3','4','5','6'],'auto');state.density=select('density',['comfortable','compact'],'comfortable');
       state.pageSize=select('pageSize',[12,24,36,60],36);state.maxAge=select('maxAge',[0,1,7,30,90],0);state.fontSize=select('fontSize',['normal','large'],'normal');
-      for(const field of ['showHero','showImages','showSummaries','hideRead','newTab'])if(typeof p[field]==='boolean')state[field]=p[field];
+      for(const field of ['showImages','showSummaries','hideRead','newTab'])if(typeof p[field]==='boolean')state[field]=p[field];
       state.sort=select('sort',['newest','oldest','source'],'newest');state.startMode=select('startMode',['all','unread','saved'],'all');state.mutedKeywords=typeof p.mutedKeywords==='string'?p.mutedKeywords.slice(0,600):'';
       const valid=new Set(state.sources.map(x=>x.id));
       for(const [k,key,onlyValid] of [['hiddenSources','radar-hidden-sources',true],['saved','radar-saved',false],['read','radar-read',false]]){
         state[k]=new Set((Array.isArray(data[k])?data[k]:[]).filter(x=>typeof x==='string'&&x.length<150&&(!onlyValid||valid.has(x))).slice(-4000));persist(key,state[k]);
       }
-      for(const [key,value] of [['layout',state.layout],['columns',state.columns],['theme',state.theme],['density',state.density],['font',state.fontSize],['page-size',state.pageSize],['max-age',state.maxAge],['show-hero',state.showHero],['show-images',state.showImages],['show-summaries',state.showSummaries],['hide-read',state.hideRead],['new-tab',state.newTab],['sort',state.sort],['start-mode',state.startMode],['keywords',state.mutedKeywords]])savePref(key,value);
+      for(const [key,value] of [['layout',state.layout],['columns',state.columns],['theme',state.theme],['density',state.density],['font',state.fontSize],['page-size',state.pageSize],['max-age',state.maxAge],['show-images',state.showImages],['show-summaries',state.showSummaries],['hide-read',state.hideRead],['new-tab',state.newTab],['sort',state.sort],['start-mode',state.startMode],['keywords',state.mutedKeywords]])savePref(key,value);
       state.mode=state.startMode;state.page=1;setTheme(state.theme,true);applyDisplaySettings();refreshFeedUI();syncSettings();selectedTab('data');$('dataNotice').textContent='Preferencias y datos importados correctamente.';
     }catch{$('dataNotice').textContent='No se pudo importar. Utiliza un respaldo JSON generado por Radar RSS.';}
   });
@@ -477,7 +474,7 @@ function initSettingsHandlers(){
     if(!confirm('¿Restablecer las preferencias? Tus artículos leídos y guardados no se borrarán.'))return;
     for(const key of ['layout','columns','theme','density','font','page-size','max-age','show-hero','show-images','show-summaries','hide-read','new-tab','sort','start-mode','keywords','hidden-sources','sidebar-width','theme-explicit']){try{localStorage.removeItem('radar-'+key);}catch{}}
     state.theme='system';state.layout='cards';state.columns='auto';state.density='comfortable';state.fontSize='normal';state.pageSize=36;state.maxAge=0;
-    state.showHero=false;state.showImages=true;state.showSummaries=true;state.hideRead=false;state.newTab=true;state.sort='newest';state.startMode='all';state.mode='all';state.mutedKeywords='';state.hiddenSources.clear();state.page=1;
+    state.showImages=true;state.showSummaries=true;state.hideRead=false;state.newTab=true;state.sort='newest';state.startMode='all';state.mode='all';state.mutedKeywords='';state.hiddenSources.clear();state.page=1;
     setTheme('system');applyDisplaySettings();$('settingsSourceSearch').value='';refreshFeedUI();syncSettings();selectedTab('data');$('dataNotice').textContent='Preferencias restablecidas.';
     window.dispatchEvent(new Event('radar-sidebar-pref-sync'));
   });

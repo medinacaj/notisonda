@@ -279,10 +279,7 @@ body.radar-hybrid .thread-body{display:grid;gap:2px}
 /* ---------- Jerarquía visual de secciones ----------
    Las cabeceras usan sans serif de mayor peso; los titulares conservan
    su tratamiento editorial. Solo se usan colores de tema claro/oscuro. */
-body.radar-hybrid .dashboard-head h1{
-  font:700 clamp(30px,3vw,36px)/1.16 var(--font-editorial);
-  letter-spacing:-.028em;
-}
+
 body.radar-hybrid .dashboard-panel-head{
   flex-wrap:wrap;row-gap:6px;
   padding-bottom:12px;margin-bottom:17px;
@@ -319,7 +316,7 @@ body.radar-hybrid .since-visit h2{
   font:750 19px/1.3 var(--font-ui);color:var(--text);
 }
 @media(max-width:720px){
-  body.radar-hybrid .dashboard-head h1{font-size:29px}
+
   body.radar-hybrid .dashboard-panel-head h2{font-size:22px}
   body.radar-hybrid .dashboard-panel-head>span{
     flex-basis:100%;margin-inline-start:15px;text-align:start;

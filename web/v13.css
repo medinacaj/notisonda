@@ -1,6 +1,6 @@
 /* Radar RSS V1.3 — guía de inicio accesible, sin modales ni seguimiento. */
 body.radar-hybrid .v13-guide{display:grid;gap:12px;border-radius:15px;border:1px solid var(--line);padding:16px;background:var(--surface2);font-family:var(--font-ui);min-width:0}
-body.radar-hybrid .v13-guide[hidden],body.radar-hybrid .v13-reopen[hidden]{display:none}
+
 body.radar-hybrid .v13-guide h2{margin:0;font:750 19px/1.2 var(--font-ui);color:var(--text)}
 body.radar-hybrid .v13-guide-subtitle{margin:0;color:var(--muted);font:13px/1.45 var(--font-ui)}
 body.radar-hybrid .v13-guide-actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}
@@ -17,7 +17,7 @@ body.radar-hybrid .v13-guide button:focus-visible,body.radar-hybrid .v13-reopen:
  body.radar-hybrid .v13-guide{padding:13px;gap:10px}
  body.radar-hybrid .v13-guide-actions{grid-template-columns:minmax(0,1fr)}
  body.radar-hybrid .v13-guide-action{min-height:0;padding:10px 12px;gap:2px}
- body.radar-hybrid .v13-reopen{width:100%}
+ 
 }
 @media(prefers-reduced-motion:reduce){body.radar-hybrid .v13-guide *{transition:none!important}}
 
@@ -383,30 +383,9 @@ body.radar-hybrid .topbar-actions{gap:7px}
 
 /* Masthead de periódico: papel neutro, tipografía y una sola raya de acento. */
 body.radar-hybrid .main{
- max-width:1550px;padding:23px clamp(17px,2.8vw,42px) 39px;
+ max-width:1550px;padding:14px clamp(17px,2.8vw,42px) 33px;
 }
-body.radar-hybrid .dashboard-view{gap:19px}
-body.radar-hybrid .dashboard-head{
- position:relative;overflow:visible;min-width:0;
- background:transparent;color:var(--text);
- padding:11px 3px 17px;
- border:0;border-bottom:2px solid var(--text);border-radius:0;
- margin:0 0 2px;box-shadow:none
-}
-body.radar-hybrid .dashboard-head::after{display:none}
-body.radar-hybrid .dashboard-head h1{
- color:var(--text);
- font:700 clamp(29px,2.5vw,39px)/1.12 var(--font-editorial);
- letter-spacing:-.038em;margin:4px 0 0
-}
-body.radar-hybrid .dashboard-head .dashboard-kicker{
- color:var(--accent);font-weight:730;font-size:10px;letter-spacing:.13em
-}
-body.radar-hybrid .dashboard-head p{
- display:block;color:var(--muted);
- font:400 12px/1.5 var(--font-ui);
- margin:7px 0 0;max-width:60ch;
-}
+body.radar-hybrid .dashboard-view{gap:15px}
 body.radar-hybrid .v13-reopen{
  background:var(--surface);color:var(--muted);border-color:var(--line)
 }
@@ -434,7 +413,7 @@ body.radar-hybrid .dashboard-panel{
 }
 body.radar-hybrid .dashboard-panel-head{
  display:flex;align-items:baseline;justify-content:space-between;
- gap:8px;margin:0 0 11px;padding:0 0 10px;
+ gap:8px;margin:0 0 9px;padding:0 0 8px;
  border-bottom:1px solid var(--line);
 }
 body.radar-hybrid .dashboard-panel-head h2{
@@ -720,18 +699,13 @@ body.radar-hybrid.font-large .dashboard-feature .article-title{font-size:20px}
 @media(max-width:950px){
  body.radar-hybrid .app-shell{grid-template-columns:minmax(0,1fr)}
  body.radar-hybrid .sidebar{box-shadow:8px 0 36px rgba(8,27,51,.3)}
- body.radar-hybrid .main{padding:16px 17px 31px}
+ body.radar-hybrid .main{padding:12px 17px 29px}
  body.radar-hybrid .dashboard-recent{grid-template-columns:minmax(0,1fr)}
 }
 @media(max-width:720px){
  body.radar-hybrid .topbar{min-height:57px;padding:8px 13px;gap:8px}
- body.radar-hybrid .main{padding:13px 13px 26px}
- body.radar-hybrid .dashboard-view{gap:16px}
- body.radar-hybrid .dashboard-head{
-  padding:17px 18px;border-radius:13px;box-shadow:0 5px 15px var(--shadow);
- }
- body.radar-hybrid .dashboard-head h1{font-size:27px}
- body.radar-hybrid .dashboard-head p{font-size:11px;line-height:1.4}
+ body.radar-hybrid .main{padding:10px 13px 24px}
+ body.radar-hybrid .dashboard-view{gap:13px}
  body.radar-hybrid .dashboard-panel{padding:0}
  body.radar-hybrid .dashboard-panel-head{margin-bottom:9px}
  body.radar-hybrid .dashboard-panel-head>span{display:none}
@@ -777,18 +751,12 @@ body.radar-hybrid.font-large .dashboard-feature .article-title{font-size:20px}
 
 /* V8 · Contraste editorial mediante papel, texto y fotografías.
    Lavanda en metadatos informativos; coral sólo en acciones y selección. */
-body.radar-hybrid .dashboard-head .dashboard-kicker{
- color:var(--accent-secondary);
-}
 body.radar-hybrid .section-heading .section-eyebrow{
  color:var(--accent-secondary);
 }
 body.radar-hybrid .dashboard-feature .article-card .article-category,
 body.radar-hybrid #articleGrid .article-card .article-category{
  color:var(--accent-secondary);
-}
-body.radar-hybrid .dashboard-head{
- border-bottom:2px solid var(--text);
 }
 body.radar-hybrid .sidebar,
 body.radar-hybrid.light .sidebar{
@@ -917,9 +885,6 @@ body.radar-hybrid #articleGrid .article-card[data-topic] .article-category{
 }
 
 /* Jerarquía editorial mediante tipografía; sin puntos decorativos en los títulos. */
-body.radar-hybrid .dashboard-head .dashboard-kicker{
- color:var(--accent-secondary);
-}
 body.radar-hybrid .article-card .article-title,
 body.radar-hybrid .dashboard-panel-head h2{color:var(--text)}
 

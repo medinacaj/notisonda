@@ -29,16 +29,16 @@
   <link rel="stylesheet" href="./styles.css?v=5.2.0">
   <link rel="stylesheet" href="./editorial.css?v=5.0.1">
   <link rel="stylesheet" href="./hashnode-preview.css?v=1.0.0">
-  <link rel="stylesheet" href="./radar-hybrid.css?v=5.0.0">
+  <link rel="stylesheet" href="./radar-hybrid.css?v=5.1.0">
   <link rel="stylesheet" href="./library.css?v=1.7.2">
   <link rel="stylesheet" href="./sidebar-layout.css?v=1.0.2">
   <link rel="stylesheet" href="./modal-layout.css?v=1.0.0">
   <link rel="stylesheet" href="./news-effects.css?v=1.0.0">
   <link rel="stylesheet" href="./sidebar-health.css?v=1.0.0">
   <link rel="stylesheet" href="./ux.css?v=1.0.2">
-  <link rel="stylesheet" href="./features.css?v=1.2.1">
+  <link rel="stylesheet" href="./features.css?v=1.2.2">
   <link rel="stylesheet" href="./v12.css?v=1.2.3">
-  <link rel="stylesheet" href="./v13.css?v=5.1.0">
+  <link rel="stylesheet" href="./v13.css?v=5.2.0">
   <title>Radar RSS — Actualidad en un solo lugar</title>
 </head>
 <body class="light radar-hybrid">
@@ -107,29 +107,19 @@
             <button id="statusDismiss" class="status-dismiss" type="button" title="Cerrar aviso" aria-label="Cerrar aviso de estado de las fuentes"><span data-icon="x" class="ui-icon-slot" aria-hidden="true"></span></button>
           </span>
         </div>
-        <section class="hero" aria-labelledby="heroTitle">
-          <div class="hero-text"><div class="eyebrow"><span class="eyebrow-line"></span> TU VENTANA A LA ACTUALIDAD</div>
-            <h1 id="heroTitle">Toda la información.<br><span>Una sola perspectiva.</span></h1>
-            <p>Fuentes seleccionadas, secciones personalizables y actualizaciones automáticas. Las noticias, organizadas a tu manera.</p>
-          </div>
-          <div class="hero-art" aria-hidden="true"><span class="hero-ring ring-a"></span><span class="hero-ring ring-b"></span><span class="hero-ring ring-c"></span><span class="hero-center">RSS</span></div>
-        </section>
-
         <section id="dashboardView" class="dashboard-view" aria-labelledby="dashboardTitle" hidden>
-          <div class="dashboard-head">
-            <div><span class="dashboard-kicker">PORTADA · RADAR RSS</span><h1 id="dashboardTitle">Noticias para estar al día.</h1><p>Una lectura clara de la actualidad desde medios diferentes.</p></div>
-          </div>
+          <h1 id="dashboardTitle" class="sr-only">Portada de Radar RSS</h1>
+          <section class="dashboard-panel dashboard-feature-panel" aria-label="Noticias recientes de diferentes categorías">
+            <div class="dashboard-panel-head"><h2>En portada</h2></div>
+            <div class="dashboard-feature" id="dashboardFeature"></div>
+          </section>
           <section class="since-visit" id="sinceVisit" aria-labelledby="sinceVisitTitle" hidden>
             <div class="since-visit-text"><span class="since-visit-icon" aria-hidden="true" data-icon="sparkle"></span><div><h2 id="sinceVisitTitle">Mientras no estabas</h2><p id="sinceVisitText"></p></div></div>
             <div class="since-visit-folders" id="sinceVisitFolders"></div>
             <div class="since-visit-actions"><button type="button" id="sinceVisitShow" class="since-visit-primary">Ver solo las nuevas</button><button type="button" id="sinceVisitDismiss" class="since-visit-dismiss" aria-label="Ocultar aviso de novedades"><span data-icon="x" class="ui-icon-slot" aria-hidden="true"></span></button></div>
           </section>
-          <section class="dashboard-panel dashboard-feature-panel" aria-label="Noticias recientes de diferentes categorías">
-            <div class="dashboard-panel-head"><h2>En portada</h2><span>Selección cronológica de distintas categorías</span></div>
-            <div class="dashboard-feature" id="dashboardFeature"></div>
-          </section>
           <section class="dashboard-panel" aria-labelledby="dashboardRecentTitle">
-            <div class="dashboard-panel-head"><h2 id="dashboardRecentTitle">Últimas publicaciones</h2><span>De todas tus fuentes</span></div>
+            <div class="dashboard-panel-head"><h2 id="dashboardRecentTitle">Últimas publicaciones</h2></div>
             <div class="dashboard-recent" id="dashboardRecent"></div>
           </section>
           <section class="dashboard-panel dashboard-saved-panel" id="dashboardSavedPanel" hidden aria-label="Artículos guardados">
@@ -137,11 +127,11 @@
             <div id="dashboardSavedList" class="dashboard-saved-list"></div>
           </section>
           <section class="dashboard-panel" aria-labelledby="dashboardFoldersTitle">
-            <div class="dashboard-panel-head"><h2 id="dashboardFoldersTitle">Por carpeta</h2><span>Lo más reciente de cada tema</span></div>
+            <div class="dashboard-panel-head"><h2 id="dashboardFoldersTitle">Por carpeta</h2></div>
             <div class="dashboard-folders" id="dashboardFolders"></div>
           </section>
         <section class="dashboard-panel radar-panel" aria-labelledby="radarTitle">
-            <div class="dashboard-panel-head"><h2 id="radarTitle">Lo más cubierto</h2><span>Historias publicadas por más medios en las últimas 24 horas</span></div>
+            <div class="dashboard-panel-head"><h2 id="radarTitle" title="Historias publicadas por más medios en las últimas 24 horas">Lo más cubierto</h2></div>
             <div class="radar-layout">
               <figure class="radar-figure" id="radarFigure">
                 <div class="radar-stage" id="radarStage"></div>
@@ -151,7 +141,7 @@
             </div>
           </section>
           <section class="dashboard-panel trends-panel" id="trendsPanel" aria-labelledby="trendsTitle" hidden>
-            <div class="dashboard-panel-head"><h2 id="trendsTitle">Temas en alza</h2><span id="trendsHint">Palabras que más crecen en los titulares frente a la última semana</span></div>
+            <div class="dashboard-panel-head"><h2 id="trendsTitle" title="Palabras que más crecen en los titulares frente a la última semana">Temas en alza</h2><span id="trendsHint" class="sr-only">Palabras que más crecen en los titulares frente a la última semana</span></div>
             <div class="trend-chips" id="trendChips"></div>
             <div class="followed-row" id="followedRow" hidden><span class="followed-label"><span data-icon="bell" class="ui-icon-slot" aria-hidden="true"></span> Temas que sigo</span><div class="trend-chips" id="followedChips"></div></div>
           </section>
@@ -319,7 +309,6 @@
               <button type="button" id="resetSidebarWidth" class="settings-secondary">Restablecer ancho</button>
             </div>
           </div>
-          <label class="setting-toggle"><span><b>Mostrar presentación de inicio</b><small>Activa el encabezado grande. Por defecto, Radar RSS prioriza las noticias.</small></span><input id="settingHero" type="checkbox"></label>
             </div>
           </details>
         </section>
@@ -368,7 +357,7 @@
   </div>
   <button id="backTop" class="back-to-top" type="button" aria-label="Volver arriba" title="Volver arriba" hidden><span data-icon="arrow-up" class="ui-icon-slot" aria-hidden="true"></span></button>
   <div id="actionToast" class="action-toast" role="status" aria-live="polite" aria-atomic="true" hidden></div>
-  <script src="./app.js?v=8.3.0" defer></script>
+  <script src="./app.js?v=8.3.1" defer></script>
   <script src="./library.js?v=1.7.4" defer></script>
   <script src="./sidebar-layout.js?v=1.0.0" defer></script>
   <script src="./news-effects.js?v=1.0.0" defer></script>

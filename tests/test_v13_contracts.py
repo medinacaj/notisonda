@@ -26,6 +26,19 @@ class V13Contracts(unittest.TestCase):
         self.assertIn('id="dashboardSavedAll"',self.html)
         self.assertIn("target===\'all\'?\'#noticias\'",self.app)
 
+    def test_home_starts_with_news_not_promotional_copy(self):
+        self.assertIn('<h1 id="dashboardTitle" class="sr-only">Portada de Radar RSS</h1>',self.html)
+        self.assertNotIn('Noticias para estar al día.',self.html)
+        self.assertNotIn('Una lectura clara de la actualidad',self.html)
+        self.assertNotIn('class="dashboard-head"',self.html)
+        self.assertNotIn('class="hero"',self.html)
+        self.assertNotIn('id="settingHero"',self.html)
+        self.assertNotIn('state.showHero',self.app)
+        self.assertLess(self.html.index('id="dashboardFeature"'),self.html.index('id="sinceVisit"'))
+        self.assertIn('id="dashboardRecentTitle"',self.html)
+        self.assertIn('id="dashboardFoldersTitle"',self.html)
+        self.assertIn('id="dashboardSavedAll"',self.html)
+
     def test_onboarding_actions_are_only_in_reading_settings(self):
         for token in ["v13GuideTitle","aria-labelledby",
                       "settings-reading-help","settings-reading-action",
@@ -59,10 +72,10 @@ class V13Contracts(unittest.TestCase):
         self.assertIn('height:76px;max-height:76px',css)
         self.assertIn('body.radar-hybrid.compact #articleGrid',css)
         self.assertNotIn('.dashboard-feature .article-card{grid-auto-rows',css)
-        self.assertIn('v13.css?v=5.1.0',self.html)
+        self.assertIn('v13.css?v=5.2.0',self.html)
         self.assertIn('Portada editorial V5.3',css)
         self.assertIn('grid-template-columns:repeat(3,minmax(0,1fr))',css)
-        self.assertIn("radar-rss-v22",self.sw)
+        self.assertIn("radar-rss-v23",self.sw)
 
     def test_card_read_action_is_visible_and_syncs_values(self):
         self.assertIn("article-action article-read-toggle",self.app)

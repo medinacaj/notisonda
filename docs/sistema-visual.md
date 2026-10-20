@@ -1,14 +1,24 @@
-# RadarRRS — Sistema editorial V9 · Multicolor funcional
+# RadarRRS — Sistema editorial V9.2 · Inicio centrado en noticias
 
 ## Objetivo de producto
 RadarRRS es un **portal público de noticias** y un lector de fuentes RSS, no un panel técnico. Deben verse primero las noticias. Las herramientas avanzadas se muestran a demanda.
 
 ## Jerarquía fija
 
-1. Inicio: encabezado breve, noticias **En portada**, **Últimas publicaciones**, guardadas si las hay, las seis carpetas OPML y luego el radar y las tendencias como análisis secundario.
+1. Inicio: **En portada**, seguido de las novedades funcionales (si existen), **Últimas publicaciones**, guardadas si las hay, las seis carpetas OPML y finalmente radar/tendencias. El primer bloque visible siempre debe ser contenido periodístico.
 2. Listado: título, pestañas Todas / Sin leer / Guardadas, filtro por fuente, vista y **Más opciones**. El buscador permanece en la cabecera.
 3. Más opciones: antigüedad, guardar búsqueda y marcar noticias visibles como leídas. El menú se expande **en flujo**, no flotando sobre los resultados.
-4. Configuración > Apariencia: tema, tamaño de letra, imágenes y resúmenes como opciones principales. Columnas, espaciado, formato, panel lateral e inicio decorativo se encuentran en un bloque plegable.
+4. Configuración > Apariencia: tema, tamaño de letra, imágenes y resúmenes como opciones principales. Columnas, espaciado, formato y panel lateral se mantienen en opciones avanzadas. No incluir controles que solo activan presentaciones promocionales.
+
+## V9.2 — Nada de encabezados promocionales en Inicio
+
+- Eliminar el masthead “Noticias para estar al día”, su subtítulo y su sello.
+- Eliminar el hero antiguo y el ajuste “Mostrar presentación de inicio” (ya estaba inoperante).
+- Conservar el H1 de Inicio **solo para accesibilidad**; la navegación no debe duplicarlo.
+- Empezar por las tarjetas **En portada**, sin espacio reservado para títulos de marketing.
+- Reubicar “Mientras no estabas” después de la primera selección de noticias. Es una función útil, no un obstáculo previo a la lectura.
+- Eliminar frases ornamentales junto a títulos autoexplicativos. Mantener aclaraciones mediante `title` o texto accesible si proporcionan una definición verificable.
+- Priorizar búsqueda, filtros, noticias y enlaces funcionales. Evitar estadísticas, paneles y botones repetidos.
 
 ## Sistema V9 — Contraste editorial por función, no monocromía
 

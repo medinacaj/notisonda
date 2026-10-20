@@ -240,12 +240,27 @@ def main():
                         visual=page.evaluate("""() => ({
                           sidebar:getComputedStyle(document.getElementById('appSidebar')).backgroundColor,
                           lightBackground:getComputedStyle(document.body).getPropertyValue('--bg').trim(),
-                          masthead:getComputedStyle(document.querySelector('.dashboard-head')).backgroundImage,
                           brand:getComputedStyle(document.querySelector('.brand-mark')).backgroundColor
                         })""")
                         assert visual["sidebar"] == "rgb(240, 242, 246)", visual
                         assert visual["brand"] == "rgb(173, 75, 88)", visual
-                        assert visual["masthead"] == "none", visual
+                        # La portada empieza directamente con noticias; no contiene
+                        # titular promocional, hero oculto ni encabezados redundantes.
+                        assert page.locator("#dashboardView .dashboard-head").count() == 0
+                        assert page.locator(".hero").count() == 0
+                        assert page.locator("#settingHero").count() == 0
+                        assert page.locator("#dashboardTitle").text_content().strip() == "Portada de Radar RSS"
+                        firstNewsOffset=page.evaluate("""() => {
+                          const dashboard=document.getElementById('dashboardView').getBoundingClientRect();
+                          const news=document.querySelector('.dashboard-feature-panel').getBoundingClientRect();
+                          return Math.round(news.top-dashboard.top);
+                        }""")
+                        assert 0 <= firstNewsOffset <= 20, firstNewsOffset
+                        assert page.evaluate("""() => {
+                          const news=document.getElementById('dashboardFeature');
+                          const update=document.getElementById('sinceVisit');
+                          return !!(news.compareDocumentPosition(update) & Node.DOCUMENT_POSITION_FOLLOWING);
+                        }""")
                         # El modo nocturno debe usar su propia paleta sin afectar el DOM.
                         page.evaluate("document.body.classList.remove('light')")
                         assert page.evaluate(
@@ -388,7 +403,7 @@ def main():
 
                         # Evitar el CTA duplicado de Inicio, sin retirar acciones
                         # distintas como Ver mis guardadas o la navegación responsive.
-                        assert page.locator("#dashboardView .dashboard-head .dashboard-read-all").count() == 0
+                        assert page.locator("#dashboardView .dashboard-feature-panel .dashboard-read-all").count() == 0
                         assert page.locator("#dashboardSavedAll").count() == 1
                         if width <= 950:
                             page.locator("#menuToggle").click()
