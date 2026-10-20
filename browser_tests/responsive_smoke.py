@@ -268,6 +268,14 @@ def main():
                         page.locator('#folderMenu [data-folder-action="sources"]').click()
                         expect(page.locator("#settingsDialog[open]")).to_be_visible()
                         expect(page.locator('[data-settings-pane="sources"]')).to_be_visible()
+                        page.locator('[data-settings-tab="appearance"]').click()
+                        expect(page.locator("#settingsDesignAdvanced")).not_to_have_attribute("open", "")
+                        expect(page.locator("#settingFont")).to_be_visible()
+                        expect(page.locator("#settingSidebarWidth")).to_be_hidden()
+                        page.locator("#settingsDesignAdvanced summary").click()
+                        expect(page.locator("#settingSidebarWidth")).to_be_visible()
+                        page.locator("#settingsDesignAdvanced summary").click()
+
                         page.locator("#closeSettings").click()
                         expect(page.locator("#settingsDialog")).to_be_hidden()
                         if width <= 950:
@@ -290,6 +298,12 @@ def main():
                         check_visible_boxes(page, [".topbar", ".topbar-caption", ".topbar-actions",
                             "#dashboardView", ".dashboard-panel-head", "#dashboardFeature",
                             "#dashboardFeature .article-card"], f"portada {width}px")
+                        # Orden editorial: ver noticias antes del radar secundario.
+                        assert page.evaluate("""() => {
+                          const feature=document.getElementById('dashboardFeature');
+                          const radar=document.getElementById('radarFigure');
+                          return !!(feature.compareDocumentPosition(radar) & Node.DOCUMENT_POSITION_FOLLOWING);
+                        }""")
                         # Las carpetas de portada deben seguir visibles como cuadrícula.
                         if page.locator("#dashboardFolders .dashboard-folder").count():
                             assert page.locator("#dashboardFolders").evaluate(
@@ -474,6 +488,11 @@ def main():
                         page.evaluate("location.hash = '#region/latinoamerica'")
                         page.locator("#feedView:not([hidden])").wait_for()
                         assert page.locator("#feedHeading").inner_text() == "Latinoamérica"
+                        # Acciones secundarias plegadas sin perder los controles existentes.
+                        expect(page.locator("#feedAdvanced")).not_to_have_attribute("open", "")
+                        expect(page.locator("#v12Date")).to_be_hidden()
+                        page.locator("#feedAdvanced summary").click()
+                        expect(page.locator("#v12Date")).to_be_visible()
                         check_visible_boxes(page, [".filter-controls","#v12Date","#v12SaveSearch","#markAllVisible"],
                                             f"barra única de noticias {browser_name} {width}px")
                         # Sin fila auxiliar flotante bajo las pestañas.
