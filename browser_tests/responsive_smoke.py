@@ -260,8 +260,10 @@ def main():
                         }""")
                         assert editorial["bg"] == "rgb(244, 242, 240)", editorial
                         assert editorial["cardShadow"] == "none", editorial
-                        assert editorial["cardBorder"] == "1px", editorial
-                        assert editorial["cardRadius"] == "16px", editorial
+                        # V11: la portada es un teletipo editorial, sin contenedor
+                        # de tarjeta redondeada; los artículos del feed siguen en cards.
+                        assert editorial["cardBorder"] == "0px", editorial
+                        assert editorial["cardRadius"] == "0px", editorial
                         assert "Inter" in editorial["font"], editorial
                         assert editorial["accent"] == "#e4f222", editorial
                         # La portada empieza directamente con noticias; no contiene
