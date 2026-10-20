@@ -311,6 +311,11 @@ def main():
                         all_news.click()
                         page.locator("#feedView:not([hidden])").wait_for(timeout=10000)
                         page.locator("#articleGrid .article-card").first.wait_for(timeout=10000)
+                        # Los contadores usan la selección y filtros, no un número fijo.
+                        assert page.locator("#sourceSelect option").evaluate_all(
+                            "(opts) => opts.length > 1 && opts.slice(1).every(o => /\\(\\d+\\)$/.test(o.textContent.trim()))"
+                        )
+
                         # Validar imágenes RSS/OG sin alterar la sección de carpetas.
                         expect(page.locator("#articleGrid .article-card .cover img").first).to_have_js_property("naturalWidth", 400)
                         assert page.locator("#articleGrid .article-card.no-cover").count() > 0

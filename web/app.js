@@ -598,6 +598,32 @@ function fillSelect() {
   select.value = old && [...select.options].some(x => x.value === old) ? old : '';
   state.feed = select.value;
 }
+// Contadores contextuales del selector; excluyen únicamente el propio filtro fuente.
+// Se derivan de los artículos ya cargados, sin nuevas consultas a los medios.
+function updateSourceCounts(){
+  const select=$('sourceSelect');
+  if(!select||select.options.length<2)return;
+  const selected=state.feed;
+  let eligible;
+  try{
+    state.feed='';
+    eligible=applyFilters();
+  }finally{
+    state.feed=selected;
+  }
+  const counts=new Map();
+  for(const item of eligible){
+    for(const id of new Set(Array.isArray(item.source_ids)?item.source_ids:[])){
+      counts.set(id,(counts.get(id)||0)+1);
+    }
+  }
+  const sourceNames=new Map(state.sources.map(source=>[source.id,sourceLabel(source.name)]));
+  for(const option of [...select.options].slice(1)){
+    const amount=counts.get(option.value)||0;
+    option.textContent=`${sourceNames.get(option.value)||option.textContent} (${format.format(amount)})`;
+    option.title=`${format.format(amount)} noticias con los filtros actuales`;
+  }
+}
 function updateHeader() {
   const name = state.category === 'all' ? 'Todas las noticias' : categoryLabel(state.category);
   $('feedHeading').textContent = name;
@@ -1192,6 +1218,7 @@ function markRead(id,value){
 }
 function render() {
   const filtered=applyFilters(), visible=filtered.slice(0,state.page*state.pageSize);
+  updateSourceCounts();
   $('visibleCount').textContent=`${format.format(filtered.length)} ${hasHistory()?'RECIENTES':'ARTÍCULOS'}`;
   $('markAllVisible').disabled=!visible.some(item=>!state.read.has(item.id));
   $('filterSummary').textContent=`${format.format(visible.length)} visibles · ${format.format(applyFilters('unread').length)} sin leer con estos filtros`; 
