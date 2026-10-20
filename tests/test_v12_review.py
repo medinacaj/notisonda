@@ -75,7 +75,8 @@ class V12ReviewTests(unittest.TestCase):
         self.assertIn("v12MineDetails",self.script)
         guide=(ROOT/'web/v13.js').read_text(encoding="utf8")
         self.assertIn("selectedTab('reading')",guide)
-        self.assertIn("head.after(panel)",guide)
+        self.assertIn("reading.append(panel)",guide)
+        self.assertNotIn("head.after(panel)",guide)
 
     def test_personalization_is_local_and_limits_saved_searches(self):
         self.assertIn("radar-v12-preferences",self.script)
