@@ -26,11 +26,16 @@ class V13Contracts(unittest.TestCase):
         self.assertIn('id="dashboardSavedAll"',self.html)
         self.assertIn("target===\'all\'?\'#noticias\'",self.app)
 
-    def test_onboarding_is_local_accessible_and_reopenable(self):
-        for token in ["radar-v13-guide-dismissed","v13GuideTitle",
-                      "v13DismissGuide","v13OpenGuide","aria-labelledby"]:
+    def test_onboarding_actions_are_only_in_reading_settings(self):
+        for token in ["v13GuideTitle","aria-labelledby",
+                      "settings-reading-help","settings-reading-action",
+                      "Personalizar temas","Combinar filtros","Comparar titulares"]:
             self.assertIn(token,self.js)
-        self.assertIn("localStorage.setItem",self.js)
+        self.assertIn("'[data-settings-pane=\"reading\"]'",self.js)
+        self.assertNotIn("head.after(panel)",self.js)
+        self.assertNotIn("v13DismissGuide",self.js)
+        self.assertNotIn("v13OpenGuide",self.js)
+        self.assertNotIn("Empieza con Radar RSS",self.js)
         self.assertNotIn("fetch(",self.js)
         self.assertNotIn("sendBeacon",self.js)
 
