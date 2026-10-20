@@ -260,10 +260,10 @@ def main():
                         }""")
                         assert editorial["bg"] == "rgb(244, 242, 240)", editorial
                         assert editorial["cardShadow"] == "none", editorial
-                        # V11: la portada es un teletipo editorial, sin contenedor
-                        # de tarjeta redondeada; los artículos del feed siguen en cards.
-                        assert editorial["cardBorder"] == "0px", editorial
-                        assert editorial["cardRadius"] == "0px", editorial
+                        # Bento: recuadros de alturas/anchos asimétricos, no
+                        # tarjetas idénticas ni rayas cromáticas superiores.
+                        assert editorial["cardBorder"] == "1px", editorial
+                        assert editorial["cardRadius"] == "15px", editorial
                         assert "Inter" in editorial["font"], editorial
                         assert editorial["accent"] == "#e4f222", editorial
                         # La portada empieza directamente con noticias; no contiene
@@ -315,10 +315,9 @@ def main():
                             semanticColor:style.getPropertyValue('--topic-ink').trim()
                           };
                         }""")
-                        # Separador INFERIOR editorial entre noticias, nunca barra
-                        # cromática decorativa encima de cada tarjeta.
-                        assert identity["borderTopWidth"] == "0px", identity
-                        assert identity["borderBottomWidth"] == "1px", identity
+                        # Contorno neutro de tarjeta; color semántico solamente en
+                        # la etiqueta. No se reintroduce una banda superior.
+                        assert identity["borderTopWidth"] == identity["borderBottomWidth"] == "1px", identity
                         assert identity["labelColor"] != "rgb(98, 107, 120)", identity
                         folder=page.locator("#dashboardFolders .dashboard-folder[data-topic]").first
                         if folder.count():
@@ -397,36 +396,59 @@ def main():
                         if page.locator("#dashboardFolders .dashboard-folder").count():
                             assert page.locator("#dashboardFolders").evaluate(
                                 "(node) => getComputedStyle(node).display") == "grid"
-                        # V11: la portada ya no es otra cuadrícula de tres cards.
-                        # Es una mesa editorial (noticias en filas + hilo de titulares).
-                        newsroom = page.evaluate("""() => {
+                        # V11.1: Bento asimétrico real, tanto en el DOM como
+                        # en la geometría COMPUTADA del navegador.
+                        bento = page.evaluate("""() => {
                           const desk=document.querySelector('#newsroomLead');
                           const featured=document.querySelector('#dashboardFeature');
                           const cards=[...featured.querySelectorAll('.article-card')];
                           const wire=document.querySelector('#dashboardRecent');
+                          const discovery=document.querySelector('#newsroomDiscovery');
+                          const folders=document.querySelector('#dashboardFolders');
                           const topics=document.querySelector('#topicRail');
                           const main=document.querySelector('#mainContent');
+                          const rects=cards.map(card=>{
+                            const b=card.getBoundingClientRect();
+                            return {x:b.x,y:b.y,width:b.width,height:b.height,
+                                    col:getComputedStyle(card).gridColumnEnd,
+                                    row:getComputedStyle(card).gridRowEnd};
+                          });
                           return {
-                            leadColumns:getComputedStyle(desk).gridTemplateColumns.split(' ').length,
+                            deskColumns:getComputedStyle(desk).gridTemplateColumns.split(' ').length,
                             featureFlow:getComputedStyle(featured).display,
-                            count:cards.length,
-                            cardsStacked:cards.every((card,i)=>i===0 || card.getBoundingClientRect().y >= cards[i-1].getBoundingClientRect().bottom-2),
+                            featureColumns:getComputedStyle(featured).gridTemplateColumns.split(' ').length,
+                            cards:rects,
                             wireCount:wire.querySelectorAll('.dashboard-recent-row').length,
+                            discoveryColumns:getComputedStyle(discovery).gridTemplateColumns.split(' ').length,
+                            folders:getComputedStyle(folders).display,
+                            radarInside:discovery.contains(document.getElementById('radarFigure')),
                             topicsVisible:getComputedStyle(topics).display,
                             navBeforeMain:!!(topics.compareDocumentPosition(main) & Node.DOCUMENT_POSITION_FOLLOWING),
                             sidebarDrawer:getComputedStyle(document.getElementById('appSidebar')).position,
                             menuToggle:getComputedStyle(document.getElementById('menuToggle')).display
                           };
                         }""")
-                        assert newsroom["leadColumns"] == (1 if width <= 780 else 2), newsroom
-                        assert newsroom["featureFlow"] == "flex", newsroom
-                        assert newsroom["cardsStacked"], newsroom
-                        assert newsroom["count"] == 3, newsroom
-                        assert newsroom["wireCount"] >= 1, newsroom
-                        assert newsroom["topicsVisible"] == "flex", newsroom
-                        assert newsroom["navBeforeMain"], newsroom
-                        assert newsroom["sidebarDrawer"] == "fixed", newsroom
-                        assert newsroom["menuToggle"] != "none", newsroom
+                        assert bento["deskColumns"] == (1 if width <= 1250 else 2), bento
+                        assert bento["discoveryColumns"] == (1 if width <= 1250 else 2), bento
+                        assert bento["featureFlow"] == "grid", bento
+                        assert bento["featureColumns"] == (1 if width <= 680 else 12), bento
+                        assert len(bento["cards"]) == 3, bento
+                        if width > 680:
+                            assert bento["cards"][0]["col"] == "span 7", bento
+                            assert bento["cards"][0]["row"] == "span 2", bento
+                            assert bento["cards"][1]["col"] == "span 5", bento
+                            assert bento["cards"][0]["width"] > bento["cards"][1]["width"], bento
+                            assert bento["cards"][0]["height"] > bento["cards"][1]["height"], bento
+                        else:
+                            assert bento["cards"][0]["width"] == bento["cards"][1]["width"], bento
+                            assert bento["cards"][0]["y"] < bento["cards"][1]["y"], bento
+                        assert bento["wireCount"] >= 1, bento
+                        assert bento["folders"] == "grid", bento
+                        assert bento["radarInside"], bento
+                        assert bento["topicsVisible"] == "flex", bento
+                        assert bento["navBeforeMain"], bento
+                        assert bento["sidebarDrawer"] == "fixed", bento
+                        assert bento["menuToggle"] != "none", bento
                         check_header_overlap(page, f"{browser_name} barra superior {width}px")
                         check_accessibility_contract(page, f"{browser_name} portada {width}px")
                         if width in (320, 768, 1440):
