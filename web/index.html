@@ -179,6 +179,7 @@
             </div>
             <div class="filter-controls">
               <label class="source-filter"><span class="sr-only">Filtrar por fuente</span><select id="sourceSelect"><option value="">Todas las fuentes</option></select></label>
+              <button id="markAllVisible" class="feed-tool-action" type="button" title="Marcar las noticias visibles como leídas" aria-label="Marcar las noticias visibles como leídas"><span data-icon="check" class="ui-icon-slot" aria-hidden="true"></span></button>
               <div class="display-controls" role="group" aria-label="Presentación de las noticias">
                 <div class="layout-switch" role="group" aria-label="Vista">
                   <div id="cardsColumnsControl" class="columns-selector">
@@ -206,7 +207,7 @@
             <span class="feed-context-chip" id="onlyNewChip" hidden>Solo nuevas desde tu visita <button type="button" id="onlyNewClear" aria-label="Mostrar todas las noticias"><span data-icon="x" class="ui-icon-slot" aria-hidden="true"></span></button></span>
             <button type="button" class="follow-topic" id="followTopic" hidden aria-pressed="false"><span data-icon="bell" class="ui-icon-slot" aria-hidden="true"></span><span id="followTopicLabel">Seguir este tema</span></button>
           </div>
-          <div class="feed-actions"><button id="markAllVisible" class="settings-secondary" type="button" title="Marca como leídas las noticias que coinciden con los filtros"><span data-icon="check" class="ui-icon-slot" aria-hidden="true"></span> Marcar visibles como leídas</button><span id="filterSummary" class="filter-summary"></span></div>
+          <span id="filterSummary" class="sr-only"></span>
           <h2 class="sr-only" id="feedListTitle">Lista de noticias</h2>
           <div id="articleGrid" class="article-grid" aria-live="polite"></div>
           <div class="load-more-wrap"><button id="loadMore" class="load-more" type="button" hidden>Cargar más noticias <span class="ui-icon-slot" data-icon="arrow-down" aria-hidden="true"></span></button></div>
