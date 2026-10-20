@@ -235,23 +235,40 @@ def main():
                         page.goto(base + "#inicio", wait_until="load")
                         page.locator("#dashboardView:not([hidden])").wait_for(timeout=15000)
                         page.locator("#dashboardFeature .article-card").first.wait_for(timeout=15000)
-                        # V6 tiene que verse realmente distinto del tema naranja anterior.
-                        # Verificamos colores computados, no solo que el CSS esté enlazado.
+                        # V9: los fondos son neutros y los colores corresponden a
+                        # categorías y funciones, no a toda la interfaz.
                         visual=page.evaluate("""() => ({
                           sidebar:getComputedStyle(document.getElementById('appSidebar')).backgroundColor,
                           lightBackground:getComputedStyle(document.body).getPropertyValue('--bg').trim(),
                           masthead:getComputedStyle(document.querySelector('.dashboard-head')).backgroundImage,
                           brand:getComputedStyle(document.querySelector('.brand-mark')).backgroundColor
                         })""")
-                        assert visual["sidebar"] == "rgb(245, 243, 248)", visual
-                        assert visual["brand"] == "rgb(167, 70, 93)", visual
+                        assert visual["sidebar"] == "rgb(240, 242, 246)", visual
+                        assert visual["brand"] == "rgb(173, 75, 88)", visual
                         assert visual["masthead"] == "none", visual
                         # El modo nocturno debe usar su propia paleta sin afectar el DOM.
                         page.evaluate("document.body.classList.remove('light')")
                         assert page.evaluate(
                             "() => getComputedStyle(document.body).getPropertyValue('--bg').trim()"
-                        ) == "#1c1a23"
+                        ) == "#191d26"
                         page.evaluate("document.body.classList.add('light')")
+                        # Seis colores distinguibles, sin repintar el fondo del menú.
+                        colors=page.evaluate("""() => {
+                          const nav=[...document.querySelectorAll('#libraryFolderNav .system-folder-link')];
+                          return nav.map(button=>({
+                            topic:button.dataset.topic,
+                            color:getComputedStyle(button.querySelector('.nav-glyph')).color,
+                            surface:getComputedStyle(button).backgroundColor
+                          }));
+                        }""")
+                        assert [x["topic"] for x in colors] == [str(i) for i in range(1,7)], colors
+                        assert len({x["color"] for x in colors}) == 6, colors
+                        featuredTopics=page.locator("#dashboardFeature .article-card[data-topic]").count()
+                        assert featuredTopics >= 1, featuredTopics
+                        categoryCard=page.locator("#dashboardFeature .article-card[data-topic]").first
+                        cardAccent=categoryCard.evaluate(
+                            "(node) => getComputedStyle(node).borderTopColor")
+                        assert cardAccent != "rgb(226, 230, 236)", cardAccent
                         # Las seis carpetas originales deben seguir accesibles y administrables.
                         assert page.locator("#libraryFolderNav .system-folder-link").count() == len(CATEGORIES)
                         assert page.locator("#libraryFolderNav .v12-hidden-category").count() == 0

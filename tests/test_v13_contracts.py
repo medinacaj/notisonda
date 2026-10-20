@@ -59,10 +59,10 @@ class V13Contracts(unittest.TestCase):
         self.assertIn('height:76px;max-height:76px',css)
         self.assertIn('body.radar-hybrid.compact #articleGrid',css)
         self.assertNotIn('.dashboard-feature .article-card{grid-auto-rows',css)
-        self.assertIn('v13.css?v=4.0.0',self.html)
+        self.assertIn('v13.css?v=5.0.0',self.html)
         self.assertIn('Portada editorial V5.3',css)
         self.assertIn('grid-template-columns:repeat(3,minmax(0,1fr))',css)
-        self.assertIn("radar-rss-v20",self.sw)
+        self.assertIn("radar-rss-v21",self.sw)
 
     def test_card_read_action_is_visible_and_syncs_values(self):
         self.assertIn("article-action article-read-toggle",self.app)
