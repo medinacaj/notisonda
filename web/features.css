@@ -359,10 +359,4 @@ body.radar-hybrid .mode-tab{flex:0 0 auto}
   body.radar-hybrid .topbar{column-gap:6px}
   body.radar-hybrid .topbar-refresh-countdown{display:none}
   body.radar-hybrid .topbar-actions{gap:4px}
-  body.radar-hybrid .dashboard-feature .article-card:not(:first-child){
-    grid-template-columns:minmax(0,1fr);
-  }
-  body.radar-hybrid .dashboard-feature .article-card:not(:first-child) .cover{
-    width:100%;height:auto;min-height:0;max-height:none;aspect-ratio:2/1;
-  }
 }

@@ -297,8 +297,6 @@ body.radar-hybrid .reader-alternative-link{min-height:32px;display:inline-flex;a
 /* Tarjetas de distinta altura: sin huecos vacíos en las que no tienen imagen. */
 body.radar-hybrid .article-grid:not(.list-view){align-items:start}
 body.radar-hybrid .article-card.no-cover .article-excerpt{-webkit-line-clamp:4}
-body.radar-hybrid .dashboard-feature{align-items:stretch}
-body.radar-hybrid .dashboard-feature .article-card:not(:first-child) .article-excerpt{display:-webkit-box;-webkit-line-clamp:3;font-size:13px}
 
 /* El listado tiene su propio h1 (la portada usa el suyo). */
 body.radar-hybrid .section-heading h1{
@@ -324,6 +322,3 @@ body.radar-hybrid.hide-images .list-view .article-card,
 body.radar-hybrid.hide-images .dashboard-feature .article-card:not(:first-child){display:flex;flex-direction:column;min-height:0}
 body.radar-hybrid .health-row small{color:var(--text);font-size:12px;font-weight:600}
 body.radar-hybrid .health-row span{color:var(--muted);font-size:13px}
-/* Imagen principal de portada contenida en tabletas y pantallas anchas. */
-@media(max-width:1150px){
-}
