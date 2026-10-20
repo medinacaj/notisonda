@@ -39,6 +39,21 @@ class V13Contracts(unittest.TestCase):
         self.assertIn('id="dashboardFoldersTitle"',self.html)
         self.assertIn('id="dashboardSavedAll"',self.html)
 
+    def test_v11_is_a_layout_change_not_just_new_colors(self):
+        css=(ROOT/'web/v13.css').read_text(encoding='utf8')
+        self.assertIn('class="newsroom-lead" id="newsroomLead"',self.html)
+        self.assertIn('newsroom-lead-stories',self.html)
+        self.assertIn('newsroom-lead-latest',self.html)
+        self.assertLess(self.html.index('id="topicRail"'),self.html.index('<main class="main"'))
+        self.assertIn('grid-template-columns:minmax(0,1.55fr) minmax(300px,.95fr)',css)
+        self.assertIn('.newsroom-lead .dashboard-feature',css)
+        self.assertIn('grid-template-columns:150px minmax(0,1fr)',css)
+        self.assertIn('body.radar-hybrid .sidebar-backdrop:not([hidden])',css)
+        self.assertIn('const MOBILE_NAV=window.matchMedia(\'(min-width: 0px)\')',self.app)
+        self.assertIn('body.radar-hybrid .topic-rail{',css)
+        self.assertNotIn('Noticias para estar al día.',self.html)
+        self.assertIn('sidebar-layout.js?v=1.1.0',self.html)
+
     def test_onboarding_actions_are_only_in_reading_settings(self):
         for token in ["v13GuideTitle","aria-labelledby",
                       "settings-reading-help","settings-reading-action",
