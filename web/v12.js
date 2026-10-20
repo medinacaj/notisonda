@@ -54,9 +54,8 @@
   });
   const display = (name, cls, tag='span') => mk(tag, cls, name);
   const regionName = { all:'Todas las noticias', latam:'Latinoamérica', chile:'Chile', venezuela:'Venezuela', region:'Medios regionales de Latinoamérica' };
-  // Las carpetas del lector pertenecen al módulo library.js:
-  // nunca sustituir ni ocultar sus entradas, nombres y opciones.
-  // Latinoamérica agrupada se ofrece solo en filtros/chips de noticias.
+  // Mantener las seis carpetas del lector sin duplicar su navegación.
+  // La vista agregada de Latinoamérica conserva su enlace y las rutas antiguas.
   const railBase = renderTopicRail;
   renderTopicRail = function(...args) {
     railBase(...args);
@@ -116,18 +115,8 @@
     if(state.feed&&!valid.has(state.feed)){state.feed='';select.value='';}
   }
   function syncGeoControls() {
-    const geoControl=$('v12Geo'), date=$('v12Date');
-    if (geoControl) { geoControl.value=geo; geoControl.disabled=state.category!=='all'; }
-    if (date) date.value=String(state.maxAge);
-    const regional=$('v12CountryTabs');
-    if (regional) {
-      regional.hidden=state.pageView!=='feed'||geo==='all';
-      regional.querySelectorAll('[data-v12-geo]').forEach(button=>{
-        const selected=button.dataset.v12Geo===geo;
-        button.classList.toggle('active',selected);
-        button.setAttribute('aria-pressed',String(selected));
-      });
-    }
+    const date=$('v12Date');
+    if(date)date.value=String(state.maxAge);
   }
   function chooseGeo(value) {
     const next=GEO.includes(value)?value:'all';
@@ -153,34 +142,15 @@
     wrap.append(select);return {wrap,select};
   }
   const filterRow=mk('div','v12-filter-bar');filterRow.id='v12FilterBar';
-  // La clasificación es por cobertura de los medios del OPML, no por regiones
-  // administrativas ni por todos los países del mundo.
-  const geoPicker=makeSelect('v12Geo','Cobertura',[['all','Todas las noticias']]);
-  const regionGroup=document.createElement('optgroup');
-  regionGroup.label='Latinoamérica';
-  for(const [value,label] of [
-    ['latam','Toda Latinoamérica'],
-    ['chile','Chile'],
-    ['venezuela','Venezuela'],
-    ['region','Medios regionales latinoamericanos']
-  ])regionGroup.append(new Option(label,value));
-  geoPicker.select.append(regionGroup);
+  // Las categorías ya se eligen en Carpetas de fuentes. Solo el criterio
+  // independiente de antigüedad necesita un control en este panel.
   const datePicker=makeSelect('v12Date','Antigüedad',[['0','Sin límite'],['1','24 horas'],['7','7 días'],['30','30 días'],['90','90 días']]);
-  filterRow.append(geoPicker.wrap,datePicker.wrap);
+  filterRow.append(datePicker.wrap);
   const saveSearch=mk('button','v12-secondary','Guardar búsqueda');saveSearch.type='button';saveSearch.id='v12SaveSearch';
   filterRow.append(saveSearch);
   const savedPanel=mk('div','v12-saved-searches');savedPanel.id='v12SavedSearches';
   savedPanel.setAttribute('aria-label','Búsquedas guardadas');
-  const tabs=mk('div','v12-country-tabs');tabs.id='v12CountryTabs';tabs.setAttribute('role','group');
-  tabs.setAttribute('aria-label','Filtrar por cobertura de medios latinoamericanos');
-  for(const [code,name] of [['latam','Toda Latinoamérica'],['chile','Chile'],['venezuela','Venezuela'],['region','Medios regionales']]) {
-    const button=mk('button','v12-country-tab',name);
-    button.type='button';button.dataset.v12Geo=code;
-    button.addEventListener('click',()=>chooseGeo(code));
-    tabs.append(button);
-  }
-  $('feedView').querySelector('.filter-bar').after(tabs,filterRow,savedPanel);
-  geoPicker.select.addEventListener('change',()=>chooseGeo(geoPicker.select.value));
+  $('feedView').querySelector('.filter-bar').after(filterRow,savedPanel);
   datePicker.select.addEventListener('change',()=>{
     state.maxAge=Number(datePicker.select.value);
     savePref('max-age',state.maxAge);
@@ -208,7 +178,13 @@
         pendingSearchFeed=item.feed||'';
         if(item.category!=='all'&&state.categories.includes(item.category)) {
           geo='all';goTo(item.category);
-        } else {geo=item.geo;chooseGeo(geo);}
+        } else if(['chile','venezuela','region'].includes(item.geo) && catOf(item.geo)) {
+          // Compatibilidad con búsquedas anteriores a la retirada del selector.
+          // Chile, Venezuela y 06-Latinoamérica son carpetas existentes.
+          geo='all';goTo(catOf(item.geo));
+        } else {
+          chooseGeo(item.geo==='latam'?'latam':'all');
+        }
         state.page=1;syncGeoControls();syncGeoSources();
         // Cuando la URL cambia, pendingSearchFeed se aplica al reconstruir el selector.
         // Si la URL no cambió, el selector ya está disponible.
