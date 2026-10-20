@@ -14,6 +14,7 @@ from hashlib import sha256
 from html.parser import HTMLParser
 import ipaddress
 import json
+import random
 from pathlib import Path
 import re
 import unicodedata
@@ -39,6 +40,7 @@ HEADERS = {"User-Agent": AGENT,
            "Accept-Language": "es-CL,es;q=0.9,en;q=0.7"}
 RETRY_STATUS = {429, 500, 502, 503, 504}
 RETRY_WAIT_SECONDS = 4
+RETRY_MAX_WAIT_SECONDS = 30
 # Prefijos del OPML que solo organizan las suscripciones. Los que informan al lector
 # (SÁTIRA, OFICIAL, ANÁLISIS, etc.) se conservan a propósito.
 ORGANIZATIONAL_PREFIX = re.compile(r'^\s*(?:MEDIO|REGIONAL)\s*[—–-]\s*')
@@ -122,7 +124,8 @@ def get_feed(url: str) -> bytes:
             raise
     except (requests.ConnectionError, requests.Timeout):
         pass
-    time.sleep(RETRY_WAIT_SECONDS)
+    # Jitter spreads simultaneous retries across hosts and protects providers.
+    time.sleep(min(RETRY_MAX_WAIT_SECONDS, RETRY_WAIT_SECONDS * (1 + random.random())))
     return _get_feed_once(url)
 
 
