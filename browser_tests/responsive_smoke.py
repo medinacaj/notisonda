@@ -415,8 +415,23 @@ def main():
                         page.evaluate("location.hash = '#region/latinoamerica'")
                         page.locator("#feedView:not([hidden])").wait_for()
                         assert page.locator("#feedHeading").inner_text() == "Latinoamérica"
-                        check_visible_boxes(page, ["#v12FilterBar","#v12Date","#v12SaveSearch"],
-                                            f"V1.2 filtros {browser_name} {width}px")
+                        check_visible_boxes(page, [".filter-controls","#v12Date","#v12SaveSearch","#markAllVisible"],
+                                            f"barra única de noticias {browser_name} {width}px")
+                        # Sin fila auxiliar flotante bajo las pestañas.
+                        assert page.locator("#v12FilterBar").count() == 0
+                        assert page.locator(".feed-actions").count() == 0
+                        assert page.locator("#filterSummary.sr-only").count() == 1
+                        assert page.locator("#v12Date").get_attribute("title") == "Filtrar por antigüedad"
+                        assert page.locator("#v12SaveSearch").get_attribute("aria-label") == "Guardar búsqueda con los filtros actuales"
+                        assert page.locator("#markAllVisible").get_attribute("aria-label") == "Marcar las noticias visibles como leídas"
+                        assert page.locator("#v12SaveSearch svg").count() == 1
+                        assert page.locator("#markAllVisible svg").count() == 1
+                        assert page.locator("#v12SaveSearch").inner_text() == ""
+                        assert page.locator("#markAllVisible").inner_text() == ""
+                        toolbar=page.locator("#feedView .filter-bar").bounding_box()
+                        news=page.locator("#articleGrid").bounding_box()
+                        assert news["y"]-toolbar["y"]-toolbar["height"] < 45, (
+                            width,browser_name,news["y"]-toolbar["y"]-toolbar["height"])
                         # El filtro geográfico duplicaba las seis carpetas.
                         assert page.locator("#v12Geo").count() == 0
                         assert page.locator("#v12CountryTabs").count() == 0
