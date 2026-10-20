@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <opml version="1.0">
   <head>
-    <title>Fuentes públicas Radar RSS (150 feeds, 6 categorías)</title>
+    <title>Fuentes públicas Radar RSS (178 feeds, 6 categorías)</title>
   </head>
   <body>
     <outline text="01 - Inteligencia Artificial" title="01 - Inteligencia Artificial">
@@ -105,6 +105,11 @@
       <outline text="VIDEO — Euronews en español" title="VIDEO — Euronews en español" type="rss" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCyoGb3SMlTlB8CLGVH4c8Rw" htmlUrl="https://www.youtube.com/channel/UCyoGb3SMlTlB8CLGVH4c8Rw/videos" />
       <outline text="RADAR — CNN en Español" title="RADAR — CNN en Español" type="rss" xmlUrl="https://news.google.com/rss/search?q=site%3Acnnespanol.cnn.com&amp;hl=es-419&amp;gl=CL&amp;ceid=CL%3Aes-419" htmlUrl="https://cnnespanol.cnn.com/" />
       <outline text="RADAR — Yahoo Noticias EE. UU. | Empresas y consumo (español)" title="RADAR — Yahoo Noticias EE. UU. | Empresas y consumo (español)" type="rss" xmlUrl="https://news.google.com/rss/search?q=site%3Aes-us.noticias.yahoo.com+%28empresas+OR+negocios+OR+econom%C3%ADa+OR+consumo+OR+marcas+OR+restaurantes+OR+clientes+OR+KFC+OR+Coca-Cola+OR+Pepsi%29&amp;hl=es-419&amp;gl=CL&amp;ceid=CL:es-419" htmlUrl="https://es-us.noticias.yahoo.com/" />
+      <outline text="RADAR — France 24 en Español" title="RADAR — France 24 en Español" type="rss" xmlUrl="https://news.google.com/rss/search?q=site%3Afrance24.com%2Fes%2F&amp;hl=es-419&amp;gl=CL&amp;ceid=CL%3Aes-419" htmlUrl="https://www.france24.com/es/" />
+      <outline text="RADAR — AP Noticias en Español" title="RADAR — AP Noticias en Español" type="rss" xmlUrl="https://news.google.com/rss/search?q=site%3Aapnews.com%2Fhub%2Fnoticias&amp;hl=es-419&amp;gl=CL&amp;ceid=CL%3Aes-419" htmlUrl="https://apnews.com/" />
+      <outline text="RADAR — Reuters Mundo" title="RADAR — Reuters Mundo" type="rss" xmlUrl="https://news.google.com/rss/search?q=site%3Areuters.com%2Fworld%2F&amp;hl=es-419&amp;gl=CL&amp;ceid=CL%3Aes-419" htmlUrl="https://www.reuters.com/world/" />
+      <outline text="RADAR — El Mundo España" title="RADAR — El Mundo España" type="rss" xmlUrl="https://news.google.com/rss/search?q=site%3Aelmundo.es&amp;hl=es-419&amp;gl=CL&amp;ceid=CL%3Aes-419" htmlUrl="https://www.elmundo.es/" />
+      <outline text="RADAR — 20minutos España" title="RADAR — 20minutos España" type="rss" xmlUrl="https://news.google.com/rss/search?q=site%3A20minutos.es&amp;hl=es-419&amp;gl=CL&amp;ceid=CL%3Aes-419" htmlUrl="https://www.20minutos.es/" />
     </outline>
     <outline text="04 - Chile" title="04 - Chile">
       <outline text="RADAR — Startups y capital emprendedor en Chile" title="RADAR — Startups y capital emprendedor en Chile" type="rss" xmlUrl="https://news.google.com/rss/search?q=%28startups+OR+emprendimiento+OR+venture+capital+OR+%22capital+de+riesgo%22%29+Chile&amp;hl=es-419&amp;gl=CL&amp;ceid=CL%3Aes-419" htmlUrl="https://news.google.com/" />
@@ -129,6 +134,19 @@
       <outline text="RADAR — Emol" title="RADAR — Emol" type="rss" xmlUrl="https://news.google.com/rss/search?q=site%3Aemol.com+Chile&amp;hl=es-419&amp;gl=CL&amp;ceid=CL:es-419" htmlUrl="https://www.emol.com/" />
       <outline text="RADAR — 24 Horas" title="RADAR — 24 Horas" type="rss" xmlUrl="https://news.google.com/rss/search?q=site%3A24horas.cl+Chile&amp;hl=es-419&amp;gl=CL&amp;ceid=CL:es-419" htmlUrl="https://www.24horas.cl/" />
       <outline text="REGIONAL — Concepción / Biobío" title="REGIONAL — Concepción / Biobío" type="rss" xmlUrl="https://news.google.com/rss/search?q=%22Concepci%C3%B3n%22+OR+%22Biob%C3%ADo%22&amp;hl=es-419&amp;gl=CL&amp;ceid=CL:es-419" htmlUrl="https://news.google.com/" />
+      <outline text="RADAR — ADN Radio" title="RADAR — ADN Radio" type="rss" xmlUrl="https://news.google.com/rss/search?q=site%3Aadnradio.cl&amp;hl=es-419&amp;gl=CL&amp;ceid=CL%3Aes-419" htmlUrl="https://www.adnradio.cl/" />
+      <outline text="RADAR — T13" title="RADAR — T13" type="rss" xmlUrl="https://news.google.com/rss/search?q=site%3At13.cl&amp;hl=es-419&amp;gl=CL&amp;ceid=CL%3Aes-419" htmlUrl="https://www.t13.cl/" />
+      <outline text="RADAR — Meganoticias" title="RADAR — Meganoticias" type="rss" xmlUrl="https://news.google.com/rss/search?q=site%3Ameganoticias.cl&amp;hl=es-419&amp;gl=CL&amp;ceid=CL%3Aes-419" htmlUrl="https://www.meganoticias.cl/" />
+      <outline text="RADAR — CIPER Chile" title="RADAR — CIPER Chile" type="rss" xmlUrl="https://news.google.com/rss/search?q=site%3Aciperchile.cl&amp;hl=es-419&amp;gl=CL&amp;ceid=CL%3Aes-419" htmlUrl="https://www.ciperchile.cl/" />
+      <outline text="RADAR — El Mostrador" title="RADAR — El Mostrador" type="rss" xmlUrl="https://news.google.com/rss/search?q=site%3Aelmostrador.cl&amp;hl=es-419&amp;gl=CL&amp;ceid=CL%3Aes-419" htmlUrl="https://www.elmostrador.cl/" />
+      <outline text="RADAR — The Clinic" title="RADAR — The Clinic" type="rss" xmlUrl="https://news.google.com/rss/search?q=site%3Atheclinic.cl&amp;hl=es-419&amp;gl=CL&amp;ceid=CL%3Aes-419" htmlUrl="https://www.theclinic.cl/" />
+      <outline text="RADAR — Ex-Ante" title="RADAR — Ex-Ante" type="rss" xmlUrl="https://news.google.com/rss/search?q=site%3Aex-ante.cl&amp;hl=es-419&amp;gl=CL&amp;ceid=CL%3Aes-419" htmlUrl="https://www.ex-ante.cl/" />
+      <outline text="RADAR — El Desconcierto" title="RADAR — El Desconcierto" type="rss" xmlUrl="https://news.google.com/rss/search?q=site%3Aeldesconcierto.cl&amp;hl=es-419&amp;gl=CL&amp;ceid=CL%3Aes-419" htmlUrl="https://www.eldesconcierto.cl/" />
+      <outline text="RADAR — La Discusión Ñuble" title="RADAR — La Discusión Ñuble" type="rss" xmlUrl="https://news.google.com/rss/search?q=site%3Aladiscusion.cl&amp;hl=es-419&amp;gl=CL&amp;ceid=CL%3Aes-419" htmlUrl="https://www.ladiscusion.cl/" />
+      <outline text="RADAR — Chillán Online" title="RADAR — Chillán Online" type="rss" xmlUrl="https://news.google.com/rss/search?q=site%3Achillanonline.cl&amp;hl=es-419&amp;gl=CL&amp;ceid=CL%3Aes-419" htmlUrl="https://www.chillanonline.cl/" />
+      <outline text="RADAR — Canal 9 Biobío TV" title="RADAR — Canal 9 Biobío TV" type="rss" xmlUrl="https://news.google.com/rss/search?q=site%3Acanal9.cl&amp;hl=es-419&amp;gl=CL&amp;ceid=CL%3Aes-419" htmlUrl="https://www.canal9.cl/" />
+      <outline text="RADAR — RedGol" title="RADAR — RedGol" type="rss" xmlUrl="https://news.google.com/rss/search?q=site%3Aredgol.cl&amp;hl=es-419&amp;gl=CL&amp;ceid=CL%3Aes-419" htmlUrl="https://redgol.cl/" />
+      <outline text="RADAR — En Cancha" title="RADAR — En Cancha" type="rss" xmlUrl="https://news.google.com/rss/search?q=site%3Aencancha.cl&amp;hl=es-419&amp;gl=CL&amp;ceid=CL%3Aes-419" htmlUrl="https://www.encancha.cl/" />
     </outline>
     <outline text="05 - Venezuela" title="05 - Venezuela">
       <outline text="RADAR — Empresas, comercio e industria en Venezuela" title="RADAR — Empresas, comercio e industria en Venezuela" type="rss" xmlUrl="https://news.google.com/rss/search?q=Venezuela+%28empresas+OR+comercio+OR+industria+OR+%22c%C3%A1maras+de+comercio%22+OR+Fedec%C3%A1maras%29+-site%3Ainstagram.com+-site%3Afacebook.com+-site%3Atiktok.com&amp;hl=es-419&amp;gl=VE&amp;ceid=VE%3Aes-419" htmlUrl="https://news.google.com/" />
@@ -156,6 +174,10 @@
       <outline text="REGIONAL — El Periódico de Monagas | Google Noticias" title="REGIONAL — El Periódico de Monagas | Google Noticias" type="rss" xmlUrl="https://news.google.com/rss/search?q=site%3Aelperiodicodemonagas.com.ve&amp;hl=es-419&amp;gl=VE&amp;ceid=VE%3Aes-419" htmlUrl="https://elperiodicodemonagas.com.ve/" />
       <outline text="RADAR — Banca y Negocios | Google Noticias" title="RADAR — Banca y Negocios | Google Noticias" type="rss" xmlUrl="https://news.google.com/rss/search?q=site%3Abancaynegocios.com&amp;hl=es-419&amp;gl=VE&amp;ceid=VE%3Aes-419" htmlUrl="https://www.bancaynegocios.com/" />
       <outline text="REGIONAL — Diario El Oriental | Monagas (Google Noticias)" title="REGIONAL — Diario El Oriental | Monagas (Google Noticias)" type="rss" xmlUrl="https://news.google.com/rss/search?q=site%3Adiarioeloriental.com+Monagas&amp;hl=es-419&amp;gl=VE&amp;ceid=VE%3Aes-419" htmlUrl="https://diarioeloriental.com/" />
+      <outline text="RADAR — La Patilla" title="RADAR — La Patilla" type="rss" xmlUrl="https://news.google.com/rss/search?q=site%3Alapatilla.com&amp;hl=es-419&amp;gl=CL&amp;ceid=CL%3Aes-419" htmlUrl="https://www.lapatilla.com/" />
+      <outline text="RADAR — El Estímulo" title="RADAR — El Estímulo" type="rss" xmlUrl="https://news.google.com/rss/search?q=site%3Aelestimulo.com&amp;hl=es-419&amp;gl=CL&amp;ceid=CL%3Aes-419" htmlUrl="https://elestimulo.com/" />
+      <outline text="RADAR — Primicia" title="RADAR — Primicia" type="rss" xmlUrl="https://news.google.com/rss/search?q=site%3Aprimicia.com.ve&amp;hl=es-419&amp;gl=CL&amp;ceid=CL%3Aes-419" htmlUrl="https://primicia.com.ve/" />
+      <outline text="RADAR — Crónica Uno" title="RADAR — Crónica Uno" type="rss" xmlUrl="https://news.google.com/rss/search?q=site%3Acronica.uno&amp;hl=es-419&amp;gl=CL&amp;ceid=CL%3Aes-419" htmlUrl="https://cronica.uno/" />
     </outline>
     <outline text="06 - Latinoamérica" title="06 - Latinoamérica">
       <outline text="MEDIO — EL PAÍS | América" title="MEDIO — EL PAÍS | América" type="rss" xmlUrl="https://feeds.elpais.com/mrss-s/pages/ep/site/elpais.com/section/america/portada" htmlUrl="https://elpais.com/" />
@@ -168,6 +190,12 @@
       <outline text="RADAR — EFE | Latinoamérica" title="RADAR — EFE | Latinoamérica" type="rss" xmlUrl="https://news.google.com/rss/search?q=site%3Aefe.com+%28intitle%3ALatinoam%C3%A9rica+OR+intitle%3A%22Am%C3%A9rica+Latina%22%29+when%3A30d&amp;hl=es-419&amp;gl=CL&amp;ceid=CL%3Aes-419" htmlUrl="https://efe.com/noticias/latinoamerica/" />
       <outline text="RADAR — Latinoamérica | Empresas, marcas y consumo" title="RADAR — Latinoamérica | Empresas, marcas y consumo" type="rss" xmlUrl="https://news.google.com/rss/search?q=%28M%C3%A9xico+OR+Argentina+OR+Brasil+OR+Colombia+OR+Per%C3%BA+OR+Chile+OR+Venezuela+OR+Ecuador+OR+Uruguay+OR+Bolivia+OR+Paraguay+OR+Centroam%C3%A9rica%29+%28econom%C3%ADa+OR+empresas+OR+negocios+OR+consumo+OR+marcas+OR+retail+OR+restaurantes%29&amp;hl=es-419&amp;gl=CL&amp;ceid=CL:es-419" htmlUrl="https://news.google.com/" />
       <outline text="MEDIO — Agência Brasil | Últimas noticias (portugués)" title="MEDIO — Agência Brasil | Últimas noticias (portugués)" type="rss" xmlUrl="https://agenciabrasil.ebc.com.br/rss/ultimasnoticias/feed.xml" htmlUrl="https://agenciabrasil.ebc.com.br/" />
+      <outline text="RADAR — Clarín Argentina" title="RADAR — Clarín Argentina" type="rss" xmlUrl="https://news.google.com/rss/search?q=site%3Aclarin.com&amp;hl=es-419&amp;gl=CL&amp;ceid=CL%3Aes-419" htmlUrl="https://www.clarin.com/" />
+      <outline text="RADAR — El Espectador Colombia" title="RADAR — El Espectador Colombia" type="rss" xmlUrl="https://news.google.com/rss/search?q=site%3Aelespectador.com&amp;hl=es-419&amp;gl=CL&amp;ceid=CL%3Aes-419" htmlUrl="https://www.elespectador.com/" />
+      <outline text="RADAR — El Universal México" title="RADAR — El Universal México" type="rss" xmlUrl="https://news.google.com/rss/search?q=site%3Aeluniversal.com.mx&amp;hl=es-419&amp;gl=CL&amp;ceid=CL%3Aes-419" htmlUrl="https://www.eluniversal.com.mx/" />
+      <outline text="RADAR — La República Perú" title="RADAR — La República Perú" type="rss" xmlUrl="https://news.google.com/rss/search?q=site%3Alarepublica.pe&amp;hl=es-419&amp;gl=CL&amp;ceid=CL%3Aes-419" htmlUrl="https://larepublica.pe/" />
+      <outline text="RADAR — G1 Brasil" title="RADAR — G1 Brasil" type="rss" xmlUrl="https://news.google.com/rss/search?q=site%3Ag1.globo.com&amp;hl=es-419&amp;gl=CL&amp;ceid=CL%3Aes-419" htmlUrl="https://g1.globo.com/" />
+      <outline text="RADAR — La República Colombia" title="RADAR — La República Colombia" type="rss" xmlUrl="https://news.google.com/rss/search?q=site%3Alarepublica.co&amp;hl=es-419&amp;gl=CL&amp;ceid=CL%3Aes-419" htmlUrl="https://www.larepublica.co/" />
     </outline>
   </body>
 </opml>
