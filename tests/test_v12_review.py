@@ -32,7 +32,7 @@ class V12ReviewTests(unittest.TestCase):
         self.assertNotIn("row.classList.add('v12-hidden-category')",self.script)
         self.assertIn("const railBase = renderTopicRail",self.script)
         self.assertIn("v12.js?v=1.2.4",self.html)
-        self.assertIn("radar-rss-v13",self.sw)
+        self.assertIn("radar-rss-v14",self.sw)
 
     def test_all_news_context_and_coverage_have_separate_responsibilities(self):
         library=(ROOT/'web/library.js').read_text(encoding='utf8')
@@ -46,7 +46,7 @@ class V12ReviewTests(unittest.TestCase):
         self.assertIn("setNavOpen(false,false)",library)
         self.assertNotIn("makeSelect('v12Geo'",self.script)
         self.assertNotIn("id='v12CountryTabs'",self.script)
-        self.assertIn("filterRow.append(datePicker.wrap)",self.script)
+        self.assertIn("controls.insertBefore(datePicker.wrap,bulkRead)",self.script)
         self.assertIn("['chile','venezuela','region'].includes(item.geo)",self.script)
         self.assertIn("goTo(catOf(item.geo))",self.script)
         self.assertIn("chooseGeo(item.geo==='latam'?'latam':'all')",self.script)
