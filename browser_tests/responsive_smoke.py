@@ -242,8 +242,28 @@ def main():
                           lightBackground:getComputedStyle(document.body).getPropertyValue('--bg').trim(),
                           brand:getComputedStyle(document.querySelector('.brand-mark')).backgroundColor
                         })""")
-                        assert visual["sidebar"] == "rgb(240, 242, 246)", visual
-                        assert visual["brand"] == "rgb(173, 75, 88)", visual
+                        assert visual["sidebar"] == "rgb(255, 255, 255)", visual
+                        assert visual["brand"] == "rgb(12, 10, 8)", visual
+                        # V10: un sistema editorial real: superficies claras,
+                        # tarjetas planas y acento lima SOLO para acciones concretas.
+                        editorial=page.evaluate("""() => {
+                          const card=document.querySelector('#dashboardFeature .article-card');
+                          const title=card.querySelector('.article-title');
+                          return {
+                            bg:getComputedStyle(document.body).backgroundColor,
+                            cardShadow:getComputedStyle(card).boxShadow,
+                            cardBorder:getComputedStyle(card).borderTopWidth,
+                            cardRadius:getComputedStyle(card).borderTopLeftRadius,
+                            font:getComputedStyle(title).fontFamily,
+                            accent:getComputedStyle(document.body).getPropertyValue('--action-lime').trim()
+                          };
+                        }""")
+                        assert editorial["bg"] == "rgb(244, 242, 240)", editorial
+                        assert editorial["cardShadow"] == "none", editorial
+                        assert editorial["cardBorder"] == "1px", editorial
+                        assert editorial["cardRadius"] == "16px", editorial
+                        assert "Inter" in editorial["font"], editorial
+                        assert editorial["accent"] == "#e4f222", editorial
                         # La portada empieza directamente con noticias; no contiene
                         # titular promocional, hero oculto ni encabezados redundantes.
                         assert page.locator("#dashboardView .dashboard-head").count() == 0
@@ -265,7 +285,7 @@ def main():
                         page.evaluate("document.body.classList.remove('light')")
                         assert page.evaluate(
                             "() => getComputedStyle(document.body).getPropertyValue('--bg').trim()"
-                        ) == "#191d26"
+                        ) == "#171616"
                         page.evaluate("document.body.classList.add('light')")
                         # Seis colores distinguibles, sin repintar el fondo del menú.
                         colors=page.evaluate("""() => {
