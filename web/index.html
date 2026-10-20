@@ -38,7 +38,7 @@
   <link rel="stylesheet" href="./ux.css?v=1.0.2">
   <link rel="stylesheet" href="./features.css?v=1.2.2">
   <link rel="stylesheet" href="./v12.css?v=1.2.3">
-  <link rel="stylesheet" href="./v13.css?v=6.0.0">
+  <link rel="stylesheet" href="./v13.css?v=7.1.0">
   <title>Radar RSS — Actualidad en un solo lugar</title>
 </head>
 <body class="light radar-hybrid">
@@ -67,7 +67,7 @@
         </section>
         <button type="button" class="minimal-button" id="aboutButton">Sobre el proyecto <span data-icon="info" class="ui-icon-slot" aria-hidden="true"></span></button>
       </div>
-      <div id="sidebarResizeHandle" class="sidebar-resize-handle" role="separator" tabindex="0" aria-label="Cambiar ancho del panel lateral" aria-orientation="vertical" aria-valuemin="240" aria-valuemax="480" aria-valuenow="310" aria-valuetext="310 píxeles" title="Arrastra para ajustar · Flechas para cambiar · Doble clic para restablecer">
+      <div id="sidebarResizeHandle" class="sidebar-resize-handle" role="separator" tabindex="0" aria-label="Cambiar ancho del panel lateral" aria-orientation="vertical" aria-valuemin="240" aria-valuemax="480" aria-valuenow="310" aria-valuetext="310 píxeles" title="Personalizar ancho del menú desde Configuración">
         <span class="sidebar-resize-grip" aria-hidden="true"></span>
       </div>
     </aside>
@@ -89,6 +89,7 @@
           <button id="themeToggle" class="icon-button" type="button" aria-label="Cambiar tema" title="Cambiar modo claro u oscuro"><span id="themeGlyph"></span></button>
         </div>
       </header>
+      <nav class="topic-rail" id="topicRail" aria-label="Secciones de noticias"></nav>
       <div id="stylePreviewNotice" class="style-preview-notice" role="status" hidden>
         <span class="style-preview-label"><strong>REFERENCIA</strong> <span id="stylePreviewName">Diseño anterior</span></span>
         <span class="style-preview-info">Versión de comparación; Radar RSS usa ahora el diseño editorial combinado.</span>
@@ -98,7 +99,6 @@
         </div>
       </div>
       <main class="main" id="mainContent">
-        <nav class="topic-rail" id="topicRail" aria-label="Secciones"></nav>
         <div id="statusBanner" class="status-banner" role="status" hidden>
           <span class="status-icon" aria-hidden="true">!</span>
           <span id="statusMessage" class="status-message"></span>
@@ -109,27 +109,31 @@
         </div>
         <section id="dashboardView" class="dashboard-view" aria-labelledby="dashboardTitle" hidden>
           <h1 id="dashboardTitle" class="sr-only">Portada de Radar RSS</h1>
-          <section class="dashboard-panel dashboard-feature-panel" aria-label="Noticias recientes de diferentes categorías">
+          <div class="newsroom-lead" id="newsroomLead">
+          <section class="dashboard-panel dashboard-feature-panel newsroom-lead-stories" aria-label="Noticias recientes de diferentes categorías">
             <div class="dashboard-panel-head"><h2>En portada</h2></div>
             <div class="dashboard-feature" id="dashboardFeature"></div>
           </section>
+          <section class="dashboard-panel newsroom-lead-latest" aria-labelledby="dashboardRecentTitle">
+            <div class="dashboard-panel-head"><h2 id="dashboardRecentTitle">Últimas publicaciones</h2></div>
+            <div class="dashboard-recent" id="dashboardRecent"></div>
+          </section>
+          </div>
           <section class="since-visit" id="sinceVisit" aria-labelledby="sinceVisitTitle" hidden>
             <div class="since-visit-text"><span class="since-visit-icon" aria-hidden="true" data-icon="sparkle"></span><div><h2 id="sinceVisitTitle">Mientras no estabas</h2><p id="sinceVisitText"></p></div></div>
             <div class="since-visit-folders" id="sinceVisitFolders"></div>
             <div class="since-visit-actions"><button type="button" id="sinceVisitShow" class="since-visit-primary">Ver solo las nuevas</button><button type="button" id="sinceVisitDismiss" class="since-visit-dismiss" aria-label="Ocultar aviso de novedades"><span data-icon="x" class="ui-icon-slot" aria-hidden="true"></span></button></div>
           </section>
-          <section class="dashboard-panel" aria-labelledby="dashboardRecentTitle">
-            <div class="dashboard-panel-head"><h2 id="dashboardRecentTitle">Últimas publicaciones</h2></div>
-            <div class="dashboard-recent" id="dashboardRecent"></div>
-          </section>
           <section class="dashboard-panel dashboard-saved-panel" id="dashboardSavedPanel" hidden aria-label="Artículos guardados">
             <div class="dashboard-panel-head"><h2>Tu lista para después</h2><button type="button" id="dashboardSavedAll" class="dashboard-read-all">Ver mis guardadas <span data-icon="arrow-right" class="ui-icon-slot" aria-hidden="true"></span></button></div>
             <div id="dashboardSavedList" class="dashboard-saved-list"></div>
           </section>
-          <section class="dashboard-panel" aria-labelledby="dashboardFoldersTitle">
+          <div class="newsroom-discovery" id="newsroomDiscovery">
+          <section class="dashboard-panel newsroom-discovery-categories" aria-labelledby="dashboardFoldersTitle">
             <div class="dashboard-panel-head"><h2 id="dashboardFoldersTitle">Por carpeta</h2></div>
             <div class="dashboard-folders" id="dashboardFolders"></div>
           </section>
+            <div class="newsroom-discovery-aside">
         <section class="dashboard-panel radar-panel" aria-labelledby="radarTitle">
             <div class="dashboard-panel-head"><h2 id="radarTitle" title="Historias publicadas por más medios en las últimas 24 horas">Lo más cubierto</h2></div>
             <div class="radar-layout">
@@ -145,6 +149,8 @@
             <div class="trend-chips" id="trendChips"></div>
             <div class="followed-row" id="followedRow" hidden><span class="followed-label"><span data-icon="bell" class="ui-icon-slot" aria-hidden="true"></span> Temas que sigo</span><div class="trend-chips" id="followedChips"></div></div>
           </section>
+            </div>
+          </div>
           </section>
         <section class="briefing-view" id="briefingView" aria-labelledby="briefingTitle" hidden>
           <header class="briefing-head">
@@ -305,7 +311,7 @@
             </div>
             <input id="settingSidebarWidth" type="range" min="240" max="480" step="10" value="310">
             <div class="setting-sidebar-width-footer">
-              <small id="sidebarWidthHelp">Arrastra el borde derecho del menú o utiliza las flechas del teclado. El ajuste se guarda en este navegador.</small>
+              <small id="sidebarWidthHelp">Personaliza el ancho del menú desplegable desde este control. El ajuste se guarda en este navegador.</small>
               <button type="button" id="resetSidebarWidth" class="settings-secondary">Restablecer ancho</button>
             </div>
           </div>
@@ -357,9 +363,9 @@
   </div>
   <button id="backTop" class="back-to-top" type="button" aria-label="Volver arriba" title="Volver arriba" hidden><span data-icon="arrow-up" class="ui-icon-slot" aria-hidden="true"></span></button>
   <div id="actionToast" class="action-toast" role="status" aria-live="polite" aria-atomic="true" hidden></div>
-  <script src="./app.js?v=8.3.1" defer></script>
+  <script src="./app.js?v=9.0.0" defer></script>
   <script src="./library.js?v=1.7.4" defer></script>
-  <script src="./sidebar-layout.js?v=1.0.0" defer></script>
+  <script src="./sidebar-layout.js?v=1.1.0" defer></script>
   <script src="./news-effects.js?v=1.0.0" defer></script>
   <script src="./features.js?v=1.0.0" defer></script>
   <script src="./v12.js?v=1.2.5" defer></script>

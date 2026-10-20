@@ -260,8 +260,10 @@ def main():
                         }""")
                         assert editorial["bg"] == "rgb(244, 242, 240)", editorial
                         assert editorial["cardShadow"] == "none", editorial
+                        # Bento: recuadros de alturas/anchos asimétricos, no
+                        # tarjetas idénticas ni rayas cromáticas superiores.
                         assert editorial["cardBorder"] == "1px", editorial
-                        assert editorial["cardRadius"] == "16px", editorial
+                        assert editorial["cardRadius"] == "15px", editorial
                         assert "Inter" in editorial["font"], editorial
                         assert editorial["accent"] == "#e4f222", editorial
                         # La portada empieza directamente con noticias; no contiene
@@ -313,6 +315,8 @@ def main():
                             semanticColor:style.getPropertyValue('--topic-ink').trim()
                           };
                         }""")
+                        # Contorno neutro de tarjeta; color semántico solamente en
+                        # la etiqueta. No se reintroduce una banda superior.
                         assert identity["borderTopWidth"] == identity["borderBottomWidth"] == "1px", identity
                         assert identity["labelColor"] != "rgb(98, 107, 120)", identity
                         folder=page.locator("#dashboardFolders .dashboard-folder[data-topic]").first
@@ -326,9 +330,8 @@ def main():
                         assert page.locator("#libraryFolderNav .v12-region-nav").count() == 0
                         actual = page.locator("#libraryFolderNav .system-folder-link .nav-label").all_text_contents()
                         assert actual == ["Inteligencia Artificial","Tecnología","Internacionales","Chile","Venezuela","Latinoamérica"], actual
-                        if width <= 950:
-                            page.locator("#menuToggle").click()
-                            page.locator("body.nav-open").wait_for(timeout=3000)
+                        page.locator("#menuToggle").click()
+                        page.locator("body.nav-open").wait_for(timeout=3000)
                         folder = page.locator("#libraryFolderNav .system-folder-link").nth(3)
                         expect(folder).to_be_visible()
                         folder.focus()
@@ -393,29 +396,59 @@ def main():
                         if page.locator("#dashboardFolders .dashboard-folder").count():
                             assert page.locator("#dashboardFolders").evaluate(
                                 "(node) => getComputedStyle(node).display") == "grid"
-                        # La primera noticia no debe ocupar dos columnas o filas:
-                        # todas las tarjetas de portada comparten formato y alineación.
-                        featured = page.evaluate("""() => {
-                          const grid = document.querySelector('#dashboardFeature');
-                          const cards = [...grid.querySelectorAll('.article-card')];
-                          const rects = cards.map(card => {
-                            const r=card.getBoundingClientRect();
-                            return {y:Math.round(r.y), w:r.width, h:r.height};
+                        # V11.1: Bento asimétrico real, tanto en el DOM como
+                        # en la geometría COMPUTADA del navegador.
+                        bento = page.evaluate("""() => {
+                          const desk=document.querySelector('#newsroomLead');
+                          const featured=document.querySelector('#dashboardFeature');
+                          const cards=[...featured.querySelectorAll('.article-card')];
+                          const wire=document.querySelector('#dashboardRecent');
+                          const discovery=document.querySelector('#newsroomDiscovery');
+                          const folders=document.querySelector('#dashboardFolders');
+                          const topics=document.querySelector('#topicRail');
+                          const main=document.querySelector('#mainContent');
+                          const rects=cards.map(card=>{
+                            const b=card.getBoundingClientRect();
+                            return {x:b.x,y:b.y,width:b.width,height:b.height,
+                                    col:getComputedStyle(card).gridColumnStart,
+                                    row:getComputedStyle(card).gridRowStart};
                           });
-                          const rows = new Map();
-                          for(const r of rects){
-                            if(!rows.has(r.y))rows.set(r.y, []);
-                            rows.get(r.y).push(r);
-                          }
-                          return {count:cards.length, rows:[...rows.values()],
-                            columns:getComputedStyle(grid).gridTemplateColumns.split(' ').length};
+                          return {
+                            deskColumns:getComputedStyle(desk).gridTemplateColumns.split(' ').length,
+                            featureFlow:getComputedStyle(featured).display,
+                            featureColumns:getComputedStyle(featured).gridTemplateColumns.split(' ').length,
+                            cards:rects,
+                            wireCount:wire.querySelectorAll('.dashboard-recent-row').length,
+                            discoveryColumns:getComputedStyle(discovery).gridTemplateColumns.split(' ').length,
+                            folders:getComputedStyle(folders).display,
+                            radarInside:discovery.contains(document.getElementById('radarFigure')),
+                            topicsVisible:getComputedStyle(topics).display,
+                            navBeforeMain:!!(topics.compareDocumentPosition(main) & Node.DOCUMENT_POSITION_FOLLOWING),
+                            sidebarDrawer:getComputedStyle(document.getElementById('appSidebar')).position,
+                            menuToggle:getComputedStyle(document.getElementById('menuToggle')).display
+                          };
                         }""")
-                        assert featured["count"] == 3, featured
-                        assert featured["columns"] == (1 if width <= 710 else 2 if width <= 1100 else 3), featured
-                        for row in featured["rows"]:
-                            if len(row) > 1:
-                                assert max(x["h"] for x in row)-min(x["h"] for x in row) <= 2, featured
-                                assert max(x["w"] for x in row)-min(x["w"] for x in row) <= 2, featured
+                        assert bento["deskColumns"] == (1 if width <= 1250 else 2), bento
+                        assert bento["discoveryColumns"] == (1 if width <= 1250 else 2), bento
+                        assert bento["featureFlow"] == "grid", bento
+                        assert bento["featureColumns"] == (1 if width <= 680 else 12), bento
+                        assert len(bento["cards"]) == 3, bento
+                        if width > 680:
+                            assert bento["cards"][0]["col"] == "span 7", bento
+                            assert bento["cards"][0]["row"] == "span 2", bento
+                            assert bento["cards"][1]["col"] == "span 5", bento
+                            assert bento["cards"][0]["width"] > bento["cards"][1]["width"], bento
+                            assert bento["cards"][0]["height"] > bento["cards"][1]["height"], bento
+                        else:
+                            assert bento["cards"][0]["width"] == bento["cards"][1]["width"], bento
+                            assert bento["cards"][0]["y"] < bento["cards"][1]["y"], bento
+                        assert bento["wireCount"] >= 1, bento
+                        assert bento["folders"] == "grid", bento
+                        assert bento["radarInside"], bento
+                        assert bento["topicsVisible"] == "flex", bento
+                        assert bento["navBeforeMain"], bento
+                        assert bento["sidebarDrawer"] == "fixed", bento
+                        assert bento["menuToggle"] != "none", bento
                         check_header_overlap(page, f"{browser_name} barra superior {width}px")
                         check_accessibility_contract(page, f"{browser_name} portada {width}px")
                         if width in (320, 768, 1440):
@@ -425,9 +458,8 @@ def main():
                         # distintas como Ver mis guardadas o la navegación responsive.
                         assert page.locator("#dashboardView .dashboard-feature-panel .dashboard-read-all").count() == 0
                         assert page.locator("#dashboardSavedAll").count() == 1
-                        if width <= 950:
-                            page.locator("#menuToggle").click()
-                            page.locator("body.nav-open").wait_for(timeout=3000)
+                        page.locator("#menuToggle").click()
+                        page.locator("body.nav-open").wait_for(timeout=3000)
                         all_news=page.locator("#categoryNav > .nav-link").nth(1)
                         expect(all_news).to_be_visible()
                         all_news.click()
@@ -521,11 +553,10 @@ def main():
                         check_visible_boxes(page, [".topbar", ".topbar-actions", ".filter-bar",
                             ".filter-controls", ".mode-tabs", "#articleGrid",
                             "#articleGrid .article-card"], f"listado {width}px")
-                        if width <= 950:
-                            page.locator("#menuToggle").click()
-                            page.locator("body.nav-open").wait_for(timeout=2000)
-                            page.keyboard.press("Escape")
-                            page.locator("body:not(.nav-open)").wait_for(timeout=2000)
+                        page.locator("#menuToggle").click()
+                        page.locator("body.nav-open").wait_for(timeout=2000)
+                        page.keyboard.press("Escape")
+                        page.locator("body:not(.nav-open)").wait_for(timeout=2000)
                         if width <= 710:
                             page.locator("#searchToggle").click()
                             page.locator("#topbarSearch").wait_for(state="visible", timeout=2000)
@@ -648,9 +679,8 @@ def main():
                         page.locator("#articleReaderDialog[open]").wait_for(state="hidden")
                         # Una acción de lectura global confirma antes de modificar
                         # el estado y actualiza los contadores de todas las carpetas.
-                        if width <= 950:
-                            page.locator("#menuToggle").click()
-                            page.locator("body.nav-open").wait_for()
+                        page.locator("#menuToggle").click()
+                        page.locator("body.nav-open").wait_for()
                         all_link=page.locator("#categoryNav > .nav-link").nth(1)
                         all_link.focus()
                         all_link.press("Shift+F10")

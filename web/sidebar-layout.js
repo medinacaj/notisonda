@@ -47,7 +47,7 @@
     handle.tabIndex=desktop?0:-1;
     output.textContent=actual+' px';
     help.textContent=desktop
-      ?'Arrastra el borde del menú o utiliza ← y →. Doble clic para restablecer. Se guarda solo en este navegador.'
+      ?'Ajusta el ancho del menú desplegable aquí. El valor se guarda solo en este navegador.'
       :'En pantallas pequeñas el menú se adapta automáticamente; el ancho elegido se conserva para el escritorio.';
   }
   function setWidth(raw,save=true){
