@@ -534,9 +534,10 @@ function renderTopicRail(){
  // Mantener visible la sección activa sin mover la página verticalmente.
  if(current)requestAnimationFrame(()=>{rail.scrollLeft=Math.max(0,current.offsetLeft-rail.offsetLeft-16);});
 }
-// En pantallas de 950 px o menos, el menú lateral es un cajón que se abre con un botón.
-// Cerrado queda inerte (fuera del orden de tabulación); abierto, la página queda inerte.
-const MOBILE_NAV=window.matchMedia('(max-width: 950px)');
+// V11: navegación editorial horizontal en cualquier pantalla.
+// La biblioteca detallada permanece accesible en un cajón bajo demanda,
+// con foco, cierre por Escape y fondo inerte tanto en escritorio como móvil.
+const MOBILE_NAV=window.matchMedia('(min-width: 0px)');
 function setNavOpen(open,restoreFocus=true){
   const sidebar=$('appSidebar'),page=document.querySelector('.page');
   if(!sidebar||!page)return;
