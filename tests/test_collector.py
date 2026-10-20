@@ -1,6 +1,7 @@
 import sys
 from pathlib import Path
 import unittest
+from unittest.mock import patch
 from datetime import datetime, timezone
 from types import SimpleNamespace
 
@@ -46,6 +47,20 @@ class ReaderTests(unittest.TestCase):
             self.assertEqual(len(calls), 1)  # Un bloqueo deliberado no se reintenta.
         finally:
             collect._get_feed_once, collect.RETRY_WAIT_SECONDS = original, wait
+
+    def test_retry_uses_bounded_jitter(self):
+        calls = []
+        def fail_once(url):
+            calls.append(url)
+            if len(calls) == 1:
+                raise collect.requests.Timeout('timeout')
+            return b'<rss/>'
+        with patch.object(collect, '_get_feed_once', side_effect=fail_once), \
+             patch.object(collect.random, 'random', return_value=0.5), \
+             patch.object(collect.time, 'sleep') as sleep:
+            self.assertEqual(collect.get_feed('https://example.com/feed'), b'<rss/>')
+            self.assertEqual(len(calls), 2)
+            sleep.assert_called_once_with(6)
 
     def test_reject_unsafe_article_links(self):
         self.assertIsNone(collect.safe_web_url('javascript:alert(1)'))
