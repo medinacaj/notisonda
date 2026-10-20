@@ -73,18 +73,25 @@ class UxReviewTests(unittest.TestCase):
         self.assertIn("THEME_EXPLICIT_KEY='radar-theme-explicit'", self.app)
         self.assertIn("return 'system';", js_function(self.app, 'initialTheme'))
 
-    def test_fresh_coral_lilac_editorial_brand(self):
+    def test_multicolor_editorial_identity(self):
         hybrid = (ROOT / 'web/radar-hybrid.css').read_text(encoding='utf-8')
-        self.assertNotIn('--accent:#1f5e5b', hybrid)
-        self.assertIn('--accent:#a7465d', hybrid)
-        self.assertIn('--accent-secondary:#7163a5', hybrid)
-        self.assertIn('--bg:#fbfafc', hybrid)
-        self.assertIn('--bg:#1c1a23', hybrid)
+        self.assertIn('--bg:#f8f9fb', hybrid)
+        self.assertIn('--accent:#ad4b58', hybrid)
+        self.assertIn('--accent-secondary:#326a9b', hybrid)
+        self.assertIn('--editorial-violet:#7354a2', hybrid)
+        self.assertIn('--editorial-amber:#99631f', hybrid)
+        self.assertIn('--bg:#191d26', hybrid)
         newsroom = (ROOT / 'web/v13.css').read_text(encoding='utf-8')
-        self.assertIn('background:var(--surface2);color:var(--text)', newsroom)
-        self.assertIn('border-bottom:2px solid var(--text)', newsroom)
+        for topic in range(1,7):
+            self.assertIn(f'[data-topic="{topic}"]',newsroom)
         self.assertIn('.settings-reading-help',newsroom)
+        self.assertIn('.article-card[data-topic]',newsroom)
         self.assertNotIn('background:#102641', newsroom)
+        self.assertIn('border-bottom:2px solid var(--text)', newsroom)
+        app = (ROOT / 'web/app.js').read_text(encoding='utf-8')
+        self.assertIn('button.dataset.topic=String(topic+1)',app)
+        self.assertIn('el.dataset.topic=String(topic+1)',app)
+        self.assertIn('block.dataset.topic=String(i+1)',app)
 
     def test_section_titles_have_clear_hierarchy(self):
         features = (ROOT / 'web/features.css').read_text(encoding='utf-8')
