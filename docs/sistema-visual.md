@@ -19,12 +19,12 @@ El fallo principal de las versiones anteriores era asignar un único color a tod
 - **Últimas publicaciones y radar**: azul editorial `#326a9b`.
 - **Temas, notas y noticias sin leer**: violeta `#7354a2`.
 - **Guardadas y tendencias**: ámbar `#99631f`.
-- **Categorías OPML**: IA violeta, tecnología azul, internacionales ámbar, Chile rojo, Venezuela cobre y Latinoamérica turquesa. La pertenencia se identifica por icono, una línea delgada o una pequeña etiqueta; **jamás** por tarjetas enteras de colores.
+- **Categorías OPML**: IA violeta, tecnología azul, internacionales ámbar, Chile rojo, Venezuela cobre y Latinoamérica turquesa. La pertenencia se indica con iconos de carpeta y pequeñas etiquetas textuales de noticia, **nunca con líneas de color en los bordes de las tarjetas ni bandas superiores de las carpetas**.
 - **Modo oscuro**: fondo grafito `#191d26`, superficie `#262c38`, tonos funcionales aclarados para legibilidad.
 - **Semántica estable**: las seis categorías asignan `data-topic="1"…data-topic="6"` en navegación, tarjetas y carpeta de portada, por el orden de `state.categories`. No depender de coincidencias parciales de nombres.
 - **Sin guía en Inicio**: “Empieza con Radar RSS” permanece fuera de portada; las herramientas están en Configuración → Lectura y filtros.
 
-Al implementar nuevas características, reutilizar el rol semántico correspondiente y comprobar en navegador los seis colores calculados. Evitar variar el fondo de todas las secciones o reemplazar la identidad completa por un solo tono.
+Regla V9.1: no añadir bordes cromáticos decorativos, barras coloreadas superiores ni puntos antes de los títulos de las secciones. Usar tipografía, fotografía y aire para jerarquizar.\n\nAl implementar nuevas características, reutilizar el rol semántico correspondiente y comprobar en navegador los seis colores calculados. Evitar variar el fondo de todas las secciones o reemplazar la identidad completa por un solo tono.
 
 ## Reglas visuales
 
