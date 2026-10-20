@@ -3,31 +3,33 @@
    navegación compacta, contornos y sans serif en titulares del feed.
    Los estilos están aislados en body.radar-hybrid para preservar vistas de referencia. */
 
+/* RadarRRS · Identidad editorial 2026: tinta azul, energía cian,
+   lienzo hielo y una barra lateral azul noche. Sustituye la paleta naranja previa. */
 body.radar-hybrid,
 body.radar-hybrid.light{
   color-scheme:light;
-  --bg:#ffffff;--surface:#ffffff;--surface2:#f4f4f2;
-  --line:#dcddda;--text:#272a29;--muted:#636967;--dim:#69706c;
-  --accent:#b8420a;--blue:#b8420a;--hover:#f2f3f1;
-  --card:#ffffff;--shadow:rgba(0,0,0,0);
-  --paper:#ffffff;--ink:#272a29;--charcoal:#242827;
-  --stone:#69706c;--ash:#cfd2cf;--mist:#dcddda;
-  --cloud:#f4f4f2;--signal:#b8420a;
+  --bg:#f2f6fb;--surface:#ffffff;--surface2:#eaf1f9;
+  --line:#dce5f1;--text:#172b44;--muted:#546d85;--dim:#73869b;
+  --accent:#1167b7;--blue:#1167b7;--hover:#e8f1fc;
+  --card:#ffffff;--shadow:rgba(21,54,94,.11);
+  --paper:#ffffff;--ink:#172b44;--charcoal:#14263d;
+  --stone:#607991;--ash:#a7bace;--mist:#dce5f1;
+  --cloud:#eaf1f9;--signal:#1167b7;
   --font-ui:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
-  --font-editorial:Charter,"Iowan Old Style","Palatino Linotype",Georgia,serif;
-  background:#ffffff;color:#272a29;
-  font-family:var(--font-ui);font-size:14px;line-height:1.55;
+  --font-editorial:"Iowan Old Style",Charter,"Palatino Linotype",Georgia,serif;
+  background:var(--bg);color:var(--text);
+  font-family:var(--font-ui);font-size:14px;line-height:1.52;
   font-feature-settings:"kern" on,"liga" on;
 }
 body.radar-hybrid:not(.light){
   color-scheme:dark;
-  --bg:#181b1b;--surface:#202323;--surface2:#292d2c;
-  --line:#3c4340;--text:#f0f1ee;--muted:#bdc3c0;--dim:#adb5b0;
-  --accent:#f08a54;--blue:#f08a54;--hover:#2c3230;
-  --card:#202323;--shadow:rgba(0,0,0,0);
-  --paper:#202323;--ink:#f0f1ee;--charcoal:#f0f1ee;
-  --stone:#bdc3c0;--ash:#565e59;--mist:#444b47;
-  --cloud:#292d2c;--signal:#f08a54;
+  --bg:#0b1525;--surface:#14243b;--surface2:#1c314d;
+  --line:#2d4563;--text:#edf4ff;--muted:#b0c4dc;--dim:#94acc5;
+  --accent:#65c8ee;--blue:#65c8ee;--hover:#223955;
+  --card:#14243b;--shadow:rgba(0,0,0,.29);
+  --paper:#14243b;--ink:#edf4ff;--charcoal:#f4faff;
+  --stone:#adc2da;--ash:#58718f;--mist:#2d4563;
+  --cloud:#1c314d;--signal:#65c8ee;
   background:var(--bg);color:var(--text);
 }
 body.radar-hybrid .page{background:var(--bg)}
