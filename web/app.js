@@ -495,6 +495,7 @@ function buildNav() {
     const isFolder=index>=2;
     const button=mk('button','nav-link'+(active?' active':'')+(isFolder?' system-folder-link':''));
     button.type='button';
+    if(isFolder){const topic=state.categories.indexOf(entry.id);if(topic>=0)button.dataset.topic=String(topic+1);}
     button.setAttribute('aria-current',active?'page':'false');
     button.title=entry.label;
     if(isFolder)button.setAttribute('aria-label','Carpeta de fuentes: '+entry.label);
@@ -528,6 +529,7 @@ function renderTopicRail(){
  entries.forEach(entry=>{
   const active=entry.id==='home'?state.pageView==='dashboard':entry.id==='briefing'?state.pageView==='briefing':state.pageView==='feed'&&state.category===entry.id;
   const button=mk('button','topic-chip'+(active?' active':''),entry.label);button.type='button';
+  const topic=state.categories.indexOf(entry.id);if(topic>=0)button.dataset.topic=String(topic+1);
   button.setAttribute('aria-current',active?'page':'false');
   button.addEventListener('click',()=>goTo(entry.id));rail.append(button);
   if(active)current=button;
@@ -844,6 +846,7 @@ function renderDashboard(){
     if(!news.length)return;
     news.forEach(x=>used.add(x.id));
     const block=mk('section','dashboard-folder');
+    block.dataset.topic=String(i+1);
     const head=mk('button','dashboard-folder-head');head.type='button';
     const icon=mk('span','dashboard-folder-icon');icon.append(svgIcon(CATEGORY_ICONS[i]||'grid'));
     head.append(icon,mk('h3','',categoryLabel(cat)),activitySpark(items.filter(item=>(item.categories||[]).includes(cat))),mk('span','dashboard-folder-more','Ver todo'),svgIcon('arrow-right'));
@@ -1065,6 +1068,8 @@ function card(item) {
     el.append(editorialCover(item));
   }
   const category=(item.categories||[])[0]||'';
+  const topic=state.categories.indexOf(category);
+  if(topic>=0)el.dataset.topic=String(topic+1);
   const content=mk('div','article-content');
   const title=mk('h3','article-title');
   const titleLink=link(item.url,item.title||'Sin título');
