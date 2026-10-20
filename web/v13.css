@@ -65,6 +65,19 @@ body.radar-hybrid #articleGrid.article-grid:not(.list-view) > .article-card .art
 body.radar-hybrid #articleGrid.article-grid:not(.list-view) > .article-card.no-excerpt .article-title{
   margin-bottom:6px;-webkit-line-clamp:3;
 }
+/* Mantener la opción Compacto existente: no imponerle imágenes mayores. */
+body.radar-hybrid.compact #articleGrid.article-grid:not(.list-view) > .article-card > .cover{
+  height:96px;
+}
+body.radar-hybrid.compact #articleGrid.article-grid:not(.list-view) > .article-card .article-title{
+  -webkit-line-clamp:2;
+}
+body.radar-hybrid.compact #articleGrid.article-grid:not(.list-view) > .article-card .article-excerpt{
+  display:none;
+}
+body.radar-hybrid.compact .article-card .article-cover-placeholder{
+  height:58px;max-height:58px;
+}
 @media(max-width:600px){
   body.radar-hybrid #articleGrid.article-grid:not(.list-view) > .article-card > .cover{
     height:148px;
