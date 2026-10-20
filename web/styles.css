@@ -690,3 +690,74 @@ body.layout-list .cards-columns-control{background:transparent;color:var(--muted
 body.layout-list .cards-columns-control:hover{color:var(--text)}
 .display-controls .layout-switch{align-items:center;gap:4px}
 @media(max-width:520px){.cards-columns-control{min-width:70px;height:33px;padding:5px 6px}}
+
+
+/* V4.5 — tarjetas de noticias uniformes, sin tarjetas protagonistas sobredimensionadas. */
+.article-grid:not(.list-view),.dashboard-feature{
+  align-items:stretch;
+  grid-auto-rows:minmax(0,1fr);
+}
+.article-grid:not(.list-view) .article-card,.dashboard-feature .article-card{
+  height:100%;
+  min-height:0;
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+}
+.article-grid:not(.list-view) .cover,.dashboard-feature .article-card .cover,
+.dashboard-feature .article-card:first-child .cover,
+.dashboard-feature .article-card:not(:first-child) .cover{
+  width:100%;
+  height:auto;
+  min-height:0;
+  flex:0 0 auto;
+  aspect-ratio:16/9;
+}
+.article-grid:not(.list-view) .article-content,.dashboard-feature .article-card .article-content{
+  flex:1;
+  min-height:0;
+  display:flex;
+  flex-direction:column;
+}
+.article-grid:not(.list-view) .article-title,.dashboard-feature .article-card .article-title,
+.dashboard-feature .article-card:first-child .article-title,
+.dashboard-feature .article-card:not(:first-child) .article-title{
+  font-size:clamp(14px,1.35vw,18px);
+  line-height:1.38;
+  margin:9px 0;
+  display:-webkit-box;
+  -webkit-box-orient:vertical;
+  -webkit-line-clamp:3;
+  overflow:hidden;
+}
+.article-grid:not(.list-view) .article-excerpt,.dashboard-feature .article-card .article-excerpt{
+  display:-webkit-box;
+  -webkit-box-orient:vertical;
+  -webkit-line-clamp:2;
+  overflow:hidden;
+}
+.dashboard-feature{
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  grid-template-rows:auto;
+}
+.dashboard-feature .article-card:first-child{
+  grid-column:auto;
+  grid-row:auto;
+}
+.dashboard-feature .article-card:not(:first-child){grid-template-columns:none}
+.dashboard-feature .article-card:not(:first-child) .article-content{padding:15px 16px 13px}
+.dashboard-feature .article-card .article-actions,
+.dashboard-feature .article-card:not(:first-child) .article-actions{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  margin-top:auto;
+}
+@media(max-width:1100px){
+  .dashboard-feature{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:600px){
+  .dashboard-feature{grid-template-columns:minmax(0,1fr)}
+  .article-grid:not(.list-view) .article-title,.dashboard-feature .article-card .article-title,
+  .dashboard-feature .article-card:first-child .article-title,
+  .dashboard-feature .article-card:not(:first-child) .article-title{font-size:16px}
+}
