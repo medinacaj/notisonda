@@ -415,19 +415,17 @@ def main():
                         page.evaluate("location.hash = '#region/latinoamerica'")
                         page.locator("#feedView:not([hidden])").wait_for()
                         assert page.locator("#feedHeading").inner_text() == "Latinoamérica"
-                        check_visible_boxes(page, ["#v12CountryTabs","#v12FilterBar","#v12Geo","#v12Date"],
-                                            f"V1.2 región {browser_name} {width}px")
-                        expect(page.locator("label:has(#v12Geo) .v12-control-label")).to_have_text("Cobertura")
-                        options=page.locator("#v12Geo option").all_text_contents()
-                        assert options == ["Todas las noticias", "Toda Latinoamérica", "Chile",
-                                           "Venezuela", "Medios regionales latinoamericanos"], options
-                        assert page.locator('#v12Geo optgroup[label="Latinoamérica"]').count() == 1
-                        page.locator("#v12Geo").select_option("region")
-                        expect(page.locator("#feedHeading")).to_have_text("Medios regionales de Latinoamérica")
-                        assert page.locator("#articleGrid .article-card").count() > 0
-                        page.locator("#v12Geo").select_option("chile")
-                        page.wait_for_url("**/#region/chile")
-                        expect(page.locator("#feedHeading")).to_have_text("Chile", timeout=10000)
+                        check_visible_boxes(page, ["#v12FilterBar","#v12Date","#v12SaveSearch"],
+                                            f"V1.2 filtros {browser_name} {width}px")
+                        # El filtro geográfico duplicaba las seis carpetas.
+                        assert page.locator("#v12Geo").count() == 0
+                        assert page.locator("#v12CountryTabs").count() == 0
+                        assert page.locator('#libraryFolderNav .system-folder-link').count() == len(CATEGORIES)
+                        # URLs existentes permanecen válidas aunque el selector se retire.
+                        page.evaluate("location.hash = '#region/chile'")
+                        expect(page.locator("#feedHeading")).to_have_text("Chile",timeout=10000)
+                        page.evaluate("location.hash = '#categoria/04%20-%20Chile'")
+                        expect(page.locator("#feedHeading")).to_have_text("Chile",timeout=10000)
                         assert page.locator("#articleGrid .article-card").count() > 0
                         page.locator("#v12Date").select_option("7")
                         page.locator("#sourceSelect").select_option("medio-3")
@@ -437,6 +435,28 @@ def main():
                         page.locator(".v12-saved-open").first.click()
                         assert page.locator("#v12Date").input_value() == "7"
                         assert page.locator("#sourceSelect").input_value() == "medio-3"
+                        page.locator(".v12-search-remove").first.click()
+                        assert page.locator(".v12-saved-open").count() == 0
+                        # Búsquedas antiguas con «geo: chile» deben poderse abrir
+                        # desde la carpeta nativa sin recrear el selector.
+                        page.evaluate("""() => localStorage.setItem(
+                            'radar-v12-saved-searches',
+                            JSON.stringify([{label:'Chile anterior',query:'',geo:'chile',
+                                age:7,category:'all',feed:'medio-3'},
+                                {label:'Latinoamérica anterior',query:'',
+                                geo:'latam',age:7,category:'all',feed:''}])
+                        )""")
+                        page.reload(wait_until="domcontentloaded")
+                        page.locator(".v12-saved-open").first.wait_for(timeout=12000)
+                        page.locator(".v12-saved-open").first.click()
+                        page.wait_for_url("**/#categoria/04%20-%20Chile")
+                        expect(page.locator("#feedHeading")).to_have_text("Chile")
+                        assert page.locator("#sourceSelect").input_value() == "medio-3"
+                        page.locator(".v12-saved-open").nth(1).click()
+                        page.wait_for_url("**/#region/latinoamerica")
+                        expect(page.locator("#feedHeading")).to_have_text("Latinoamérica")
+                        assert page.locator("#v12Geo").count() == 0
+                        page.locator(".v12-search-remove").first.click()
                         page.locator(".v12-search-remove").first.click()
                         assert page.locator(".v12-saved-open").count() == 0
                         page.evaluate("location.hash = '#noticias'")
