@@ -209,7 +209,6 @@ body.radar-hybrid .dashboard-head h1{font-size:28px;margin:2px 0}
 body.radar-hybrid .dashboard-kicker{display:none}
 body.radar-hybrid .dashboard-head p{font-size:14px}
 body.radar-hybrid .dashboard-panel-head>span{font-size:13px}
-body.radar-hybrid .dashboard-feature .article-card:first-child .cover{height:auto;aspect-ratio:2/1}
 body.radar-hybrid .dashboard-recent{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:28px}
 body.radar-hybrid .dashboard-recent-row,
 body.radar-hybrid .dashboard-folder-row{
@@ -326,7 +325,5 @@ body.radar-hybrid.hide-images .dashboard-feature .article-card:not(:first-child)
 body.radar-hybrid .health-row small{color:var(--text);font-size:12px;font-weight:600}
 body.radar-hybrid .health-row span{color:var(--muted);font-size:13px}
 /* Imagen principal de portada contenida en tabletas y pantallas anchas. */
-body.radar-hybrid .dashboard-feature .article-card:first-child .cover{max-height:300px}
 @media(max-width:1150px){
-  body.radar-hybrid .dashboard-feature .article-card:not(:first-child) .cover{aspect-ratio:2/1;max-height:200px}
 }
