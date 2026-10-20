@@ -1227,7 +1227,7 @@ body.radar-hybrid.light .sidebar{
  position:fixed;inset:0 auto 0 0;z-index:70;
  display:flex;flex-direction:column;
  width:min(calc(100vw - 24px),var(--radar-sidebar-width,310px));
- max-width:440px;height:100dvh;min-height:0;max-height:none;
+ max-width:480px;height:100dvh;min-height:0;max-height:none;
  background:var(--surface);border-right:1px solid var(--line);
  padding:15px 15px 14px;overflow:hidden;
  transform:translateX(-104%);visibility:hidden;
@@ -1434,23 +1434,7 @@ body.radar-hybrid .dashboard-saved-panel{
  border-top:1px solid var(--line);padding-top:10px;
 }
 
-/* No afecta las preferencias personalizadas del feed en cuadrícula o lista. */
-body.radar-hybrid #articleGrid.article-grid:not(.list-view){
- grid-template-columns:repeat(3,minmax(0,1fr));
-}
-body.radar-hybrid[data-columns="2"] #articleGrid.article-grid:not(.list-view){
- grid-template-columns:repeat(2,minmax(0,1fr));
-}
-body.radar-hybrid[data-columns="4"] #articleGrid.article-grid:not(.list-view){
- grid-template-columns:repeat(4,minmax(0,1fr));
-}
-body.radar-hybrid[data-columns="5"] #articleGrid.article-grid:not(.list-view){
- grid-template-columns:repeat(5,minmax(0,1fr));
-}
-body.radar-hybrid[data-columns="6"] #articleGrid.article-grid:not(.list-view){
- grid-template-columns:repeat(6,minmax(0,1fr));
-}
-
+/* Las preferencias del feed (lista, columnas y compacto) conservan sus propias reglas. */
 /* La navegación es horizontal en escritorio y móvil; el menú detallado
    sigue en un cajón accesible en todas las resoluciones. */
 @media(max-width:1200px){
