@@ -128,10 +128,12 @@
             <div class="dashboard-panel-head"><h2>Tu lista para después</h2><button type="button" id="dashboardSavedAll" class="dashboard-read-all">Ver mis guardadas <span data-icon="arrow-right" class="ui-icon-slot" aria-hidden="true"></span></button></div>
             <div id="dashboardSavedList" class="dashboard-saved-list"></div>
           </section>
-          <section class="dashboard-panel" aria-labelledby="dashboardFoldersTitle">
+          <div class="newsroom-discovery" id="newsroomDiscovery">
+          <section class="dashboard-panel newsroom-discovery-categories" aria-labelledby="dashboardFoldersTitle">
             <div class="dashboard-panel-head"><h2 id="dashboardFoldersTitle">Por carpeta</h2></div>
             <div class="dashboard-folders" id="dashboardFolders"></div>
           </section>
+            <div class="newsroom-discovery-aside">
         <section class="dashboard-panel radar-panel" aria-labelledby="radarTitle">
             <div class="dashboard-panel-head"><h2 id="radarTitle" title="Historias publicadas por más medios en las últimas 24 horas">Lo más cubierto</h2></div>
             <div class="radar-layout">
@@ -147,6 +149,8 @@
             <div class="trend-chips" id="trendChips"></div>
             <div class="followed-row" id="followedRow" hidden><span class="followed-label"><span data-icon="bell" class="ui-icon-slot" aria-hidden="true"></span> Temas que sigo</span><div class="trend-chips" id="followedChips"></div></div>
           </section>
+            </div>
+          </div>
           </section>
         <section class="briefing-view" id="briefingView" aria-labelledby="briefingTitle" hidden>
           <header class="briefing-head">
