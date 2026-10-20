@@ -89,6 +89,7 @@
           <button id="themeToggle" class="icon-button" type="button" aria-label="Cambiar tema" title="Cambiar modo claro u oscuro"><span id="themeGlyph"></span></button>
         </div>
       </header>
+      <nav class="topic-rail" id="topicRail" aria-label="Secciones de noticias"></nav>
       <div id="stylePreviewNotice" class="style-preview-notice" role="status" hidden>
         <span class="style-preview-label"><strong>REFERENCIA</strong> <span id="stylePreviewName">Diseño anterior</span></span>
         <span class="style-preview-info">Versión de comparación; Radar RSS usa ahora el diseño editorial combinado.</span>
@@ -98,7 +99,6 @@
         </div>
       </div>
       <main class="main" id="mainContent">
-        <nav class="topic-rail" id="topicRail" aria-label="Secciones"></nav>
         <div id="statusBanner" class="status-banner" role="status" hidden>
           <span class="status-icon" aria-hidden="true">!</span>
           <span id="statusMessage" class="status-message"></span>
@@ -109,18 +109,20 @@
         </div>
         <section id="dashboardView" class="dashboard-view" aria-labelledby="dashboardTitle" hidden>
           <h1 id="dashboardTitle" class="sr-only">Portada de Radar RSS</h1>
-          <section class="dashboard-panel dashboard-feature-panel" aria-label="Noticias recientes de diferentes categorías">
+          <div class="newsroom-lead" id="newsroomLead">
+          <section class="dashboard-panel dashboard-feature-panel newsroom-lead-stories" aria-label="Noticias recientes de diferentes categorías">
             <div class="dashboard-panel-head"><h2>En portada</h2></div>
             <div class="dashboard-feature" id="dashboardFeature"></div>
           </section>
+          <section class="dashboard-panel newsroom-lead-latest" aria-labelledby="dashboardRecentTitle">
+            <div class="dashboard-panel-head"><h2 id="dashboardRecentTitle">Últimas publicaciones</h2></div>
+            <div class="dashboard-recent" id="dashboardRecent"></div>
+          </section>
+          </div>
           <section class="since-visit" id="sinceVisit" aria-labelledby="sinceVisitTitle" hidden>
             <div class="since-visit-text"><span class="since-visit-icon" aria-hidden="true" data-icon="sparkle"></span><div><h2 id="sinceVisitTitle">Mientras no estabas</h2><p id="sinceVisitText"></p></div></div>
             <div class="since-visit-folders" id="sinceVisitFolders"></div>
             <div class="since-visit-actions"><button type="button" id="sinceVisitShow" class="since-visit-primary">Ver solo las nuevas</button><button type="button" id="sinceVisitDismiss" class="since-visit-dismiss" aria-label="Ocultar aviso de novedades"><span data-icon="x" class="ui-icon-slot" aria-hidden="true"></span></button></div>
-          </section>
-          <section class="dashboard-panel" aria-labelledby="dashboardRecentTitle">
-            <div class="dashboard-panel-head"><h2 id="dashboardRecentTitle">Últimas publicaciones</h2></div>
-            <div class="dashboard-recent" id="dashboardRecent"></div>
           </section>
           <section class="dashboard-panel dashboard-saved-panel" id="dashboardSavedPanel" hidden aria-label="Artículos guardados">
             <div class="dashboard-panel-head"><h2>Tu lista para después</h2><button type="button" id="dashboardSavedAll" class="dashboard-read-all">Ver mis guardadas <span data-icon="arrow-right" class="ui-icon-slot" aria-hidden="true"></span></button></div>
