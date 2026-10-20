@@ -114,12 +114,23 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     permissions:
+      contents: read
       pages: write
       id-token: write
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
+      - name: Descargar verificador del repositorio
+        uses: actions/checkout@v4
+      - name: Preparar Python para verificación
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
       - name: Publicar GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+      - name: Comprobar publicación de noticias y estado RSS
+        env:
+          RADAR_PAGE_URL: ${{ steps.deployment.outputs.page_url }}
+        run: python scripts/check_pages.py "$RADAR_PAGE_URL" --attempts 8 --delay 15
