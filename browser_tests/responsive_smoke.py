@@ -403,7 +403,7 @@ def main():
 
                         # Evitar el CTA duplicado de Inicio, sin retirar acciones
                         # distintas como Ver mis guardadas o la navegación responsive.
-                        assert page.locator("#dashboardView .dashboard-read-all").count() == 0
+                        assert page.locator("#dashboardView .dashboard-feature-panel .dashboard-read-all").count() == 0
                         assert page.locator("#dashboardSavedAll").count() == 1
                         if width <= 950:
                             page.locator("#menuToggle").click()
