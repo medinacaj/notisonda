@@ -74,21 +74,37 @@ class QuietHandler(SimpleHTTPRequestHandler):
         pass
 
 def check_uniform_card_heights(page, label):
-    """All cards in the grid, not merely each row, share a common height."""
+    """Cards align within EACH row; a long item must not stretch every row."""
     result = page.evaluate("""() => {
       const grid = document.querySelector('#articleGrid');
       if (!grid || grid.classList.contains('list-view')) return {error:'not in cards view'};
       const cards = [...grid.querySelectorAll(':scope > .article-card')];
-      const heights = cards.map(card => card.getBoundingClientRect().height);
-      return {heights, gridAutoRows: getComputedStyle(grid).gridAutoRows,
-              hasImage: cards.some(x => x.querySelector('.cover')),
-              hasNoImage: cards.some(x => !x.querySelector('.cover'))};
+      const rows = new Map();
+      for(const card of cards){
+        const r=card.getBoundingClientRect();
+        const y=Math.round(r.top);
+        if(!rows.has(y))rows.set(y, []);
+        rows.get(y).push(Math.round(r.height*10)/10);
+      }
+      const covers=cards.map(c=>c.querySelector(':scope > .cover')).filter(Boolean);
+      const placeholders=cards.map(c=>c.querySelector(':scope > .article-cover-placeholder')).filter(Boolean);
+      return {
+        rows:[...rows.values()], gridAutoRows:getComputedStyle(grid).gridAutoRows,
+        hasImage:covers.length>0, hasNoImage:cards.some(x=>!x.querySelector('.cover')),
+        maxImageHeight:covers.length?Math.max(...covers.map(c=>c.getBoundingClientRect().height)):0,
+        maxPlaceholderHeight:placeholders.length?Math.max(...placeholders.map(c=>c.getBoundingClientRect().height)):0
+      };
     }""")
-    values=result.get("heights", [])
-    if len(values) < 6 or not result["hasImage"] or not result["hasNoImage"]:
-        raise AssertionError(f"{label}: fixture does not cover mixed news: {result}")
-    if max(values) - min(values) > 2:
-        raise AssertionError(f"{label}: irregular card heights: {result}")
+    rows=result.get("rows", [])
+    if sum(map(len,rows))<6 or not result["hasImage"] or not result["hasNoImage"]:
+        raise AssertionError(f"{label}: fixture lacks mixed images: {result}")
+    if result["gridAutoRows"] != "auto":
+        raise AssertionError(f"{label}: global equal-height grid creates wasted space: {result}")
+    for heights in rows:
+        if max(heights)-min(heights)>2:
+            raise AssertionError(f"{label}: cards in same row differ in height: {result}")
+    if result["maxImageHeight"]>153 or result["maxPlaceholderHeight"]>80:
+        raise AssertionError(f"{label}: image/placeholder unnecessarily tall: {result}")
 
 
 def check_visible_boxes(page, selectors, label):
@@ -308,6 +324,13 @@ def main():
                             "(node) => getComputedStyle(node).boxShadow")
                         assert shadow_unread != "none", shadow_unread
                         check_uniform_card_heights(page, f"tarjetas {browser_name} {width}px")
+                        # Preferencia Compacto mantiene miniaturas y títulos acotados.
+                        page.evaluate("document.body.classList.add('compact')")
+                        assert page.locator("#articleGrid .article-card .cover").first.evaluate(
+                            "(node) => node.getBoundingClientRect().height") <= 101
+                        assert placeholders.first.evaluate(
+                            "(node) => node.getBoundingClientRect().height") <= 61
+                        page.evaluate("document.body.classList.remove('compact')")
                         # CSS states are checked directly: the quick column button is
                         # deliberately hidden on some mobile widths.
                         page.evaluate("() => { document.body.dataset.columns = '2'; }")
