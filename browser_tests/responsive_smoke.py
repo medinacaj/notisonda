@@ -265,10 +265,26 @@ def main():
                         assert len({x["color"] for x in colors}) == 6, colors
                         featuredTopics=page.locator("#dashboardFeature .article-card[data-topic]").count()
                         assert featuredTopics >= 1, featuredTopics
+                        # V9.1: la categoría se lee en la etiqueta; no en una raya
+                        # de color arriba de cada tarjeta o carpeta.
                         categoryCard=page.locator("#dashboardFeature .article-card[data-topic]").first
-                        cardAccent=categoryCard.evaluate(
-                            "(node) => getComputedStyle(node).borderTopColor")
-                        assert cardAccent != "rgb(226, 230, 236)", cardAccent
+                        identity=categoryCard.evaluate("""node => {
+                          const style=getComputedStyle(node);
+                          const tag=getComputedStyle(node.querySelector('.article-category'));
+                          return {
+                            borderTopWidth:style.borderTopWidth,
+                            borderBottomWidth:style.borderBottomWidth,
+                            labelColor:tag.color,
+                            semanticColor:style.getPropertyValue('--topic-ink').trim()
+                          };
+                        }""")
+                        assert identity["borderTopWidth"] == identity["borderBottomWidth"] == "1px", identity
+                        assert identity["labelColor"] != "rgb(98, 107, 120)", identity
+                        folder=page.locator("#dashboardFolders .dashboard-folder[data-topic]").first
+                        if folder.count():
+                            assert folder.evaluate(
+                                "node => getComputedStyle(node).borderTopWidth === getComputedStyle(node).borderBottomWidth"
+                            )
                         # Las seis carpetas originales deben seguir accesibles y administrables.
                         assert page.locator("#libraryFolderNav .system-folder-link").count() == len(CATEGORIES)
                         assert page.locator("#libraryFolderNav .v12-hidden-category").count() == 0
