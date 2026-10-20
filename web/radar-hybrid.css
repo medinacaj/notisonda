@@ -1,36 +1,40 @@
-/* RadarRRS V9 — paleta por función editorial, sin monocromía.
-   Tinta neutra, titulares contrastados, categorías diferenciadas y acciones coral. */
+/* RadarRRS V10 — adaptación editorial Ink & Paper.
+   Inspiración: referencia Ramp proporcionada. Sin marketing/hero ni recursos
+   propietarios; fotografía RSS, navegación y seis temas propios se conservan.
+   Base neutra, amarillo lima solo para acciones primarias y estado destacado. */
 body.radar-hybrid,
 body.radar-hybrid.light{
  color-scheme:light;
- --bg:#f8f9fb;--surface:#ffffff;--surface2:#f0f2f6;
- --line:#e2e6ec;--text:#232831;--muted:#626b78;--dim:#7a8290;
- --accent:#ad4b58;--blue:#326a9b;--hover:#edf0f4;
- --card:#ffffff;--shadow:rgba(29,41,56,.075);
- --paper:#ffffff;--ink:#232831;--charcoal:#232831;
- --stone:#727c89;--ash:#b6bec9;--mist:#e2e6ec;
- --cloud:#f0f2f6;--signal:#ad4b58;
- --accent-secondary:#326a9b;--accent-soft:#edf3f9;
- --editorial-ink:#232831;--editorial-violet:#7354a2;
- --editorial-amber:#99631f;
- --font-ui:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
- --font-editorial:"Iowan Old Style",Charter,"Palatino Linotype",Georgia,serif;
+ --bg:#f4f2f0;--surface:#ffffff;--surface2:#f4f2f0;
+ --line:#e5e7eb;--text:#0c0a08;--muted:#6d6c6b;--dim:#747372;
+ --accent:#0c0a08;--blue:#0c0a08;--hover:#ebe8e5;
+ --card:#ffffff;--shadow:rgba(12,10,8,0);
+ --paper:#ffffff;--ink:#0c0a08;--charcoal:#1a1919;
+ --stone:#6d6c6b;--ash:#a09f9d;--mist:#e5e7eb;
+ --cloud:#f4f2f0;--signal:#0c0a08;
+ --accent-secondary:#494846;--accent-soft:#efedea;
+ --editorial-ink:#0c0a08;--editorial-violet:#634c88;
+ --editorial-amber:#845d25;
+ --action-lime:#e4f222;--action-ink:#0c0a08;
+ --font-ui:Inter,"IBM Plex Sans",ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+ --font-editorial:Inter,"IBM Plex Sans",ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
  background:var(--bg);color:var(--text);
- font-family:var(--font-ui);font-size:14px;line-height:1.55;
+ font-family:var(--font-ui);font-size:14px;line-height:1.5;
  font-feature-settings:"kern" on,"liga" on;
 }
 body.radar-hybrid:not(.light){
  color-scheme:dark;
- --bg:#191d26;--surface:#262c38;--surface2:#303744;
- --line:#454e5c;--text:#f2f4f7;--muted:#c0c9d4;--dim:#a0abba;
- --accent:#f0a0a7;--blue:#8abce7;--hover:#384150;
- --card:#262c38;--shadow:rgba(0,0,0,.22);
- --paper:#262c38;--ink:#f2f4f7;--charcoal:#f2f4f7;
- --stone:#bdc7d2;--ash:#82909f;--mist:#454e5c;
- --cloud:#303744;--signal:#f0a0a7;
- --accent-secondary:#8abce7;--accent-soft:#303c4c;
- --editorial-ink:#f2f4f7;--editorial-violet:#c9b1f3;
- --editorial-amber:#edc485;
+ --bg:#171616;--surface:#232121;--surface2:#1a1919;
+ --line:#444240;--text:#f4f2f0;--muted:#bcb7b2;--dim:#b3aea9;
+ --accent:#f4f2f0;--blue:#f4f2f0;--hover:#353231;
+ --card:#232121;--shadow:rgba(0,0,0,0);
+ --paper:#232121;--ink:#f4f2f0;--charcoal:#f4f2f0;
+ --stone:#bcb7b2;--ash:#89837e;--mist:#444240;
+ --cloud:#1a1919;--signal:#f4f2f0;
+ --accent-secondary:#d3d0cc;--accent-soft:#302e2b;
+ --editorial-ink:#f4f2f0;--editorial-violet:#c7b1e5;
+ --editorial-amber:#e3c58a;
+ --action-lime:#e4f222;--action-ink:#0c0a08;
  background:var(--bg);color:var(--text);
 }
 body.radar-hybrid .page{background:var(--bg)}
