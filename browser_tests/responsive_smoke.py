@@ -241,8 +241,7 @@ def main():
                           sidebar:getComputedStyle(document.getElementById('appSidebar')).backgroundColor,
                           lightBackground:getComputedStyle(document.body).getPropertyValue('--bg').trim(),
                           masthead:getComputedStyle(document.querySelector('.dashboard-head')).backgroundImage,
-                          brand:getComputedStyle(document.querySelector('.brand-mark')).backgroundColor,
-                          coverHeight:getComputedStyle(document.querySelector('#dashboardFeature .article-card .cover')).height
+                          brand:getComputedStyle(document.querySelector('.brand-mark')).backgroundColor
                         })""")
                         assert visual["sidebar"] == "rgb(16, 38, 65)", visual
                         assert visual["brand"] == "rgb(97, 221, 202)", visual
