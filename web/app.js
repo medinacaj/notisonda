@@ -1193,6 +1193,7 @@ function markRead(id,value){
 function render() {
   const filtered=applyFilters(), visible=filtered.slice(0,state.page*state.pageSize);
   $('visibleCount').textContent=`${format.format(filtered.length)} ${hasHistory()?'RECIENTES':'ARTÍCULOS'}`;
+  $('markAllVisible').disabled=!visible.some(item=>!state.read.has(item.id));
   $('filterSummary').textContent=`${format.format(visible.length)} visibles · ${format.format(applyFilters('unread').length)} sin leer con estos filtros`; 
   const modeCounts={
     all:state.mode==='all'?filtered.length:applyFilters('all').length,
