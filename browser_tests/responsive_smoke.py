@@ -410,8 +410,8 @@ def main():
                           const rects=cards.map(card=>{
                             const b=card.getBoundingClientRect();
                             return {x:b.x,y:b.y,width:b.width,height:b.height,
-                                    col:getComputedStyle(card).gridColumnEnd,
-                                    row:getComputedStyle(card).gridRowEnd};
+                                    col:getComputedStyle(card).gridColumnStart,
+                                    row:getComputedStyle(card).gridRowStart};
                           });
                           return {
                             deskColumns:getComputedStyle(desk).gridTemplateColumns.split(' ').length,
