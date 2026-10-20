@@ -100,6 +100,7 @@
   const content=document.createElement('div');
   content.className='feed-advanced-content';
   group.append(summary,content);
+  summary.addEventListener('click',event=>{event.preventDefault();group.open=!group.open;});
   content.append(date,save,bulk);
   controls.append(group);
   function updateSummary(){
@@ -112,7 +113,11 @@
     updateSummary();
     return result;
   };
-  document.getElementById('v12Date').addEventListener('change',updateSummary);
+  document.getElementById('v12Date').addEventListener('change',()=>{
+    updateSummary();group.open=false;
+  });
+  save.addEventListener('click',()=>{group.open=false;});
+  bulk.addEventListener('click',()=>{group.open=false;});
   document.addEventListener('pointerdown',event=>{
     if(group.open&&!group.contains(event.target))group.open=false;
   });
