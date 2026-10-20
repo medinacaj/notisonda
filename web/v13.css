@@ -921,3 +921,292 @@ body.radar-hybrid .settings-reading-action:nth-child(3):hover{
  body.radar-hybrid .dashboard-folder[data-topic],
  body.radar-hybrid .article-card[data-topic]{transition:none}
 }
+
+
+/* V10 · INK & PAPER — sistema canónico de lectura.
+   Adaptación de la guía visual aportada: tinta/papel, letras neo-grotescas,
+   bordes de 1px, acción lima muy puntual. Sin hero, franjas cromáticas, ni
+   animaciones decorativas. Las categorías propias continúan en microetiquetas. */
+
+/* Shell: navegación apacible, sin paneles pintados ni efectos tridimensionales. */
+body.radar-hybrid .page{background:var(--bg)}
+body.radar-hybrid .sidebar,
+body.radar-hybrid.light .sidebar{
+ background:var(--surface);border-right:1px solid var(--line);
+ color:var(--text);box-shadow:none;
+ padding:18px 12px 16px;
+}
+body.radar-hybrid .brand{padding:4px 6px 16px;gap:11px}
+body.radar-hybrid .brand-mark,
+body.radar-hybrid.light .brand-mark{
+ width:37px;height:37px;flex:0 0 37px;
+ border-radius:9px;background:#0c0a08;color:#ffffff;
+ box-shadow:none;
+}
+body.radar-hybrid .brand strong,body.radar-hybrid.light .brand strong{
+ color:var(--text);font-family:var(--font-ui);font-size:17px;font-weight:650;
+ letter-spacing:-.045em;
+}
+body.radar-hybrid .brand em,body.radar-hybrid.light .brand em{color:var(--text)}
+body.radar-hybrid .brand small,body.radar-hybrid.light .brand small{
+ color:var(--muted);font-weight:400;letter-spacing:0;
+}
+body.radar-hybrid .sidebar-brand-row{border-color:var(--line)}
+body.radar-hybrid .sidebar-label,body.radar-hybrid.light .sidebar-label,
+body.radar-hybrid .folder-group-head{
+ color:var(--muted);font-size:10px;letter-spacing:.055em;font-weight:580;
+}
+body.radar-hybrid .nav-link,body.radar-hybrid.light .nav-link{
+ border-radius:6px;border:1px solid transparent;background:transparent;
+ color:var(--text);font-size:13px;font-weight:450;
+ padding:9px 11px;margin:2px 0;box-shadow:none;
+ transition:background .18s ease,color .18s ease;
+}
+body.radar-hybrid .nav-link:hover,body.radar-hybrid.light .nav-link:hover{
+ background:var(--hover);border-color:transparent;color:var(--text);
+}
+body.radar-hybrid .nav-link.active,body.radar-hybrid.light .nav-link.active{
+ background:var(--surface2);border:1px solid var(--line);
+ color:var(--text);font-weight:640;box-shadow:none;
+}
+body.radar-hybrid .nav-link.active::before{display:none}
+body.radar-hybrid .nav-link.active .nav-glyph{color:var(--text)}
+body.radar-hybrid .sidebar .nav-count{color:var(--muted);font-weight:400}
+body.radar-hybrid .sidebar-bottom{border-top:1px solid var(--line)}
+body.radar-hybrid .sidebar .health-indicator{background:var(--surface2);box-shadow:none}
+body.radar-hybrid .sidebar .live-dot{background:var(--text);box-shadow:none}
+body.radar-hybrid .menu-close{color:var(--text)}
+
+/* Cabecera de trabajo con separaciones finas, sin botones llamativos. */
+body.radar-hybrid .topbar{
+ position:sticky;top:0;z-index:15;
+ min-height:59px;padding:9px clamp(16px,2.7vw,34px);
+ gap:12px;background:var(--surface);
+ border-bottom:1px solid var(--line);box-shadow:none;
+}
+body.radar-hybrid .topbar-caption strong{
+ color:var(--text);font-size:14px;font-weight:620;letter-spacing:-.02em;
+}
+body.radar-hybrid .topbar-search .search-wrap{
+ background:var(--surface);border:1px solid var(--line);
+ min-height:39px;border-radius:10px;box-shadow:none;
+}
+body.radar-hybrid .topbar-search .search-wrap:focus-within{
+ border-color:var(--text);box-shadow:0 0 0 2px var(--line);
+}
+body.radar-hybrid .settings-trigger,body.radar-hybrid .icon-button,
+body.radar-hybrid .refresh-now,body.radar-hybrid .search-toggle{
+ background:transparent;color:var(--text);
+ border:1px solid var(--line);border-radius:6px;box-shadow:none;
+}
+body.radar-hybrid .settings-trigger:hover,body.radar-hybrid .icon-button:hover,
+body.radar-hybrid .refresh-now:hover,body.radar-hybrid .search-toggle:hover{
+ background:var(--hover);color:var(--text);
+}
+
+/* Contenido: más noticias a la vista y aire dentro de cada noticia. */
+body.radar-hybrid .main{
+ max-width:1550px;padding:14px clamp(16px,2.7vw,34px) 35px;
+}
+body.radar-hybrid .dashboard-view{gap:19px}
+body.radar-hybrid .dashboard-panel-head{
+ margin:0 0 12px;padding:0 0 9px;
+ border-bottom:1px solid var(--line);gap:9px;
+}
+body.radar-hybrid .dashboard-panel-head h2,
+body.radar-hybrid .briefing-section-head h2{
+ font:570 clamp(18px,1.65vw,22px)/1.23 var(--font-ui);
+ letter-spacing:-.035em;color:var(--text);margin:0;
+}
+body.radar-hybrid .dashboard-panel-head>span{font-size:11px;color:var(--muted)}
+body.radar-hybrid .section-heading h1,
+body.radar-hybrid .briefing-head h1{
+ font:550 clamp(25px,2.3vw,33px)/1.15 var(--font-ui);
+ letter-spacing:-.045em;color:var(--text);
+}
+body.radar-hybrid .section-heading .section-eyebrow{letter-spacing:.07em}
+body.radar-hybrid .dashboard-panel-head .dashboard-read-all{
+ border:0;background:transparent;padding:6px 2px;
+ color:var(--text);box-shadow:none;
+ font-size:12px;font-weight:530;
+}
+body.radar-hybrid .dashboard-panel-head .dashboard-read-all:hover{text-decoration:underline}
+
+/* Superficies planas. Bordes consistentes sustituyen elevación decorativa. */
+body.radar-hybrid .dashboard-feature .article-card,
+body.radar-hybrid .dashboard-feature .article-card:first-child,
+body.radar-hybrid .dashboard-feature .article-card:not(:first-child),
+body.radar-hybrid #articleGrid.article-grid:not(.list-view)>.article-card,
+body.radar-hybrid #articleGrid.list-view>.article-card{
+ border:1px solid var(--line);background:var(--surface);
+ border-radius:16px;box-shadow:none;
+ transform:none;transition:border-color .2s ease,background .2s ease;
+}
+body.radar-hybrid .dashboard-feature .article-card:hover,
+body.radar-hybrid #articleGrid.article-grid:not(.list-view)>.article-card:hover,
+body.radar-hybrid #articleGrid.list-view>.article-card:hover{
+ transform:none;border-color:var(--ash);box-shadow:none;
+}
+body.radar-hybrid #articleGrid .article-card.read-article,
+body.radar-hybrid .dashboard-feature .article-card.read-article{
+ border-color:var(--line);box-shadow:none;
+}
+body.radar-hybrid #articleGrid .article-card.unread-card,
+body.radar-hybrid .dashboard-feature .article-card.unread-card{
+ border-color:var(--line);box-shadow:none;
+}
+body.radar-hybrid .dashboard-feature .article-card .article-title,
+body.radar-hybrid .dashboard-feature .article-card:first-child .article-title,
+body.radar-hybrid .dashboard-feature .article-card:not(:first-child) .article-title,
+body.radar-hybrid #articleGrid.article-grid:not(.list-view)>.article-card .article-title,
+body.radar-hybrid #articleGrid.list-view .article-title{
+ font:570 clamp(16px,1.25vw,18px)/1.34 var(--font-ui);
+ color:var(--text);letter-spacing:-.025em;margin:7px 0 8px;
+}
+body.radar-hybrid .article-card .article-title a:hover{
+ color:var(--text);text-decoration:underline;text-underline-offset:3px;
+}
+body.radar-hybrid .dashboard-feature .article-card .article-excerpt,
+body.radar-hybrid #articleGrid .article-card .article-excerpt{
+ color:var(--muted);font-size:12px;line-height:1.5;
+}
+body.radar-hybrid .article-card .article-category{
+ font-family:var(--font-ui);
+ font-size:10px;letter-spacing:.04em;font-weight:590;
+}
+body.radar-hybrid .article-card .cover,
+body.radar-hybrid .dashboard-feature .article-card .cover{
+ background:var(--surface2);
+}
+body.radar-hybrid .article-card .article-cover-placeholder{
+ background:var(--surface2);border-bottom:1px solid var(--line);
+}
+body.radar-hybrid .article-card .article-footer,
+body.radar-hybrid .dashboard-feature .article-footer{
+ border-color:var(--line);
+}
+
+/* Secciones funcionales, sin tarjetas dentro de tarjetas excesivamente ornamentadas. */
+body.radar-hybrid .dashboard-folder{
+ border:1px solid var(--line);background:var(--surface);
+ border-radius:12px;padding:8px 13px;box-shadow:none;
+}
+body.radar-hybrid .dashboard-folder-head h3{
+ font:560 14px/1.35 var(--font-ui);letter-spacing:-.018em;
+}
+body.radar-hybrid .dashboard-folder .dashboard-folder-icon{
+ border-radius:6px;box-shadow:none;
+}
+body.radar-hybrid .dashboard-recent-title,
+body.radar-hybrid .dashboard-folder .dashboard-recent-title{
+ font:520 15px/1.37 var(--font-ui);letter-spacing:-.012em;
+}
+body.radar-hybrid .dashboard-recent-row,body.radar-hybrid .dashboard-folder-row{
+ border-bottom:1px solid var(--line);
+}
+body.radar-hybrid .since-visit,body.radar-hybrid .v13-guide,
+body.radar-hybrid .dashboard-saved-item{
+ background:var(--surface);border:1px solid var(--line);
+ border-radius:12px;box-shadow:none;
+}
+body.radar-hybrid .radar-panel{background:transparent}
+body.radar-hybrid .covered-item:hover{background:var(--hover)}
+
+/* Control de lectura: botón prioritario amarillo solo donde dispara una acción.
+   Los numerosos iconos de tarjetas NO se rellenan de amarillo. */
+body.radar-hybrid .filter-bar{
+ background:var(--surface);border:1px solid var(--line);
+ border-radius:12px;box-shadow:none;padding:8px 10px;
+}
+body.radar-hybrid .mode-tabs{background:var(--surface2);padding:3px;border-radius:8px}
+body.radar-hybrid .mode-tab{
+ background:transparent;color:var(--muted);border:0;
+ border-radius:6px;font-weight:480;box-shadow:none;
+}
+body.radar-hybrid .mode-tab.active{
+ background:var(--surface);color:var(--text);
+ box-shadow:none;font-weight:630;
+}
+body.radar-hybrid .source-filter select,
+body.radar-hybrid .v12-select,
+body.radar-hybrid .display-controls .layout-switch{
+ border:1px solid var(--line);background:var(--surface);
+ border-radius:6px;box-shadow:none;
+}
+body.radar-hybrid #loadMore,
+body.radar-hybrid .load-more,
+body.radar-hybrid .since-visit-primary,
+body.radar-hybrid #sinceVisitShow{
+ background:var(--action-lime);color:var(--action-ink);
+ border:1px solid var(--action-lime);
+ border-radius:6px;box-shadow:none;font-weight:680;
+}
+body.radar-hybrid :is(#loadMore,.load-more,.since-visit-primary,#sinceVisitShow):hover{
+ background:color-mix(in srgb,var(--action-lime) 88%,var(--surface));
+ border-color:var(--action-ink);color:var(--action-ink);
+}
+body.radar-hybrid .feed-advanced>summary,
+body.radar-hybrid .settings-design-advanced>summary{
+ border-radius:6px;background:var(--surface);border-color:var(--line);
+}
+body.radar-hybrid .feed-advanced[open]>summary{
+ color:var(--text);background:var(--surface2);border-color:var(--ash);
+}
+body.radar-hybrid .settings-reading-action{
+ border-radius:9px;box-shadow:none;
+}
+body.radar-hybrid .settings-reading-action:hover{
+ border-color:var(--ash);background:var(--hover);
+}
+body.radar-hybrid .settings-reading-action:nth-child(2),
+body.radar-hybrid .settings-reading-action:nth-child(3){
+ background:var(--surface);border:1px solid var(--line);
+}
+body.radar-hybrid .settings-dialog,
+body.radar-hybrid .article-reader-dialog{
+ border:1px solid var(--line);background:var(--surface);border-radius:16px;
+}
+body.radar-hybrid .footer{border-top:1px solid var(--line);color:var(--muted)}
+
+/* V9 categorías no desaparecen; códigos de color locales en texto/icono,
+   nunca una línea superior, un panel a color ni un degradado. */
+body.radar-hybrid [data-topic] .article-category{color:var(--topic-ink)}
+body.radar-hybrid .dashboard-folder[data-topic]{
+ border:1px solid var(--line);
+}
+body.radar-hybrid #articleGrid .article-card[data-topic],
+body.radar-hybrid .dashboard-feature .article-card[data-topic]{
+ border:1px solid var(--line);
+}
+body.radar-hybrid :is(.dashboard-folder,.article-card):hover{
+ border-color:var(--ash);
+}
+
+/* Lectura nocturna de bajo brillo sin invertir fotografías. */
+body.radar-hybrid:not(.light) .brand-mark{background:var(--action-lime);color:var(--action-ink)}
+body.radar-hybrid:not(.light) .nav-link.active{
+ background:var(--surface2);color:var(--text);
+}
+body.radar-hybrid:not(.light) .article-card .article-title a{color:var(--text)}
+body.radar-hybrid:not(.light) .mode-tab.active{background:var(--surface)}
+body.radar-hybrid:not(.light) .topbar-search .search-wrap{background:var(--surface)}
+
+/* Responsive: conservar columnas, menú móvil y densidad configurada. */
+@media(max-width:950px){
+ body.radar-hybrid .main{padding:13px 16px 30px}
+ body.radar-hybrid .sidebar{box-shadow:none}
+}
+@media(max-width:720px){
+ body.radar-hybrid .topbar{min-height:55px;padding:8px 13px}
+ body.radar-hybrid .main{padding:10px 13px 26px}
+ body.radar-hybrid .dashboard-view{gap:15px}
+ body.radar-hybrid .dashboard-feature .article-card .article-title{
+  font-size:17px;line-height:1.34;
+ }
+ body.radar-hybrid .dashboard-panel-head h2{font-size:19px}
+ body.radar-hybrid .dashboard-folder-head h3{font-size:14px}
+}
+@media(prefers-reduced-motion:reduce){
+ body.radar-hybrid .article-card,
+ body.radar-hybrid .nav-link{transition:none!important}
+}
