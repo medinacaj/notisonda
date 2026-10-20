@@ -141,16 +141,24 @@
     entries.forEach(([value,name])=>select.append(new Option(name,value)));
     wrap.append(select);return {wrap,select};
   }
-  const filterRow=mk('div','v12-filter-bar');filterRow.id='v12FilterBar';
-  // Las categorías ya se eligen en Carpetas de fuentes. Solo el criterio
-  // independiente de antigüedad necesita un control en este panel.
-  const datePicker=makeSelect('v12Date','Antigüedad',[['0','Sin límite'],['1','24 horas'],['7','7 días'],['30','30 días'],['90','90 días']]);
-  filterRow.append(datePicker.wrap);
-  const saveSearch=mk('button','v12-secondary','Guardar búsqueda');saveSearch.type='button';saveSearch.id='v12SaveSearch';
-  filterRow.append(saveSearch);
+  // Un único toolbar con fuente, etiquetas, fecha, acciones y vista.
+  // No crear otra fila que duplique los controles ya presentes.
+  const datePicker=makeSelect('v12Date','Antigüedad',[
+    ['0','Cualquier fecha'],['1','24 horas'],['7','7 días'],['30','30 días'],['90','90 días']]);
+  datePicker.wrap.classList.add('v12-toolbar-age');
+  datePicker.wrap.querySelector('.v12-control-label').classList.add('sr-only');
+  datePicker.select.title='Filtrar por antigüedad';
+  const saveSearch=mk('button','v12-save-icon');saveSearch.type='button';saveSearch.id='v12SaveSearch';
+  saveSearch.title='Guardar búsqueda con los filtros actuales';
+  saveSearch.setAttribute('aria-label','Guardar búsqueda con los filtros actuales');
+  saveSearch.append(svgIcon('bookmark'));
+  const controls=$('feedView').querySelector('.filter-controls');
+  const bulkRead=$('markAllVisible');
+  controls.insertBefore(datePicker.wrap,bulkRead);
+  controls.insertBefore(saveSearch,bulkRead);
   const savedPanel=mk('div','v12-saved-searches');savedPanel.id='v12SavedSearches';
   savedPanel.setAttribute('aria-label','Búsquedas guardadas');
-  $('feedView').querySelector('.filter-bar').after(filterRow,savedPanel);
+  $('feedView').querySelector('.filter-bar').after(savedPanel);
   datePicker.select.addEventListener('change',()=>{
     state.maxAge=Number(datePicker.select.value);
     savePref('max-age',state.maxAge);
