@@ -73,15 +73,16 @@ class UxReviewTests(unittest.TestCase):
         self.assertIn("THEME_EXPLICIT_KEY='radar-theme-explicit'", self.app)
         self.assertIn("return 'system';", js_function(self.app, 'initialTheme'))
 
-    def test_new_editorial_brand_colors(self):
+    def test_neutral_editorial_brand_colors(self):
         hybrid = (ROOT / 'web/radar-hybrid.css').read_text(encoding='utf-8')
-        self.assertNotIn('--accent:#b8420a', hybrid)
-        self.assertIn('--accent:#1167b7', hybrid)
-        self.assertIn('--bg:#f2f6fb', hybrid)
-        self.assertIn('--bg:#0b1525', hybrid)
+        self.assertNotIn('--accent:#1167b7', hybrid)
+        self.assertIn('--accent:#1f5e5b', hybrid)
+        self.assertIn('--bg:#f7f7f5', hybrid)
+        self.assertIn('--bg:#181c1a', hybrid)
         newsroom = (ROOT / 'web/v13.css').read_text(encoding='utf-8')
-        self.assertIn('background:#102641', newsroom)
-        self.assertIn('background:#61ddca', newsroom)
+        self.assertIn('background:var(--surface2);color:var(--text)', newsroom)
+        self.assertIn('border-bottom:2px solid var(--text)', newsroom)
+        self.assertNotIn('background:#102641', newsroom)
 
     def test_section_titles_have_clear_hierarchy(self):
         features = (ROOT / 'web/features.css').read_text(encoding='utf-8')

@@ -1,4 +1,4 @@
-# RadarRRS — Sistema editorial V6 · Nueva identidad
+# RadarRRS — Sistema editorial V7 · Neutro
 
 ## Objetivo de producto
 RadarRRS es un **portal público de noticias** y un lector de fuentes RSS, no un panel técnico. Deben verse primero las noticias. Las herramientas avanzadas se muestran a demanda.
@@ -10,20 +10,21 @@ RadarRRS es un **portal público de noticias** y un lector de fuentes RSS, no un
 3. Más opciones: antigüedad, guardar búsqueda y marcar noticias visibles como leídas. El menú se expande **en flujo**, no flotando sobre los resultados.
 4. Configuración > Apariencia: tema, tamaño de letra, imágenes y resúmenes como opciones principales. Columnas, espaciado, formato, panel lateral e inicio decorativo se encuentran en un bloque plegable.
 
-## Identidad nueva y verificable
+## Sistema V7 — Editorial neutro de bajo cansancio visual
 
-Este rediseño sustituye la apariencia naranja/gris y el fondo blanco uniforme de V5.4.
+Se elimina la identidad de bloques azul noche y cian de V6. La interfaz debe producir contraste con la **tipografía, tamaños, espacios y fotografías**, no con fondos fuertes.
 
-- **Barra de navegación:** azul noche `#102641`, con selección verde agua `#67decc`.
-- **Marca RSS:** fondo azul noche y símbolo verde agua.
-- **Superficie general:** azul hielo `#f2f6fb`, tarjetas blancas independientes y sombra suave.
-- **Titulares:** tipografía editorial serif y jerarquía diferenciada.
-- **Encabezado de portada:** banda azul con titular y texto breve, sin ilustración ni gráficos adicionales.
-- **Modo oscuro:** azul profundo `#0b1525` con superficies azul pizarra `#14243b`.
-- **Densidad:** imágenes de feed hasta 148 px, compacto 96 px, cubiertas sin foto 70 px; ningún resultado desaparece por falta de imagen.
-- **Mantener:** mismas seis carpetas OPML, filtros, guardadas, búsqueda, menú contextual, lista, cuadrícula y personalización del panel.
+- **Paleta clara**: fondo `#f7f7f5`, superficies `#fff`, texto principal `#1f2424`, secundarios `#646d6b`, líneas `#e1e5e1`.
+- **Acento único y moderado**: petróleo `#1f5e5b`, reservado para enlaces, controles activos, navegación seleccionada y estados de foco.
+- **Oscuro accesible**: fondo `#181c1a`, superficie `#242a27`, texto `#f0f2ef`, acento `#87ccba`.
+- **Navegación**: superficie gris humo claro, sin bloque de color; elemento activo blanco, borde fino y línea lateral petróleo.
+- **Cabecera**: blanca, con buscador suave y controles secundarios discretos.
+- **Portada**: encabezado sin color de fondo ni gradiente; título editorial de tinta oscura y divisor fuerte.
+- **Tarjetas**: superficie blanca, sombra fina, fotografía protagonista y título editorial legible. Las leídas y no leídas se distinguen sin recurrir a grandes masas cromáticas.
+- **Contraste visual**: cambios de peso, alineación y densidad; no repetir el color de acento en cada contenedor.
+- **Móvil**: sidebar tipo cajón, una columna y controles avanzados plegados. Se conservan carpeta, búsqueda, fecha, vista lista, lectura y preferencias.
 
-El nuevo diseño vive en las variables de `radar-hybrid.css` y en la capa canónica `v13.css`. No deben añadirse más temas paralelos ni reutilizar los colores naranjas anteriores.
+No restaurar la banda azul saturada, ni cambiar de nuevo toda la interfaz a un único color llamativo. Los acentos deben permanecer localizados.
 
 ## Reglas visuales
 
@@ -48,7 +49,7 @@ El proyecto tiene CSS modular. **No fusionar todos los archivos en uno**: los m�
 | `radar-hybrid.css` | Identidad de RadarRRS, barra lateral, cabecera y adaptaciones generales. |
 | `ux.css` | Utilidades de interacción y navegación. No definir tamaños especiales de tarjetas de portada. |
 | `features.css` | Radar informativo, tendencias, historial y herramientas específicas. |
-| `v13.css` | **Definición final** de tarjetas uniformes, identidad visual V6, controles avanzados y portada responsive. |
+| `v13.css` | **Definición final** de tarjetas uniformes, identidad visual V7 neutra, controles avanzados y portada responsive. |
 
 Antes de añadir un selector, buscarlo en las hojas cargadas **después** del módulo actual. Modificar su regla canónica, en vez de crear más reglas al final de otro archivo. Evitar `!important` salvo una corrección de compatibilidad justificada.
 
@@ -57,7 +58,7 @@ Antes de añadir un selector, buscarlo en las hojas cargadas **después** del m�
 Para publicar cualquier cambio visual:
 - Ejecutar pruebas Python y JavaScript.
 - Ejecutar `browser_tests/responsive_smoke.py` en Chromium, Firefox y WebKit, con anchos 320, 375, 390, 430, 768, 1024 y 1440 px.
-- Verificar que Inicio muestra **En portada antes que el radar**, masthead azul, sidebar azul noche y tarjetas de alturas uniformes por fila.
+- Verificar que Inicio muestra **En portada antes que el radar**, masthead neutro, sidebar gris claro y tarjetas de alturas uniformes por fila.
 - Confirmar que `Más opciones` abre y cierra por ratón, teclado y Escape; que fecha, guardar búsqueda y marcar visibles funcionan y no tapan el listado.
 - Confirmar la reversibilidad Lista ↔ Tarjetas también en móvil.
 - Verificar Apariencia básica y su bloque avanzado, sin pérdida de preferencias.
