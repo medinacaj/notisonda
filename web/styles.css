@@ -790,3 +790,35 @@ body.layout-list .cards-columns-control:hover{color:var(--text)}
 .library-source-details-list dd a{color:var(--accent);text-decoration:underline;text-underline-offset:3px}
 .library-source-copy{margin-left:8px;border:1px solid var(--line);border-radius:6px;background:var(--surface2);color:var(--text);padding:4px 8px;font-size:11px}
 @media(max-width:540px){.library-source-row{grid-template-columns:26px minmax(0,1fr)}.library-source-folder{grid-column:2}.library-source-details-list{grid-template-columns:1fr;gap:4px}.library-source-details-list dd{margin-bottom:9px}}
+
+
+/* V4.6 — limpieza visual conservadora: la lectura ocupa el primer plano.
+   No elimina datos ni controles de suscripción, lectura o navegación. */
+.hero,.stats,.topic-rail{display:none!important}
+.main{padding-top:16px}
+.section-heading{margin-bottom:9px}
+.section-heading h2{font-size:22px;margin:3px 0}
+.section-heading p,.dashboard-head p{display:none}
+.filter-bar{gap:9px;margin-bottom:12px;padding-bottom:10px}
+.filter-controls{gap:7px}
+.feed-actions{margin-bottom:7px}
+.dashboard-head{margin:0 0 13px}
+.dashboard-head h1{font-size:clamp(23px,2.4vw,29px);margin:3px 0}
+.dashboard-kicker{font-size:10px;letter-spacing:.07em}
+.dashboard-panel{margin-bottom:14px}
+.dashboard-panel-head{margin-bottom:8px}
+.dashboard-panel-head h2{font-size:16px}
+.dashboard-panel-head>span{font-size:11px}
+.dashboard-folders{display:none!important} /* Las seis carpetas siguen accesibles en la barra lateral. */
+.article-grid{gap:12px}
+.article-grid:not(.list-view) .article-content,.dashboard-feature .article-card .article-content{padding:12px 13px 10px}
+.article-grid:not(.list-view) .article-title,.dashboard-feature .article-card .article-title{margin:7px 0}
+.article-grid:not(.list-view) .article-excerpt,.dashboard-feature .article-card .article-excerpt{margin-bottom:8px}
+.article-card,body.light .article-card{border:1px solid var(--line);box-shadow:0 3px 13px var(--shadow)}
+.article-card:hover{transform:translateY(-1px);box-shadow:0 8px 22px var(--shadow)}
+@media(max-width:710px){
+ .main{padding-top:10px}
+ .dashboard-head{margin-bottom:9px}
+ .dashboard-panel{margin-bottom:10px}
+ .filter-bar{gap:7px}
+}
