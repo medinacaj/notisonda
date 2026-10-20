@@ -1,4 +1,4 @@
-# RadarRRS — Sistema editorial V5.4
+# RadarRRS — Sistema editorial V6 · Nueva identidad
 
 ## Objetivo de producto
 RadarRRS es un **portal público de noticias** y un lector de fuentes RSS, no un panel técnico. Deben verse primero las noticias. Las herramientas avanzadas se muestran a demanda.
@@ -9,6 +9,21 @@ RadarRRS es un **portal público de noticias** y un lector de fuentes RSS, no un
 2. Listado: título, pestañas Todas / Sin leer / Guardadas, filtro por fuente, vista y **Más opciones**. El buscador permanece en la cabecera.
 3. Más opciones: antigüedad, guardar búsqueda y marcar noticias visibles como leídas. El menú se expande **en flujo**, no flotando sobre los resultados.
 4. Configuración > Apariencia: tema, tamaño de letra, imágenes y resúmenes como opciones principales. Columnas, espaciado, formato, panel lateral e inicio decorativo se encuentran en un bloque plegable.
+
+## Identidad nueva y verificable
+
+Este rediseño sustituye la apariencia naranja/gris y el fondo blanco uniforme de V5.4.
+
+- **Barra de navegación:** azul noche `#102641`, con selección verde agua `#67decc`.
+- **Marca RSS:** fondo azul noche y símbolo verde agua.
+- **Superficie general:** azul hielo `#f2f6fb`, tarjetas blancas independientes y sombra suave.
+- **Titulares:** tipografía editorial serif y jerarquía diferenciada.
+- **Encabezado de portada:** banda azul con titular y texto breve, sin ilustración ni gráficos adicionales.
+- **Modo oscuro:** azul profundo `#0b1525` con superficies azul pizarra `#14243b`.
+- **Densidad:** imágenes de feed hasta 148 px, compacto 96 px, cubiertas sin foto 70 px; ningún resultado desaparece por falta de imagen.
+- **Mantener:** mismas seis carpetas OPML, filtros, guardadas, búsqueda, menú contextual, lista, cuadrícula y personalización del panel.
+
+El nuevo diseño vive en las variables de `radar-hybrid.css` y en la capa canónica `v13.css`. No deben añadirse más temas paralelos ni reutilizar los colores naranjas anteriores.
 
 ## Reglas visuales
 
@@ -33,7 +48,7 @@ El proyecto tiene CSS modular. **No fusionar todos los archivos en uno**: los m�
 | `radar-hybrid.css` | Identidad de RadarRRS, barra lateral, cabecera y adaptaciones generales. |
 | `ux.css` | Utilidades de interacción y navegación. No definir tamaños especiales de tarjetas de portada. |
 | `features.css` | Radar informativo, tendencias, historial y herramientas específicas. |
-| `v13.css` | **Definición final** de tarjetas uniformes, jerarquía visual V5.4, controles avanzados y portada responsive. |
+| `v13.css` | **Definición final** de tarjetas uniformes, identidad visual V6, controles avanzados y portada responsive. |
 
 Antes de añadir un selector, buscarlo en las hojas cargadas **después** del módulo actual. Modificar su regla canónica, en vez de crear más reglas al final de otro archivo. Evitar `!important` salvo una corrección de compatibilidad justificada.
 
@@ -42,7 +57,7 @@ Antes de añadir un selector, buscarlo en las hojas cargadas **después** del m�
 Para publicar cualquier cambio visual:
 - Ejecutar pruebas Python y JavaScript.
 - Ejecutar `browser_tests/responsive_smoke.py` en Chromium, Firefox y WebKit, con anchos 320, 375, 390, 430, 768, 1024 y 1440 px.
-- Verificar que Inicio muestra **En portada antes que el radar** y que ninguna tarjeta destaca artificialmente por tamaño.
+- Verificar que Inicio muestra **En portada antes que el radar**, masthead azul, sidebar azul noche y tarjetas de alturas uniformes por fila.
 - Confirmar que `Más opciones` abre y cierra por ratón, teclado y Escape; que fecha, guardar búsqueda y marcar visibles funcionan y no tapan el listado.
 - Confirmar la reversibilidad Lista ↔ Tarjetas también en móvil.
 - Verificar Apariencia básica y su bloque avanzado, sin pérdida de preferencias.

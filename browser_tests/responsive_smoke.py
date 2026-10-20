@@ -235,6 +235,23 @@ def main():
                         page.goto(base + "#inicio", wait_until="load")
                         page.locator("#dashboardView:not([hidden])").wait_for(timeout=15000)
                         page.locator("#dashboardFeature .article-card").first.wait_for(timeout=15000)
+                        # V6 tiene que verse realmente distinto del tema naranja anterior.
+                        # Verificamos colores computados, no solo que el CSS esté enlazado.
+                        visual=page.evaluate("""() => ({
+                          sidebar:getComputedStyle(document.getElementById('appSidebar')).backgroundColor,
+                          lightBackground:getComputedStyle(document.body).getPropertyValue('--bg').trim(),
+                          masthead:getComputedStyle(document.querySelector('.dashboard-head')).backgroundImage,
+                          brand:getComputedStyle(document.querySelector('.brand-mark')).backgroundColor
+                        })""")
+                        assert visual["sidebar"] == "rgb(16, 38, 65)", visual
+                        assert visual["brand"] == "rgb(97, 221, 202)", visual
+                        assert "gradient" in visual["masthead"], visual
+                        # El modo nocturno debe usar su propia paleta sin afectar el DOM.
+                        page.evaluate("document.body.classList.remove('light')")
+                        assert page.evaluate(
+                            "() => getComputedStyle(document.body).getPropertyValue('--bg').trim()"
+                        ) == "#0b1525"
+                        page.evaluate("document.body.classList.add('light')")
                         # Las seis carpetas originales deben seguir accesibles y administrables.
                         assert page.locator("#libraryFolderNav .system-folder-link").count() == len(CATEGORIES)
                         assert page.locator("#libraryFolderNav .v12-hidden-category").count() == 0
