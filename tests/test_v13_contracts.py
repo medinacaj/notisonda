@@ -50,7 +50,7 @@ class V13Contracts(unittest.TestCase):
         self.assertIn('> .article-card .article-footer',css)
         self.assertNotIn('.dashboard-feature .article-card{grid-auto-rows',css)
         self.assertIn('v13.css?v=1.3.4',self.html)
-        self.assertIn("radar-rss-v13",self.sw)
+        self.assertIn("radar-rss-v14",self.sw)
 
     def test_card_read_action_is_visible_and_syncs_values(self):
         self.assertIn("article-action article-read-toggle",self.app)

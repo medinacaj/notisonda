@@ -31,8 +31,8 @@ class V12ReviewTests(unittest.TestCase):
         self.assertNotIn("folderNav.append(section)",self.script)
         self.assertNotIn("row.classList.add('v12-hidden-category')",self.script)
         self.assertIn("const railBase = renderTopicRail",self.script)
-        self.assertIn("v12.js?v=1.2.4",self.html)
-        self.assertIn("radar-rss-v13",self.sw)
+        self.assertIn("v12.js?v=1.2.5",self.html)
+        self.assertIn("radar-rss-v14",self.sw)
 
     def test_all_news_context_and_coverage_have_separate_responsibilities(self):
         library=(ROOT/'web/library.js').read_text(encoding='utf8')
@@ -46,12 +46,27 @@ class V12ReviewTests(unittest.TestCase):
         self.assertIn("setNavOpen(false,false)",library)
         self.assertNotIn("makeSelect('v12Geo'",self.script)
         self.assertNotIn("id='v12CountryTabs'",self.script)
-        self.assertIn("filterRow.append(datePicker.wrap)",self.script)
+        self.assertIn("controls.insertBefore(datePicker.wrap,bulkRead)",self.script)
         self.assertIn("['chile','venezuela','region'].includes(item.geo)",self.script)
         self.assertIn("goTo(catOf(item.geo))",self.script)
         self.assertIn("chooseGeo(item.geo==='latam'?'latam':'all')",self.script)
         self.assertIn("savedSearches.length>=12",self.script)
         self.assertNotIn("Todos los países",self.script)
+
+    def test_feed_toolbar_is_compact_and_not_duplicated(self):
+        app=(ROOT/'web/app.js').read_text(encoding='utf8')
+        self.assertNotIn('id="v12FilterBar"',self.html)
+        self.assertNotIn('class="feed-actions"',self.html)
+        self.assertNotIn("const filterRow=mk",self.script)
+        self.assertIn("controls.insertBefore(datePicker.wrap,bulkRead)",self.script)
+        self.assertIn("controls.insertBefore(saveSearch,bulkRead)",self.script)
+        self.assertIn("datePicker.select.title='Filtrar por antigüedad'",self.script)
+        self.assertIn("saveSearch.setAttribute('aria-label'",self.script)
+        self.assertIn('class="feed-tool-action"',self.html)
+        self.assertIn('id="filterSummary" class="sr-only"',self.html)
+        self.assertIn("'markAllVisible').disabled=!visible.some",app)
+        self.assertIn(".filter-controls .v12-toolbar-age",self.css)
+        self.assertIn(".v12-save-icon,#markAllVisible",self.css)
 
     def test_home_categories_not_duplicated_in_dashboard(self):
         self.assertIn("document.querySelector('[data-settings-pane=\"reading\"]')",self.script)
