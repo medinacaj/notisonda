@@ -113,9 +113,7 @@
     updateSummary();
     return result;
   };
-  document.getElementById('v12Date').addEventListener('change',()=>{
-    updateSummary();group.open=false;
-  });
+  document.getElementById('v12Date').addEventListener('change',updateSummary);
   save.addEventListener('click',()=>{group.open=false;});
   bulk.addEventListener('click',()=>{group.open=false;});
   document.addEventListener('pointerdown',event=>{
