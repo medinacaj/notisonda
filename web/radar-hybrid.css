@@ -574,18 +574,6 @@ body.radar-hybrid:not(.light) .brand-mark{color:#181b1b}
   body.radar-hybrid .main{max-width:100%}
   body.radar-hybrid[data-columns="5"] .main,
   body.radar-hybrid[data-columns="6"] .main{max-width:100%}
-  body.radar-hybrid .dashboard-feature{
-    grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:auto;
-  }
-  body.radar-hybrid .dashboard-feature .article-card:first-child{
-    grid-column:1/-1;grid-row:auto;
-  }
-  body.radar-hybrid .dashboard-feature .article-card:not(:first-child){
-    display:flex;flex-direction:column;
-  }
-  body.radar-hybrid .dashboard-feature .article-card:not(:first-child) .cover{
-    height:auto;min-height:0;aspect-ratio:16/9;
-  }
   body.radar-hybrid .dashboard-lower{grid-template-columns:1fr}
 }
 @media(max-width:950px){
@@ -607,14 +595,6 @@ body.radar-hybrid:not(.light) .brand-mark{color:#181b1b}
   }
   body.radar-hybrid .stat{border:1px solid var(--line)!important}
   body.radar-hybrid .dashboard-head h1{font-size:31px}
-  body.radar-hybrid .dashboard-feature{grid-template-columns:1fr}
-  body.radar-hybrid .dashboard-feature .article-card:first-child{grid-column:auto}
-  body.radar-hybrid .dashboard-feature .article-card:not(:first-child){
-    display:grid;grid-template-columns:125px minmax(0,1fr);
-  }
-  body.radar-hybrid .dashboard-feature .article-card:not(:first-child) .cover{
-    height:100%;min-height:155px;aspect-ratio:auto;
-  }
   body.radar-hybrid[data-columns="auto"] .article-grid:not(.list-view){
     grid-template-columns:repeat(2,minmax(0,1fr));
   }
@@ -634,18 +614,8 @@ body.radar-hybrid:not(.light) .brand-mark{color:#181b1b}
   body.radar-hybrid .article-card,
   body.radar-hybrid.light .article-card{border-radius:12px}
   body.radar-hybrid .article-content{padding:14px}
-  body.radar-hybrid .dashboard-feature .article-card:first-child .article-title{
-    font-size:22px;
-  }
-  body.radar-hybrid .dashboard-feature .article-card:not(:first-child) .article-title{
-    font-size:14px;
-  }
-  body.radar-hybrid .dashboard-feature .article-card:not(:first-child) .article-content{
-    padding:10px;
-  }
   body.radar-hybrid .reader-title{font-size:26px}
   body.radar-hybrid .reader-summary{font-size:17px}
-  body.radar-hybrid .dashboard-panel-head h2{font-size:21px}
   body.radar-hybrid .section-heading h2{font-size:26px}
   body.hashnode-preview .style-preview-info,
   body.substack-preview .style-preview-info{display:none}
