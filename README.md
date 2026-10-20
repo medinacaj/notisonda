@@ -2,13 +2,13 @@
 
 **Versión pública operativa · octubre 2026:** recopilación y publicación automáticas, monitoreo, historial paginado, tendencias, lectura responsive y pruebas multiplataforma.
 
-Proyecto público sin backend ni cuentas. Mantiene 150 fuentes y las seis carpetas del OPML, accesibles y editables. El listado ofrece una vista conjunta de Latinoamérica sin ocultar ni modificar las carpetas de fuentes.
+Proyecto público sin backend ni cuentas. El catálogo contiene 178 fuentes RSS y seis carpetas OPML. Las carpetas personales se configuran localmente sin modificar el catálogo público. El listado ofrece una vista conjunta de Latinoamérica sin ocultar ni modificar las carpetas de fuentes.
 
 ## Arquitectura
 
 ```mermaid
 flowchart LR
-  A[OPML: 150 feeds] --> B[GitHub Actions: cada 6 horas]
+  A[OPML: 178 feeds] --> B[GitHub Actions: cada 6 horas]
   B --> C[Python: RSS/Atom y deduplicación]
   C --> D[JSON estáticos]
   D --> E[GitHub Pages]
@@ -18,6 +18,9 @@ flowchart LR
 
 - **Fuentes:** `sources/feeds.opml`. Suscripciones agrupadas en inteligencia artificial, tecnología, internacionales, Chile, Venezuela y Latinoamérica.
 - **Colector:** `scripts/collect.py`, Python + feedparser + requests. Obtiene los feeds con concurrencia limitada, normaliza titulares, extractos, imágenes y fechas, deduplica por URL y retiene artículos hasta 45 días (sujeto al límite de 5.000 artículos y a la disponibilidad del historial). Si un feed falla, mantiene datos antiguos dentro del período de retención gracias a la caché de GitHub Actions.
+
+- **Integridad de fuentes:** `scripts/audit_feeds.py` valida el OPML sin consultar internet y se ejecuta antes de recopilar noticias. Los errores temporales admiten un reintento con espera aleatoria; un feed permanentemente bloqueado no se reintenta.
+- **Contadores de medios:** el selector de fuentes puede mostrar noticias disponibles dentro de los filtros vigentes; no expresa la cantidad total histórica publicada por cada periódico.
 - **Vigilancia:** `web/data/status.json`. Registra errores, feeds vacíos y feeds con última publicación fechada hace al menos 365 días. Una fuente no se elimina automáticamente: un feed roto no implica un medio inactivo.
 - **Publicación:** `.github/workflows/deploy.yml`, GitHub Actions -> GitHub Pages. El navegador consume JSON generado, sin solicitar RSS externos directamente (evita CORS).
 - **UI:** `web/index.html`, `web/app.js` y los módulos `library.js`, `features.js`, `v12.js`. Interfaz sin frameworks con filtros combinables, Mi Radar, búsqueda guardada, vista de lectura, resumen personalizado y modos claro/oscuro.
@@ -128,7 +131,7 @@ Abrir `http://localhost:8000` (no abrir el archivo HTML haciendo doble clic: `fe
 ## Actualización y edición
 
 - **Automática:** aproximadamente cada seis horas mediante cron UTC `17 */6 * * *`. GitHub puede retrasar u omitir alguna ejecución; en repos públicos, la programación puede desactivarse por inactividad prolongada. El flujo también puede iniciarse manualmente.
-- **Modificar fuentes:** editar `sources/feeds.opml`, confirmar y esperar el siguiente flujo. No existe límite fijo de 150 en la aplicación, pero más fuentes incrementan consumo de Actions y tiempo de recopilación.
+- **Modificar fuentes:** editar `sources/feeds.opml`, confirmar y esperar el siguiente flujo. No existe límite fijo de fuentes en la aplicación, pero más fuentes incrementan consumo de Actions y tiempo de recopilación.
 - **Número de artículos:** 12 por feed por ciclo, hasta 5.000 noticias en caché y un máximo de 45 días por defecto. Ajustable en `deploy.yml` / `collect.py`.
 - **Sitio sin noticias después de publicar:** revisar los detalles de `Actions` y `data/status.json`. La aplicación no inventa noticias ni reemplaza automáticamente feeds problemáticos.
 - **URL del proyecto:** cambiar el enlace de GitHub en `web/index.html` después de crear el repositorio.
