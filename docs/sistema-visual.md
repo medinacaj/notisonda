@@ -1,4 +1,4 @@
-# RadarRRS — Sistema editorial V8 · Ligero
+# RadarRRS — Sistema editorial V9 · Multicolor funcional
 
 ## Objetivo de producto
 RadarRRS es un **portal público de noticias** y un lector de fuentes RSS, no un panel técnico. Deben verse primero las noticias. Las herramientas avanzadas se muestran a demanda.
@@ -10,20 +10,21 @@ RadarRRS es un **portal público de noticias** y un lector de fuentes RSS, no un
 3. Más opciones: antigüedad, guardar búsqueda y marcar noticias visibles como leídas. El menú se expande **en flujo**, no flotando sobre los resultados.
 4. Configuración > Apariencia: tema, tamaño de letra, imágenes y resúmenes como opciones principales. Columnas, espaciado, formato, panel lateral e inicio decorativo se encuentran en un bloque plegable.
 
-## Sistema V8 — Luminoso, coral y lavanda
+## Sistema V9 — Contraste editorial por función, no monocromía
 
-La paleta verde/petróleo de V7 ha sido retirada. Tampoco se vuelve a un único azul dominante.
+El fallo principal de las versiones anteriores era asignar un único color a toda la interfaz. En V9, se mantienen superficies neutras y se distingue **la función visual**, no se colorea cada panel.
 
-- **Base clara**: fondo `#fbfafc`, tarjetas `#ffffff`, texto `#282631`, líneas `#e8e5ed`.
-- **Coral suave** `#a7465d`: acciones primarias, elementos activos y foco. Evitar usarlo como fondo de secciones.
-- **Lavanda** `#7163a5`: etiquetas informativas, categoría de noticias y señales editoriales secundarias. No duplicar el color de acciones.
-- **Modo oscuro**: fondo `#1c1a23`, tarjetas `#292630`, coral `#eca0af`, lavanda `#c5b9f4`.
-- **Navegación y cabecera**: neutras y aireadas, sin grandes franjas de color ni bloques reiterativos.
-- **Portada**: sólo masthead editorial, noticias y secciones de cobertura; **no contiene “Empieza con Radar RSS”**.
-- **Ayuda de uso**: las tres herramientas “Personalizar temas”, “Combinar filtros” y “Comparar titulares” se agrupan en **Configuración → Lectura y filtros → Herramientas de lectura**. No presentar un bloque de bienvenida en Inicio.
-- **Tarjetas**: imágenes auténticas, sombras suaves y jerarquía tipográfica; resúmenes y controles siguen disponibles.
+- **Neutros**: fondo `#f8f9fb`, tarjetas blancas, tinta `#232831` y bordes suaves `#e2e6ec`.
+- **Acciones y foco**: coral `#ad4b58`.
+- **Últimas publicaciones y radar**: azul editorial `#326a9b`.
+- **Temas, notas y noticias sin leer**: violeta `#7354a2`.
+- **Guardadas y tendencias**: ámbar `#99631f`.
+- **Categorías OPML**: IA violeta, tecnología azul, internacionales ámbar, Chile rojo, Venezuela cobre y Latinoamérica turquesa. La pertenencia se identifica por icono, una línea delgada o una pequeña etiqueta; **jamás** por tarjetas enteras de colores.
+- **Modo oscuro**: fondo grafito `#191d26`, superficie `#262c38`, tonos funcionales aclarados para legibilidad.
+- **Semántica estable**: las seis categorías asignan `data-topic="1"…data-topic="6"` en navegación, tarjetas y carpeta de portada, por el orden de `state.categories`. No depender de coincidencias parciales de nombres.
+- **Sin guía en Inicio**: “Empieza con Radar RSS” permanece fuera de portada; las herramientas están en Configuración → Lectura y filtros.
 
-Regla de mantenimiento: evitar volver a colorear todos los componentes con un mismo acento. El contraste debe proceder mayormente de la fotografía, la tipografía y la composición.
+Al implementar nuevas características, reutilizar el rol semántico correspondiente y comprobar en navegador los seis colores calculados. Evitar variar el fondo de todas las secciones o reemplazar la identidad completa por un solo tono.
 
 ## Reglas visuales
 
@@ -48,7 +49,7 @@ El proyecto tiene CSS modular. **No fusionar todos los archivos en uno**: los m�
 | `radar-hybrid.css` | Identidad de RadarRRS, barra lateral, cabecera y adaptaciones generales. |
 | `ux.css` | Utilidades de interacción y navegación. No definir tamaños especiales de tarjetas de portada. |
 | `features.css` | Radar informativo, tendencias, historial y herramientas específicas. |
-| `v13.css` | **Definición final** de tarjetas uniformes, identidad visual V8 coral/lavanda, controles avanzados y portada responsive. |
+| `v13.css` | **Definición final** de tarjetas uniformes, identidad visual V9 por rol y categoría, controles avanzados y portada responsive. |
 
 Antes de añadir un selector, buscarlo en las hojas cargadas **después** del módulo actual. Modificar su regla canónica, en vez de crear más reglas al final de otro archivo. Evitar `!important` salvo una corrección de compatibilidad justificada.
 
