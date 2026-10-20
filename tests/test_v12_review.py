@@ -53,6 +53,21 @@ class V12ReviewTests(unittest.TestCase):
         self.assertIn("savedSearches.length>=12",self.script)
         self.assertNotIn("Todos los países",self.script)
 
+    def test_feed_toolbar_is_compact_and_not_duplicated(self):
+        app=(ROOT/'web/app.js').read_text(encoding='utf8')
+        self.assertNotIn('id="v12FilterBar"',self.html)
+        self.assertNotIn('class="feed-actions"',self.html)
+        self.assertNotIn("const filterRow=mk",self.script)
+        self.assertIn("controls.insertBefore(datePicker.wrap,bulkRead)",self.script)
+        self.assertIn("controls.insertBefore(saveSearch,bulkRead)",self.script)
+        self.assertIn("datePicker.select.title='Filtrar por antigüedad'",self.script)
+        self.assertIn("saveSearch.setAttribute('aria-label'",self.script)
+        self.assertIn('class="feed-tool-action"',self.html)
+        self.assertIn('id="filterSummary" class="sr-only"',self.html)
+        self.assertIn("'markAllVisible').disabled=!visible.some",app)
+        self.assertIn(".filter-controls .v12-toolbar-age",self.css)
+        self.assertIn(".v12-save-icon,#markAllVisible",self.css)
+
     def test_home_categories_not_duplicated_in_dashboard(self):
         self.assertIn("document.querySelector('[data-settings-pane=\"reading\"]')",self.script)
         self.assertIn("grid.after(section)",self.script)
