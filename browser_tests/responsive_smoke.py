@@ -243,14 +243,14 @@ def main():
                           masthead:getComputedStyle(document.querySelector('.dashboard-head')).backgroundImage,
                           brand:getComputedStyle(document.querySelector('.brand-mark')).backgroundColor
                         })""")
-                        assert visual["sidebar"] == "rgb(240, 241, 238)", visual
-                        assert visual["brand"] == "rgb(31, 94, 91)", visual
+                        assert visual["sidebar"] == "rgb(245, 243, 248)", visual
+                        assert visual["brand"] == "rgb(167, 70, 93)", visual
                         assert visual["masthead"] == "none", visual
                         # El modo nocturno debe usar su propia paleta sin afectar el DOM.
                         page.evaluate("document.body.classList.remove('light')")
                         assert page.evaluate(
                             "() => getComputedStyle(document.body).getPropertyValue('--bg').trim()"
-                        ) == "#181c1a"
+                        ) == "#1c1a23"
                         page.evaluate("document.body.classList.add('light')")
                         # Las seis carpetas originales deben seguir accesibles y administrables.
                         assert page.locator("#libraryFolderNav .system-folder-link").count() == len(CATEGORIES)
@@ -298,20 +298,20 @@ def main():
                         if width <= 950:
                             page.keyboard.press("Escape")
                             page.locator("body:not(.nav-open)").wait_for(timeout=3000)
-                        page.locator("#v13Guide").wait_for(state="visible", timeout=10000)
-                        assert page.locator("#v13Guide .v13-guide-action").count() == 3
+                        # La guía ya no ocupa la portada: sus 3 acciones viven
+                        # exclusivamente en Configuración > Lectura y filtros.
+                        assert page.locator("#dashboardView #v13Guide").count() == 0
+                        assert page.locator("#v13OpenGuide").count() == 0
                         assert page.locator("#articleGrid .article-card").count() == 0
-                        page.locator(".v13-guide-action").first.click()
-                        expect(page.locator("#settingsDialog")).to_be_visible()
-                        expect(page.locator("#v12MineToggle")).to_be_focused()
+                        page.locator("#settingsButton").click()
+                        page.locator('[data-settings-tab="reading"]').click()
                         expect(page.locator('[data-settings-pane="reading"]')).to_be_visible()
+                        assert page.locator("#v13Guide .settings-reading-action").count() == 3
+                        expect(page.locator("#v13Guide")).to_be_visible()
+                        page.locator(".settings-reading-action").first.click()
+                        expect(page.locator("#v12MineToggle")).to_be_focused()
                         page.locator("#closeSettings").click()
                         expect(page.locator("#settingsDialog")).to_be_hidden()
-                        page.locator("#v13DismissGuide").click()
-                        expect(page.locator("#v13Guide")).to_be_hidden()
-                        page.locator("#v13OpenGuide").click()
-                        expect(page.locator("#v13Guide")).to_be_visible()
-                        page.locator("#v13DismissGuide").click()
                         check_visible_boxes(page, [".topbar", ".topbar-caption", ".topbar-actions",
                             "#dashboardView", ".dashboard-panel-head", "#dashboardFeature",
                             "#dashboardFeature .article-card"], f"portada {width}px")
