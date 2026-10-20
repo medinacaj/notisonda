@@ -210,25 +210,7 @@ body.radar-hybrid .dashboard-health-panel h2{
   letter-spacing:-.023em;color:var(--text);
 }
 body.radar-hybrid .dashboard-panel-head>span{font-size:12px;color:var(--stone)}
-body.radar-hybrid .dashboard-feature{gap:13px}
-body.radar-hybrid .dashboard-feature .article-card:first-child .cover{
-  height:245px;aspect-ratio:16/9;
-}
-body.radar-hybrid .dashboard-feature .article-card:first-child .article-title{
-  font:600 25px/1.25 var(--font-editorial);letter-spacing:-.023em;
-}
-body.radar-hybrid .dashboard-feature .article-card:not(:first-child){
-  display:grid;grid-template-columns:minmax(115px,37%) minmax(0,1fr);
-}
-body.radar-hybrid .dashboard-feature .article-card:not(:first-child) .cover{
-  height:100%;min-height:166px;aspect-ratio:auto;
-}
-body.radar-hybrid .dashboard-feature .article-card:not(:first-child) .article-title{
-  font:650 15px/1.38 var(--font-ui);letter-spacing:-.012em;
-}
-body.radar-hybrid .dashboard-feature .article-card:not(:first-child) .article-content{
-  padding:11px 12px;
-}
+/* La portada comparte tarjetas editoriales homogéneas (v13.css). */
 body.radar-hybrid .dashboard-lower{gap:25px;grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
 body.radar-hybrid .dashboard-category,
 body.radar-hybrid.light .dashboard-category{
