@@ -383,9 +383,9 @@ body.radar-hybrid .topbar-actions{gap:7px}
 
 /* Masthead de periódico: papel neutro, tipografía y una sola raya de acento. */
 body.radar-hybrid .main{
- max-width:1550px;padding:23px clamp(17px,2.8vw,42px) 39px;
+ max-width:1550px;padding:14px clamp(17px,2.8vw,42px) 33px;
 }
-body.radar-hybrid .dashboard-view{gap:19px}
+body.radar-hybrid .dashboard-view{gap:15px}
 body.radar-hybrid .v13-reopen{
  background:var(--surface);color:var(--muted);border-color:var(--line)
 }
@@ -413,7 +413,7 @@ body.radar-hybrid .dashboard-panel{
 }
 body.radar-hybrid .dashboard-panel-head{
  display:flex;align-items:baseline;justify-content:space-between;
- gap:8px;margin:0 0 11px;padding:0 0 10px;
+ gap:8px;margin:0 0 9px;padding:0 0 8px;
  border-bottom:1px solid var(--line);
 }
 body.radar-hybrid .dashboard-panel-head h2{
@@ -699,13 +699,13 @@ body.radar-hybrid.font-large .dashboard-feature .article-title{font-size:20px}
 @media(max-width:950px){
  body.radar-hybrid .app-shell{grid-template-columns:minmax(0,1fr)}
  body.radar-hybrid .sidebar{box-shadow:8px 0 36px rgba(8,27,51,.3)}
- body.radar-hybrid .main{padding:16px 17px 31px}
+ body.radar-hybrid .main{padding:12px 17px 29px}
  body.radar-hybrid .dashboard-recent{grid-template-columns:minmax(0,1fr)}
 }
 @media(max-width:720px){
  body.radar-hybrid .topbar{min-height:57px;padding:8px 13px;gap:8px}
- body.radar-hybrid .main{padding:13px 13px 26px}
- body.radar-hybrid .dashboard-view{gap:16px}
+ body.radar-hybrid .main{padding:10px 13px 24px}
+ body.radar-hybrid .dashboard-view{gap:13px}
  body.radar-hybrid .dashboard-panel{padding:0}
  body.radar-hybrid .dashboard-panel-head{margin-bottom:9px}
  body.radar-hybrid .dashboard-panel-head>span{display:none}
