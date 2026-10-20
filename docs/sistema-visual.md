@@ -1,4 +1,4 @@
-# RadarRRS — Sistema editorial V9.2 · Inicio centrado en noticias
+# RadarRRS — Sistema editorial V10 · Ink & Paper
 
 ## Objetivo de producto
 RadarRRS es un **portal público de noticias** y un lector de fuentes RSS, no un panel técnico. Deben verse primero las noticias. Las herramientas avanzadas se muestran a demanda.
@@ -19,6 +19,22 @@ RadarRRS es un **portal público de noticias** y un lector de fuentes RSS, no un
 - Reubicar “Mientras no estabas” después de la primera selección de noticias. Es una función útil, no un obstáculo previo a la lectura.
 - Eliminar frases ornamentales junto a títulos autoexplicativos. Mantener aclaraciones mediante `title` o texto accesible si proporcionan una definición verificable.
 - Priorizar búsqueda, filtros, noticias y enlaces funcionales. Evitar estadísticas, paneles y botones repetidos.
+
+## Sistema V10 — Adaptación de la referencia Ramp (Ink & Paper)
+
+La referencia visual proporcionada se adapta **al lector de noticias**, no se clona su sitio de marketing: se conserva el feed, las seis categorías, las imágenes legítimas, los filtros y la portada directa a noticias. No se replica su tipografía propietaria Laus﻿anne; se emplea Inter con alternativas del sistema, sin distribuir fuentes comerciales.
+
+- **Lienzo**: hueso `#f4f2f0`; superficies `#ffffff`; texto tinta `#0c0a08`; secundarios `#6d6c6b`; bordes `#e5e7eb`.
+- **Jerarquía**: sans serif neo-grotesca; tamaño, interlineado y separación establecen niveles. No usar grandes eslóganes, bandas publicitarias ni intersticios promocionales.
+- **Tarjetas**: 16 px de radio y 1 px de borde, **sin sombra ni transformación vertical**. Mostrar fotografía real cuando exista, título y fuente; no pintar contorno según la categoría.
+- **Acciones**: lima `#e4f222` únicamente para llamadas funcionales de alta prioridad como “Cargar más” y “Ver solo las nuevas”, con texto casi negro. El resto de controles es neutro o outline/ghost.
+- **Categorías**: mantener sus seis matices en el icono de navegación o la etiqueta pequeña de la noticia. No convertir todo el sitio en amarillo ni introducir franjas sobre las tarjetas.
+- **Navegación**: barra lateral y encabezado blancos con líneas de separación. Estado activo por superficie y peso, no por paneles de color.
+- **Modo oscuro**: lienzo `#171616`, superficie `#232121`, bordes `#444240`; acciones lima con texto negro.
+- **Responsive**: el mismo sistema de lectura se conserva en el cajón móvil, sin barras adicionales.
+- **Motion**: interacción ligera por hover/foco, no elevación artificial, rotación decorativa ni gradientes.
+
+El bloque V10 al final de `web/v13.css` es la fuente de la presentación; `web/radar-hybrid.css` mantiene los tokens base. Al modificar estilos, comprobar valores computados de fondo, borde, radio, ausencia de sombra y contraste del botón lima en los tres navegadores.
 
 ## Sistema V9 — Contraste editorial por función, no monocromía
 
