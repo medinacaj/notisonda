@@ -424,29 +424,52 @@ function renderFolderNav(){
 }
 function createFolder(){openFolderEditor('manual',null,true);}
 function decorateSources(){
-  const elements=[...$('settingsSources').querySelectorAll('.settings-source-row')];
-  for(const label of elements){
-    if(label.closest('.library-source-row'))continue;
-    const name=label.querySelector('.settings-source-name')?.textContent||'';
-    const cat=label.querySelector('small')?.textContent||'';
-    const source=state.sources.find(s=>s.name===name&&categoryLabel(s.category)===cat);
-    if(!source)continue;
-    const wrapper=mk('div','library-source-row');
-    const select=mk('select','library-source-folder');
-    select.setAttribute('aria-label','Carpeta de '+name);
-    select.append(new Option('Sin carpeta',''));
-    for(const folderName of Object.keys(folders))select.append(new Option(folderName,folderName));
-    select.value=Object.entries(folders).find(([,ids])=>ids.includes(source.id))?.[0]||'';
-    select.addEventListener('change',()=>{
-      for(const ids of Object.values(folders)){
-        const i=ids.indexOf(source.id);if(i>=0)ids.splice(i,1);
-      }
-      if(select.value&&folders[select.value])folders[select.value].push(source.id);
-      write(FOLDER_KEY,folders);buildNav();
-      if(activeFolder)render();
-    });
-    label.replaceWith(wrapper);wrapper.append(label,select);
-  }
+ const list=$('settingsSources');
+ for(const label of [...list.querySelectorAll('.settings-source-row')]){
+  if(label.closest('.library-source-row'))continue;
+  const name=label.querySelector('.settings-source-name')?.textContent?.trim()||'';
+  const cat=label.querySelector('small')?.textContent?.trim()||'';
+  const source=state.sources.find(s=>sourceLabel(s.name)===name&&categoryLabel(s.category)===cat);
+  if(!source)continue;
+  const wrapper=mk('div','library-source-row'),select=mk('select','library-source-folder');
+  select.setAttribute('aria-label','Mover '+name+' a otra carpeta');
+  select.title='Mover a una carpeta de este navegador';
+  for(const id of state.categories)select.append(new Option(categoryLabel(id),'default:'+id));
+  for(const folder of Object.keys(folders))select.append(new Option(folder,'manual:'+folder));
+  const currentManual=Object.entries(folders).find(([,ids])=>ids.includes(source.id))?.[0];
+  const currentDefault=state.categories.find(id=>folderSources('default',id).includes(source.id));
+  select.value=currentManual?'manual:'+currentManual:'default:'+(currentDefault||source.category);
+  select.addEventListener('change',()=>{
+   const target=select.value;
+   if(!target.startsWith('default:')&&!target.startsWith('manual:'))return;
+   const oldFolders=JSON.stringify(folders),oldDefaults=JSON.stringify(defaults);
+   for(const id of state.categories){
+    const old=defaults[id]||{};
+    defaults[id]={...old,sources:folderSources('default',id).filter(x=>x!==source.id)};
+   }
+   for(const ids of Object.values(folders)){
+    const pos=ids.indexOf(source.id);if(pos>=0)ids.splice(pos,1);
+   }
+   if(target.startsWith('default:')){
+    const id=target.slice(8);
+    if(!state.categories.includes(id))return;
+    defaults[id].sources.push(source.id);
+   }else{
+    const name=target.slice(7);
+    if(!Object.prototype.hasOwnProperty.call(folders,name))return;
+    folders[name].push(source.id);
+   }
+   if(!saveDefaults()||!write(FOLDER_KEY,folders)){
+    defaults=JSON.parse(oldDefaults);folders=readFolders(JSON.parse(oldFolders));
+    saveDefaults();write(FOLDER_KEY,folders);
+    actionToast('No se pudo guardar el cambio de carpeta.');
+    return;
+   }
+   buildNav();renderSettingsSources();render();
+   actionToast('Fuente movida a la carpeta seleccionada.');
+  });
+  label.replaceWith(wrapper);wrapper.append(label,select);
+ }
 }
 const oldSources=renderSettingsSources;
 renderSettingsSources=function(){oldSources();decorateSources();};
