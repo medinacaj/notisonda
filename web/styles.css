@@ -805,18 +805,7 @@ body.layout-list .cards-columns-control:hover{color:var(--text)}
 .article-card,body.light .article-card{border:1px solid var(--line);box-shadow:0 3px 14px var(--shadow)}
 .article-card:hover{transform:translateY(-1px);box-shadow:0 9px 25px var(--shadow)}
 
-/* Carpetas visibles, compactas y distintas de la navegación lateral. */
-.dashboard-folders{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
-.dashboard-folder{min-width:0;border-bottom:1px solid var(--line);padding:0 0 11px}
-.dashboard-folder-head{
- width:100%;min-width:0;display:flex;align-items:center;gap:8px;
- padding:7px 0 10px;border:0;background:transparent;color:var(--text);text-align:left
-}
-.dashboard-folder-head h3{font-size:13px;margin:0;min-width:0}
-.dashboard-folder-more{margin-left:auto;color:var(--muted);font-size:11px}
-.dashboard-folder-list{min-width:0}
-.dashboard-folder-head:hover{color:var(--accent)}
-
+/* Las carpetas se diseñan en ux.css (más específico, cargado después). */
 /* Respetar los modos de lectura y las opciones de accesibilidad. */
 .article-grid.list-view{grid-auto-rows:auto;align-items:stretch}
 .article-grid.list-view .article-card{height:auto}
