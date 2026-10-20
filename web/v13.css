@@ -1281,7 +1281,7 @@ body.radar-hybrid .topbar-caption strong{
 body.radar-hybrid .topbar-separator,
 body.radar-hybrid #topbarSection{display:none}
 body.radar-hybrid .topic-rail{
- display:flex;align-items:center;gap:3px;flex-wrap:nowrap;
+ display:flex!important;align-items:center;gap:3px;flex-wrap:nowrap;
  width:100%;max-width:100%;min-width:0;min-height:48px;
  margin:0;padding:5px clamp(16px,3vw,44px);
  border-bottom:1px solid var(--line);
