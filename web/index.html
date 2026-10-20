@@ -124,7 +124,23 @@
             <div class="since-visit-folders" id="sinceVisitFolders"></div>
             <div class="since-visit-actions"><button type="button" id="sinceVisitShow" class="since-visit-primary">Ver solo las nuevas</button><button type="button" id="sinceVisitDismiss" class="since-visit-dismiss" aria-label="Ocultar aviso de novedades"><span data-icon="x" class="ui-icon-slot" aria-hidden="true"></span></button></div>
           </section>
-          <section class="dashboard-panel radar-panel" aria-labelledby="radarTitle">
+          <section class="dashboard-panel dashboard-feature-panel" aria-label="Noticias recientes de diferentes categorías">
+            <div class="dashboard-panel-head"><h2>En portada</h2><span>Selección cronológica de distintas categorías</span></div>
+            <div class="dashboard-feature" id="dashboardFeature"></div>
+          </section>
+          <section class="dashboard-panel" aria-labelledby="dashboardRecentTitle">
+            <div class="dashboard-panel-head"><h2 id="dashboardRecentTitle">Últimas publicaciones</h2><span>De todas tus fuentes</span></div>
+            <div class="dashboard-recent" id="dashboardRecent"></div>
+          </section>
+          <section class="dashboard-panel dashboard-saved-panel" id="dashboardSavedPanel" hidden aria-label="Artículos guardados">
+            <div class="dashboard-panel-head"><h2>Tu lista para después</h2><button type="button" id="dashboardSavedAll" class="dashboard-read-all">Ver mis guardadas <span data-icon="arrow-right" class="ui-icon-slot" aria-hidden="true"></span></button></div>
+            <div id="dashboardSavedList" class="dashboard-saved-list"></div>
+          </section>
+          <section class="dashboard-panel" aria-labelledby="dashboardFoldersTitle">
+            <div class="dashboard-panel-head"><h2 id="dashboardFoldersTitle">Por carpeta</h2><span>Lo más reciente de cada tema</span></div>
+            <div class="dashboard-folders" id="dashboardFolders"></div>
+          </section>
+        <section class="dashboard-panel radar-panel" aria-labelledby="radarTitle">
             <div class="dashboard-panel-head"><h2 id="radarTitle">Lo más cubierto</h2><span>Historias publicadas por más medios en las últimas 24 horas</span></div>
             <div class="radar-layout">
               <figure class="radar-figure" id="radarFigure">
@@ -139,23 +155,7 @@
             <div class="trend-chips" id="trendChips"></div>
             <div class="followed-row" id="followedRow" hidden><span class="followed-label"><span data-icon="bell" class="ui-icon-slot" aria-hidden="true"></span> Temas que sigo</span><div class="trend-chips" id="followedChips"></div></div>
           </section>
-          <section class="dashboard-panel dashboard-feature-panel" aria-label="Noticias recientes de diferentes categorías">
-            <div class="dashboard-panel-head"><h2>En portada</h2><span>Selección cronológica de distintas categorías</span></div>
-            <div class="dashboard-feature" id="dashboardFeature"></div>
           </section>
-          <section class="dashboard-panel dashboard-saved-panel" id="dashboardSavedPanel" hidden aria-label="Artículos guardados">
-            <div class="dashboard-panel-head"><h2>Tu lista para después</h2><button type="button" id="dashboardSavedAll" class="dashboard-read-all">Ver mis guardadas <span data-icon="arrow-right" class="ui-icon-slot" aria-hidden="true"></span></button></div>
-            <div id="dashboardSavedList" class="dashboard-saved-list"></div>
-          </section>
-          <section class="dashboard-panel" aria-labelledby="dashboardRecentTitle">
-            <div class="dashboard-panel-head"><h2 id="dashboardRecentTitle">Últimas publicaciones</h2><span>De todas tus fuentes</span></div>
-            <div class="dashboard-recent" id="dashboardRecent"></div>
-          </section>
-          <section class="dashboard-panel" aria-labelledby="dashboardFoldersTitle">
-            <div class="dashboard-panel-head"><h2 id="dashboardFoldersTitle">Por carpeta</h2><span>Lo más reciente de cada tema</span></div>
-            <div class="dashboard-folders" id="dashboardFolders"></div>
-          </section>
-        </section>
         <section class="briefing-view" id="briefingView" aria-labelledby="briefingTitle" hidden>
           <header class="briefing-head">
             <div><span class="briefing-kicker" id="briefingDate"></span><h1 id="briefingTitle">Resumen del día</h1><p id="briefingIntro">Las historias que más medios publicaron en las últimas 24 horas, por tema.</p></div>
@@ -292,13 +292,22 @@
       <div class="settings-pages" id="settingsPages" tabindex="0" role="region" aria-label="Contenido de configuración, desplazable">
         <section class="settings-pane active" data-settings-pane="appearance" aria-label="Apariencia">
           <h3>Apariencia</h3><p class="setting-hint">Personaliza cómo ves las noticias en todos los dispositivos desde cada navegador.</p>
-          <div class="setting-grid">
+          <div class="setting-grid editorial-primary-settings">
             <label class="setting-field" for="settingTheme"><span>Tema</span><select id="settingTheme"><option value="system">Automático (sistema)</option><option value="dark">Oscuro</option><option value="light">Claro</option></select></label>
+            <label class="setting-field" for="settingFont"><span>Texto</span><select id="settingFont"><option value="normal">Normal</option><option value="large">Grande</option></select></label>
+          </div>
+          <div class="settings-divider"></div>
+          <label class="setting-toggle"><span><b>Modo ligero</b><small>Para conexiones lentas: no descarga imágenes ni animaciones. Se activa solo si tu navegador indica ahorro de datos.</small></span><input id="settingLite" type="checkbox"></label>
+          <label class="setting-toggle"><span><b>Mostrar imágenes</b><small>Ocultar fotografías para una lectura más limpia y rápida.</small></span><input id="settingImages" type="checkbox"></label>
+          <label class="setting-toggle"><span><b>Mostrar resúmenes</b><small>Ver u ocultar los extractos de cada artículo.</small></span><input id="settingSummaries" type="checkbox"></label>
+          <details class="settings-design-advanced" id="settingsDesignAdvanced">
+            <summary>Más opciones de diseño</summary>
+            <div class="settings-design-advanced-content">
+              <div class="setting-grid">
             <label class="setting-field" for="settingLayout"><span>Formato</span><select id="settingLayout"><option value="cards">Tarjetas</option><option value="list">Lista</option></select></label>
             <label class="setting-field" for="settingColumns"><span>Columnas de noticias</span><select id="settingColumns"><option value="auto">Automático (3 por defecto)</option><option value="2">2 columnas</option><option value="3">3 columnas</option><option value="4">4 columnas</option><option value="5">5 columnas</option><option value="6">6 columnas</option></select><small>En pantallas pequeñas se adaptan para conservar la lectura.</small></label>
             <label class="setting-field" for="settingDensity"><span>Espaciado</span><select id="settingDensity"><option value="comfortable">Cómodo</option><option value="compact">Compacto</option></select></label>
-            <label class="setting-field" for="settingFont"><span>Texto</span><select id="settingFont"><option value="normal">Normal</option><option value="large">Grande</option></select></label>
-          </div>
+              </div>
           <div class="setting-sidebar-width">
             <div class="setting-sidebar-width-heading">
               <label for="settingSidebarWidth">Ancho del panel lateral</label>
@@ -310,11 +319,9 @@
               <button type="button" id="resetSidebarWidth" class="settings-secondary">Restablecer ancho</button>
             </div>
           </div>
-          <div class="settings-divider"></div>
-          <label class="setting-toggle"><span><b>Modo ligero</b><small>Para conexiones lentas: no descarga imágenes ni animaciones. Se activa solo si tu navegador indica ahorro de datos.</small></span><input id="settingLite" type="checkbox"></label>
           <label class="setting-toggle"><span><b>Mostrar presentación de inicio</b><small>Activa el encabezado grande. Por defecto, Radar RSS prioriza las noticias.</small></span><input id="settingHero" type="checkbox"></label>
-          <label class="setting-toggle"><span><b>Mostrar imágenes</b><small>Ocultar fotografías para una lectura más limpia y rápida.</small></span><input id="settingImages" type="checkbox"></label>
-          <label class="setting-toggle"><span><b>Mostrar resúmenes</b><small>Ver u ocultar los extractos de cada artículo.</small></span><input id="settingSummaries" type="checkbox"></label>
+            </div>
+          </details>
         </section>
         <section class="settings-pane" data-settings-pane="reading" aria-label="Lectura y filtros" hidden>
           <h3>Lectura y filtros</h3><p class="setting-hint">Controla qué noticias aparecen primero y cuáles prefieres evitar.</p>
