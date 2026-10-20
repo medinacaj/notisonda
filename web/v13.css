@@ -281,7 +281,7 @@ body.radar-hybrid .dashboard-feature .article-card .article-actions{margin-top:a
    módulos de lectura. Este bloque es la fuente canónica de la presentación. */
 
 /* Navegación principal: de bandeja gris a librería azul noche */
-body.radar-hybrid .app-shell{grid-template-columns:256px minmax(0,1fr)}
+body.radar-hybrid .app-shell{grid-template-columns:minmax(0,var(--radar-sidebar-width,310px)) minmax(0,1fr)}
 body.radar-hybrid .sidebar,
 body.radar-hybrid.light .sidebar{
  background:#102641;color:#f2f8ff;
@@ -489,6 +489,23 @@ body.radar-hybrid #articleGrid.article-grid:not(.list-view)>.article-card>.cover
  min-height:0;max-height:160px;
  aspect-ratio:auto;object-fit:cover;flex:0 0 160px;
  border-radius:0;border-bottom:1px solid var(--line);
+}
+/* Las imágenes del feed respetan el contrato de altura; compacto y sin
+   fotografías conservan prioridad sobre la retícula editorial. */
+body.radar-hybrid #articleGrid.article-grid:not(.list-view)>.article-card>.cover{
+ height:148px;max-height:148px;flex-basis:148px;
+}
+body.radar-hybrid.compact #articleGrid.article-grid:not(.list-view)>.article-card>.cover,
+body.radar-hybrid.compact .dashboard-feature .article-card .cover,
+body.radar-hybrid.compact .dashboard-feature .article-card:first-child .cover,
+body.radar-hybrid.compact .dashboard-feature .article-card:not(:first-child) .cover{
+ height:96px;max-height:96px;flex-basis:96px;
+}
+body.radar-hybrid.hide-images #articleGrid.article-grid:not(.list-view)>.article-card>.cover,
+body.radar-hybrid.hide-images .dashboard-feature .article-card .cover,
+body.radar-hybrid.hide-images .dashboard-feature .article-card:first-child .cover,
+body.radar-hybrid.hide-images .dashboard-feature .article-card:not(:first-child) .cover{
+ display:none;
 }
 body.radar-hybrid .dashboard-feature .article-card .article-content,
 body.radar-hybrid .dashboard-feature .article-card:not(:first-child) .article-content,
