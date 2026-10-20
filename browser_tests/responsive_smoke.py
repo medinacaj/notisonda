@@ -294,6 +294,29 @@ def main():
                         if page.locator("#dashboardFolders .dashboard-folder").count():
                             assert page.locator("#dashboardFolders").evaluate(
                                 "(node) => getComputedStyle(node).display") == "grid"
+                        # La primera noticia no debe ocupar dos columnas o filas:
+                        # todas las tarjetas de portada comparten formato y alineación.
+                        featured = page.evaluate("""() => {
+                          const grid = document.querySelector('#dashboardFeature');
+                          const cards = [...grid.querySelectorAll('.article-card')];
+                          const rects = cards.map(card => {
+                            const r=card.getBoundingClientRect();
+                            return {y:Math.round(r.y), w:r.width, h:r.height};
+                          });
+                          const rows = new Map();
+                          for(const r of rects){
+                            if(!rows.has(r.y))rows.set(r.y, []);
+                            rows.get(r.y).push(r);
+                          }
+                          return {count:cards.length, rows:[...rows.values()],
+                            columns:getComputedStyle(grid).gridTemplateColumns.split(' ').length};
+                        }""")
+                        assert featured["count"] == 3, featured
+                        assert featured["columns"] == (1 if width <= 710 else 2 if width <= 1100 else 3), featured
+                        for row in featured["rows"]:
+                            if len(row) > 1:
+                                assert max(x["h"] for x in row)-min(x["h"] for x in row) <= 2, featured
+                                assert max(x["w"] for x in row)-min(x["w"] for x in row) <= 2, featured
                         check_header_overlap(page, f"{browser_name} barra superior {width}px")
                         check_accessibility_contract(page, f"{browser_name} portada {width}px")
                         if width in (320, 768, 1440):
