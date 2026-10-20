@@ -243,14 +243,14 @@ def main():
                           masthead:getComputedStyle(document.querySelector('.dashboard-head')).backgroundImage,
                           brand:getComputedStyle(document.querySelector('.brand-mark')).backgroundColor
                         })""")
-                        assert visual["sidebar"] == "rgb(16, 38, 65)", visual
-                        assert visual["brand"] == "rgb(97, 221, 202)", visual
-                        assert "gradient" in visual["masthead"], visual
+                        assert visual["sidebar"] == "rgb(240, 241, 238)", visual
+                        assert visual["brand"] == "rgb(31, 94, 91)", visual
+                        assert visual["masthead"] == "none", visual
                         # El modo nocturno debe usar su propia paleta sin afectar el DOM.
                         page.evaluate("document.body.classList.remove('light')")
                         assert page.evaluate(
                             "() => getComputedStyle(document.body).getPropertyValue('--bg').trim()"
-                        ) == "#0b1525"
+                        ) == "#181c1a"
                         page.evaluate("document.body.classList.add('light')")
                         # Las seis carpetas originales deben seguir accesibles y administrables.
                         assert page.locator("#libraryFolderNav .system-folder-link").count() == len(CATEGORIES)
