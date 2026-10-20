@@ -370,21 +370,21 @@ body.radar-hybrid .feed-advanced[open]>summary{
  border-color:var(--accent);
  background:var(--surface2);
 }
+body.radar-hybrid .filter-controls:has(> .feed-advanced[open]){flex-wrap:wrap}
+body.radar-hybrid .feed-advanced[open]{flex:1 1 100%;order:20;min-width:0}
 body.radar-hybrid .feed-advanced-content{
- position:absolute;
- z-index:35;
- top:calc(100% + 7px);
- right:0;
+ position:static;
  display:grid;
  grid-template-columns:1fr 1fr;
  align-items:center;
  gap:10px;
- width:min(325px,calc(100vw - 28px));
- padding:13px;
+ width:100%;
+ max-width:100%;
+ margin-top:7px;
+ padding:10px;
  border:1px solid var(--line);
  background:var(--surface);
- border-radius:12px;
- box-shadow:0 15px 36px var(--shadow);
+ border-radius:10px;
 }
 body.radar-hybrid .feed-advanced:not([open]) .feed-advanced-content{display:none}
 body.radar-hybrid .feed-advanced-content .v12-toolbar-age{
@@ -464,7 +464,6 @@ body.radar-hybrid .v13-guide-action{min-height:57px;padding:9px}
  body.radar-hybrid .cards-columns-control .columns-chevron{display:none}
  body.radar-hybrid .feed-advanced>summary{min-width:43px;font-size:0;padding:7px}
  body.radar-hybrid .feed-advanced>summary::before{content:"Más";font-size:12px}
- body.radar-hybrid .feed-advanced-content{right:0}
 }
 @media(max-width:350px){
  body.radar-hybrid .filter-bar{gap:5px}
