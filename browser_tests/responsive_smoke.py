@@ -290,6 +290,10 @@ def main():
                         check_visible_boxes(page, [".topbar", ".topbar-caption", ".topbar-actions",
                             "#dashboardView", ".dashboard-panel-head", "#dashboardFeature",
                             "#dashboardFeature .article-card"], f"portada {width}px")
+                        # Las carpetas de portada deben seguir visibles como cuadrícula.
+                        if page.locator("#dashboardFolders .dashboard-folder").count():
+                            assert page.locator("#dashboardFolders").evaluate(
+                                "(node) => getComputedStyle(node).display") == "grid"
                         check_header_overlap(page, f"{browser_name} barra superior {width}px")
                         check_accessibility_contract(page, f"{browser_name} portada {width}px")
                         if width in (320, 768, 1440):
@@ -325,11 +329,15 @@ def main():
                         assert shadow_unread != "none", shadow_unread
                         check_uniform_card_heights(page, f"tarjetas {browser_name} {width}px")
                         # Preferencia Compacto mantiene miniaturas y títulos acotados.
+                        # Compacto debe ocultar los resúmenes; no basta con reducir imágenes.
                         page.evaluate("document.body.classList.add('compact')")
                         assert page.locator("#articleGrid .article-card .cover").first.evaluate(
                             "(node) => node.getBoundingClientRect().height") <= 101
                         assert placeholders.first.evaluate(
                             "(node) => node.getBoundingClientRect().height") <= 61
+                        excerpt=page.locator("#articleGrid .article-card:not(.no-excerpt) .article-excerpt").first
+                        assert excerpt.count() > 0
+                        assert excerpt.evaluate("(node) => getComputedStyle(node).display") == "none"
                         page.evaluate("document.body.classList.remove('compact')")
                         # CSS states are checked directly: the quick column button is
                         # deliberately hidden on some mobile widths.
