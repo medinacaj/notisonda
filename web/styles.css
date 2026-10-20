@@ -822,7 +822,7 @@ body.layout-list .cards-columns-control:hover{color:var(--text)}
 .article-grid.list-view .article-card{height:auto}
 body.compact .article-grid:not(.list-view) .article-card .cover,
 body.compact .dashboard-feature .article-card .cover{
- height:clamp(100px,12vw,132px);aspect-ratio:auto
+ height:96px;aspect-ratio:auto
 }
 body.compact .article-grid:not(.list-view) .article-content,
 body.compact .dashboard-feature .article-card .article-content{padding:10px 12px}
