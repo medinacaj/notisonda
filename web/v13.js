@@ -81,3 +81,43 @@
   };
   updateStats();
 })();
+
+
+/* V5.4 — controles secundarios mediante un desplegable nativo y accesible.
+   Se reagrupan los elementos existentes: no se duplican ni se pierden eventos. */
+(() => {
+  const controls=document.querySelector('#feedView .filter-controls');
+  if (!controls || document.getElementById('feedAdvanced')) return;
+  const date=document.querySelector('.v12-toolbar-age');
+  const save=document.getElementById('v12SaveSearch');
+  const bulk=document.getElementById('markAllVisible');
+  if(!date||!save||!bulk)return;
+  const group=document.createElement('details');
+  group.className='feed-advanced';
+  group.id='feedAdvanced';
+  const summary=document.createElement('summary');
+  summary.setAttribute('aria-label','Más opciones de noticias: antigüedad y acciones');
+  const content=document.createElement('div');
+  content.className='feed-advanced-content';
+  group.append(summary,content);
+  content.append(date,save,bulk);
+  controls.append(group);
+  function updateSummary(){
+    const age=Number(document.getElementById('v12Date')?.value||state.maxAge);
+    summary.textContent=age>0?'Opciones · fecha activa':'Más opciones';
+  }
+  const renderPrevious=render;
+  render=function(...args){
+    const result=renderPrevious(...args);
+    updateSummary();
+    return result;
+  };
+  document.getElementById('v12Date').addEventListener('change',updateSummary);
+  document.addEventListener('pointerdown',event=>{
+    if(group.open&&!group.contains(event.target))group.open=false;
+  });
+  group.addEventListener('keydown',event=>{
+    if(event.key==='Escape'&&group.open){group.open=false;summary.focus();event.stopPropagation();}
+  });
+  updateSummary();
+})();
