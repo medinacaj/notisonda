@@ -48,7 +48,7 @@ flowchart LR
 - **Sin fotografía:** cuando la fuente RSS no publica foto, la URL es inválida o la fotografía original no carga, la cuadrícula usa una cubierta **tipográfica identificada como «Sin fotografía disponible»**, sin imagen inventada ni copia de fotografías ajenas. El modo ligero, la opción «Ocultar imágenes» y la vista Lista omiten la cubierta adicional.
 - **Sin descripción:** el colector busca primero el resumen RSS y, si no contiene texto, intenta el campo `description`, el subtítulo y el cuerpo Atom ya entregado por el mismo feed. El texto se limpia y acorta; si la fuente no proporciona contenido útil, no se inventa una descripción. La tarjeta conserva el título, medio y acciones.
 - **Sombras por lectura:** las noticias sin leer tienen una elevación suave más visible; las leídas, una sombra más discreta. La distinción se complementa con el contraste del título y el estado del botón. Las transiciones respetan la preferencia de movimiento reducido.
-- **Diseño:** se mantiene la altura uniforme solicitada en la cuadrícula; la vista Lista conserva su diseño compacto y la noticia destacada de portada conserva su jerarquía.
+- **Diseño compacto:** las tarjetas mantienen igual altura **dentro de cada fila**, pero una noticia extensa ya no agranda todas las filas del listado. Las imágenes originales son más bajas, las cubiertas tipográficas ocupan menos espacio y los titulares/extractos tienen límites de líneas; el contenido completo sigue disponible en el lector. El modo Compacto, la vista Lista y la noticia principal de portada conservan sus estilos.
 
 ## Imágenes originales en noticias
 
