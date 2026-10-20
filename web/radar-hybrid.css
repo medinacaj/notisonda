@@ -177,17 +177,13 @@ body.radar-hybrid .stat small{
   color:var(--muted)!important;font-size:10px!important;
   letter-spacing:0;font-weight:560;
 }
-/* Dashboard: Substack's hero hierarchy + Hashnode's navigable modules. */
-body.radar-hybrid .dashboard-view{gap:25px}
-body.radar-hybrid .dashboard-head{margin:0 0 2px;gap:15px}
-body.radar-hybrid .dashboard-kicker{
-  color:var(--stone);font-size:10px;letter-spacing:.10em;font-weight:730;
-}
-body.radar-hybrid .dashboard-head h1{
-  color:var(--text);font:600 clamp(29px,3vw,39px)/1.13 var(--font-editorial);
-  letter-spacing:-.035em;margin:6px 0 9px;
-}
-body.radar-hybrid .dashboard-head p{font-size:13px;color:var(--muted);line-height:1.5}
+
+/* Portada editorial: bloques funcionales, sin presentación introductoria. */
+body.radar-hybrid .dashboard-view{gap:16px}
+
+
+
+
 body.radar-hybrid .dashboard-read-all{
   display:inline-flex;align-items:center;gap:7px;
   padding:9px 13px;border:1px solid var(--line);
@@ -597,7 +593,7 @@ body.radar-hybrid:not(.light) .brand-mark{color:#181b1b}
     grid-template-columns:repeat(2,minmax(0,1fr));gap:8px!important;
   }
   body.radar-hybrid .stat{border:1px solid var(--line)!important}
-  body.radar-hybrid .dashboard-head h1{font-size:31px}
+
   body.radar-hybrid[data-columns="auto"] .article-grid:not(.list-view){
     grid-template-columns:repeat(2,minmax(0,1fr));
   }
