@@ -46,11 +46,12 @@ class V13Contracts(unittest.TestCase):
     def test_card_height_fix_only_targets_grid_not_editorial_or_list(self):
         css=(ROOT/'web/v13.css').read_text(encoding='utf8')
         self.assertIn('#articleGrid.article-grid:not(.list-view)',css)
-        self.assertIn('grid-auto-rows:1fr',css)
+        self.assertIn('grid-auto-rows:auto',css)
+        self.assertNotIn('grid-auto-rows:1fr',css)
         self.assertIn('> .article-card .article-footer',css)
         self.assertNotIn('.dashboard-feature .article-card{grid-auto-rows',css)
-        self.assertIn('v13.css?v=1.3.4',self.html)
-        self.assertIn("radar-rss-v14",self.sw)
+        self.assertIn('v13.css?v=1.3.5',self.html)
+        self.assertIn("radar-rss-v15",self.sw)
 
     def test_card_read_action_is_visible_and_syncs_values(self):
         self.assertIn("article-action article-read-toggle",self.app)
