@@ -423,6 +423,34 @@ function renderFolderNav(){
   });
 }
 function createFolder(){openFolderEditor('manual',null,true);}
+function showSourceDetails(source){
+ let dialog=document.getElementById('librarySourceDetailsDialog');
+ if(!dialog){
+  dialog=mk('dialog','library-source-details-dialog');
+  dialog.id='librarySourceDetailsDialog';
+  dialog.addEventListener('click',event=>{if(event.target===dialog)dialog.close();});
+  document.body.append(dialog);
+ }
+ dialog.replaceChildren();
+ const heading=mk('h2','',sourceLabel(source.name));
+ const description=mk('p','', 'Información del catálogo público de Radar RSS.');
+ const close=mk('button','settings-secondary','Cerrar');close.type='button';close.addEventListener('click',()=>dialog.close());
+ const entries=[['Nombre en catálogo',source.name],['Categoría original',categoryLabel(source.category)],['Carpeta asignada',Object.entries(folders).find(([,ids])=>ids.includes(source.id))?.[0]||state.categories.filter(id=>folderSources('default',id).includes(source.id)).map(categoryLabel).join(', ')||'Sin carpeta'],['Identificador',source.id],['Dirección RSS',source.url],['Sitio del medio',source.website]];
+ const dl=mk('dl','library-source-details-list');
+ for(const [label,value] of entries){
+  const dt=mk('dt','',label),dd=mk('dd');
+  if((label==='Dirección RSS'||label==='Sitio del medio')&&safeURL(value)){
+   const link=mk('a','',value);link.href=safeURL(value);link.target='_blank';link.rel='noopener noreferrer';link.referrerPolicy='no-referrer';dd.append(link);
+   const copy=mk('button','library-source-copy','Copiar');copy.type='button';copy.addEventListener('click',async()=>{
+    try{await navigator.clipboard.writeText(value);actionToast('Dirección copiada.');}
+    catch{actionToast('No se pudo copiar la dirección.');}
+   });dd.append(copy);
+  }else dd.textContent=value||'No disponible en el catálogo';
+  dl.append(dt,dd);
+ }
+ dialog.append(heading,description,dl,close);
+ dialog.showModal();close.focus();
+}
 function decorateSources(){
  const list=$('settingsSources');
  for(const label of [...list.querySelectorAll('.settings-source-row')]){
@@ -468,7 +496,15 @@ function decorateSources(){
    buildNav();renderSettingsSources();render();
    actionToast('Fuente movida a la carpeta seleccionada.');
   });
-  label.replaceWith(wrapper);wrapper.append(label,select);
+  const checkbox=label.querySelector('input[type="checkbox"]');
+  const details=label.querySelector('.settings-source-details');
+  const open=mk('button','library-source-details-trigger');open.type='button';
+  open.setAttribute('aria-label','Ver detalles de '+name);open.title='Ver nombre, RSS, web y carpeta';
+  if(details)open.append(details);
+  open.addEventListener('click',()=>showSourceDetails(source));
+  label.replaceWith(wrapper);
+  if(checkbox){label.replaceChildren(checkbox);label.classList.add('library-source-check');wrapper.append(label);}
+  wrapper.append(open,select);
  }
 }
 const oldSources=renderSettingsSources;
