@@ -32,14 +32,16 @@ self.addEventListener('fetch', event => {
   const request = event.request;
   if (request.method !== 'GET') return;
   // Never cache range requests or requests outside the app's own scope.
-  if (request.headers.has('range')) return;
+  if (request.headers.has('range') || request.cache === 'only-if-cached' && request.mode !== 'same-origin') return;
   const url = new URL(request.url);
   if (url.origin !== self.location.origin || !url.pathname.startsWith(new URL(self.registration.scope).pathname)) return;
   event.respondWith((async () => {
     const cache = await caches.open(CACHE);
     try {
       const response = await fetch(request);
-      if (response.ok && response.type === 'basic') cache.put(keyFor(request), response.clone()).catch(() => {});
+      if (response.ok && response.type === 'basic' && !url.pathname.endsWith('/sw.js')) {
+        event.waitUntil(cache.put(keyFor(request), response.clone()).catch(() => {}));
+      }
       return response;
     } catch (error) {
       const cached = await cache.match(keyFor(request));
