@@ -2,7 +2,7 @@
    Estrategia: primero la red (siempre lo más reciente); si no hay conexión, la última
    copia guardada. Solo se guardan archivos del propio sitio, nunca imágenes ni enlaces externos.
    Las URL se guardan sin parámetros (?v=, ?check=) para que la caché no crezca sin límite. */
-const CACHE = 'radar-rss-v26';
+const CACHE = 'radar-rss-v27';
 const SHELL = [
   './', './index.html', './manifest.webmanifest', './favicon.svg', './icon-192.png',
   './styles.css', './editorial.css', './hashnode-preview.css', './radar-hybrid.css', './library.css',
@@ -31,13 +31,17 @@ self.addEventListener('activate', event => {
 self.addEventListener('fetch', event => {
   const request = event.request;
   if (request.method !== 'GET') return;
+  // Never cache range requests or requests outside the app's own scope.
+  if (request.headers.has('range') || request.cache === 'only-if-cached' && request.mode !== 'same-origin') return;
   const url = new URL(request.url);
-  if (url.origin !== self.location.origin) return;
+  if (url.origin !== self.location.origin || !url.pathname.startsWith(new URL(self.registration.scope).pathname)) return;
   event.respondWith((async () => {
     const cache = await caches.open(CACHE);
     try {
       const response = await fetch(request);
-      if (response.ok && response.type === 'basic') cache.put(keyFor(request), response.clone()).catch(() => {});
+      if (response.ok && response.type === 'basic' && !url.pathname.endsWith('/sw.js')) {
+        event.waitUntil(cache.put(keyFor(request), response.clone()).catch(() => {}));
+      }
       return response;
     } catch (error) {
       const cached = await cache.match(keyFor(request));
