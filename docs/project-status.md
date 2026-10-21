@@ -18,6 +18,8 @@
 - **V1.3 — editorial:** informe orientativo en Actions sobre calidad de fuentes y coincidencias de titulares, sin bajas automáticas.
 - **V1.3 — recuperación:** artefactos JSON públicos de Actions con retención de hasta 90 días y recuperación manual validada.
 
+- **Frecuencia programada:** cada tres horas UTC (GitHub Actions puede demorar la ejecución); antes era cada seis horas.
+
 ## Fuente de verdad
 - [Issues](https://github.com/medinacaj/radar-rss-publico/issues): incidencias sin resolver.
 - [Pull requests](https://github.com/medinacaj/radar-rss-publico/pulls): cambios en revisión.
