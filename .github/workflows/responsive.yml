@@ -5,7 +5,10 @@ on:
     branches: [main]
     paths:
       - "web/**"
+      - "scripts/**"
+      - "sources/**"
       - "browser_tests/**"
+      - "tests/**"
       - ".github/workflows/responsive.yml"
   push:
     branches: [main]
