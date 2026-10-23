@@ -91,7 +91,9 @@ def exercise(browser, base, width):
         expect(page.locator('#articleGrid .article-card')).to_have_count(18)
 
         # Undo reverses this batch, retaining a prior read and a later unrelated one.
-        page.locator('#articleGrid .article-read-toggle').first.click()
+        page.evaluate("state.read.clear();markRead('noticia-0',true)")
+        expect(page.locator('[data-article-id="noticia-0"] .article-read-toggle')).to_have_attribute('aria-pressed', 'true')
+        assert page.evaluate("state.read.size===1&&state.read.has('noticia-0')")
         if width <= 640:
             page.locator('#feedFiltersToggle').click()
         else:
