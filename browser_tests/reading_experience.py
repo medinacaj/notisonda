@@ -95,7 +95,8 @@ def exercise(browser, base, width):
         expect(page.locator('[data-article-id="noticia-0"] .article-read-toggle')).to_have_attribute('aria-pressed', 'true')
         assert page.evaluate("state.read.size===1&&state.read.has('noticia-0')")
         if width <= 640:
-            page.locator('#feedFiltersToggle').click()
+            if page.locator('#feedFiltersToggle').get_attribute('aria-expanded') != 'true':
+                page.locator('#feedFiltersToggle').click()
         else:
             page.locator('#feedAdvanced').evaluate('(node)=>node.open=true')
         page.locator('#markAllVisible').click()
@@ -144,6 +145,9 @@ def exercise(browser, base, width):
         assert page.evaluate('document.documentElement.scrollWidth<=innerWidth+2'), f'Overflow at {width}px'
         assert not errors, errors
         print(f'{width}px: filters, mobile controls, recovery, Undo, reader navigation, return position and staged publication OK', flush=True)
+    except Exception:
+        page.screenshot(path=str(OUTPUT / f'failure-{width}.png'))
+        raise
     finally:
         context.close()
 
