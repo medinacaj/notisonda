@@ -287,7 +287,7 @@ def main():
                         page.evaluate("document.body.classList.remove('light')")
                         assert page.evaluate(
                             "() => getComputedStyle(document.body).getPropertyValue('--bg').trim()"
-                        ) == "#1C1B1A"
+                        ) == "#191B1F"
                         page.evaluate("document.body.classList.add('light')")
                         # Seis colores distinguibles, sin repintar el fondo del menú.
                         colors=page.evaluate("""() => {
