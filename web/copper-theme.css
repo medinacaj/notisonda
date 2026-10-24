@@ -79,5 +79,6 @@ body.radar-hybrid :is(.article-card,.news-card):focus-within a:focus-visible{out
  body.radar-hybrid .newsroom-lead{align-items:start}
  body.radar-hybrid .newsroom-discovery-categories{
    margin-top:calc(-1 * var(--lead-free-space,0px));
+   padding-top:14px;
  }
 }
