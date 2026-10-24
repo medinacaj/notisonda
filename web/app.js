@@ -8,14 +8,14 @@ const IS_HASHNODE_PREVIEW = PREVIEW_STYLE === 'hashnode';
 const IS_SUBSTACK_PREVIEW = PREVIEW_STYLE === 'substack';
 const IS_STYLE_PREVIEW = IS_HASHNODE_PREVIEW || IS_SUBSTACK_PREVIEW;
 function storeGet(key) { try { return localStorage.getItem(key); } catch { return null; } }
-// El tema sigue al sistema operativo salvo que la persona elija uno explícitamente.
+// El tema índigo es la opción inicial; una elección explícita (claro/oscuro/sistema) siempre prevalece.
 // Versiones anteriores guardaban "light" en cada visita aunque nadie lo eligiera,
 // por eso solo se respeta lo guardado cuando existe la marca de elección explícita.
 const THEME_EXPLICIT_KEY='radar-theme-explicit';
 function initialTheme(){
   const saved=storeGet('radar-theme');
   if(storeGet(THEME_EXPLICIT_KEY)==='true'&&['system','light','dark'].includes(saved))return saved;
-  return 'system';
+  return 'dark';
 }
 const state = {
   sources: [], categories: [], items: [], health: [], generated: null,
@@ -212,7 +212,7 @@ function setTheme(theme, explicit=false) {
   $('themeGlyph').replaceChildren(svgIcon(light?'moon':'sun'));
   $('themeToggle').setAttribute('aria-label',light?'Cambiar a modo oscuro':'Cambiar a modo claro');
   $('themeToggle').title=light?'Modo oscuro':'Modo claro';
-  if(!IS_STYLE_PREVIEW)document.querySelector('meta[name="theme-color"]')?.setAttribute('content',light?'#ffffff':'#181b1b');
+  if(!IS_STYLE_PREVIEW)document.querySelector('meta[name="theme-color"]')?.setAttribute('content',light?'#f3f4ff':'#0e0f2d');
   if(explicit&&!IS_STYLE_PREVIEW){
     try{localStorage.setItem('radar-theme',state.theme);localStorage.setItem(THEME_EXPLICIT_KEY,'true');}catch{}
   }
@@ -473,9 +473,9 @@ function initSettingsHandlers(){
   $('resetSettings').addEventListener('click',()=>{
     if(!confirm('¿Restablecer las preferencias? Tus artículos leídos y guardados no se borrarán.'))return;
     for(const key of ['layout','columns','theme','density','font','page-size','max-age','show-hero','show-images','show-summaries','hide-read','new-tab','sort','start-mode','keywords','hidden-sources','sidebar-width','theme-explicit']){try{localStorage.removeItem('radar-'+key);}catch{}}
-    state.theme='system';state.layout='cards';state.columns='4';state.density='comfortable';state.fontSize='normal';state.pageSize=36;state.maxAge=0;
+    state.theme='dark';state.layout='cards';state.columns='4';state.density='comfortable';state.fontSize='normal';state.pageSize=36;state.maxAge=0;
     state.showImages=true;state.showSummaries=true;state.hideRead=false;state.newTab=true;state.sort='newest';state.startMode='all';state.mode='all';state.mutedKeywords='';state.hiddenSources.clear();state.page=1;
-    setTheme('system');applyDisplaySettings();$('settingsSourceSearch').value='';refreshFeedUI();syncSettings();selectedTab('data');$('dataNotice').textContent='Preferencias restablecidas.';
+    setTheme('dark');applyDisplaySettings();$('settingsSourceSearch').value='';refreshFeedUI();syncSettings();selectedTab('data');$('dataNotice').textContent='Preferencias restablecidas.';
     window.dispatchEvent(new Event('radar-sidebar-pref-sync'));
   });
 }

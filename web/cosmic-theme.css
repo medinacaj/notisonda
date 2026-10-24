@@ -1,0 +1,225 @@
+/* Radar RSS · Cosmic Indigo
+   Adaptación editorial de la referencia visual Discord aportada por el usuario.
+   No importa tipografías ni ilustraciones propietarias y no altera la retícula. */
+
+/* Paleta principal: índigo nocturno + una sola acción violeta. */
+body.radar-hybrid:not(.light){
+  color-scheme:dark;
+  --bg:#0e0f2d;--surface:#1b1f40;--surface2:#151936;--card:#202446;
+  --line:#373c62;--text:#ffffff;--ink:#ffffff;--muted:#babcd9;--dim:#a4a9c6;
+  --accent:#5865f2;--blue:#8891f2;--hover:#2b3056;
+  --paper:#202446;--stone:#babcd9;--mist:#373c62;--cloud:#0e0f2d;
+  --signal:#5865f2;--action-lime:#5865f2;--action-ink:#ffffff;
+  --accent-secondary:#8891f2;--accent-soft:#2b305b;--editorial-ink:#ffffff;
+  --editorial-violet:#aab0ff;--editorial-amber:#f5bc70;
+  --featured-accent:#8891f2;--reading-accent:#57f287;--trend-accent:#f5bc70;
+  --shadow:rgba(1,2,20,.3);
+  --cosmic-chrome:#121630;--cosmic-glass:rgba(21,25,54,.92);
+  --cosmic-focus:#8891f2;--cosmic-card-glow:rgba(88,101,242,.16);
+  background:var(--bg);color:var(--text);
+}
+/* Alternativa clara derivada de la misma marca, disponible en Configuración. */
+body.radar-hybrid.light{
+  color-scheme:light;
+  --bg:#f3f4ff;--surface:#ffffff;--surface2:#e9ebfa;--card:#ffffff;
+  --line:#d8ddf3;--text:#191d3d;--ink:#191d3d;--muted:#515976;--dim:#596381;
+  --accent:#4352d8;--blue:#4352d8;--hover:#e5e9ff;
+  --paper:#ffffff;--stone:#515976;--mist:#d8ddf3;--cloud:#f3f4ff;
+  --signal:#4352d8;--action-lime:#4352d8;--action-ink:#ffffff;
+  --accent-secondary:#303fb9;--accent-soft:#e6e9ff;--editorial-ink:#191d3d;
+  --editorial-violet:#4352d8;--editorial-amber:#9b6224;
+  --featured-accent:#4352d8;--reading-accent:#286b47;--trend-accent:#9b6224;
+  --shadow:rgba(27,35,100,.10);
+  --cosmic-chrome:#e9ebfa;--cosmic-glass:rgba(255,255,255,.94);
+  --cosmic-focus:#4352d8;--cosmic-card-glow:rgba(67,82,216,.12);
+  background:var(--bg);color:var(--text);
+}
+body.radar-hybrid{
+  --font-ui:Inter,"Nunito","Segoe UI",ui-sans-serif,system-ui,sans-serif;
+  --font-editorial:Inter,"Nunito","Segoe UI",ui-sans-serif,system-ui,sans-serif;
+  --cosmic-display:"Nunito","Arial Rounded MT Bold",Inter,"Segoe UI",system-ui,sans-serif;
+  accent-color:var(--accent);
+}
+body.radar-hybrid .page{background:var(--bg)}
+body.radar-hybrid .sidebar{
+  background:var(--cosmic-chrome);
+  border-color:var(--line);
+}
+body.radar-hybrid .brand-mark,
+body.radar-hybrid.light .brand-mark,
+body.radar-hybrid:not(.light) .brand-mark{
+  background:#5865f2;color:#fff;border-radius:12px;box-shadow:none;
+}
+body.radar-hybrid .brand strong{
+  color:var(--text);font-family:var(--cosmic-display);
+  font-weight:850;letter-spacing:-.012em;
+}
+body.radar-hybrid .brand em{color:var(--blue)}
+body.radar-hybrid .brand small,
+body.radar-hybrid .sidebar-label,
+body.radar-hybrid .nav-count{color:var(--muted)}
+body.radar-hybrid .nav-link,
+body.radar-hybrid.light .nav-link{
+  border-radius:12px;color:var(--text);
+  transition:background .16s ease,border-color .16s ease;
+}
+body.radar-hybrid .nav-link:hover,
+body.radar-hybrid.light .nav-link:hover{
+  background:var(--hover);border-color:var(--line);
+}
+body.radar-hybrid .nav-link.active,
+body.radar-hybrid.light .nav-link.active{
+  background:var(--accent-soft);border-color:var(--line);color:var(--text);
+}
+body.radar-hybrid .nav-link.active::before{background:var(--accent);border-radius:4px}
+body.radar-hybrid .nav-link.active .nav-glyph{color:var(--blue)}
+body.radar-hybrid .sidebar-bottom{border-color:var(--line)}
+body.radar-hybrid .topbar{
+  background:var(--cosmic-glass);border-color:var(--line);
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+}
+body.radar-hybrid .topbar-caption strong,
+body.radar-hybrid .topbar-caption #topbarSection{color:var(--text)}
+body.radar-hybrid .topbar-search .search-wrap{
+  background:var(--surface2);border-color:var(--line);border-radius:12px;
+}
+body.radar-hybrid .topbar-search .search-wrap:focus-within{
+  border-color:var(--cosmic-focus);background:var(--surface);
+  box-shadow:0 0 0 3px var(--cosmic-card-glow);
+}
+body.radar-hybrid .icon-button,
+body.radar-hybrid .settings-trigger,
+body.radar-hybrid .refresh-now,
+body.radar-hybrid .menu-toggle,
+body.radar-hybrid .menu-close{
+  border:1px solid var(--line);border-radius:12px;
+  background:var(--surface);color:var(--text);box-shadow:none;
+}
+body.radar-hybrid :is(.icon-button,.settings-trigger,.refresh-now,.menu-toggle,.menu-close):hover{
+  background:var(--hover);border-color:var(--accent);
+}
+body.radar-hybrid .topic-rail{background:var(--bg)}
+body.radar-hybrid .topic-chip,
+body.radar-hybrid .topic-chip[data-topic]{
+  background:var(--surface);border-color:var(--line);
+  border-radius:104px;color:var(--muted);
+}
+body.radar-hybrid .topic-chip.active,
+body.radar-hybrid .topic-chip[data-topic].active{
+  background:var(--accent-soft);color:var(--text);
+  border-color:var(--accent);border-bottom-color:var(--accent);
+}
+body.radar-hybrid #newsroomColumns .dashboard-panel-head h2,
+body.radar-hybrid .dashboard-panel-head h2,
+body.radar-hybrid .section-heading h1,
+body.radar-hybrid .briefing-head h1{
+  color:var(--text);font-family:var(--cosmic-display);
+  font-weight:850;letter-spacing:-.02em;
+}
+body.radar-hybrid #newsroomColumns .dashboard-panel-head h2{
+  font-size:18px;line-height:1.2;text-transform:uppercase;
+}
+body.radar-hybrid #newsroomColumns .dashboard-panel-head h2::before{
+  background:var(--accent);width:3px;border-radius:3px;
+}
+body.radar-hybrid #newsroomColumns .newsroom-discovery-aside .dashboard-panel-head h2::before{
+  background:var(--accent);
+}
+/* Tarjetas y módulos: ligeros, sin cambiar alturas, spans ni recortes RSS. */
+body.radar-hybrid #newsroomColumns #dashboardFeature>.article-card,
+body.radar-hybrid #newsroomColumns .newsroom-lead-latest .dashboard-recent,
+body.radar-hybrid #newsroomColumns #dashboardFolders .dashboard-folder,
+body.radar-hybrid #newsroomColumns .newsroom-discovery-aside .radar-panel,
+body.radar-hybrid #newsroomColumns .newsroom-discovery-aside .trends-panel,
+body.radar-hybrid #articleGrid .article-card{
+  background:var(--card);border:1px solid var(--line);
+  border-radius:16px;
+}
+body.radar-hybrid #newsroomColumns #dashboardFeature>.article-card,
+body.radar-hybrid #newsroomColumns #dashboardFolders .dashboard-folder,
+body.radar-hybrid #articleGrid .article-card{
+  box-shadow:0 2px 9px var(--shadow);
+  transition:box-shadow .16s ease,border-color .16s ease;
+}
+body.radar-hybrid #newsroomColumns #dashboardFeature>.article-card:hover,
+body.radar-hybrid #newsroomColumns #dashboardFolders .dashboard-folder:hover,
+body.radar-hybrid #articleGrid .article-card:hover{
+  transform:none;border-color:var(--accent-secondary);
+  box-shadow:0 5px 18px var(--shadow);
+}
+body.radar-hybrid #articleGrid .article-card.unread-card{
+  box-shadow:0 3px 12px var(--cosmic-card-glow),0 2px 8px var(--shadow);
+}
+body.radar-hybrid #articleGrid .article-card.read-article{
+  box-shadow:0 1px 5px var(--shadow);
+}
+body.radar-hybrid #newsroomColumns .dashboard-feature .article-title,
+body.radar-hybrid #articleGrid .article-title{
+  color:var(--text);font-family:var(--font-ui);letter-spacing:-.018em;
+}
+body.radar-hybrid .article-excerpt,
+body.radar-hybrid .article-meta,
+body.radar-hybrid .dashboard-recent-meta{color:var(--muted)}
+body.radar-hybrid :is(.article-card,.dashboard-folder,.dashboard-recent-row) a:hover{color:var(--blue)}
+body.radar-hybrid .article-cover-placeholder{
+  background:linear-gradient(135deg,var(--surface2),var(--accent-soft));
+  color:var(--muted);
+}
+body.radar-hybrid .article-card .cover{background:var(--surface2)}
+body.radar-hybrid .cover-badge{
+  background:rgba(14,15,45,.9);color:#fff;border-color:#454b81;border-radius:9px;
+}
+/* Un CTA violeta, acciones secundarias neutras. */
+body.radar-hybrid .load-more,
+body.radar-hybrid .since-visit-primary,
+body.radar-hybrid .reader-primary{
+  background:#5865f2;color:#fff;border:1px solid #5865f2;
+  border-radius:12px;box-shadow:none;
+}
+body.radar-hybrid :is(.load-more,.since-visit-primary,.reader-primary):hover{
+  background:#3442d9;border-color:#3442d9;color:#fff;
+}
+body.radar-hybrid .mode-tab.active,
+body.radar-hybrid .view-button.active,
+body.radar-hybrid .settings-tab.active{
+  background:var(--accent-soft);color:var(--text);border-radius:12px;
+}
+body.radar-hybrid .filter-bar,
+body.radar-hybrid .reader-actions,
+body.radar-hybrid .footer{border-color:var(--line)}
+body.radar-hybrid .filter-bar :is(button,select),
+body.radar-hybrid .follow-topic,
+body.radar-hybrid .columns-menu-popup{
+  border-radius:12px;
+}
+body.radar-hybrid .footer{background:var(--bg);color:var(--muted)}
+body.radar-hybrid .footer a{color:var(--blue)}
+body.radar-hybrid :is(.settings-dialog,.article-reader-dialog,.about-dialog,.feed-health-dialog){
+  background:var(--surface);border-color:var(--line);color:var(--text);
+  border-radius:24px;
+}
+body.radar-hybrid :is(.settings-dialog,.article-reader-dialog,.about-dialog,.feed-health-dialog)::backdrop{
+  background:rgba(5,6,24,.78);
+}
+body.radar-hybrid :is(.settings-dialog,.article-reader-dialog) :is(input,select,textarea){
+  background:var(--surface2);border-color:var(--line);color:var(--text);
+}
+body.radar-hybrid :is(button,a,input,select,textarea,[tabindex]):focus-visible{
+  outline:2px solid var(--cosmic-focus);outline-offset:3px;
+}
+body.radar-hybrid :is(.live-dot,.health-indicator-dot){background:#57f287}
+body.radar-hybrid.light :is(.live-dot,.health-indicator-dot){background:#257f4b}
+@media(max-width:950px){
+  body.radar-hybrid .sidebar,
+  body.radar-hybrid.light .sidebar{
+    background:var(--cosmic-chrome);
+    box-shadow:0 16px 42px rgba(5,6,24,.36);
+  }
+  body.radar-hybrid .topbar{backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+}
+@media(max-width:480px){
+  body.radar-hybrid #newsroomColumns .dashboard-panel-head h2{font-size:17px}
+}
+@media(prefers-reduced-motion:reduce){
+  body.radar-hybrid :is(.article-card,.dashboard-folder,.nav-link){transition:none}
+}
