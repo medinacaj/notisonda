@@ -71,3 +71,11 @@ body.radar-hybrid :is(.topic-chip.active,.topic-chip[data-topic].active){border-
 body.radar-hybrid :is(.trends-panel,.radar-panel) :is(.panel-title,.section-title){color:var(--text)}
 body.radar-hybrid :is(.article-card,.news-card):focus-within{border-color:var(--featured-accent)}
 body.radar-hybrid :is(.article-card,.news-card):focus-within a:focus-visible{outline-color:var(--featured-accent)}
+
+/* La columna de titulares recientes puede ser más alta que el mosaico.
+   Evitar que su altura reserve espacio vacío bajo las tarjetas principales. */
+@media (min-width:1251px){
+ body.radar-hybrid .newsroom-lead{align-items:start}
+ body.radar-hybrid .newsroom-lead-stories{align-self:start}
+ body.radar-hybrid .newsroom-lead-latest{align-self:start}
+}
