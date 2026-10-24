@@ -71,14 +71,3 @@ body.radar-hybrid :is(.topic-chip.active,.topic-chip[data-topic].active){border-
 body.radar-hybrid :is(.trends-panel,.radar-panel) :is(.panel-title,.section-title){color:var(--text)}
 body.radar-hybrid :is(.article-card,.news-card):focus-within{border-color:var(--featured-accent)}
 body.radar-hybrid :is(.article-card,.news-card):focus-within a:focus-visible{outline-color:var(--featured-accent)}
-
-
-/* La zona inferior izquierda aprovecha la altura libre bajo el mosaico,
-   sin superponerse a las últimas publicaciones de la columna derecha. */
-@media (min-width:1251px){
- body.radar-hybrid .newsroom-lead{align-items:start}
- body.radar-hybrid .newsroom-discovery-categories{
-   margin-top:calc(-1 * var(--lead-free-space,0px));
-   padding-top:14px;
- }
-}

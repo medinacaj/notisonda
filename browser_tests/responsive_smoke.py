@@ -263,7 +263,7 @@ def main():
                         # Bento: recuadros de alturas/anchos asimétricos, no
                         # tarjetas idénticas ni rayas cromáticas superiores.
                         assert editorial["cardBorder"] == "1px", editorial
-                        assert editorial["cardRadius"] == "15px", editorial
+                        assert editorial["cardRadius"] == "13px", editorial
                         assert "Inter" in editorial["font"], editorial
                         assert editorial["accent"] == "#456B78", editorial
                         # La portada empieza directamente con noticias; no contiene
@@ -396,84 +396,61 @@ def main():
                         if page.locator("#dashboardFolders .dashboard-folder").count():
                             assert page.locator("#dashboardFolders").evaluate(
                                 "(node) => getComputedStyle(node).display") == "grid"
-                        # V11.1: Bento asimétrico real, tanto en el DOM como
-                        # en la geometría COMPUTADA del navegador.
-                        bento = page.evaluate("""() => {
-                          const desk=document.querySelector('#newsroomLead');
-                          const featured=document.querySelector('#dashboardFeature');
-                          const cards=[...featured.querySelectorAll('.article-card')];
-                          const wire=document.querySelector('#dashboardRecent');
-                          const discovery=document.querySelector('#newsroomDiscovery');
-                          const folders=document.querySelector('#dashboardFolders');
-                          const topics=document.querySelector('#topicRail');
-                          const main=document.querySelector('#mainContent');
-                          const rects=cards.map(card=>{
-                            const b=card.getBoundingClientRect();
-                            return {x:b.x,y:b.y,width:b.width,height:b.height,
-                                    col:getComputedStyle(card).gridColumnStart,
-                                    row:getComputedStyle(card).gridRowStart};
-                          });
+                        # Dos carriles independientes sin compensaciones de altura:
+                        # una noticia principal horizontal y dos secundarios iguales.
+                        layout = page.evaluate("""() => {
+                          const rect = s => {
+                            const r=document.querySelector(s).getBoundingClientRect();
+                            return {x:r.x,y:r.y,w:r.width,h:r.height,right:r.right,bottom:r.bottom};
+                          };
+                          const cards=[...document.querySelectorAll('#dashboardFeature > .article-card')];
+                          const folders=[...document.querySelectorAll('#dashboardFolders > .dashboard-folder')];
                           return {
-                            deskColumns:getComputedStyle(desk).gridTemplateColumns.split(' ').length,
-                            featureFlow:getComputedStyle(featured).display,
-                            featureColumns:getComputedStyle(featured).gridTemplateColumns.split(' ').length,
-                            cards:rects,
-                            wireCount:wire.querySelectorAll('.dashboard-recent-row').length,
-                            discoveryColumns:getComputedStyle(discovery).gridTemplateColumns.split(' ').length,
-                            folders:getComputedStyle(folders).display,
-                            radarInside:discovery.contains(document.getElementById('radarFigure')),
-                            topicsVisible:getComputedStyle(topics).display,
-                            navBeforeMain:!!(topics.compareDocumentPosition(main) & Node.DOCUMENT_POSITION_FOLLOWING),
-                            sidebarDrawer:getComputedStyle(document.getElementById('appSidebar')).position,
-                            menuToggle:getComputedStyle(document.getElementById('menuToggle')).display
+                            lanes:getComputedStyle(document.getElementById('newsroomColumns')).gridTemplateColumns.split(' ').length,
+                            featureColumns:getComputedStyle(document.getElementById('dashboardFeature')).gridTemplateColumns.split(' ').length,
+                            story:rect('.newsroom-lead-stories'),
+                            latest:rect('.newsroom-lead-latest'),
+                            categories:rect('.newsroom-discovery-categories'),
+                            radar:rect('.newsroom-discovery-aside'),
+                            cards:cards.map(el=>{ const r=el.getBoundingClientRect(); return {x:r.x,y:r.y,w:r.width,h:r.height,bottom:r.bottom}; }),
+                            folders:folders.map(el=>{const r=el.getBoundingClientRect(); return {x:r.x,y:r.y,w:r.width,h:r.height};}),
+                            columns:getComputedStyle(document.getElementById('dashboardFolders')).gridTemplateColumns.split(' ').length,
+                            latestCount:document.querySelectorAll('#dashboardRecent .dashboard-recent-row').length
                           };
                         }""")
-                        assert bento["deskColumns"] == (1 if width <= 1250 else 2), bento
-                        assert bento["discoveryColumns"] == (1 if width <= 1250 else 2), bento
-                        assert bento["featureFlow"] == "grid", bento
-                        assert bento["featureColumns"] == (1 if width <= 680 else 12), bento
-                        assert len(bento["cards"]) == 3, bento
-                        if width > 680:
-                            assert bento["cards"][0]["col"] == "span 7", bento
-                            assert bento["cards"][0]["row"] == "span 2", bento
-                            assert bento["cards"][1]["col"] == "span 5", bento
-                            assert bento["cards"][0]["width"] > bento["cards"][1]["width"], bento
-                            assert bento["cards"][0]["height"] > bento["cards"][1]["height"], bento
+                        assert layout["lanes"] == (1 if width <= 1180 else 2), layout
+                        assert layout["featureColumns"] == (1 if width <= 610 else 2), layout
+                        assert len(layout["cards"]) == 3, layout
+                        assert layout["latestCount"] >= 1, layout
+                        assert layout["columns"] == (1 if width <= 610 else 2), layout
+                        assert layout["cards"][0]["y"] < layout["cards"][1]["y"], layout
+                        if width > 610:
+                            assert abs(layout["cards"][1]["y"]-layout["cards"][2]["y"]) <= 2, layout
+                            assert abs(layout["cards"][1]["w"]-layout["cards"][2]["w"]) <= 2, layout
+                            assert layout["cards"][0]["w"] > layout["cards"][1]["w"], layout
                         else:
-                            assert bento["cards"][0]["width"] == bento["cards"][1]["width"], bento
-                            assert bento["cards"][0]["y"] < bento["cards"][1]["y"], bento
-                        assert bento["wireCount"] >= 1, bento
-                        assert bento["folders"] == "grid", bento
-                        assert bento["radarInside"], bento
-                        assert bento["topicsVisible"] == "flex", bento
-                        assert bento["navBeforeMain"], bento
-                        assert bento["sidebarDrawer"] == "fixed", bento
-                        assert bento["menuToggle"] != "none", bento
-                        # La portada aprovecha el hueco de la columna izquierda,
-                        # mantiene los encabezados a nivel y alinea ambos carriles.
-                        if width > 1250:
-                            alignment = page.evaluate("""() => {
-                              const box = s => document.querySelector(s).getBoundingClientRect();
-                              const stories = box('.newsroom-lead-stories');
-                              const latest = box('.newsroom-lead-latest');
-                              const folders = box('.newsroom-discovery-categories');
-                              const aside = box('.newsroom-discovery-aside');
-                              const storyTitle = box('.newsroom-lead-stories h2');
-                              const latestTitle = box('.newsroom-lead-latest h2');
-                              return {
-                                storyLeft: stories.left, folderLeft: folders.left,
-                                latestLeft: latest.left, asideLeft: aside.left,
-                                storyBottom: stories.bottom, latestBottom: latest.bottom,
-                                foldersTop: folders.top, storyTitleTop: storyTitle.top,
-                                latestTitleTop: latestTitle.top, folderRight: folders.right
-                              };
-                            }""")
-                            assert abs(alignment["storyLeft"]-alignment["folderLeft"]) <= 2, alignment
-                            assert abs(alignment["latestLeft"]-alignment["asideLeft"]) <= 2, alignment
-                            assert abs(alignment["storyTitleTop"]-alignment["latestTitleTop"]) <= 3, alignment
-                            assert alignment["folderRight"] < alignment["latestLeft"], alignment
-                            if alignment["latestBottom"] > alignment["storyBottom"] + 28:
-                                assert 10 <= alignment["foldersTop"]-alignment["storyBottom"] <= 45, alignment
+                            assert abs(layout["cards"][0]["w"]-layout["cards"][1]["w"]) <= 2, layout
+                        assert layout["categories"]["y"] >= layout["story"]["bottom"] + 10, layout
+                        assert layout["radar"]["y"] >= layout["latest"]["bottom"] + 10, layout
+                        if width > 1180:
+                            assert abs(layout["story"]["y"]-layout["latest"]["y"]) <= 3, layout
+                            assert abs(layout["story"]["x"]-layout["categories"]["x"]) <= 2, layout
+                            assert layout["categories"]["right"] < layout["latest"]["x"], layout
+                            assert layout["story"]["right"] < layout["latest"]["x"], layout
+                        else:
+                            assert layout["latest"]["y"] >= layout["categories"]["bottom"] + 10, layout
+                        if len(layout["folders"]) >= 2 and width > 610:
+                            assert abs(layout["folders"][0]["y"]-layout["folders"][1]["y"]) <= 2, layout
+                            assert abs(layout["folders"][0]["w"]-layout["folders"][1]["w"]) <= 2, layout
+                        # Los controles de lectura afectan también al nuevo layout.
+                        page.evaluate("document.body.classList.add('hide-images')")
+                        assert page.locator("#dashboardFeature .article-card .cover").evaluate_all(
+                            "(nodes) => nodes.every(n => getComputedStyle(n).display === 'none')")
+                        page.evaluate("document.body.classList.remove('hide-images')")
+                        page.evaluate("document.body.classList.add('compact')")
+                        assert page.locator("#dashboardFeature .article-card .cover").first.evaluate(
+                            "(node) => node.getBoundingClientRect().height <= 101")
+                        page.evaluate("document.body.classList.remove('compact')")
                         check_header_overlap(page, f"{browser_name} barra superior {width}px")
                         check_accessibility_contract(page, f"{browser_name} portada {width}px")
                         if width in (320, 768, 1440):

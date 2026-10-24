@@ -40,6 +40,7 @@
   <link rel="stylesheet" href="./v12.css?v=1.2.3">
   <link rel="stylesheet" href="./v13.css?v=7.1.1">
   <link rel="stylesheet" href="./copper-theme.css?v=3.0.0">
+  <link rel="stylesheet" href="./home-editorial.css?v=1.0.0">
   <title>Radar RSS — Actualidad en un solo lugar</title>
 </head>
 <body class="light radar-hybrid">
@@ -110,31 +111,36 @@
         </div>
         <section id="dashboardView" class="dashboard-view" aria-labelledby="dashboardTitle" hidden>
           <h1 id="dashboardTitle" class="sr-only">Portada de Radar RSS</h1>
-          <div class="newsroom-lead" id="newsroomLead">
-          <section class="dashboard-panel dashboard-feature-panel newsroom-lead-stories" aria-label="Noticias recientes de diferentes categorías">
+          <div class="newsroom-columns" id="newsroomColumns">
+            <div class="newsroom-primary-column">
+              <div class="newsroom-lead" id="newsroomLead">
+                <section class="dashboard-panel dashboard-feature-panel newsroom-lead-stories" aria-label="Noticias recientes de diferentes categorías">
             <div class="dashboard-panel-head"><h2>En portada</h2></div>
             <div class="dashboard-feature" id="dashboardFeature"></div>
           </section>
-          <section class="dashboard-panel newsroom-lead-latest" aria-labelledby="dashboardRecentTitle">
-            <div class="dashboard-panel-head"><h2 id="dashboardRecentTitle">Últimas publicaciones</h2></div>
-            <div class="dashboard-recent" id="dashboardRecent"></div>
-          </section>
-          </div>
-          <section class="since-visit" id="sinceVisit" aria-labelledby="sinceVisitTitle" hidden>
+              </div>
+              <section class="since-visit" id="sinceVisit" aria-labelledby="sinceVisitTitle" hidden>
             <div class="since-visit-text"><span class="since-visit-icon" aria-hidden="true" data-icon="sparkle"></span><div><h2 id="sinceVisitTitle">Mientras no estabas</h2><p id="sinceVisitText"></p></div></div>
             <div class="since-visit-folders" id="sinceVisitFolders"></div>
             <div class="since-visit-actions"><button type="button" id="sinceVisitShow" class="since-visit-primary">Ver solo las nuevas</button><button type="button" id="sinceVisitDismiss" class="since-visit-dismiss" aria-label="Ocultar aviso de novedades"><span data-icon="x" class="ui-icon-slot" aria-hidden="true"></span></button></div>
           </section>
-          <section class="dashboard-panel dashboard-saved-panel" id="dashboardSavedPanel" hidden aria-label="Artículos guardados">
+              <section class="dashboard-panel dashboard-saved-panel" id="dashboardSavedPanel" hidden aria-label="Artículos guardados">
             <div class="dashboard-panel-head"><h2>Tu lista para después</h2><button type="button" id="dashboardSavedAll" class="dashboard-read-all">Ver mis guardadas <span data-icon="arrow-right" class="ui-icon-slot" aria-hidden="true"></span></button></div>
             <div id="dashboardSavedList" class="dashboard-saved-list"></div>
           </section>
-          <div class="newsroom-discovery" id="newsroomDiscovery">
-          <section class="dashboard-panel newsroom-discovery-categories" aria-labelledby="dashboardFoldersTitle">
+              <div class="newsroom-discovery" id="newsroomDiscovery">
+                <section class="dashboard-panel newsroom-discovery-categories" aria-labelledby="dashboardFoldersTitle">
             <div class="dashboard-panel-head"><h2 id="dashboardFoldersTitle">Por carpeta</h2></div>
             <div class="dashboard-folders" id="dashboardFolders"></div>
           </section>
-            <div class="newsroom-discovery-aside">
+              </div>
+            </div>
+            <div class="newsroom-secondary-column">
+              <section class="dashboard-panel newsroom-lead-latest" aria-labelledby="dashboardRecentTitle">
+            <div class="dashboard-panel-head"><h2 id="dashboardRecentTitle">Últimas publicaciones</h2></div>
+            <div class="dashboard-recent" id="dashboardRecent"></div>
+          </section>
+              <div class="newsroom-discovery-aside">
         <section class="dashboard-panel radar-panel" aria-labelledby="radarTitle">
             <div class="dashboard-panel-head"><h2 id="radarTitle" title="Historias publicadas por más medios en las últimas 24 horas">Lo más cubierto</h2></div>
             <div class="radar-layout">
@@ -150,6 +156,7 @@
             <div class="trend-chips" id="trendChips"></div>
             <div class="followed-row" id="followedRow" hidden><span class="followed-label"><span data-icon="bell" class="ui-icon-slot" aria-hidden="true"></span> Temas que sigo</span><div class="trend-chips" id="followedChips"></div></div>
           </section>
+            </div>
             </div>
           </div>
           </section>
@@ -371,6 +378,5 @@
   <script src="./features.js?v=1.0.0" defer></script>
   <script src="./v12.js?v=1.2.5" defer></script>
   <script src="./v13.js?v=1.4.0" defer></script>
-  <script src="./lead-gap.js?v=1.0.0" defer></script>
 </body>
 </html>
