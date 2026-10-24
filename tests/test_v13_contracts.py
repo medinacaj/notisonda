@@ -39,24 +39,29 @@ class V13Contracts(unittest.TestCase):
         self.assertIn('id="dashboardFoldersTitle"',self.html)
         self.assertIn('id="dashboardSavedAll"',self.html)
 
-    def test_v11_bento_has_real_asymmetric_structure(self):
-        css=(ROOT/'web/v13.css').read_text(encoding='utf8')
+    def test_home_has_stable_two_lane_editorial_structure(self):
+        css=(ROOT/'web/home-editorial.css').read_text(encoding='utf8')
+        self.assertIn('class="newsroom-columns" id="newsroomColumns"',self.html)
+        self.assertIn('class="newsroom-primary-column"',self.html)
+        self.assertIn('class="newsroom-secondary-column"',self.html)
         self.assertIn('class="newsroom-lead" id="newsroomLead"',self.html)
+        self.assertIn('class="newsroom-discovery" id="newsroomDiscovery"',self.html)
         self.assertIn('newsroom-lead-stories',self.html)
         self.assertIn('newsroom-lead-latest',self.html)
-        self.assertLess(self.html.index('id="topicRail"'),self.html.index('<main class="main"'))
-        self.assertIn('grid-template-columns:minmax(0,8fr) minmax(290px,4fr)',css)
-        self.assertIn('.newsroom-lead .dashboard-feature',css)
-        self.assertIn('grid-column:span 7;grid-row:span 2',css)
-        self.assertIn('body.radar-hybrid .sidebar-backdrop:not([hidden])',css)
-        self.assertIn('const MOBILE_NAV=window.matchMedia(\'(min-width: 0px)\')',self.app)
-        self.assertIn('body.radar-hybrid .topic-rail{',css)
-        self.assertIn('class="newsroom-discovery" id="newsroomDiscovery"',self.html)
         self.assertIn('newsroom-discovery-aside',self.html)
-        self.assertIn('grid-template-columns:repeat(12,minmax(0,1fr))',css)
-        self.assertIn('V11.1 · BENTO GRID auténtico',css)
-        self.assertNotIn('Noticias para estar al día.',self.html)
+        self.assertLess(self.html.index('id="topicRail"'),self.html.index('<main class="main"'))
+        self.assertIn('grid-template-columns:minmax(0, 1.93fr) minmax(300px, 1fr)',css)
+        self.assertIn('#dashboardFeature',css)
+        self.assertIn('grid-template-columns:repeat(2,minmax(0,1fr))',css)
+        self.assertIn('grid-column:1 / -1;grid-row:auto',css)
+        self.assertNotIn('lead-gap.js',self.html)
+        self.assertNotIn('--lead-free-space',css)
+        self.assertLess(self.html.index('copper-theme.css'),self.html.index('home-editorial.css'))
+        self.assertIn('body.radar-hybrid .sidebar-backdrop:not([hidden])',
+                      (ROOT/'web/v13.css').read_text(encoding='utf8'))
+        self.assertIn('const MOBILE_NAV=window.matchMedia(\\'(min-width: 0px)\\')',self.app)
         self.assertIn('sidebar-layout.js?v=1.1.0',self.html)
+        self.assertNotIn('Noticias para estar al día.',self.html)
 
     def test_onboarding_actions_are_only_in_reading_settings(self):
         for token in ["v13GuideTitle","aria-labelledby",
