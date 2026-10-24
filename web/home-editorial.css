@@ -166,6 +166,29 @@ body.radar-hybrid #newsroomColumns .article-card:hover,
 body.radar-hybrid #newsroomColumns .dashboard-folder:hover {
  transform:none;border-color:var(--featured-accent);
 }
+/* Preferencias de lectura: el nuevo diseño debe respetar Compacto y sin imágenes. */
+body.radar-hybrid.hide-images #newsroomColumns #dashboardFeature > .article-card > .cover {
+ display:none;
+}
+body.radar-hybrid.hide-images #newsroomColumns #dashboardFeature > .article-card:first-child,
+body.radar-hybrid.compact #newsroomColumns #dashboardFeature > .article-card:first-child {
+ display:flex;flex-direction:column;min-height:0;
+}
+body.radar-hybrid.compact #newsroomColumns #dashboardFeature > .article-card > .cover,
+body.radar-hybrid.compact #newsroomColumns #dashboardFeature > .article-card:first-child > .cover {
+ display:block;flex:0 0 96px;
+ height:96px;min-height:0;max-height:96px;width:100%;
+ border:0;border-bottom:1px solid var(--line);
+}
+body.radar-hybrid.hide-images.compact #newsroomColumns #dashboardFeature > .article-card > .cover {
+ display:none;
+}
+body.radar-hybrid.font-large #newsroomColumns #dashboardFeature > .article-card:first-child .article-title {
+ font-size:27px;
+}
+body.radar-hybrid.font-large #newsroomColumns #dashboardFeature > .article-card:not(:first-child) .article-title {
+ font-size:19px;
+}
 @media(max-width:1180px) {
  body.radar-hybrid #newsroomColumns {grid-template-columns:minmax(0,1fr);gap:24px}
  body.radar-hybrid #newsroomColumns .newsroom-secondary-column {gap:20px}
