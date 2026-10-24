@@ -1,10 +1,22 @@
+# Radar Editorial · IAADC Design System (activo, octubre de 2026)
+
+El sistema **Apple-Inspired Editorial Dashboard / Minimal SaaS UI** adapta el panel docente de IA Aplicada desde Cero a Radar RSS: navegación azul noche `#192934`, fondo gris suave `#f4f6f6`, superficies blancas `#ffffff`, tinta `#26343f`, líneas `#e2e8e9` y acciones verde petróleo `#3a8c83`. Usa `Avenir Next` y fuentes del sistema como alternativas; **no distribuye fuentes de terceros**.
+
+`web/iaadc-editorial.css` es la capa visual activa, cargada después de `cosmic-theme.css`. Transforma **botones, iconos y estados, líneas/divisores, búsqueda/filtros, pestañas, badges, tarjetas, carpetas, menús contextuales, modales, cabecera, sidebar, hover/foco y sombras Apple suaves**. La diferenciación de tarjetas sin leer es por sombra algo más marcada; las leídas conservan una sombra reducida. No cambia el HTML del feed ni la estructura de 6 carpetas, ni los manejadores JS de menús, lectura y búsqueda.
+
+Modo inicial **claro** para visitantes sin elección previa, conservando preferencias manuales `claro/oscuro/sistema`. En modo oscuro se usan variables equivalentes navy+teal con contraste. La barra lateral permanece oscura también en modo claro, como en IAADC.
+
+**Restricciones:** no alterar tamaños/alturas de tarjetas, retícula de portada, icon-only «marcar leída», accesibilidad, menú derecho, sidebar móvil o redimensionamiento manual. No introducir fuentes externas, enlaces ajenos o contenido decorativo. Tests de Python, Node y 3 navegadores en GitHub Actions. Deshacer el cambio es reversible retirando esta hoja, restaurando `initialTheme` y actualizando la caché PWA; no editar `cosmic-theme.css` para conservar la variante anterior como referencia.
+
+---
+
 # RadarRRS — Sistema editorial V11.1 · Bento Grid funcional
 
-## Tema activo — Cosmic Indigo (octubre de 2026)
+## Tema histórico — Cosmic Indigo (octubre de 2026)
 
 Se adapta la referencia visual de Discord al lector RSS, **sin copiar** su marca, sus personajes, tipografías propietarias o hero promocional. Predomina el índigo nocturno `#0e0f2d`, las superficies oscuras `#1b1f40`, el texto blanco y el violeta `#5865f2` en acciones de primera prioridad. Se conservan fotografías RSS, jerarquía editorial compacta y navegación. La variante clara existe en Configuración y las elecciones guardadas tienen prioridad; el tema nuevo es oscuro por defecto para visitantes sin selección explícita.
 
-El CSS de marca vigente es `web/cosmic-theme.css`, cargado después de `home-editorial.css`; no reorganizar la estructura de `newsroomColumns` ni las alturas de `articleGrid` por razones únicamente cosméticas. Los sistemas históricos V9–V11 de abajo explican decisiones de estructura y no reemplazan esta paleta.
+El CSS de la versión índigo es `web/cosmic-theme.css`, cargado antes de la nueva capa IAADC; no reorganizar la estructura de `newsroomColumns` ni las alturas de `articleGrid` por razones únicamente cosméticas. Los sistemas históricos V9–V11 de abajo explican decisiones de estructura y no reemplazan esta paleta.
 
 
 ## Objetivo de producto

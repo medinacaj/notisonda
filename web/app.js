@@ -15,7 +15,7 @@ const THEME_EXPLICIT_KEY='radar-theme-explicit';
 function initialTheme(){
   const saved=storeGet('radar-theme');
   if(storeGet(THEME_EXPLICIT_KEY)==='true'&&['system','light','dark'].includes(saved))return saved;
-  return 'dark';
+  return 'light';
 }
 const state = {
   sources: [], categories: [], items: [], health: [], generated: null,
