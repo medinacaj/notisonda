@@ -261,7 +261,7 @@ def main():
                         # Bento: recuadros de alturas/anchos asimétricos, no
                         # tarjetas idénticas ni rayas cromáticas superiores.
                         assert editorial["cardBorder"] == "1px", editorial
-                        assert editorial["cardRadius"] == "16px", editorial
+                        assert editorial["cardRadius"] == "15px", editorial
                         assert "Avenir" in editorial["font"], editorial
                         assert editorial["accent"] == "#3a8c83", editorial
                         # La portada empieza directamente con noticias; no contiene

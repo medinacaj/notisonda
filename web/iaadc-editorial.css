@@ -359,3 +359,15 @@ body.radar-hybrid .back-to-top{
     outline:2px solid Highlight;
   }
 }
+
+/* Tipografía completa IAADC. Reafirmar frente a los tokens heredados V13. */
+body.radar-hybrid.light,
+body.radar-hybrid:not(.light){
+ --font-ui:"Avenir Next",Avenir,"Segoe UI",system-ui,-apple-system,sans-serif;
+ --font-editorial:"Avenir Next",Avenir,"Segoe UI",system-ui,-apple-system,sans-serif;
+ --cosmic-display:"Avenir Next",Avenir,"Segoe UI",system-ui,sans-serif;
+}
+body.radar-hybrid #newsroomColumns #dashboardFeature .article-card .article-title,
+body.radar-hybrid #articleGrid .article-card .article-title{
+ font-family:"Avenir Next",Avenir,"Segoe UI",system-ui,-apple-system,sans-serif;
+}
