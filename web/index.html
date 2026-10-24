@@ -43,7 +43,7 @@
   <link rel="stylesheet" href="./home-editorial.css?v=1.0.0">
   <title>Radar RSS — Actualidad en un solo lugar</title>
 </head>
-<body class="light radar-hybrid">
+<body class="light radar-hybrid" data-columns="4">
   <div class="app-shell">
     <aside class="sidebar" id="appSidebar" aria-label="Menú de fuentes">
       <div class="sidebar-brand-row">
@@ -189,15 +189,15 @@
                   <div id="cardsColumnsControl" class="columns-selector">
                     <button id="columnsToggle" type="button" class="cards-columns-control" aria-label="Configurar número de columnas" aria-haspopup="menu" aria-controls="columnsMenu" aria-expanded="false">
                       <span data-icon="grid" class="ui-icon-slot" aria-hidden="true"></span>
-                      <span id="columnsCurrent" class="columns-current" aria-hidden="true">Auto</span>
+                      <span id="columnsCurrent" class="columns-current" aria-hidden="true">4</span>
                       <span data-icon="chevron-down" class="ui-icon-slot columns-chevron" aria-hidden="true"></span>
                     </button>
                     <div id="columnsMenu" class="columns-menu-popup" role="menu" aria-label="Número de columnas de tarjetas" hidden>
                       <span class="columns-menu-caption">Columnas de noticias</span>
-                      <button type="button" role="menuitemradio" aria-checked="true" data-columns="auto">Automático</button>
+                      <button type="button" role="menuitemradio" aria-checked="false" data-columns="auto">Automático</button>
                       <button type="button" role="menuitemradio" aria-checked="false" data-columns="2">2 columnas</button>
                       <button type="button" role="menuitemradio" aria-checked="false" data-columns="3">3 columnas</button>
-                      <button type="button" role="menuitemradio" aria-checked="false" data-columns="4">4 columnas</button>
+                      <button type="button" role="menuitemradio" aria-checked="true" data-columns="4">4 columnas</button>
                       <button type="button" role="menuitemradio" aria-checked="false" data-columns="5">5 columnas</button>
                       <button type="button" role="menuitemradio" aria-checked="false" data-columns="6">6 columnas</button>
                     </div>
@@ -309,7 +309,7 @@
             <div class="settings-design-advanced-content">
               <div class="setting-grid">
             <label class="setting-field" for="settingLayout"><span>Formato</span><select id="settingLayout"><option value="cards">Tarjetas</option><option value="list">Lista</option></select></label>
-            <label class="setting-field" for="settingColumns"><span>Columnas de noticias</span><select id="settingColumns"><option value="auto">Automático (3 por defecto)</option><option value="2">2 columnas</option><option value="3">3 columnas</option><option value="4">4 columnas</option><option value="5">5 columnas</option><option value="6">6 columnas</option></select><small>En pantallas pequeñas se adaptan para conservar la lectura.</small></label>
+            <label class="setting-field" for="settingColumns"><span>Columnas de noticias</span><select id="settingColumns"><option value="auto">Automático (adaptable al ancho)</option><option value="2">2 columnas</option><option value="3">3 columnas</option><option value="4">4 columnas</option><option value="5">5 columnas</option><option value="6">6 columnas</option></select><small>En pantallas pequeñas se adaptan para conservar la lectura.</small></label>
             <label class="setting-field" for="settingDensity"><span>Espaciado</span><select id="settingDensity"><option value="comfortable">Cómodo</option><option value="compact">Compacto</option></select></label>
               </div>
           <div class="setting-sidebar-width">
@@ -371,8 +371,8 @@
   </div>
   <button id="backTop" class="back-to-top" type="button" aria-label="Volver arriba" title="Volver arriba" hidden><span data-icon="arrow-up" class="ui-icon-slot" aria-hidden="true"></span></button>
   <div id="actionToast" class="action-toast" role="status" aria-live="polite" aria-atomic="true" hidden></div>
-  <script src="./app.js?v=9.0.0" defer></script>
-  <script src="./library.js?v=1.7.4" defer></script>
+  <script src="./app.js?v=9.0.1" defer></script>
+  <script src="./library.js?v=1.7.5" defer></script>
   <script src="./sidebar-layout.js?v=1.1.0" defer></script>
   <script src="./news-effects.js?v=1.0.0" defer></script>
   <script src="./features.js?v=1.0.0" defer></script>
