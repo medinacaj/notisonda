@@ -394,3 +394,56 @@ body.radar-hybrid :is(.card-menu,.columns-menu-popup,.source-context-menu,.folde
     transform:none;
   }
 }
+
+/* Radar RSS conserva su identidad índigo. IAADC aporta componentes, no paleta. */
+body.radar-hybrid:not(.light){
+  color-scheme:dark;
+  --bg:#0e0f2d;--surface:#1b1f40;--surface2:#151936;--card:#202446;
+  --line:#373c62;--text:#ffffff;--ink:#ffffff;--muted:#babcd9;--dim:#a4a9c6;
+  --accent:#5865f2;--blue:#8891f2;--hover:#2b3056;
+  --paper:#202446;--stone:#babcd9;--mist:#373c62;--cloud:#0e0f2d;
+  --signal:#5865f2;--action-lime:#5865f2;--action-ink:#ffffff;
+  --accent-secondary:#8891f2;--accent-soft:#2b305b;--editorial-ink:#ffffff;
+  --editorial-violet:#aab0ff;--editorial-amber:#f5bc70;
+  --featured-accent:#8891f2;--reading-accent:#57f287;--trend-accent:#f5bc70;
+  --shadow:rgba(1,2,20,.3);
+  --cosmic-chrome:#121630;--cosmic-glass:rgba(21,25,54,.92);
+  --cosmic-focus:#8891f2;--cosmic-card-glow:rgba(88,101,242,.16);
+  background:var(--bg);color:var(--text);
+}
+/* Alternativa clara derivada de la misma marca, disponible en Configuración. */
+body.radar-hybrid.light{
+  color-scheme:light;
+  --bg:#f3f4ff;--surface:#ffffff;--surface2:#e9ebfa;--card:#ffffff;
+  --line:#d8ddf3;--text:#191d3d;--ink:#191d3d;--muted:#515976;--dim:#596381;
+  --accent:#4352d8;--blue:#4352d8;--hover:#e5e9ff;
+  --paper:#ffffff;--stone:#515976;--mist:#d8ddf3;--cloud:#f3f4ff;
+  --signal:#4352d8;--action-lime:#4352d8;--action-ink:#ffffff;
+  --accent-secondary:#303fb9;--accent-soft:#e6e9ff;--editorial-ink:#191d3d;
+  --editorial-violet:#4352d8;--editorial-amber:#9b6224;
+  --featured-accent:#4352d8;--reading-accent:#286b47;--trend-accent:#9b6224;
+  --shadow:rgba(27,35,100,.10);
+  --cosmic-chrome:#e9ebfa;--cosmic-glass:rgba(255,255,255,.94);
+  --cosmic-focus:#4352d8;--cosmic-card-glow:rgba(67,82,216,.12);
+  background:var(--bg);color:var(--text);
+}
+
+body.radar-hybrid .sidebar,body.radar-hybrid.light .sidebar,body.radar-hybrid:not(.light) .sidebar{
+  background:var(--cosmic-chrome);color:var(--text);border-color:var(--line);
+}
+body.radar-hybrid .sidebar .nav-link,body.radar-hybrid.light .sidebar .nav-link{color:var(--text)}
+body.radar-hybrid .sidebar .nav-link:hover,body.radar-hybrid.light .sidebar .nav-link:hover{background:var(--hover);color:var(--text)}
+body.radar-hybrid .sidebar .nav-link.active,body.radar-hybrid.light .sidebar .nav-link.active{background:var(--accent-soft);color:var(--text)}
+body.radar-hybrid .sidebar .nav-link.active::before{background:var(--accent)}
+body.radar-hybrid .brand-mark,body.radar-hybrid.light .brand-mark{background:var(--accent)}
+body.radar-hybrid .brand em{color:var(--blue)}
+body.radar-hybrid .brand,body.radar-hybrid .brand strong{color:var(--text)}
+body.radar-hybrid .sidebar :is(.minimal-button,.menu-close,.sidebar-health-action){background:var(--surface);color:var(--text);border-color:var(--line)}
+body.radar-hybrid .sidebar :is(.minimal-button,.menu-close,.sidebar-health-action):hover{background:var(--hover);border-color:var(--accent)}
+body.radar-hybrid .sidebar :is(.nav-count,.side-count){background:var(--surface2);color:var(--text);border-color:var(--line)}
+body.radar-hybrid .sidebar :is(.sidebar-brand-row,.sidebar-bottom,.sidebar-feed-status){border-color:var(--line)}
+body.radar-hybrid .sidebar :is(.sidebar-label,.sidebar-feed-status-heading,.brand small){color:var(--muted)}
+body.radar-hybrid :is(.load-more,.since-visit-primary,.reader-primary){background:var(--accent);border-color:var(--accent);color:var(--action-ink)}
+body.radar-hybrid :is(.load-more,.since-visit-primary,.reader-primary):hover{background:var(--accent-secondary);border-color:var(--accent-secondary);color:var(--action-ink)}
+body.radar-hybrid .cover-badge{background:var(--surface2);color:var(--text);border-color:var(--line)}
+@media(max-width:950px){body.radar-hybrid .sidebar,body.radar-hybrid.light .sidebar{background:var(--cosmic-chrome)}}
