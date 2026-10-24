@@ -1570,3 +1570,16 @@ body.radar-hybrid .dashboard-saved-panel{
 @media(prefers-reduced-motion:reduce){
  body.radar-hybrid .sidebar,body.radar-hybrid.nav-open .sidebar{transition:none!important}
 }
+
+/* Portadas de prensa: el recorte anterior centrado cortaba frente y ojos
+   en fotografías de personas. Enfocar la zona superior del original,
+   manteniendo las tarjetas compactas y sin estirar las imágenes. */
+body.radar-hybrid #articleGrid .article-card > .cover > img,
+body.radar-hybrid .dashboard-feature .article-card > .cover > img{
+ object-fit:cover;
+ object-position:center 12%;
+}
+body.radar-hybrid #articleGrid.article-grid:not(.list-view) > .article-card > .cover > img,
+body.radar-hybrid .newsroom-lead .dashboard-feature > .article-card > .cover > img{
+ object-position:center 8%;
+}
