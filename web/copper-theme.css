@@ -38,3 +38,27 @@ body.radar-hybrid .hero h1 span{color:var(--accent)}
 body.radar-hybrid .article-card :is(.article-image,.article-thumb){background-color:#514137}
 body.radar-hybrid.light .article-card :is(.article-image,.article-thumb){background-color:#EBD9C9}
 @media (prefers-reduced-motion:reduce){body.radar-hybrid :is(.article-card,.news-card){transition:none}}
+
+/* Reglas V13 del menú y marca tienen mayor especificidad que las genéricas.
+   Igualarlas evita conservar colores de la identidad anterior. */
+body.radar-hybrid.light .sidebar,
+body.radar-hybrid:not(.light) .sidebar {
+ background:var(--surface2);
+ border-color:var(--line);
+ color:var(--text);
+}
+body.radar-hybrid.light .brand-mark,
+body.radar-hybrid:not(.light) .brand-mark {
+ background:var(--accent);
+ color:var(--action-ink);
+}
+/* Elevar suavemente la portada Bento, sin cambiar sus dimensiones o estructura. */
+body.radar-hybrid.light .newsroom-lead .dashboard-feature>.article-card,
+body.radar-hybrid:not(.light) .newsroom-lead .dashboard-feature>.article-card {
+ background:var(--card);
+ box-shadow:0 3px 10px var(--shadow);
+}
+body.radar-hybrid.light .newsroom-lead .dashboard-feature>.article-card:hover,
+body.radar-hybrid:not(.light) .newsroom-lead .dashboard-feature>.article-card:hover {
+ box-shadow:0 7px 22px var(--shadow);
+}
