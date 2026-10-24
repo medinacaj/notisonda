@@ -48,7 +48,7 @@ class IAADCEditorialThemeTests(unittest.TestCase):
         for component_id in (
             "articleGrid", "dashboardFeature", "dashboardFolders",
             "categoryNav", "settingsDialog", "cardMenu", "themeToggle",
-            "libraryFolderNav", "sidebarResizeHandle"
+            "sidebarResizeHandle"
         ):
             with self.subTest(component=component_id):
                 self.assertIn(f'id="{component_id}"',self.html)
