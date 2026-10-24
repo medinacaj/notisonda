@@ -59,7 +59,7 @@ class V13Contracts(unittest.TestCase):
         self.assertLess(self.html.index('copper-theme.css'),self.html.index('home-editorial.css'))
         self.assertIn('body.radar-hybrid .sidebar-backdrop:not([hidden])',
                       (ROOT/'web/v13.css').read_text(encoding='utf8'))
-        self.assertIn('const MOBILE_NAV=window.matchMedia(\\'(min-width: 0px)\\')',self.app)
+        self.assertIn("const MOBILE_NAV=window.matchMedia('(min-width: 0px)')",self.app)
         self.assertIn('sidebar-layout.js?v=1.1.0',self.html)
         self.assertNotIn('Noticias para estar al día.',self.html)
 
