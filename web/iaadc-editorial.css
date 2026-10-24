@@ -1,0 +1,373 @@
+/* Radar Editorial · Adaptación del Design System IAADC
+   Basado en web/admin/styles.css de IA Aplicada desde Cero.
+   Solo apariencia: no modifica layout de portada, estructura RSS, carpetas o menús.
+   Todos los selectores están bajo body.radar-hybrid; el tema oscuro sigue disponible.
+   Mantener este archivo DESPUÉS de cosmic-theme.css. */
+
+/* 1. Tokens IAADC exactos de la fuente y semántica del lector. */
+body.radar-hybrid.light{
+  color-scheme:light;
+  --bg:#f4f6f6;--surface:#ffffff;--surface2:#f0f3f3;--card:#ffffff;
+  --line:#e2e8e9;--text:#26343f;--ink:#26343f;--muted:#63737d;--dim:#71848c;
+  --accent:#3a8c83;--blue:#317b74;--hover:#eaf1ef;
+  --paper:#ffffff;--stone:#63737d;--mist:#e2e8e9;--cloud:#f4f6f6;
+  --signal:#3a8c83;--action-lime:#3a8c83;--action-ink:#ffffff;
+  --accent-secondary:#317b74;--accent-soft:#e6f1ed;--editorial-ink:#26343f;
+  --editorial-violet:#8a77cb;--editorial-amber:#a77935;
+  --featured-accent:#3a8c83;--reading-accent:#317b74;--trend-accent:#a77935;
+  --shadow:rgba(31,58,78,.075);
+  --iaadc-sidebar:#192934;--iaadc-sidebar-hover:#263d49;
+  --iaadc-sidebar-active:#344b54;--iaadc-sidebar-line:#3b515a;
+  --iaadc-sidebar-text:#dce7e8;--iaadc-sidebar-muted:#9eb3ba;
+  --iaadc-shadow-soft:0 1px 3px rgba(31,58,78,.025),0 5px 15px rgba(31,58,78,.045);
+  --iaadc-shadow-card:0 2px 5px rgba(31,58,78,.035),0 8px 23px rgba(31,58,78,.075);
+  --iaadc-shadow-unread:0 2px 5px rgba(31,58,78,.055),0 12px 27px rgba(31,58,78,.13);
+  --iaadc-shadow-hover:0 5px 12px rgba(31,58,78,.085),0 16px 30px rgba(31,58,78,.125);
+  --cosmic-chrome:#192934;--cosmic-glass:rgba(255,255,255,.97);
+  --cosmic-focus:#3a8c83;--cosmic-card-glow:rgba(58,140,131,.12);
+  background:var(--bg);color:var(--text);
+}
+body.radar-hybrid:not(.light){
+  color-scheme:dark;
+  --bg:#151e25;--surface:#23313b;--surface2:#1d2a33;--card:#263640;
+  --line:#3c4d56;--text:#eef4f3;--ink:#eef4f3;--muted:#b3c2c7;--dim:#9caeb5;
+  --accent:#7bc1b6;--blue:#8ccfc4;--hover:#30454e;
+  --paper:#263640;--stone:#b3c2c7;--mist:#3c4d56;--cloud:#151e25;
+  --signal:#7bc1b6;--action-lime:#7bc1b6;--action-ink:#122d2c;
+  --accent-secondary:#9fd9ca;--accent-soft:#294c49;--editorial-ink:#eef4f3;
+  --editorial-violet:#baaee9;--editorial-amber:#f0ca8a;
+  --featured-accent:#7bc1b6;--reading-accent:#8bd0ac;--trend-accent:#f0ca8a;
+  --shadow:rgba(0,0,0,.22);
+  --iaadc-sidebar:#121d25;--iaadc-sidebar-hover:#263a42;
+  --iaadc-sidebar-active:#344e55;--iaadc-sidebar-line:#32464d;
+  --iaadc-sidebar-text:#ecf3f1;--iaadc-sidebar-muted:#a4b9bf;
+  --iaadc-shadow-soft:0 1px 3px rgba(0,0,0,.09),0 5px 15px rgba(0,0,0,.14);
+  --iaadc-shadow-card:0 2px 5px rgba(0,0,0,.13),0 9px 22px rgba(0,0,0,.20);
+  --iaadc-shadow-unread:0 2px 6px rgba(0,0,0,.18),0 14px 29px rgba(0,0,0,.30);
+  --iaadc-shadow-hover:0 6px 13px rgba(0,0,0,.23),0 18px 33px rgba(0,0,0,.32);
+  --cosmic-chrome:#121d25;--cosmic-glass:rgba(35,49,59,.96);
+  --cosmic-focus:#7bc1b6;--cosmic-card-glow:rgba(123,193,182,.15);
+  background:var(--bg);color:var(--text);
+}
+body.radar-hybrid{
+  --font-ui:"Avenir Next",Avenir,"Segoe UI",system-ui,-apple-system,sans-serif;
+  --font-editorial:"Avenir Next",Avenir,"Segoe UI",system-ui,-apple-system,sans-serif;
+  --cosmic-display:"Avenir Next",Avenir,"Segoe UI",system-ui,sans-serif;
+  --editorial-radius:15px;
+  font-family:var(--font-ui);font-size:14px;line-height:1.48;
+  accent-color:var(--accent);
+}
+body.radar-hybrid .page{background:var(--bg)}
+body.radar-hybrid :is(button,input,select,textarea){font-family:var(--font-ui)}
+body.radar-hybrid :is(a,button,input,select,textarea,[tabindex]):focus-visible{
+  outline:2px solid var(--cosmic-focus);outline-offset:3px;
+}
+
+/* 2. Menú IAADC azul noche: no alterar las dimensiones del drawer ni el resize. */
+body.radar-hybrid .sidebar,
+body.radar-hybrid.light .sidebar,
+body.radar-hybrid:not(.light) .sidebar{
+  background:var(--iaadc-sidebar);color:var(--iaadc-sidebar-text);
+  border-right:1px solid var(--iaadc-sidebar-line);box-shadow:none;
+}
+body.radar-hybrid .sidebar-brand-row{
+  border-bottom:1px solid var(--iaadc-sidebar-line);
+}
+body.radar-hybrid .brand,
+body.radar-hybrid .brand strong{color:#f1f6f5;font-family:var(--font-ui);letter-spacing:-.04em}
+body.radar-hybrid .brand em{color:#89c4b5}
+body.radar-hybrid .brand small,
+body.radar-hybrid .sidebar-label,
+body.radar-hybrid .sidebar-feed-status-heading{color:var(--iaadc-sidebar-muted)}
+body.radar-hybrid .brand-mark,
+body.radar-hybrid.light .brand-mark{
+  background:#3a8c83;color:#fff;border-radius:10px;
+  box-shadow:0 3px 12px rgba(0,0,0,.12);
+}
+body.radar-hybrid .sidebar .nav-link,
+body.radar-hybrid.light .sidebar .nav-link{
+  border:1px solid transparent;border-radius:10px;
+  background:transparent;color:#bbcbd0;font-size:13px;font-weight:650;
+  transition:background .16s ease,color .16s ease,border-color .16s ease;
+}
+body.radar-hybrid .sidebar .nav-link:hover,
+body.radar-hybrid.light .sidebar .nav-link:hover{
+  background:var(--iaadc-sidebar-hover);color:#fff;border-color:transparent;
+}
+body.radar-hybrid .sidebar .nav-link.active,
+body.radar-hybrid.light .sidebar .nav-link.active{
+  background:var(--iaadc-sidebar-active);color:#fff;border-color:transparent;
+}
+body.radar-hybrid .sidebar .nav-link.active::before{background:#7bc1b6}
+body.radar-hybrid .sidebar :is(.nav-count,.side-count){
+  color:#eaf2ef;background:#3b535d;border-color:#4c6269;border-radius:8px;
+}
+body.radar-hybrid .sidebar :is(.sidebar-bottom,.sidebar-feed-status){
+  border-color:var(--iaadc-sidebar-line);color:var(--iaadc-sidebar-text);
+}
+body.radar-hybrid .sidebar :is(.minimal-button,.menu-close,.sidebar-health-action){
+  color:#e2eeeb;background:#253a44;border:1px solid #3b515a;border-radius:10px;
+}
+body.radar-hybrid .sidebar :is(.minimal-button,.menu-close,.sidebar-health-action):hover{
+  background:#304a54;border-color:#5d817d;color:#fff;
+}
+body.radar-hybrid .sidebar .sidebar-resize-handle{border-color:var(--iaadc-sidebar-line)}
+body.radar-hybrid .sidebar .sidebar-resize-grip{background:#7995a0}
+body.radar-hybrid .sidebar .nav-glyph{opacity:.92}
+/* Mantener iconos semánticos de las seis categorías; no repintarlos como un solo acento. */
+
+/* 3. Barra superior, líneas, iconos, búsqueda y navegación contextual. */
+body.radar-hybrid .topbar{
+  background:var(--cosmic-glass);border-bottom:1px solid var(--line);
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  box-shadow:0 1px 2px rgba(31,58,78,.025);
+}
+body.radar-hybrid .topbar-caption strong{font-weight:770;color:var(--text);letter-spacing:-.028em}
+body.radar-hybrid .topbar-caption #topbarSection{color:var(--muted)}
+body.radar-hybrid .topbar-search .search-wrap,
+body.radar-hybrid .search-wrap{
+  border:1px solid var(--line);border-radius:10px;background:var(--surface);
+  box-shadow:0 1px 3px rgba(31,58,78,.02);
+}
+body.radar-hybrid .topbar-search .search-wrap:focus-within,
+body.radar-hybrid .search-wrap:focus-within{
+  border-color:var(--accent);box-shadow:0 0 0 3px var(--cosmic-card-glow);
+}
+body.radar-hybrid :is(.icon-button,.settings-trigger,.refresh-now,.menu-toggle){
+  background:var(--surface);color:var(--text);border:1px solid var(--line);
+  border-radius:10px;box-shadow:var(--iaadc-shadow-soft);
+  transition:background .16s ease,box-shadow .16s ease,border-color .16s ease;
+}
+body.radar-hybrid :is(.icon-button,.settings-trigger,.refresh-now,.menu-toggle):hover{
+  background:var(--hover);border-color:var(--accent);
+  box-shadow:var(--iaadc-shadow-card);
+}
+body.radar-hybrid .topbar-refresh{border-color:var(--line);color:var(--muted)}
+body.radar-hybrid .topic-rail{background:var(--bg);border-color:var(--line)}
+body.radar-hybrid .topic-chip,
+body.radar-hybrid .topic-chip[data-topic]{
+  border:1px solid var(--line);background:var(--surface);
+  color:var(--muted);border-radius:9px;
+  box-shadow:0 1px 2px rgba(31,58,78,.035);
+  transition:background .16s ease,border-color .16s ease,color .16s ease;
+}
+body.radar-hybrid .topic-chip:hover{background:var(--hover);color:var(--text)}
+body.radar-hybrid .topic-chip.active,
+body.radar-hybrid .topic-chip[data-topic].active{
+  background:var(--accent-soft);border-color:var(--accent);color:var(--text);
+  box-shadow:inset 0 0 0 1px var(--accent-soft);
+}
+
+/* 4. Superficies editoriales, sombras en capas y tarjetas uniformes por fila. */
+body.radar-hybrid :is(.dashboard-recent,.radar-panel,.trends-panel,.dashboard-folder,.module-card){
+  border-color:var(--line);border-radius:15px;
+}
+body.radar-hybrid #newsroomColumns .newsroom-lead-latest .dashboard-recent,
+body.radar-hybrid #newsroomColumns .newsroom-discovery-aside :is(.radar-panel,.trends-panel),
+body.radar-hybrid #newsroomColumns #dashboardFolders .dashboard-folder{
+  background:var(--card);border:1px solid var(--line);
+  box-shadow:var(--iaadc-shadow-soft);border-radius:15px;
+}
+body.radar-hybrid #newsroomColumns .dashboard-panel-head{
+  border-bottom:1px solid var(--line);
+  padding-bottom:9px;margin-bottom:12px;
+}
+body.radar-hybrid #newsroomColumns .dashboard-panel-head h2,
+body.radar-hybrid .dashboard-panel-head h2,
+body.radar-hybrid .section-heading h1,
+body.radar-hybrid .briefing-head h1{
+  color:var(--text);font-family:var(--font-ui);font-weight:780;
+  letter-spacing:-.038em;text-transform:none;
+}
+body.radar-hybrid #newsroomColumns .dashboard-panel-head h2{
+  font-size:18px;line-height:1.3;
+}
+body.radar-hybrid #newsroomColumns .dashboard-panel-head h2::before{
+  width:3px;background:var(--accent);border-radius:4px;
+}
+body.radar-hybrid #newsroomColumns #dashboardFeature>.article-card,
+body.radar-hybrid #articleGrid.article-grid:not(.list-view)>.article-card,
+body.radar-hybrid #articleGrid.article-grid.list-view>.article-card,
+body.radar-hybrid #newsroomColumns #dashboardFolders .dashboard-folder{
+  border:1px solid var(--line);border-radius:15px;background:var(--card);
+  box-shadow:var(--iaadc-shadow-card);
+  transition:box-shadow .2s ease,border-color .2s ease,transform .2s ease;
+}
+body.radar-hybrid #newsroomColumns #dashboardFeature>.article-card.unread-card,
+body.radar-hybrid #articleGrid .article-card.unread-card{
+  border-color:color-mix(in srgb,var(--accent) 20%,var(--line));
+  box-shadow:var(--iaadc-shadow-unread);
+}
+body.radar-hybrid #newsroomColumns #dashboardFeature>.article-card.read-article,
+body.radar-hybrid #articleGrid .article-card.read-article{
+  border-color:var(--line);box-shadow:var(--iaadc-shadow-soft);
+}
+body.radar-hybrid #newsroomColumns #dashboardFeature>.article-card:hover,
+body.radar-hybrid #articleGrid .article-card:hover,
+body.radar-hybrid #newsroomColumns #dashboardFolders .dashboard-folder:hover{
+  border-color:color-mix(in srgb,var(--accent) 38%,var(--line));
+  box-shadow:var(--iaadc-shadow-hover);
+  transform:translateY(-1px);
+}
+body.radar-hybrid #articleGrid.article-grid.list-view>.article-card:hover{
+  transform:none;
+}
+body.radar-hybrid :is(.article-card,.dashboard-folder):focus-within{
+  outline:2px solid color-mix(in srgb,var(--accent) 55%,transparent);
+  outline-offset:2px;
+}
+body.radar-hybrid #articleGrid .article-title,
+body.radar-hybrid #newsroomColumns .dashboard-feature .article-title{
+  color:var(--text);font-family:var(--font-ui);
+  font-weight:740;letter-spacing:-.022em;
+}
+body.radar-hybrid :is(.article-excerpt,.article-meta,.dashboard-recent-meta){color:var(--muted)}
+body.radar-hybrid :is(.dashboard-recent-row,.dashboard-folder-row){
+  border-bottom:1px solid var(--line);
+}
+body.radar-hybrid .article-cover-placeholder{
+  background:linear-gradient(145deg,var(--surface2),var(--accent-soft));
+  color:var(--muted);
+}
+body.radar-hybrid .article-card .cover{background:var(--surface2)}
+body.radar-hybrid .cover-badge{
+  background:#253a44;color:#f7faf8;border:1px solid #3b515a;border-radius:8px;
+}
+
+/* 5. Botones, grupos segmentados, controles icon-only y filtros. */
+body.radar-hybrid :is(.filter-bar,.reader-actions,.settings-divider){border-color:var(--line)}
+body.radar-hybrid :is(.mode-tab,.view-button,.filter-controls button,.filter-controls select,
+  .columns-menu-button,.follow-topic,.dashboard-read-all,.dashboard-more,.briefing-button,
+  .reader-secondary,.reader-close,.settings-tab,.settings-trigger,.minimal-button){
+  border-radius:9px;
+}
+body.radar-hybrid :is(.mode-tab,.view-button,.filter-controls button,.filter-controls select,
+  .columns-menu-button,.follow-topic,.briefing-button,.reader-secondary){
+  border-color:var(--line);background:var(--surface);color:var(--text);
+  box-shadow:0 1px 3px rgba(31,58,78,.035);
+  transition:background .16s ease,border-color .16s ease,box-shadow .16s ease;
+}
+body.radar-hybrid :is(.mode-tab,.view-button,.filter-controls button,.follow-topic,
+  .briefing-button,.reader-secondary):hover{
+  background:var(--hover);border-color:var(--accent);box-shadow:var(--iaadc-shadow-soft);
+}
+body.radar-hybrid :is(.mode-tab.active,.view-button.active,.settings-tab.active){
+  background:var(--accent-soft);border-color:var(--accent);color:var(--text);
+  box-shadow:inset 0 0 0 1px var(--accent-soft);
+}
+body.radar-hybrid .mode-tab-count{
+  border-radius:7px;background:var(--surface2);border:1px solid var(--line);color:var(--muted);
+}
+body.radar-hybrid :is(.load-more,.since-visit-primary,.reader-primary){
+  background:var(--action-lime);color:var(--action-ink);
+  border:1px solid var(--action-lime);border-radius:10px;
+  box-shadow:0 3px 9px rgba(58,140,131,.14);
+}
+body.radar-hybrid :is(.load-more,.since-visit-primary,.reader-primary):hover{
+  background:var(--accent-secondary);border-color:var(--accent-secondary);
+  color:var(--action-ink);box-shadow:var(--iaadc-shadow-card);
+}
+body.radar-hybrid .article-footer .article-read-toggle{
+  display:inline-grid;place-items:center;
+  background:var(--surface2);color:var(--text);border:1px solid var(--line);
+  border-radius:9px;box-shadow:0 1px 3px rgba(31,58,78,.035);
+  /* Respetar el botón SOLO icono de marcar como leída; no agregar texto ni cambiar tamaño. */
+}
+body.radar-hybrid .article-footer .article-read-toggle:hover{
+  border-color:var(--accent);background:var(--accent-soft);color:var(--accent);
+}
+body.radar-hybrid .article-footer .article-read-toggle[aria-pressed="true"]{
+  color:var(--accent);background:var(--accent-soft);border-color:var(--line);
+}
+body.radar-hybrid .article-actions :is(button,a){
+  border-radius:9px;transition:background .16s ease,border-color .16s ease;
+}
+body.radar-hybrid .filter-bar :is(input,select),
+body.radar-hybrid :is(.settings-dialog,.article-reader-dialog) :is(input,select,textarea){
+  background:var(--surface);color:var(--text);
+  border:1px solid var(--line);border-radius:9px;
+}
+body.radar-hybrid .filter-bar :is(input,select):focus-visible,
+body.radar-hybrid :is(.settings-dialog,.article-reader-dialog) :is(input,select,textarea):focus-visible{
+  border-color:var(--accent);box-shadow:0 0 0 3px var(--cosmic-card-glow);
+}
+body.radar-hybrid :is(.tag,.status-pill,.source-tag,.nav-count){
+  border-radius:7px;
+}
+
+/* 6. Menús contextuales, diálogos, listas y líneas IAADC. */
+body.radar-hybrid :is(.card-menu,.columns-menu-popup,.source-context-menu,
+  .folder-context-menu,.view-menu,.more-options-menu){
+  background:var(--surface);color:var(--text);
+  border:1px solid var(--line);border-radius:12px;
+  box-shadow:var(--iaadc-shadow-hover);
+}
+body.radar-hybrid :is(.card-menu,.columns-menu-popup,.source-context-menu,
+  .folder-context-menu,.view-menu,.more-options-menu) :is(button,a){
+  color:var(--text);border-radius:7px;
+}
+body.radar-hybrid :is(.card-menu,.columns-menu-popup,.source-context-menu,
+  .folder-context-menu,.view-menu,.more-options-menu) :is(button,a):hover{
+  background:var(--hover);color:var(--text);
+}
+body.radar-hybrid :is(.settings-dialog,.article-reader-dialog,.about-dialog,
+  .feed-health-dialog,.shortcuts-dialog){
+  border:1px solid var(--line);background:var(--surface);color:var(--text);
+  border-radius:16px;box-shadow:var(--iaadc-shadow-hover);
+}
+body.radar-hybrid :is(.settings-dialog,.article-reader-dialog,.about-dialog,
+  .feed-health-dialog,.shortcuts-dialog)::backdrop{background:rgba(10,24,32,.62)}
+body.radar-hybrid :is(.settings-top,.settings-tabs,.settings-footer,
+  .reader-topbar,.reader-divider,.reader-actions,.data-actions,
+  .settings-source-list){border-color:var(--line)}
+body.radar-hybrid .settings-tab:hover{background:var(--hover)}
+body.radar-hybrid .settings-tab.active{background:var(--accent-soft);color:var(--text)}
+body.radar-hybrid .settings-notice{border-color:var(--line)}
+body.radar-hybrid :is(.status-banner,.since-visit,.sidebar-feed-status){
+  border-radius:12px;
+}
+body.radar-hybrid .footer{background:var(--bg);border-top:1px solid var(--line);color:var(--muted)}
+body.radar-hybrid .footer a{color:var(--accent)}
+body.radar-hybrid .back-to-top{
+  background:var(--surface);border:1px solid var(--line);color:var(--accent);
+  border-radius:12px;box-shadow:var(--iaadc-shadow-hover);
+}
+
+/* 7. Sin modificar visibilidad, contenido, orden, acciones ni alturas del feed. */
+@media(max-width:950px){
+  body.radar-hybrid .sidebar,body.radar-hybrid.light .sidebar{
+    background:var(--iaadc-sidebar);
+    box-shadow:0 10px 36px rgba(8,24,35,.26);
+  }
+}
+@media(max-width:710px){
+  body.radar-hybrid .topbar{backdrop-filter:none;-webkit-backdrop-filter:none}
+  body.radar-hybrid .sidebar .nav-link{border-radius:9px}
+}
+@media(prefers-reduced-motion:reduce){
+  body.radar-hybrid :is(.article-card,.dashboard-folder,.nav-link,.icon-button,
+   .settings-trigger,.mode-tab,.topic-chip,.reader-primary,.load-more){
+    transition:none;animation:none;
+  }
+  body.radar-hybrid :is(.article-card,.dashboard-folder):hover{transform:none}
+}
+@media(forced-colors:active){
+  body.radar-hybrid :is(.article-card,.dashboard-folder,.mode-tab,.nav-link){
+    border:1px solid CanvasText;box-shadow:none;
+  }
+  body.radar-hybrid :is(.article-card,.dashboard-folder):focus-within{
+    outline:2px solid Highlight;
+  }
+}
+
+/* Tipografía completa IAADC. Reafirmar frente a los tokens heredados V13. */
+body.radar-hybrid.light,
+body.radar-hybrid:not(.light){
+ --font-ui:"Avenir Next",Avenir,"Segoe UI",system-ui,-apple-system,sans-serif;
+ --font-editorial:"Avenir Next",Avenir,"Segoe UI",system-ui,-apple-system,sans-serif;
+ --cosmic-display:"Avenir Next",Avenir,"Segoe UI",system-ui,sans-serif;
+}
+body.radar-hybrid #newsroomColumns #dashboardFeature .article-card .article-title,
+body.radar-hybrid #articleGrid .article-card .article-title{
+ font-family:"Avenir Next",Avenir,"Segoe UI",system-ui,-apple-system,sans-serif;
+}

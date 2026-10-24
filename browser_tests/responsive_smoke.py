@@ -235,15 +235,15 @@ def main():
                         page.goto(base + "#inicio", wait_until="load")
                         page.locator("#dashboardView:not([hidden])").wait_for(timeout=15000)
                         page.locator("#dashboardFeature .article-card").first.wait_for(timeout=15000)
-                        # Tema índigo: la marca se distingue de las categorías y las acciones.
+                        # Tema editorial IAADC: barra lateral azul noche y acento petróleo.
                         visual=page.evaluate("""() => ({
                           sidebar:getComputedStyle(document.getElementById('appSidebar')).backgroundColor,
                           lightBackground:getComputedStyle(document.body).getPropertyValue('--bg').trim(),
                           brand:getComputedStyle(document.querySelector('.brand-mark')).backgroundColor
                         })""")
-                        assert visual["sidebar"] == "rgb(18, 22, 48)", visual
-                        assert visual["brand"] == "rgb(88, 101, 242)", visual
-                        # Tema índigo: fondo oscuro, cards redondeadas y violeta de acción.
+                        assert visual["sidebar"] == "rgb(25, 41, 52)", visual
+                        assert visual["brand"] == "rgb(58, 140, 131)", visual
+                        # Tema IAADC: fondo claro, tarjetas legibles y acciones petróleo.
                         editorial=page.evaluate("""() => {
                           const card=document.querySelector('#dashboardFeature .article-card');
                           const title=card.querySelector('.article-title');
@@ -256,14 +256,14 @@ def main():
                             accent:getComputedStyle(document.body).getPropertyValue('--action-lime').trim()
                           };
                         }""")
-                        assert editorial["bg"] == "rgb(14, 15, 45)", editorial
+                        assert editorial["bg"] == "rgb(244, 246, 246)", editorial
                         assert editorial["cardShadow"] != "none", editorial
                         # Bento: recuadros de alturas/anchos asimétricos, no
                         # tarjetas idénticas ni rayas cromáticas superiores.
                         assert editorial["cardBorder"] == "1px", editorial
-                        assert editorial["cardRadius"] == "16px", editorial
-                        assert "Inter" in editorial["font"], editorial
-                        assert editorial["accent"] == "#5865f2", editorial
+                        assert editorial["cardRadius"] == "15px", editorial
+                        assert "Avenir" in editorial["font"], editorial
+                        assert editorial["accent"] == "#3a8c83", editorial
                         # La portada empieza directamente con noticias; no contiene
                         # titular promocional, hero oculto ni encabezados redundantes.
                         assert page.locator("#dashboardView .dashboard-head").count() == 0
@@ -285,7 +285,7 @@ def main():
                         page.evaluate("document.body.classList.remove('light')")
                         assert page.evaluate(
                             "() => getComputedStyle(document.body).getPropertyValue('--bg').trim()"
-                        ) == "#0e0f2d"
+                        ) == "#151e25"
                         page.evaluate("document.body.classList.add('light')")
                         # Seis colores distinguibles, sin repintar el fondo del menú.
                         colors=page.evaluate("""() => {
