@@ -442,6 +442,15 @@ def main():
                         if len(layout["folders"]) >= 2 and width > 610:
                             assert abs(layout["folders"][0]["y"]-layout["folders"][1]["y"]) <= 2, layout
                             assert abs(layout["folders"][0]["w"]-layout["folders"][1]["w"]) <= 2, layout
+                        # Los controles de lectura afectan también al nuevo layout.
+                        page.evaluate("document.body.classList.add('hide-images')")
+                        assert page.locator("#dashboardFeature .article-card .cover").evaluate_all(
+                            "(nodes) => nodes.every(n => getComputedStyle(n).display === 'none')")
+                        page.evaluate("document.body.classList.remove('hide-images')")
+                        page.evaluate("document.body.classList.add('compact')")
+                        assert page.locator("#dashboardFeature .article-card .cover").first.evaluate(
+                            "(node) => node.getBoundingClientRect().height <= 101")
+                        page.evaluate("document.body.classList.remove('compact')")
                         check_header_overlap(page, f"{browser_name} barra superior {width}px")
                         check_accessibility_contract(page, f"{browser_name} portada {width}px")
                         if width in (320, 768, 1440):
