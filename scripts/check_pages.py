@@ -18,7 +18,7 @@ def download(url: str) -> bytes:
         return response.read(8_000_000)
 
 
-def verify(base_url: str, fetch=download, *, now: datetime | None = None) -> dict:
+def verify(base_url: str, fetch=download, *, now: datetime | None = None, expected_generation: str | None = None) -> dict:
     """Confirm rendered shell and mutually consistent, recently generated public data."""
     base_url = base_url.rstrip("/") + "/"
     parsed = urlsplit(base_url)
@@ -40,8 +40,10 @@ def verify(base_url: str, fetch=download, *, now: datetime | None = None) -> dic
     status = data["status.json"]
     if not isinstance(sources, list) or len(sources) < 100:
         raise ValueError("Catálogo público vacío o incompleto")
-    if not isinstance(categories, list) or len(categories) != 6:
-        raise ValueError("No se encuentran las seis carpetas OPML")
+    if (not isinstance(categories, list) or not categories
+            or any(not isinstance(category, str) or not category.strip() for category in categories)
+            or len({category.strip() for category in categories}) != len(categories)):
+        raise ValueError("Las carpetas OPML deben tener nombres válidos, únicos y no estar vacías")
     if not isinstance(latest, list) or not 1 <= len(latest) <= 300:
         raise ValueError("No hay noticias recientes publicadas")
     if not isinstance(status.get("feeds"), list) or len(status["feeds"]) != len(sources):
@@ -49,6 +51,8 @@ def verify(base_url: str, fetch=download, *, now: datetime | None = None) -> dic
     generated = meta.get("generated_at")
     if generated != data["latest.json"].get("generated_at") or generated != status.get("checked_at"):
         raise ValueError("Los archivos públicos pertenecen a generaciones diferentes")
+    if expected_generation is not None and generated != expected_generation:
+        raise ValueError("La generación pública no coincide con la esperada")
     if not isinstance(meta.get("total_articles"), int) or meta["total_articles"] < len(latest):
         raise ValueError("El manifiesto de noticias es inconsistente")
     if meta.get("latest_count") != len(latest):
@@ -72,13 +76,14 @@ def main() -> int:
     parser.add_argument("url", help="Dirección HTTPS de GitHub Pages")
     parser.add_argument("--attempts", type=int, default=6)
     parser.add_argument("--delay", type=float, default=12)
+    parser.add_argument("--expected-generation", help="Generación exacta del artefacto construido")
     args = parser.parse_args()
     if not 1 <= args.attempts <= 10 or not 0 <= args.delay <= 60:
         parser.error("Argumentos de reintento fuera de rango")
     last_error = None
     for attempt in range(1, args.attempts + 1):
         try:
-            result = verify(args.url)
+            result = verify(args.url, expected_generation=args.expected_generation)
             print("Pages verificado: " + json.dumps(result, ensure_ascii=False))
             summary = os.environ.get("GITHUB_STEP_SUMMARY")
             if summary:

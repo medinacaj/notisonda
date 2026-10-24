@@ -43,6 +43,7 @@
   <link rel="stylesheet" href="./home-editorial.css?v=1.0.0">
   <link rel="stylesheet" href="./cosmic-theme.css?v=1.0.0">
   <link rel="stylesheet" href="./iaadc-editorial.css?v=1.0.2">
+  <link rel="stylesheet" href="./usability.css?v=1.0.0">
   <title>Radar RSS — Actualidad en un solo lugar</title>
 </head>
 <body class="radar-hybrid" data-columns="4">
@@ -85,7 +86,7 @@
           <label class="search-wrap"><span class="sr-only">Buscar en todas las noticias</span><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m16 16 5 5"/></svg><input id="searchInput" type="search" placeholder="Buscar noticias…" autocomplete="off" enterkeyhint="search" aria-keyshortcuts="/"><kbd class="search-shortcut" aria-hidden="true">/</kbd></label>
         </div>
         <div class="topbar-actions">
-          <div class="topbar-refresh" id="refreshCycle" role="group" aria-label="Actualización de noticias" title="Radar RSS busca noticias nuevas cada 15 minutos. Los medios se recopilan aproximadamente cada 6 horas.">
+          <div class="topbar-refresh" id="refreshCycle" role="group" aria-label="Actualización de noticias" title="Radar RSS busca noticias nuevas cada 15 minutos. Los medios se recopilan aproximadamente cada 3 horas.">
             <span class="update-label" id="lastUpdate">Sin sincronizar</span>
             <button id="refreshNow" class="refresh-now" type="button" title="Comprobar ahora si hay publicaciones nuevas" aria-label="Comprobar novedades ahora"><span data-icon="refresh" class="ui-icon-slot" aria-hidden="true"></span></button>
           </div>
@@ -173,7 +174,7 @@
             </div>
           </header>
           <div class="briefing-sections" id="briefingSections"></div>
-          <p class="briefing-note">Ordenado por cobertura (número de medios distintos), no por clics. Se actualiza con cada recopilación, aproximadamente cada 6 horas.</p>
+          <p class="briefing-note">Ordenado por cobertura (número de medios distintos), no por clics. Se actualiza con cada recopilación, aproximadamente cada 3 horas.</p>
         </section>
         <section class="feed-area" id="feedView" aria-labelledby="feedHeading">
           <div class="section-heading"><div><span class="section-eyebrow" id="sectionEyebrow">SELECCIÓN EDITORIAL</span><h1 id="feedHeading">Todas las noticias</h1><p id="feedDescription">Titulares y novedades de tus medios favoritos.</p></div><span class="count-label" id="visibleCount">0 ARTÍCULOS</span></div>
@@ -258,7 +259,7 @@
   </dialog>
   <dialog id="aboutDialog" class="about-dialog"><div class="dialog-head"><h2>Acerca de Radar RSS</h2><button type="button" id="closeAbout" aria-label="Cerrar"><span data-icon="x" class="ui-icon-slot" aria-hidden="true"></span></button></div>
     <p>Radar RSS reúne titulares, extractos breves y enlaces a noticias de medios y blogs externos. Cada artículo enlaza al sitio original y sus derechos siguen perteneciendo a sus respectivos autores.</p>
-    <p>Las fuentes se organizan en seis categorías, inicialmente importadas desde OPML. Los contenidos se recopilan mediante GitHub Actions y se publican de forma estática. La frecuencia programada es de aproximadamente seis horas, sujeta a disponibilidad de GitHub y de cada feed.</p>
+    <p>Las fuentes se organizan en siete categorías, inicialmente importadas desde OPML. Los contenidos se recopilan mediante GitHub Actions y se publican de forma estática. La frecuencia programada es de aproximadamente tres horas, sujeta a disponibilidad de GitHub y de cada feed.</p>
     <p>Los artículos guardados y marcados como leídos se conservan <strong>solo en este navegador</strong>; no hay cuentas, sincronización entre dispositivos ni seguimiento personal desde esta aplicación. Las imágenes externas pueden realizar solicitudes a los sitios de sus editores.</p>
     <p>Un RSS con error o sin noticias recientes no implica necesariamente que el periódico haya cerrado. La revisión editorial es necesaria antes de retirar una fuente.</p>
     <h3 class="about-subtitle">Sigue esta selección en tu lector</h3>
@@ -360,7 +361,7 @@
         <section class="settings-pane" data-settings-pane="health" aria-label="Estado de las fuentes RSS" hidden>
           <h3>Estado de RSS</h3><p class="setting-hint">Medios que no se pudieron leer en la última revisión automática. Que un medio no esté disponible no significa que haya dejado de publicar.</p>
           <div id="healthSummary" class="health-summary"></div><div id="healthFeedList" class="health-list"></div>
-          <p class="setting-admin">El intervalo de actualización del servidor está definido en <a href="https://github.com/medinacaj/radar-rss-publico/blob/main/.github/workflows/deploy.yml" rel="noopener noreferrer" target="_blank">GitHub Actions</a> (aproximadamente cada seis horas). Un visitante no puede cambiarlo desde la web pública.</p>
+          <p class="setting-admin">El intervalo de actualización del servidor está definido en <a href="https://github.com/medinacaj/radar-rss-publico/blob/main/.github/workflows/deploy.yml" rel="noopener noreferrer" target="_blank">GitHub Actions</a> (aproximadamente cada tres horas). Un visitante no puede cambiarlo desde la web pública.</p>
         </section>
       </div>
     </div>
@@ -373,12 +374,13 @@
   </div>
   <button id="backTop" class="back-to-top" type="button" aria-label="Volver arriba" title="Volver arriba" hidden><span data-icon="arrow-up" class="ui-icon-slot" aria-hidden="true"></span></button>
   <div id="actionToast" class="action-toast" role="status" aria-live="polite" aria-atomic="true" hidden></div>
-  <script src="./app.js?v=9.0.1" defer></script>
-  <script src="./library.js?v=1.7.5" defer></script>
+  <script src="./app.js?v=9.0.2" defer></script>
+  <script src="./library.js?v=1.7.6" defer></script>
   <script src="./sidebar-layout.js?v=1.1.0" defer></script>
   <script src="./news-effects.js?v=1.0.0" defer></script>
-  <script src="./features.js?v=1.0.0" defer></script>
-  <script src="./v12.js?v=1.2.5" defer></script>
+  <script src="./features.js?v=1.0.1" defer></script>
+  <script src="./v12.js?v=1.2.7" defer></script>
   <script src="./v13.js?v=1.4.0" defer></script>
+  <script src="./usability.js?v=1.0.0" defer></script>
 </body>
 </html>

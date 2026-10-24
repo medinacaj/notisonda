@@ -42,6 +42,12 @@ jobs:
           python -m playwright install --with-deps ${{ matrix.browser }}
       - name: Revisar portada y navegación a múltiples tamaños
         run: python browser_tests/responsive_smoke.py ${{ matrix.browser }}
+      - name: Regresiones de respaldo, Concepción y ayuda de lectura
+        if: matrix.browser == 'chromium'
+        run: |
+          python browser_tests/audit_regressions.py
+          python browser_tests/concepcion_regressions.py
+          python browser_tests/usability_regressions.py
       - name: Guardar capturas para revisión
         if: always()
         uses: actions/upload-artifact@v4

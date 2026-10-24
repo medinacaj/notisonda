@@ -29,7 +29,7 @@ except ModuleNotFoundError:
     import feedparser_compat as feedparser
 import requests
 
-from insights import trending_topics, write_feeds
+from insights import independent_publishers, trending_topics, write_feeds
 
 # Agente identificable (convención "compatible" de lectores y buscadores) con enlace de contacto.
 AGENT = "Mozilla/5.0 (compatible; RadarRSS/1.1; +https://github.com/medinacaj/radar-rss-publico)"
@@ -563,6 +563,25 @@ def story_instant(item: dict) -> datetime | None:
     except ValueError:
         return None
 
+
+def retained_alternatives(item: dict, candidates: list[dict], valid_ids: set[str]) -> list[dict]:
+    """Keep attributable alternatives once, excluding the lead and retired feeds."""
+    urls = {item.get('url')}
+    ids = {item.get('id')}
+    alternatives = []
+    for alternative in candidates:
+        if not isinstance(alternative, dict) or alternative.get('source_id') not in valid_ids:
+            continue
+        url, identity = alternative.get('url'), alternative.get('id')
+        if not safe_web_url(url or '') or url in urls or (identity and identity in ids):
+            continue
+        alternatives.append(alternative)
+        urls.add(url)
+        if identity:
+            ids.add(identity)
+    return alternatives[:12]
+
+
 def group_related_articles(items: list[dict]) -> list[dict]:
     """Conservative similarity within 24 h and across independent feed sources."""
     groups=[]
@@ -661,8 +680,24 @@ def collect(opml: Path, out: Path, days: int, workers: int, max_per_feed: int, *
 
     merged = {}
     cutoff = now - timedelta(days=days)
-    valid_ids = {x['id'] for x in sources}
+    catalog = {source['id']: source for source in sources}
+    valid_ids = set(catalog)
     for item in prior_articles + current_items:
+        original_sources = item.get('source_ids') or []
+        if original_sources and original_sources[0] not in valid_ids:
+            alternatives = retained_alternatives(item, item.get('also_in') or [], valid_ids)
+            replacement = next((alt for alt in alternatives if alt.get('id') and alt.get('title')), None)
+            if replacement is None:
+                # Do not republish a retired outlet merely because a grouped feed survives.
+                continue
+            source = catalog[replacement['source_id']]
+            item = {**item, **{name: replacement.get(name) for name in
+                              ('id', 'url', 'title', 'publisher', 'published_at')},
+                    'source': source['name'], 'is_radar': source['is_radar'],
+                    'source_ids': [source['id'], *[sid for sid in original_sources if sid != source['id']]],
+                    'categories': list(dict.fromkeys(catalog[sid]['category'] for sid in
+                                                     original_sources if sid in catalog)),
+                    'summary': '', 'image': None, 'also_in': alternatives}
         # Reprocess old Google News titles, including alternatives under a direct RSS lead.
         normalize_cached_google_titles(item)
         date_txt = item.get('published_at') or item.get('first_seen_at')
@@ -678,10 +713,13 @@ def collect(opml: Path, out: Path, days: int, workers: int, max_per_feed: int, *
         key = item.get('id')
         if not key:
             continue
+        alternatives = list(item.get('also_in') or [])
         if key in merged:
             previous = merged[key]
-            item['source_ids'] = list(dict.fromkeys(previous['source_ids'] + item['source_ids']))
+            # The first source identifies this lead's credited publisher.
+            item['source_ids'] = list(dict.fromkeys(item['source_ids'] + previous['source_ids']))
             item['categories'] = list(dict.fromkeys(previous['categories'] + item['categories']))
+            alternatives.extend(previous.get('also_in') or [])
             if not item.get('published_at') and previous.get('published_at'):
                 item['published_at'] = previous['published_at']
             if not item.get('image') and previous.get('image'):
@@ -691,6 +729,8 @@ def collect(opml: Path, out: Path, days: int, workers: int, max_per_feed: int, *
             if not item.get('summary') and previous.get('summary'):
                 item['summary'] = previous['summary']
             item['first_seen_at'] = previous.get('first_seen_at', item['first_seen_at'])
+        if alternatives:
+            item['also_in'] = retained_alternatives(item, alternatives, valid_ids)
         merged[key] = item
 
     ordered = sorted(merged.values(), key=lambda i: (i.get('published_at') or i.get('first_seen_at') or ''), reverse=True)
@@ -701,8 +741,8 @@ def collect(opml: Path, out: Path, days: int, workers: int, max_per_feed: int, *
               f"{image_stats['recovered']} recuperadas de "
               f"{image_stats['checked']} páginas consultadas", flush=True)
     for article in articles:
-        # Cobertura: cuántas fuentes distintas publicaron la misma historia.
-        article['coverage'] = max(1, len(set(article.get('source_ids') or [])))
+        # Multiple RSS subscriptions or Google queries do not imply multiple outlets.
+        article['coverage'] = max(1, len(independent_publishers(article, catalog)))
     states = [fresh_status[x['id']] for x in sources]
     write_json(out / 'sources.json', {'version': 1, 'sources': sources,
                                       'categories': list(dict.fromkeys(s['category'] for s in sources))})

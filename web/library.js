@@ -57,6 +57,31 @@ function readTags(data){
 }
 tags=readTags(rawTags);
 let activeFolder=null,activeTag='';
+// Keep the backup schema independent of module closures; old v2/v3 backups may omit modules.
+const cleanStrings=(value,limit,maxLength)=>Array.isArray(value)?[...new Set(value.filter(x=>typeof x==='string').map(x=>x.trim().slice(0,maxLength)).filter(Boolean))].slice(0,limit):[];
+function cleanModules(data){
+ const input=data&&typeof data==='object'&&!Array.isArray(data)?data:{};
+ const result={};
+ if(Object.hasOwn(input,'followedTopics'))result.followedTopics=cleanStrings(input.followedTopics,12,40);
+ if(Object.hasOwn(input,'v12Preferences')){
+  const p=input.v12Preferences&&typeof input.v12Preferences==='object'?input.v12Preferences:{};
+  const categories=cleanStrings(p.categories,Math.max(state.categories.length,12),150).filter(cat=>state.categories.includes(cat));
+  const scope=typeof p.briefing==='string'?p.briefing:'';
+  result.v12Preferences={mine:p.mine===true,categories,briefing:['all','mine','latam','chile','venezuela','region'].includes(scope)||(scope.startsWith('cat:')&&state.categories.includes(scope.slice(4)))?scope:'all'};
+ }
+ if(Object.hasOwn(input,'savedSearches'))result.savedSearches=(Array.isArray(input.savedSearches)?input.savedSearches:[])
+  .filter(x=>x&&typeof x==='object'&&typeof x.label==='string'&&typeof x.query==='string'&&['all','latam','chile','venezuela','region'].includes(x.geo)).slice(0,12)
+  .map(x=>({label:x.label.trim().slice(0,65),query:x.query.slice(0,90),geo:x.geo,age:[0,1,7,30,90].includes(Number(x.age))?Number(x.age):0,
+   category:state.categories.includes(x.category)?x.category:'all',feed:typeof x.feed==='string'&&state.sources.some(source=>source.id===x.feed)?x.feed:''}));
+ return result;
+}
+function backupModules(){return cleanModules({followedTopics:read('radar-followed-topics',[]),v12Preferences:read('radar-v12-preferences',{}),savedSearches:read('radar-v12-saved-searches',[])});}
+function restoreModules(data){
+ const modules=cleanModules(data);
+ for(const [field,key] of [['followedTopics','radar-followed-topics'],['v12Preferences','radar-v12-preferences'],['savedSearches','radar-v12-saved-searches']])
+  if(Object.hasOwn(modules,field)&&!write(key,modules[field]))throw Error('No se pudo guardar '+field);
+}
+
 
 const FOLDER_OVERLAY_KEY='radar-default-folders-v1';
 let defaults=(()=>{try{const obj=JSON.parse(localStorage.getItem(FOLDER_OVERLAY_KEY)||'{}');
@@ -511,7 +536,7 @@ const oldSources=renderSettingsSources;
 renderSettingsSources=function(){oldSources();decorateSources();};
 const oldNavigate=navigateFromHash;
 navigateFromHash=function(){
-  const hash=decodeURIComponent(window.location.hash.slice(1));
+  const hash=decodeRouteHash();
   activeFolder=hash.startsWith('carpeta/')&&Object.prototype.hasOwnProperty.call(folders,hash.slice(8))?hash.slice(8):null;
   if(activeFolder)state.mode='all';
   oldNavigate();
@@ -639,6 +664,9 @@ function refreshTagFilter(){
   select.replaceChildren(new Option('Todas las etiquetas',''),...names.map(x=>new Option(x,x)));
   if(activeTag&&!names.includes(activeTag))activeTag='';
   select.value=activeTag;
+  const wrapper=select.closest('.library-tag-filter-wrap');
+  wrapper.hidden=!names.length;
+  wrapper.style.display=names.length?'':'none';
 }
 function renderTags(){
   const el=$('libraryReaderTags');el.replaceChildren();
@@ -723,9 +751,9 @@ function mount(){
   $('exportData').addEventListener('click',e=>{
     e.preventDefault();e.stopImmediatePropagation();syncArchive();
     const obj={format:'radar-rss-settings-v3',exported_at:new Date().toISOString(),
-      preferences:{theme:state.theme,layout:state.layout,columns:state.columns,density:state.density,pageSize:state.pageSize,maxAge:state.maxAge,fontSize:state.fontSize,showHero:state.showHero,showImages:state.showImages,showSummaries:state.showSummaries,hideRead:state.hideRead,newTab:state.newTab,sort:state.sort,startMode:state.startMode,mutedKeywords:state.mutedKeywords,sidebarWidth:Number(localStorage.getItem('radar-sidebar-width'))||310},
+      preferences:{theme:state.theme,layout:state.layout,columns:state.columns,density:state.density,pageSize:state.pageSize,maxAge:state.maxAge,fontSize:state.fontSize,showHero:state.showHero,showImages:state.showImages,showSummaries:state.showSummaries,hideRead:state.hideRead,newTab:state.newTab,lite:state.lite,sort:state.sort,startMode:state.startMode,mutedKeywords:state.mutedKeywords,sidebarWidth:Number(storeGet('radar-sidebar-width'))||310},
       saved:[...state.saved],read:[...state.read],hiddenSources:[...state.hiddenSources],
-      savedArchive:[...archive.values()],sourceFolders:folders,folderDefaults:defaults,articleTags:tags};
+      modules:backupModules(),savedArchive:[...archive.values()],sourceFolders:folders,folderDefaults:defaults,articleTags:tags};
     downloadText('radar-rss-respaldo-completo.json',JSON.stringify(obj,null,2),'application/json;charset=utf-8');
     $('dataNotice').textContent='Respaldo completo generado con guardadas, etiquetas y carpetas.';
   },true);
@@ -735,7 +763,7 @@ function mount(){
     if(file.size>5_000_000){$('dataNotice').textContent='Respaldo mayor de 5 MB.';return;}
     try{
       const d=JSON.parse(await file.text());
-      if(!['radar-rss-settings-v2','radar-rss-settings-v3'].includes(d.format)||!d.preferences)throw Error('Formato incompatible');
+      if(!['radar-rss-settings-v2','radar-rss-settings-v3'].includes(d.format)||!d.preferences||typeof d.preferences!=='object'||Array.isArray(d.preferences))throw Error('Formato incompatible');
       const p=d.preferences,choose=(key,options,def)=>options.includes(p[key])?p[key]:def;
       state.theme=choose('theme',['system','light','dark'],'system');
       state.layout=choose('layout',['cards','list'],'cards');
@@ -744,7 +772,7 @@ function mount(){
       state.pageSize=choose('pageSize',[12,24,36,60],36);
       state.maxAge=choose('maxAge',[0,1,7,30,90],0);
       state.fontSize=choose('fontSize',['normal','large'],'normal');
-      for(const key of ['showHero','showImages','showSummaries','hideRead','newTab'])if(typeof p[key]==='boolean')state[key]=p[key];
+      for(const key of ['showHero','showImages','showSummaries','hideRead','newTab','lite'])if(typeof p[key]==='boolean')state[key]=p[key];
       state.sort=choose('sort',['newest','oldest','source'],'newest');
       state.startMode=choose('startMode',['all','unread','saved'],'all');
       state.mutedKeywords=typeof p.mutedKeywords==='string'?p.mutedKeywords.slice(0,600):'';
@@ -760,7 +788,10 @@ function mount(){
         try{localStorage.setItem('radar-sidebar-width',String(Math.round(Number(p.sidebarWidth))));}catch{}
         window.dispatchEvent(new Event('radar-sidebar-pref-sync'));
       }
-      for(const [key,value] of [['layout',state.layout],['columns',state.columns],['theme',state.theme],['density',state.density],['font',state.fontSize],['page-size',state.pageSize],['max-age',state.maxAge],['show-hero',state.showHero],['show-images',state.showImages],['show-summaries',state.showSummaries],['hide-read',state.hideRead],['new-tab',state.newTab],['sort',state.sort],['start-mode',state.startMode],['keywords',state.mutedKeywords]])savePref(key,value);
+      for(const [key,value] of [['layout',state.layout],['columns',state.columns],['theme',state.theme],['density',state.density],['font',state.fontSize],['page-size',state.pageSize],['max-age',state.maxAge],['show-hero',state.showHero],['show-images',state.showImages],['show-summaries',state.showSummaries],['hide-read',state.hideRead],['new-tab',state.newTab],['lite',state.lite],['sort',state.sort],['start-mode',state.startMode],['keywords',state.mutedKeywords]])savePref(key,value);
+      restoreModules(d.modules);
+      document.body.classList.toggle('lite',state.lite);
+      window.dispatchEvent(new Event('radar-preferences-imported'));
       state.mode=state.startMode;state.page=1;
       setTheme(state.theme,true);applyDisplaySettings();refreshFeedUI();syncSettings();selectedTab('data');
       $('dataNotice').textContent='Respaldo importado correctamente.';

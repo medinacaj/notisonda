@@ -473,9 +473,9 @@ function initSettingsHandlers(){
   $('resetSettings').addEventListener('click',()=>{
     if(!confirm('¿Restablecer las preferencias? Tus artículos leídos y guardados no se borrarán.'))return;
     for(const key of ['layout','columns','theme','density','font','page-size','max-age','show-hero','show-images','show-summaries','hide-read','new-tab','sort','start-mode','keywords','hidden-sources','sidebar-width','theme-explicit']){try{localStorage.removeItem('radar-'+key);}catch{}}
-    state.theme='dark';state.layout='cards';state.columns='4';state.density='comfortable';state.fontSize='normal';state.pageSize=36;state.maxAge=0;
+    state.theme=initialTheme();state.layout='cards';state.columns='4';state.density='comfortable';state.fontSize='normal';state.pageSize=36;state.maxAge=0;
     state.showImages=true;state.showSummaries=true;state.hideRead=false;state.newTab=true;state.sort='newest';state.startMode='all';state.mode='all';state.mutedKeywords='';state.hiddenSources.clear();state.page=1;
-    setTheme('dark');applyDisplaySettings();$('settingsSourceSearch').value='';refreshFeedUI();syncSettings();selectedTab('data');$('dataNotice').textContent='Preferencias restablecidas.';
+    setTheme(state.theme);applyDisplaySettings();$('settingsSourceSearch').value='';refreshFeedUI();syncSettings();selectedTab('data');$('dataNotice').textContent='Preferencias restablecidas.';
     window.dispatchEvent(new Event('radar-sidebar-pref-sync'));
   });
 }
@@ -573,9 +573,12 @@ function goTo(target){
   if(window.location.hash===hash)navigateFromHash();
   else window.location.hash=hash;
 }
+function decodeRouteHash(raw=window.location.hash){
+  try{return decodeURIComponent(String(raw).replace(/^#/,''));}catch{return '';}
+}
 function navigateFromHash(){
   closeColumnsMenu();closeCardMenu();setNavOpen(false,false);
-  const hash=decodeURIComponent(window.location.hash.slice(1));
+  const hash=decodeRouteHash();
   state.pageView=(!hash||hash==='inicio')?'dashboard':hash==='resumen'?'briefing':'feed';
   state.category=hash.startsWith('categoria/')&&state.categories.includes(hash.slice(10))?hash.slice(10):'all';
   state.feed='';
@@ -1033,7 +1036,9 @@ function initArticleReader(){
 // Los medios que no envían fotografías reciben una cubierta editorial
 // claramente tipográfica: nunca se presenta una ilustración como foto real.
 function editorialCover(item) {
-  const tile=mk('div','article-cover-placeholder');
+  const tile=mk('a','article-cover-placeholder');
+  tile.href=safeURL(item.url)||'#';tile.target=state.newTab?'_blank':'_self';tile.rel='noopener noreferrer external';tile.referrerPolicy='no-referrer';
+  tile.tabIndex=-1;tile.addEventListener('click',event=>openArticleReader(item,event));
   tile.setAttribute('aria-hidden','true');
   const wrap=mk('div','article-cover-placeholder-inner');
   const source=sourceLabel(item.publisher||item.source,'Medio de noticias');

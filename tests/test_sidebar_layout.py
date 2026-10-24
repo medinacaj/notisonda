@@ -32,7 +32,7 @@ class SidebarLayoutTests(unittest.TestCase):
     def test_persistence_reset_and_v3_backup(self):
         self.assertIn("'radar-sidebar-width'",self.script)
         self.assertIn("'sidebar-width'",self.app)
-        self.assertIn('sidebarWidth:Number(localStorage.getItem',self.library)
+        self.assertIn('sidebarWidth:Number(storeGet',self.library)
         self.assertIn("window.dispatchEvent(new Event('radar-sidebar-pref-sync'))",self.library)
         self.assertIn("window.dispatchEvent(new Event('radar-sidebar-pref-sync'))",self.app)
 
@@ -40,6 +40,6 @@ class SidebarLayoutTests(unittest.TestCase):
         # Verificar el orden de carga sin acoplar las pruebas al número de versión.
         import re
         scripts=re.findall(r'<script src="\./([^"?]+\.js)(?:\?v=[^"]+)?" defer></script>',self.html)
-        self.assertEqual(scripts,['app.js','library.js','sidebar-layout.js','news-effects.js','features.js','v12.js','v13.js'])
+        self.assertEqual(scripts,['app.js','library.js','sidebar-layout.js','news-effects.js','features.js','v12.js','v13.js','usability.js'])
         self.assertRegex(self.html,r'<link rel="stylesheet" href="\./sidebar-layout\.css\?v=[^"]+">')
         self.assertLess(self.html.index('sidebar-layout.css?v='),self.html.index('</head>'))

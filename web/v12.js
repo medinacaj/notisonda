@@ -18,9 +18,15 @@
     const code = {chile:'04',venezuela:'05',region:'06'}[geo];
     return state.categories.find(cat => cat.startsWith(code + ' -')) || null;
   }
+  function geoCats(geo) {
+    // Las carpetas locales conservan acceso propio junto a la agrupación original.
+    if (geo === 'chile') return state.categories.filter(cat => /^0[47]\s*-/.test(cat));
+    if (geo === 'latam') return state.categories.filter(cat => /^0[4567]\s*-/.test(cat));
+    return [catOf(geo)].filter(Boolean);
+  }
   function inGeo(item, geo) {
     if (geo === 'all') return true;
-    const selected = geo === 'latam' ? regionalCats() : [catOf(geo)].filter(Boolean);
+    const selected = geoCats(geo);
     return (item.categories || []).some(cat => selected.includes(cat));
   }
   const stored = load(KEY, {});
@@ -43,8 +49,7 @@
     },
     briefingCategories() {
       if (prefs.briefing === 'mine') return myCats().length ? myCats() : state.categories;
-      if (prefs.briefing === 'latam') return regionalCats();
-      if (['chile','venezuela','region'].includes(prefs.briefing)) return [catOf(prefs.briefing)].filter(Boolean);
+      if (['latam','chile','venezuela','region'].includes(prefs.briefing)) return geoCats(prefs.briefing);
       if (prefs.briefing.startsWith('cat:')) {
         const cat = prefs.briefing.slice(4);
         return state.categories.includes(cat) ? [cat] : state.categories;
@@ -54,7 +59,7 @@
   });
   const display = (name, cls, tag='span') => mk(tag, cls, name);
   const regionName = { all:'Todas las noticias', latam:'Latinoamérica', chile:'Chile', venezuela:'Venezuela', region:'Medios regionales de Latinoamérica' };
-  // Mantener las seis carpetas del lector sin duplicar su navegación.
+  // Mantener las carpetas del lector sin duplicar su navegación.
   // La vista agregada de Latinoamérica conserva su enlace y las rutas antiguas.
   const railBase = renderTopicRail;
   renderTopicRail = function(...args) {
@@ -73,7 +78,7 @@
   };
   const navigateBase = navigateFromHash;
   navigateFromHash = function(...args) {
-    const slug=decodeURIComponent(location.hash.slice(1));
+    const slug=decodeRouteHash();
     if(slug.startsWith('region/')) {
       const candidate=slug.slice(7);
       geo=candidate==='latinoamerica'?'latam':GEO.includes(candidate)?candidate:'latam';
@@ -109,7 +114,7 @@
   function syncGeoSources() {
     const select = $('sourceSelect');
     if (!select || state.pageView!=='feed' || geo==='all') return;
-    const allowed=geo==='latam'?regionalCats():[catOf(geo)].filter(Boolean);
+    const allowed=geoCats(geo);
     const valid = new Set(state.sources.filter(src=>allowed.includes(src.category)&&!state.hiddenSources.has(src.id)).map(x=>x.id));
     for (const option of [...select.options].slice(1)) if(!valid.has(option.value)) option.remove();
     if(state.feed&&!valid.has(state.feed)){state.feed='';select.value='';}
@@ -184,19 +189,18 @@
         state.search=item.query;state.feed='';state.maxAge=[0,1,7,30,90].includes(Number(item.age))?Number(item.age):0;
         $('searchInput').value=state.search; savePref('max-age',state.maxAge);
         pendingSearchFeed=item.feed||'';
+        const previousHash=location.hash;
         if(item.category!=='all'&&state.categories.includes(item.category)) {
           geo='all';goTo(item.category);
-        } else if(['chile','venezuela','region'].includes(item.geo) && catOf(item.geo)) {
-          // Compatibilidad con búsquedas anteriores a la retirada del selector.
-          // Chile, Venezuela y 06-Latinoamérica son carpetas existentes.
-          geo='all';goTo(catOf(item.geo));
         } else {
-          chooseGeo(item.geo==='latam'?'latam':'all');
+          // El ámbito geográfico puede abarcar varias carpetas (Chile y Concepción).
+          // Una carpeta explícita se restaura arriba; un agregado conserva su ruta.
+          chooseGeo(item.geo);
         }
         state.page=1;syncGeoControls();syncGeoSources();
         // Cuando la URL cambia, pendingSearchFeed se aplica al reconstruir el selector.
         // Si la URL no cambió, el selector ya está disponible.
-        if(pendingSearchFeed!==null && [...$('sourceSelect').options].some(o=>o.value===pendingSearchFeed)){
+        if(previousHash===location.hash && pendingSearchFeed!==null && [...$('sourceSelect').options].some(o=>o.value===pendingSearchFeed)){
           state.feed=pendingSearchFeed;$('sourceSelect').value=pendingSearchFeed;pendingSearchFeed=null;
         }
         render();
@@ -262,8 +266,8 @@
     const selected=new Set(myCats());
     const options=[...state.categories.filter(c=>!regionalCats().includes(c)),'latam'];
     options.forEach(cat=>{
-      const ids=cat==='latam'?regionalCats():[cat];
-      const active=ids.some(id=>selected.has(id));
+      const ids=cat==='latam'?geoCats('latam'):[cat];
+      const active=ids.length>0&&ids.every(id=>selected.has(id));
       const title=cat==='latam'?'Latinoamérica':categoryLabel(cat);
       const button=mk('button','v12-mine-chip'+(active?' selected':''),title);
       button.type='button';button.setAttribute('aria-pressed',String(active));
@@ -298,7 +302,7 @@
     const header=mk('button','dashboard-folder-head');header.type='button';
     header.setAttribute('aria-label','Ver noticias de Latinoamérica');
     header.append(display('Latinoamérica','v12-region-dashboard-title','h3'),
-      display(String(state.sources.filter(src=>regionalCats().includes(src.category)).length)+' fuentes regionales','v12-region-dashboard-count'),
+      display(String(state.sources.filter(src=>geoCats('latam').includes(src.category)).length)+' fuentes regionales','v12-region-dashboard-count'),
       display('Ver todo →','dashboard-folder-more'));
     header.addEventListener('click',()=>goTo('region'));
     const list=mk('div','dashboard-folder-list');
@@ -376,5 +380,15 @@
     updateBriefingOptions();
     syncGeoControls();
   };
+  window.addEventListener('radar-preferences-imported',()=>{
+    const imported=load(KEY,{});
+    prefs.mine=imported?.mine===true;
+    prefs.categories=Array.isArray(imported?.categories)?imported.categories.filter(cat=>state.categories.includes(cat)):[];
+    prefs.briefing=['all','mine','latam','chile','venezuela','region'].includes(imported?.briefing)||state.categories.some(cat=>'cat:'+cat===imported?.briefing)?imported.briefing:'all';
+    const searches=load(SEARCH_KEY,[]);
+    savedSearches=(Array.isArray(searches)?searches:[]).filter(item=>item&&typeof item.label==='string'&&typeof item.query==='string'&&GEO.includes(item.geo)).slice(0,12);
+    pendingSearchFeed=null;
+    updateMine();updateBriefingOptions();renderSearches();
+  });
   syncGeoControls();renderSearches();updateMine();
 })();

@@ -2,13 +2,13 @@
 
 **Versión pública operativa · octubre 2026:** recopilación y publicación automáticas, monitoreo, historial paginado, tendencias, lectura responsive y pruebas multiplataforma.
 
-Proyecto público sin backend ni cuentas. El catálogo contiene 178 fuentes RSS y seis carpetas OPML. Las carpetas personales se configuran localmente sin modificar el catálogo público. El listado ofrece una vista conjunta de Latinoamérica sin ocultar ni modificar las carpetas de fuentes.
+Proyecto público sin backend ni cuentas. El catálogo contiene 211 suscripciones RSS y siete carpetas OPML. La cantidad de carpetas se obtiene del catálogo, sin un máximo fijo. Las carpetas personales se configuran localmente sin modificar el catálogo público. El listado ofrece una vista conjunta de Latinoamérica sin ocultar ni modificar las carpetas de fuentes.
 
 ## Arquitectura
 
 ```mermaid
 flowchart LR
-  A[OPML: 178 feeds] --> B[GitHub Actions: cada 6 horas]
+  A[OPML: 211 feeds] --> B[GitHub Actions: cada 3 horas]
   B --> C[Python: RSS/Atom y deduplicación]
   C --> D[JSON estáticos]
   D --> E[GitHub Pages]
@@ -25,6 +25,14 @@ flowchart LR
 - **Publicación:** `.github/workflows/deploy.yml`, GitHub Actions -> GitHub Pages. El navegador consume JSON generado, sin solicitar RSS externos directamente (evita CORS).
 - **UI:** `web/index.html`, `web/app.js` y los módulos `library.js`, `features.js`, `v12.js`. Interfaz sin frameworks con filtros combinables, Mi Radar, búsqueda guardada, vista de lectura, resumen personalizado y modos claro/oscuro.
 
+## Carpeta Concepción
+
+**Concepción (Chile) y Gran Concepción** dispone de carpeta propia, con **33 suscripciones comprobadas el 24-10-2026: 21 RSS/Atom directos y 12 consultas de Google Noticias**. Incluye prensa, radio/TV, noticias universitarias, municipios, cultura y deporte local. Las consultas intermediadas se identifican como RADAR o indican «Google Noticias»; no equivalen a un RSS directo del editor. Las fuentes institucionales llevan el prefijo OFICIAL.
+
+La carpeta se incluye también en las vistas agregadas de Chile y Latinoamérica, conserva su selección individual en Mi Radar y en el resumen, y genera el feed de salida `feeds/concepcion.xml` durante la recopilación. Las 178 suscripciones anteriores conservan URL, identificador y carpeta. El número de carpetas es dinámico: siete es el catálogo actual, no un límite.
+
+El inventario y las fechas observadas están en [Fuentes de Concepción](docs/fuentes-concepcion.md) y [el registro de verificación](sources/concepcion-verification.json). Algunos RSS publican poco y pueden no aportar noticias dentro de los 45 días de retención. Una consulta vacía o un RSS inaccesible se registra como pendiente; no se presenta como medio inactivo. La investigación es amplia y ampliable, sin prometer que abarque todos los medios existentes.
+
 ## Funciones para lectores
 
 - **Lo más cubierto y el radar.** Las historias publicadas por más medios distintos en 24 h, en una lista numerada y en un radar (sector = tema, distancia = antigüedad, tamaño = cobertura). Es una señal de importancia que no depende de clics.
@@ -37,8 +45,8 @@ flowchart LR
 
 ## Interacción y personalización V1.2
 
-- **Latinoamérica:** 54 fuentes distribuidas entre Chile (22), Venezuela (22) y medios latinoamericanos de alcance regional (10). Los filtros no repiten estas categorías: el lector navega por **Todas las noticias** o por las seis carpetas originales de la barra lateral. La vista agregada de Latinoamérica sigue disponible mediante su acceso de noticias y los enlaces antiguos; no modifica las carpetas ni sus menús.
-- **Portada limpia:** las categorías ya están disponibles en las seis carpetas del lateral; no se repiten como botones grandes en Inicio. La selección opcional de intereses se encuentra en **Configuración → Lectura y filtros → Personalizar portada** (plegada), conservando las preferencias locales y el resumen por intereses. Desactivarla devuelve la portada general. Las tarjetas usan solo un icono para marcar lectura, con descripción accesible y estado visual.
+- **Latinoamérica:** 110 suscripciones distribuidas entre Chile (35), Venezuela (26), medios latinoamericanos de alcance regional (16) y Concepción (33). Los filtros no repiten estas categorías: el lector navega por **Todas las noticias** o por las carpetas del catálogo de la barra lateral. La vista agregada de Latinoamérica sigue disponible mediante su acceso de noticias y los enlaces antiguos; no modifica las carpetas ni sus menús.
+- **Portada limpia:** las categorías ya están disponibles en las carpetas del lateral; no se repiten como botones grandes en Inicio. La selección opcional de intereses se encuentra en **Configuración → Lectura y filtros → Personalizar portada** (plegada), conservando las preferencias locales y el resumen por intereses. Desactivarla devuelve la portada general. Las tarjetas usan solo un icono para marcar lectura, con descripción accesible y estado visual.
 - **Barra de noticias compacta:** los controles de fuente, etiqueta, antigüedad y presentación comparten una única barra. «Guardar búsqueda» y «Marcar visibles como leídas» se muestran como iconos con nombre accesible y ayuda al pasar el cursor; no hay segunda franja ni contador repetido bajo los filtros. Marcar visibles afecta solo las tarjetas cargadas que coinciden con los filtros, mientras que el menú contextual «Todas las noticias» puede abarcar también el historial tras confirmación.
 - **Filtros combinables:** se pueden cruzar la carpeta seleccionada en la barra lateral, antigüedad, medio RSS, búsqueda textual y estado de lectura, sin un selector geográfico duplicado. Se conservan hasta 12 combinaciones locales y las búsquedas anteriores con criterios «Chile», «Venezuela», «Región» y «Latinoamérica» siguen funcionando; no se realiza una búsqueda web externa.
 - **Comparación:** para las historias agrupadas de dos o más enlaces editoriales, se puede alternar entre medios/regiones y cronología usando las fechas publicadas; el sistema no asigna intenciones ni sesgos a los medios.
@@ -130,7 +138,7 @@ Abrir `http://localhost:8000` (no abrir el archivo HTML haciendo doble clic: `fe
 
 ## Actualización y edición
 
-- **Automática:** aproximadamente cada seis horas mediante cron UTC `17 */6 * * *`. GitHub puede retrasar u omitir alguna ejecución; en repos públicos, la programación puede desactivarse por inactividad prolongada. El flujo también puede iniciarse manualmente.
+- **Automática:** aproximadamente cada tres horas mediante cron UTC `17 */3 * * *`. GitHub puede retrasar u omitir alguna ejecución; en repos públicos, la programación puede desactivarse por inactividad prolongada. El flujo también puede iniciarse manualmente.
 - **Modificar fuentes:** editar `sources/feeds.opml`, confirmar y esperar el siguiente flujo. No existe límite fijo de fuentes en la aplicación, pero más fuentes incrementan consumo de Actions y tiempo de recopilación.
 - **Número de artículos:** 12 por feed por ciclo, hasta 5.000 noticias en caché y un máximo de 45 días por defecto. Ajustable en `deploy.yml` / `collect.py`.
 - **Sitio sin noticias después de publicar:** revisar los detalles de `Actions` y `data/status.json`. La aplicación no inventa noticias ni reemplaza automáticamente feeds problemáticos.
