@@ -81,6 +81,17 @@ class V13Contracts(unittest.TestCase):
         self.assertIn("if(state.pageView==='feed')",self.app)
         self.assertIn("grid.replaceChildren();",self.app)
 
+    def test_four_columns_are_default_without_overriding_saved_selection(self):
+        self.assertIn(" : '4',",self.app)
+        self.assertIn("state.columns='4';state.density='comfortable'",self.app)
+        self.assertIn("data-columns=\"4\"",self.html)
+        self.assertIn('id="columnsCurrent" class="columns-current" aria-hidden="true">4</span>',self.html)
+        self.assertIn('aria-checked="true" data-columns="4"',self.html)
+        self.assertIn('aria-checked="false" data-columns="auto"',self.html)
+        self.assertIn("Automático (adaptable al ancho)",self.html)
+        self.assertIn("state.columns=choose('columns',['auto','2','3','4','5','6'],'4')",
+                      (ROOT/'web/library.js').read_text(encoding='utf8'))
+
     def test_save_restores_keyboard_focus(self):
         self.assertIn("const restoreFocus=document.activeElement",self.lib)
         self.assertIn("button.focus({preventScroll:true})",self.lib)
