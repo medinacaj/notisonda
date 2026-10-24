@@ -739,7 +739,7 @@ function mount(){
       const p=d.preferences,choose=(key,options,def)=>options.includes(p[key])?p[key]:def;
       state.theme=choose('theme',['system','light','dark'],'system');
       state.layout=choose('layout',['cards','list'],'cards');
-      state.columns=choose('columns',['auto','2','3','4','5','6'],'auto');
+      state.columns=choose('columns',['auto','2','3','4','5','6'],'4');
       state.density=choose('density',['comfortable','compact'],'comfortable');
       state.pageSize=choose('pageSize',[12,24,36,60],36);
       state.maxAge=choose('maxAge',[0,1,7,30,90],0);

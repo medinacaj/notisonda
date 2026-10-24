@@ -472,6 +472,19 @@ def main():
                             "(opts) => opts.length > 1 && opts.slice(1).every(o => /\\(\\d+\\)$/.test(o.textContent.trim()))"
                         )
 
+                        # Cuatro columnas es el valor inicial de nuevas visitas.
+                        # El navegador reduce la cantidad en pantallas estrechas.
+                        columns_state=page.evaluate("""() => ({
+                          value:document.body.dataset.columns,
+                          label:document.getElementById('columnsCurrent').textContent.trim(),
+                          selection:document.querySelector('#columnsMenu [data-columns="4"]').getAttribute('aria-checked'),
+                          visible:getComputedStyle(document.getElementById('articleGrid')).gridTemplateColumns.split(' ').length
+                        })""")
+                        assert columns_state["value"] == "4", columns_state
+                        assert columns_state["label"] == "4", columns_state
+                        assert columns_state["selection"] == "true", columns_state
+                        expected_columns=4 if width > 1180 else 3 if width > 950 else 2 if width > 530 else 1
+                        assert columns_state["visible"] == expected_columns, (width,columns_state)
                         # Validar imágenes RSS/OG sin alterar la sección de carpetas.
                         expect(page.locator("#articleGrid .article-card .cover img").first).to_have_js_property("naturalWidth", 400)
                         # El recorte debe mostrar la zona superior (rostros),
