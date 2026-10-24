@@ -1,5 +1,12 @@
 # RadarRRS — Sistema editorial V11.1 · Bento Grid funcional
 
+## Tema activo — Cosmic Indigo (octubre de 2026)
+
+Se adapta la referencia visual de Discord al lector RSS, **sin copiar** su marca, sus personajes, tipografías propietarias o hero promocional. Predomina el índigo nocturno `#0e0f2d`, las superficies oscuras `#1b1f40`, el texto blanco y el violeta `#5865f2` en acciones de primera prioridad. Se conservan fotografías RSS, jerarquía editorial compacta y navegación. La variante clara existe en Configuración y las elecciones guardadas tienen prioridad; el tema nuevo es oscuro por defecto para visitantes sin selección explícita.
+
+El CSS de marca vigente es `web/cosmic-theme.css`, cargado después de `home-editorial.css`; no reorganizar la estructura de `newsroomColumns` ni las alturas de `articleGrid` por razones únicamente cosméticas. Los sistemas históricos V9–V11 de abajo explican decisiones de estructura y no reemplazan esta paleta.
+
+
 ## Objetivo de producto
 RadarRRS es un **portal público de noticias** y un lector de fuentes RSS, no un panel técnico. Deben verse primero las noticias. Las herramientas avanzadas se muestran a demanda.
 

@@ -235,17 +235,15 @@ def main():
                         page.goto(base + "#inicio", wait_until="load")
                         page.locator("#dashboardView:not([hidden])").wait_for(timeout=15000)
                         page.locator("#dashboardFeature .article-card").first.wait_for(timeout=15000)
-                        # V9: los fondos son neutros y los colores corresponden a
-                        # categorías y funciones, no a toda la interfaz.
+                        # Tema índigo: la marca se distingue de las categorías y las acciones.
                         visual=page.evaluate("""() => ({
                           sidebar:getComputedStyle(document.getElementById('appSidebar')).backgroundColor,
                           lightBackground:getComputedStyle(document.body).getPropertyValue('--bg').trim(),
                           brand:getComputedStyle(document.querySelector('.brand-mark')).backgroundColor
                         })""")
-                        assert visual["sidebar"] == "rgb(233, 233, 231)", visual
-                        assert visual["brand"] == "rgb(69, 107, 120)", visual
-                        # V10: un sistema editorial real: superficies claras,
-                        # tarjetas planas y acento lima SOLO para acciones concretas.
+                        assert visual["sidebar"] == "rgb(18, 22, 48)", visual
+                        assert visual["brand"] == "rgb(88, 101, 242)", visual
+                        # Tema índigo: fondo oscuro, cards redondeadas y violeta de acción.
                         editorial=page.evaluate("""() => {
                           const card=document.querySelector('#dashboardFeature .article-card');
                           const title=card.querySelector('.article-title');
@@ -258,14 +256,14 @@ def main():
                             accent:getComputedStyle(document.body).getPropertyValue('--action-lime').trim()
                           };
                         }""")
-                        assert editorial["bg"] == "rgb(245, 245, 244)", editorial
+                        assert editorial["bg"] == "rgb(14, 15, 45)", editorial
                         assert editorial["cardShadow"] != "none", editorial
                         # Bento: recuadros de alturas/anchos asimétricos, no
                         # tarjetas idénticas ni rayas cromáticas superiores.
                         assert editorial["cardBorder"] == "1px", editorial
-                        assert editorial["cardRadius"] == "13px", editorial
+                        assert editorial["cardRadius"] == "16px", editorial
                         assert "Inter" in editorial["font"], editorial
-                        assert editorial["accent"] == "#456B78", editorial
+                        assert editorial["accent"] == "#5865f2", editorial
                         # La portada empieza directamente con noticias; no contiene
                         # titular promocional, hero oculto ni encabezados redundantes.
                         assert page.locator("#dashboardView .dashboard-head").count() == 0
@@ -287,7 +285,7 @@ def main():
                         page.evaluate("document.body.classList.remove('light')")
                         assert page.evaluate(
                             "() => getComputedStyle(document.body).getPropertyValue('--bg').trim()"
-                        ) == "#191B1F"
+                        ) == "#0e0f2d"
                         page.evaluate("document.body.classList.add('light')")
                         # Seis colores distinguibles, sin repintar el fondo del menú.
                         colors=page.evaluate("""() => {

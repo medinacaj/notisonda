@@ -71,9 +71,9 @@ class UxReviewTests(unittest.TestCase):
         self.assertIn('id="statusBanner"', main)
         self.assertLess(main.index('id="statusBanner"'), main.index('id="dashboardView"'))
 
-    def test_theme_follows_system_by_default(self):
+    def test_theme_is_dark_by_default_with_explicit_system_option(self):
         self.assertIn("THEME_EXPLICIT_KEY='radar-theme-explicit'", self.app)
-        self.assertIn("return 'system';", js_function(self.app, 'initialTheme'))
+        self.assertIn("return 'dark';", js_function(self.app, 'initialTheme'))
 
     def test_multicolor_editorial_identity(self):
         hybrid = (ROOT / 'web/radar-hybrid.css').read_text(encoding='utf-8')
