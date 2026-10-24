@@ -41,7 +41,9 @@ body.radar-hybrid{
   accent-color:var(--accent);
 }
 body.radar-hybrid .page{background:var(--bg)}
-body.radar-hybrid .sidebar{
+body.radar-hybrid .sidebar,
+body.radar-hybrid.light .sidebar,
+body.radar-hybrid:not(.light) .sidebar{
   background:var(--cosmic-chrome);
   border-color:var(--line);
 }
