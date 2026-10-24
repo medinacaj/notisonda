@@ -242,8 +242,8 @@ def main():
                           lightBackground:getComputedStyle(document.body).getPropertyValue('--bg').trim(),
                           brand:getComputedStyle(document.querySelector('.brand-mark')).backgroundColor
                         })""")
-                        assert visual["sidebar"] == "rgb(234, 227, 218)", visual
-                        assert visual["brand"] == "rgb(166, 92, 50)", visual
+                        assert visual["sidebar"] == "rgb(233, 233, 231)", visual
+                        assert visual["brand"] == "rgb(69, 107, 120)", visual
                         # V10: un sistema editorial real: superficies claras,
                         # tarjetas planas y acento lima SOLO para acciones concretas.
                         editorial=page.evaluate("""() => {
@@ -258,14 +258,14 @@ def main():
                             accent:getComputedStyle(document.body).getPropertyValue('--action-lime').trim()
                           };
                         }""")
-                        assert editorial["bg"] == "rgb(247, 245, 242)", editorial
+                        assert editorial["bg"] == "rgb(245, 245, 244)", editorial
                         assert editorial["cardShadow"] != "none", editorial
                         # Bento: recuadros de alturas/anchos asimétricos, no
                         # tarjetas idénticas ni rayas cromáticas superiores.
                         assert editorial["cardBorder"] == "1px", editorial
                         assert editorial["cardRadius"] == "15px", editorial
                         assert "Inter" in editorial["font"], editorial
-                        assert editorial["accent"] == "#A65C32", editorial
+                        assert editorial["accent"] == "#456B78", editorial
                         # La portada empieza directamente con noticias; no contiene
                         # titular promocional, hero oculto ni encabezados redundantes.
                         assert page.locator("#dashboardView .dashboard-head").count() == 0
@@ -287,7 +287,7 @@ def main():
                         page.evaluate("document.body.classList.remove('light')")
                         assert page.evaluate(
                             "() => getComputedStyle(document.body).getPropertyValue('--bg').trim()"
-                        ) == "#1C1B1A"
+                        ) == "#191B1F"
                         page.evaluate("document.body.classList.add('light')")
                         # Seis colores distinguibles, sin repintar el fondo del menú.
                         colors=page.evaluate("""() => {
