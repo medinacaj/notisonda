@@ -449,6 +449,31 @@ def main():
                         assert bento["navBeforeMain"], bento
                         assert bento["sidebarDrawer"] == "fixed", bento
                         assert bento["menuToggle"] != "none", bento
+                        # La portada aprovecha el hueco de la columna izquierda,
+                        # mantiene los encabezados a nivel y alinea ambos carriles.
+                        if width > 1250:
+                            alignment = page.evaluate("""() => {
+                              const box = s => document.querySelector(s).getBoundingClientRect();
+                              const stories = box('.newsroom-lead-stories');
+                              const latest = box('.newsroom-lead-latest');
+                              const folders = box('.newsroom-discovery-categories');
+                              const aside = box('.newsroom-discovery-aside');
+                              const storyTitle = box('.newsroom-lead-stories h2');
+                              const latestTitle = box('.newsroom-lead-latest h2');
+                              return {
+                                storyLeft: stories.left, folderLeft: folders.left,
+                                latestLeft: latest.left, asideLeft: aside.left,
+                                storyBottom: stories.bottom, latestBottom: latest.bottom,
+                                foldersTop: folders.top, storyTitleTop: storyTitle.top,
+                                latestTitleTop: latestTitle.top, folderRight: folders.right
+                              };
+                            }""")
+                            assert abs(alignment["storyLeft"]-alignment["folderLeft"]) <= 2, alignment
+                            assert abs(alignment["latestLeft"]-alignment["asideLeft"]) <= 2, alignment
+                            assert abs(alignment["storyTitleTop"]-alignment["latestTitleTop"]) <= 3, alignment
+                            assert alignment["folderRight"] < alignment["latestLeft"], alignment
+                            if alignment["latestBottom"] > alignment["storyBottom"] + 28:
+                                assert 10 <= alignment["foldersTop"]-alignment["storyBottom"] <= 45, alignment
                         check_header_overlap(page, f"{browser_name} barra superior {width}px")
                         check_accessibility_contract(page, f"{browser_name} portada {width}px")
                         if width in (320, 768, 1440):
