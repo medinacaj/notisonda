@@ -497,6 +497,12 @@ def main():
 
                         # Validar imágenes RSS/OG sin alterar la sección de carpetas.
                         expect(page.locator("#articleGrid .article-card .cover img").first).to_have_js_property("naturalWidth", 400)
+                        # El recorte debe mostrar la zona superior (rostros),
+                        # no el centro de las fotos panorámicas.
+                        image_crop=page.locator("#articleGrid .article-card .cover img").first.evaluate(
+                            "(img) => ({position:getComputedStyle(img).objectPosition, fit:getComputedStyle(img).objectFit})")
+                        assert image_crop["position"].endswith("8%"), image_crop
+                        assert image_crop["fit"] == "cover", image_crop
                         assert page.locator("#articleGrid .article-card.no-cover").count() > 0
                         assert page.locator("#articleGrid .article-card.unread-card").count() >= 1
                         assert page.locator("#articleGrid .article-card.no-excerpt").count() >= 1
