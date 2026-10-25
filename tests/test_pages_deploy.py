@@ -46,6 +46,22 @@ class DeploymentTests(unittest.TestCase):
         result = verify(self.BASE, fetcher(payloads()), now=NOW, expected_generation=STAMP)
         self.assertEqual(result["generated_at"], STAMP)
 
+    def test_agenda_generation_must_match_the_published_news(self):
+        files = payloads()
+        files['data/meta.json']['events_version'] = 1
+        files['data/events.json'] = {'version': 1, 'generated_at': STAMP, 'horizon_days': 90,
+                                     'items': [], 'pending': [], 'sources': []}
+        self.assertEqual(verify(self.BASE, fetcher(files), now=NOW)['events'], 0)
+        files['data/events.json']['generated_at'] = '2026-10-19T10:00:00Z'
+        with self.assertRaisesRegex(ValueError, 'agenda|Agenda'):
+            verify(self.BASE, fetcher(files), now=NOW)
+
+    def test_advertised_agenda_cannot_be_missing(self):
+        files = payloads()
+        files['data/meta.json']['events_version'] = 1
+        with self.assertRaises((ValueError, KeyError)):
+            verify(self.BASE, fetcher(files), now=NOW)
+
     def test_valid_generated_pages(self):
         result = verify(self.BASE, fetcher(payloads()), now=NOW)
         self.assertEqual(result["sources"], 178)

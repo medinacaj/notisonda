@@ -50,6 +50,7 @@ jobs:
           path: |
             web/data/articles.json
             web/data/status.json
+            web/data/events.json
           key: radar-history-v1-${{ github.run_id }}
           restore-keys: |
             radar-history-v1-
@@ -68,9 +69,17 @@ jobs:
           python scripts/validate_restore.py "$RUNNER_TEMP/radar-restore"
           cp "$RUNNER_TEMP/radar-restore/articles.json" web/data/articles.json
           cp "$RUNNER_TEMP/radar-restore/status.json" web/data/status.json
+          if [ -f "$RUNNER_TEMP/radar-restore/events.json" ]; then
+            cp "$RUNNER_TEMP/radar-restore/events.json" web/data/events.json
+          fi
       - name: Recuperar historial anterior de Pages
         if: ${{ inputs.restore_run_id == '' }}
         run: python scripts/recover_history.py web/data
+      - name: Recuperar agenda independiente de la retención de noticias
+        run: |
+          if [ ! -f "$RUNNER_TEMP/radar-restore/events.json" ]; then
+            python scripts/recover_events.py web/data
+          fi
       - name: Auditar integridad del catálogo RSS
         run: python scripts/audit_feeds.py --opml sources/feeds.opml
       - name: Revisar estructura de fuentes
@@ -84,11 +93,24 @@ jobs:
           node --check web/features.js
           node --check web/v12.js
           node --check web/v13.js
+          node --check web/homepage.js
+          node --check web/agenda.js
           node --check web/sw.js
           node tests/test_sidebar_behavior.cjs
           node tests/test_news_effects.cjs
       - name: Obtener noticias
         run: python scripts/collect.py --opml sources/feeds.opml --out web/data --days 45 --workers 8 --image-fallback
+      - name: Obtener actividades de los próximos 90 días
+        run: |
+          python scripts/collect_events.py --catalog sources/feeds.opml --config sources/events.json --out web/data/events.json --generation-from web/data/meta.json
+          python - <<'PYAGENDA'
+          import json
+          from pathlib import Path
+          path = Path("web/data/meta.json")
+          doc = json.loads(path.read_text())
+          doc["events_version"] = 1
+          path.write_text(json.dumps(doc, ensure_ascii=False, separators=(",", ":")) + "\n")
+          PYAGENDA
       - name: Validar JSON antes de publicar
         run: python scripts/validate_data.py web/data
       - name: Registrar generación esperada
@@ -112,6 +134,7 @@ jobs:
             web/data/sources.json
             web/data/status.json
             web/data/meta.json
+            web/data/events.json
           retention-days: 90
           if-no-files-found: error
       - name: Configurar Pages
@@ -137,6 +160,8 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - name: Instalar dependencias del verificador de agenda
+        run: python -m pip install -r requirements.txt
       - name: Publicar GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4

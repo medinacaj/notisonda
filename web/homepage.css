@@ -1,4 +1,5 @@
 /* Latest headlines lead; editorial exploration remains available below. */
+#newsroomLead,#newsroomDiscovery{display:none!important}
 body.radar-hybrid #newsroomColumns{grid-template-columns:minmax(0,1fr)}
 body.radar-hybrid .homepage-latest{margin:0 0 22px;min-width:0}
 body.radar-hybrid .homepage-latest .dashboard-panel-head{display:flex;align-items:center;justify-content:space-between;gap:12px}

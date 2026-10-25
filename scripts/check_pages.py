@@ -67,7 +67,14 @@ def verify(base_url: str, fetch=download, *, now: datetime | None = None, expect
     age = current - timestamp
     if age > timedelta(hours=24) or age < -timedelta(minutes=10):
         raise ValueError(f"El portal está desactualizado: última generación {generated}")
-    return {"sources": len(sources), "news": len(latest), "total": meta["total_articles"],
+    agenda_count = None
+    if meta.get('events_version') == 1:
+        from events import validate_document
+        agenda = validate_document(json.loads(fetch(urljoin(base_url, 'data/events.json')).decode('utf-8')))
+        if agenda['generated_at'] != generated:
+            raise ValueError('La agenda pública pertenece a otra generación')
+        agenda_count = len(agenda['items'])
+    return {"events": agenda_count, "sources": len(sources), "news": len(latest), "total": meta["total_articles"],
             "generated_at": generated, "age_minutes": round(age.total_seconds() / 60)}
 
 

@@ -208,3 +208,13 @@ La barra lateral se muestra por defecto en escritorio y se puede ocultar; en mó
 La carpeta **Maturín / Monagas** añade seis canales y **Internacionales** incorpora cuatro canales culturales en español (BBC Mundo, EFE, El País y Euronews); Concepción conserva su selección propia y cobertura del Biobío. El registro [fuentes ampliadas](docs/fuentes-ampliadas.md) distingue configuración de disponibilidad: la comprobación HTTP de los canales nuevos está pendiente por la política de red del entorno de desarrollo. No se han inventado fotografías para cubrir fuentes sin imagen.
 
 El tema sigue la configuración del sistema por defecto; una selección manual prevalece. La firma enlaza a LinkedIn en una nueva pestaña.
+
+## Noticias y próximas actividades
+
+La portada reúne las noticias en un único carrusel y presenta debajo una agenda de actividades. Sus filtros permiten consultar hoy o los próximos 7, 30 y 90 días. Una actividad permanece visible hasta el final de su último día en la zona horaria del lugar; sin fecha de término explícita se conserva sólo el día de inicio. La fecha del anuncio se muestra por separado.
+
+La recopilación revisa hasta 50 entradas por cada una de las diez fuentes locales configuradas en [sources/events.json](sources/events.json), en Concepción/Biobío y Monagas, con hasta 12 consultas adicionales a páginas de los mismos medios por ejecución. Sigue la actualización de noticias cada tres horas. El horizonte de 90 días limita lo que se muestra, no la antigüedad del anuncio ni la conservación de futuras actividades ya detectadas. No es una búsqueda exhaustiva de todos los eventos de esas regiones.
+
+Sólo se confirman fechas explícitas de actividad: campos RSS, datos estructurados `Event` relacionados con el anuncio o texto inequívoco con día, mes y año. No se deducen fechas a partir de la publicación. Los anuncios ambiguos y los aplazamientos sin nueva fecha se muestran aparte, como pendientes; las cancelaciones salen de los próximos eventos.
+
+`web/data/events.json` conserva la agenda independientemente de los 45 días y el límite de noticias. Actions la recupera de caché o de la publicación validada, incorpora el archivo al respaldo y exige que agenda y noticias pertenezcan a la misma generación antes de publicar. Una fuente temporalmente ausente no elimina las actividades vigentes ya registradas. Los límites de almacenamiento de GitHub indicados arriba también se aplican a la agenda. Las actualizaciones publicadas en una URL diferente pueden necesitar revisión editorial para vincularlas con el anuncio original.

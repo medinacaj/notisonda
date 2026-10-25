@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "sources": [
+    {"url": "https://concecultura.periodismoudec.cl/feed/", "timezone": "America/Santiago"},
+    {"url": "https://www.radioudec.cl/feed/", "timezone": "America/Santiago"},
+    {"url": "https://gorebiobio.cl/feed/", "timezone": "America/Santiago"},
+    {"url": "https://chiguayante.cl/Chgte/?feed=rss2", "timezone": "America/Santiago"},
+    {"url": "https://www.coronel.cl/feed/", "timezone": "America/Santiago"},
+    {"url": "https://lota.cl/feed/", "timezone": "America/Santiago"},
+    {"url": "https://penco.cl/feed/", "timezone": "America/Santiago"},
+    {"url": "https://noticias.udec.cl/feed/", "timezone": "America/Santiago"},
+    {"url": "https://noticias.ubiobio.cl/feed/", "timezone": "America/Santiago"},
+    {"url": "https://laverdaddemonagas.com/feed/", "timezone": "America/Caracas"}
+  ]
+}

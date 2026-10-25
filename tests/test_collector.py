@@ -157,6 +157,10 @@ class PublishGuardTests(unittest.TestCase):
         feeds=[{'id':str(i),'state':'error' if i<failed else 'ok'} for i in range(total)]
         collect.write_json(root/'status.json', {'feeds':feeds})
         collect.write_json(root/'trends.json', {'topics':[]})
+        meta = json.loads((root/'meta.json').read_text())
+        meta['events_version'] = 1
+        collect.write_json(root/'meta.json', meta)
+        collect.write_json(root/'events.json', {'version':1,'generated_at':meta['generated_at'], 'horizon_days':90, 'items':[], 'pending':[], 'sources':[]})
         (root.parent/'feeds').mkdir(exist_ok=True)
         (root.parent/'feeds'/'mas-cubierto.xml').write_text('<rss/>')
 
@@ -174,6 +178,8 @@ class PublishGuardTests(unittest.TestCase):
                                {'version': 2, 'generated_at': '2026-10-17T00:00:00Z',
                                 'items': articles})
             metadata = json.loads((root / 'meta.json').read_text(encoding='utf-8'))
+            metadata['events_version'] = 1
+            collect.write_json(root / 'meta.json', metadata)
             self.assertEqual(len(metadata['archive_files']), 16)
             self.assertEqual(metadata['total_articles'], 5000)
             last = json.loads((root / 'archive-16.json').read_text())['items'][-1]
