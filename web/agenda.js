@@ -76,7 +76,7 @@
   const dateLabel=value=>new Intl.DateTimeFormat('es',{timeZone:'UTC',day:'numeric',month:'long',year:'numeric'}).format(new Date(value+'T00:00:00Z'));
   function eligible(row){
     if(state.hiddenSources.has(row.source_id))return false;
-    if(window.RadarV12&&!window.RadarV12.dashboardMatch({categories:[row.category]}))return false;
+    if(window.RadarV12&&!window.RadarV12.dashboardMatch({categories:[row.category]},{useSavedCategories:true}))return false;
     const haystack=stripAccents([row.title,row.source_name,row.location||''].join(' '));
     const query=stripAccents(state.search.trim());
     if(query&&!haystack.includes(query))return false;

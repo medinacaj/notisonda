@@ -52,11 +52,13 @@ def document():
 def review_regressions(browser, server):
     """Catch boot coupling, automatic focus loss, and unreadable active dates."""
     selected = os.environ.get('RADAR_AGENDA_REVIEW_ONLY')
-    for case in ('boot', 'focus', 'contrast', 'mixed_generation'):
+    for case in ('boot', 'focus', 'contrast', 'mixed_generation', 'mine_boot', 'mine_slow'):
         if selected and selected != case:
             continue
         payload = document()
-        state = {'event_status': 200, 'news_status': 503 if case == 'boot' else 200, 'hold': False, 'route': None}
+        mine = case in ('mine_boot', 'mine_slow')
+        state = {'event_status': 200, 'news_status': 503 if case in ('boot', 'mine_boot') else 200,
+                 'hold': mine, 'route': None, 'source_route': None}
 
         def route_data(route):
             name = Path(urlsplit(route.request.url).path).name
@@ -67,16 +69,52 @@ def review_regressions(browser, server):
                     route.fulfill(status=state['event_status'], content_type='application/json', body=json.dumps(payload))
             elif name == 'status.json' and state['news_status'] != 200:
                 route.fulfill(status=state['news_status'], body='Unavailable')
+            elif name == 'sources.json' and case == 'mine_slow':
+                state['source_route'] = route
             else:
                 fixtures.make_route(route)
 
         context = browser.new_context(viewport={'width': 1440, 'height': 900}, service_workers='block', reduced_motion='reduce')
+        if mine:
+            context.add_init_script("localStorage.setItem('radar-v12-preferences', JSON.stringify({mine:true,categories:['08 - Monagas']}))")
         context.route('**/*', lambda r: r.continue_() if r.request.url.startswith('http://127.0.0.1:') else r.abort())
         page = context.new_page()
         page.clock.install(time=datetime(2026, 10, 25, 3, 59, 30, tzinfo=timezone.utc))
         page.route('**/data/**', route_data)
         page.goto(f'http://127.0.0.1:{server.server_port}/#inicio')
-        if case == 'boot':
+        if mine:
+            assert page.evaluate('state.categories.length') == 0
+            # Hold events until this observer is attached: every rendered output
+            # before/after the delayed catalog must honor the saved selection.
+            observations = page.evaluate_handle("""() => {
+              const seen=[];
+              const observer=new MutationObserver(()=>{
+                seen.push([...document.querySelectorAll('#agendaList [data-event-id], #agendaPendingList [data-event-id]')].map(n=>n.dataset.eventId));
+              });
+              observer.observe(document.getElementById('agendaSection'),{childList:true,subtree:true});
+              return {seen,observer};
+            }""")
+            assert state['route'] is not None
+            state['hold'] = False
+            state['route'].fulfill(status=200, content_type='application/json', body=json.dumps(payload))
+            expect(page.locator('#agendaList [data-event-id="hoy-venezuela"]')).to_have_count(1)
+            allowed = {'ayer-venezuela', 'hoy-venezuela'}
+            shown = page.locator('#agendaList [data-event-id]').evaluate_all('nodes=>nodes.map(n=>n.dataset.eventId)')
+            assert shown and set(shown) <= allowed, (case, shown)
+            expect(page.locator('#agendaPending')).to_be_hidden()
+            if case == 'mine_slow':
+                assert state['source_route'] is not None
+                state['source_route'].fulfill(status=200, content_type='application/json', body=json.dumps(fixtures.RESPONSES['sources.json']))
+                page.wait_for_function('() => state.ready')
+            else:
+                page.clock.run_for(61_000)
+                assert page.evaluate('state.ready') is False
+            page.evaluate('window.RadarAgenda.refresh()')
+            expect(page.locator('#agendaList [data-event-id="hoy-venezuela"]')).to_be_visible()
+            rendered = observations.evaluate('observation=>observation.seen')
+            assert rendered and all(set(ids) <= allowed for ids in rendered), (case, rendered)
+            observations.evaluate('observation=>observation.observer.disconnect()')
+        elif case == 'boot':
             page.clock.run_for(61_000)
             # A failed news resource cannot leave the independent agenda busy.
             expect(page.locator('#agendaSection')).to_have_attribute('aria-busy', 'false')
