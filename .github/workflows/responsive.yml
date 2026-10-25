@@ -48,6 +48,8 @@ jobs:
           python browser_tests/audit_regressions.py
           python browser_tests/concepcion_regressions.py
           python browser_tests/usability_regressions.py
+          python browser_tests/layout_regressions.py
+          python browser_tests/homepage_regressions.py
       - name: Guardar capturas para revisión
         if: always()
         uses: actions/upload-artifact@v4

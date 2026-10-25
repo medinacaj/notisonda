@@ -185,9 +185,16 @@ def make_route(route):
         route.fulfill(status=200, content_type="application/json; charset=utf-8",
                       body=json.dumps(payload, ensure_ascii=False))
 
+def ensure_navigation(page):
+    if page.locator('#appSidebar').evaluate('(node) => node.inert'):
+        page.locator('#menuToggle').click()
+    expect(page.locator('#appSidebar')).to_be_visible()
+    assert not page.locator('#appSidebar').evaluate('(node) => node.inert')
+
+
 def check_concepcion_category(page):
     """The seventh folder stays accessible, exclusive and part of Chile/Latam."""
-    page.locator("#menuToggle").click()
+    ensure_navigation(page)
     folder = page.locator("#libraryFolderNav .system-folder-link").filter(has_text="Concepción")
     expect(folder).to_be_visible()
     assert folder.get_attribute("data-topic") == "7"
@@ -326,7 +333,7 @@ def main():
                         assert page.locator("#dashboardTitle").text_content().strip() == "Portada de Radar RSS"
                         firstNewsOffset=page.evaluate("""() => {
                           const dashboard=document.getElementById('dashboardView').getBoundingClientRect();
-                          const news=document.querySelector('.dashboard-feature-panel').getBoundingClientRect();
+                          const news=document.querySelector('.homepage-latest').getBoundingClientRect();
                           return Math.round(news.top-dashboard.top);
                         }""")
                         assert 0 <= firstNewsOffset <= 20, firstNewsOffset
@@ -382,8 +389,7 @@ def main():
                         assert page.locator("#libraryFolderNav .v12-region-nav").count() == 0
                         actual = page.locator("#libraryFolderNav .system-folder-link .nav-label").all_text_contents()
                         assert actual == ["Inteligencia Artificial","Tecnología","Internacionales","Chile","Venezuela","Latinoamérica","Concepción"], actual
-                        page.locator("#menuToggle").click()
-                        page.locator("body.nav-open").wait_for(timeout=3000)
+                        ensure_navigation(page)
                         folder = page.locator("#libraryFolderNav .system-folder-link").nth(6)
                         expect(folder).to_be_visible()
                         folder.focus()
@@ -470,7 +476,7 @@ def main():
                             latestCount:document.querySelectorAll('#dashboardRecent .dashboard-recent-row').length
                           };
                         }""")
-                        assert layout["lanes"] == (1 if width <= 1180 else 2), layout
+                        assert layout["lanes"] == 1, layout
                         assert layout["featureColumns"] == (1 if width <= 610 else 2), layout
                         assert len(layout["cards"]) == 3, layout
                         assert layout["latestCount"] >= 1, layout
@@ -483,14 +489,8 @@ def main():
                         else:
                             assert abs(layout["cards"][0]["w"]-layout["cards"][1]["w"]) <= 2, layout
                         assert layout["categories"]["y"] >= layout["story"]["bottom"] + 10, layout
-                        assert layout["radar"]["y"] >= layout["latest"]["bottom"] + 10, layout
-                        if width > 1180:
-                            assert abs(layout["story"]["y"]-layout["latest"]["y"]) <= 3, layout
-                            assert abs(layout["story"]["x"]-layout["categories"]["x"]) <= 2, layout
-                            assert layout["categories"]["right"] < layout["latest"]["x"], layout
-                            assert layout["story"]["right"] < layout["latest"]["x"], layout
-                        else:
-                            assert layout["latest"]["y"] >= layout["categories"]["bottom"] + 10, layout
+                        assert layout["latest"]["bottom"] <= layout["story"]["y"], layout
+                        assert layout["latest"]["y"] < layout["story"]["y"], layout
                         if len(layout["folders"]) >= 2 and width > 610:
                             assert abs(layout["folders"][0]["y"]-layout["folders"][1]["y"]) <= 2, layout
                             assert abs(layout["folders"][0]["w"]-layout["folders"][1]["w"]) <= 2, layout
@@ -512,8 +512,7 @@ def main():
                         # distintas como Ver mis guardadas o la navegación responsive.
                         assert page.locator("#dashboardView .dashboard-feature-panel .dashboard-read-all").count() == 0
                         assert page.locator("#dashboardSavedAll").count() == 1
-                        page.locator("#menuToggle").click()
-                        page.locator("body.nav-open").wait_for(timeout=3000)
+                        ensure_navigation(page)
                         all_news=page.locator("#categoryNav > .nav-link").nth(1)
                         expect(all_news).to_be_visible()
                         all_news.click()
@@ -626,10 +625,10 @@ def main():
                         check_visible_boxes(page, [".topbar", ".topbar-actions", ".filter-bar",
                             ".filter-controls", ".mode-tabs", "#articleGrid",
                             "#articleGrid .article-card"], f"listado {width}px")
-                        page.locator("#menuToggle").click()
-                        page.locator("body.nav-open").wait_for(timeout=2000)
+                        ensure_navigation(page)
                         page.keyboard.press("Escape")
-                        page.locator("body:not(.nav-open)").wait_for(timeout=2000)
+                        if width <= 950:
+                            page.locator("body:not(.nav-open)").wait_for(timeout=2000)
                         if width <= 710:
                             page.locator("#searchToggle").click()
                             page.locator("#topbarSearch").wait_for(state="visible", timeout=2000)
@@ -755,8 +754,7 @@ def main():
                         page.locator("#articleReaderDialog[open]").wait_for(state="hidden")
                         # Una acción de lectura global confirma antes de modificar
                         # el estado y actualiza los contadores de todas las carpetas.
-                        page.locator("#menuToggle").click()
-                        page.locator("body.nav-open").wait_for()
+                        ensure_navigation(page)
                         all_link=page.locator("#categoryNav > .nav-link").nth(1)
                         all_link.focus()
                         all_link.press("Shift+F10")

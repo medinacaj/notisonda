@@ -8,14 +8,14 @@ const IS_HASHNODE_PREVIEW = PREVIEW_STYLE === 'hashnode';
 const IS_SUBSTACK_PREVIEW = PREVIEW_STYLE === 'substack';
 const IS_STYLE_PREVIEW = IS_HASHNODE_PREVIEW || IS_SUBSTACK_PREVIEW;
 function storeGet(key) { try { return localStorage.getItem(key); } catch { return null; } }
-// El tema índigo es la opción inicial; una elección explícita (claro/oscuro/sistema) siempre prevalece.
+// El tema sigue al sistema; una elección explícita (claro/oscuro/sistema) siempre prevalece.
 // Versiones anteriores guardaban "light" en cada visita aunque nadie lo eligiera,
 // por eso solo se respeta lo guardado cuando existe la marca de elección explícita.
 const THEME_EXPLICIT_KEY='radar-theme-explicit';
 function initialTheme(){
   const saved=storeGet('radar-theme');
   if(storeGet(THEME_EXPLICIT_KEY)==='true'&&['system','light','dark'].includes(saved))return saved;
-  return 'light';
+  return 'system';
 }
 const state = {
   sources: [], categories: [], items: [], health: [], generated: null,
@@ -519,53 +519,62 @@ function buildNav() {
   }
   renderTopicRail();
 }
+// Compatibility anchor for progressive modules; navigation lives in the sidebar.
 function renderTopicRail(){
- const rail=$('topicRail');rail.replaceChildren();
- const entries=[{id:'home',label:'Inicio'},{id:'briefing',label:'Resumen'},{id:'all',label:'Todas'},...state.categories.map(id=>({id,label:categoryLabel(id)}))];
- let current=null;
- entries.forEach(entry=>{
-  const active=entry.id==='home'?state.pageView==='dashboard':entry.id==='briefing'?state.pageView==='briefing':state.pageView==='feed'&&state.category===entry.id;
-  const button=mk('button','topic-chip'+(active?' active':''),entry.label);button.type='button';
-  const topic=state.categories.indexOf(entry.id);if(topic>=0)button.dataset.topic=String(topic+1);
-  button.setAttribute('aria-current',active?'page':'false');
-  button.addEventListener('click',()=>goTo(entry.id));rail.append(button);
-  if(active)current=button;
- });
- // Mantener visible la sección activa sin mover la página verticalmente.
- if(current)requestAnimationFrame(()=>{rail.scrollLeft=Math.max(0,current.offsetLeft-rail.offsetLeft-16);});
+ const rail=$('topicRail');
+ if(rail){rail.replaceChildren();rail.hidden=true;}
 }
-// V11: navegación editorial horizontal en cualquier pantalla.
-// La biblioteca detallada permanece accesible en un cajón bajo demanda,
-// con foco, cierre por Escape y fondo inerte tanto en escritorio como móvil.
-const MOBILE_NAV=window.matchMedia('(min-width: 0px)');
-function setNavOpen(open,restoreFocus=true){
+const MOBILE_NAV=window.matchMedia('(max-width: 950px)');
+const SIDEBAR_COLLAPSED_KEY='radar-sidebar-collapsed';
+function setNavOpen(open,restoreFocus=true,persistDesktop=false){
   const sidebar=$('appSidebar'),page=document.querySelector('.page');
   if(!sidebar||!page)return;
   const mobile=MOBILE_NAV.matches,wasOpen=document.body.classList.contains('nav-open');
-  const next=mobile&&open;
-  document.body.classList.toggle('nav-open',next);
-  $('menuToggle').setAttribute('aria-expanded',String(next));
-  $('sidebarBackdrop').hidden=!next;
-  sidebar.inert=mobile&&!next;
-  page.inert=next;
-  if(mobile)sidebar.setAttribute('aria-modal',String(next));else sidebar.removeAttribute('aria-modal');
-  if(next&&!wasOpen){
-    (sidebar.querySelector('.nav-link.active')||sidebar.querySelector('.nav-link'))?.focus({preventScroll:true});
-  }else if(!next&&wasOpen&&restoreFocus){
-    $('menuToggle').focus();
+  if(!mobile&&persistDesktop){
+    try{localStorage.setItem(SIDEBAR_COLLAPSED_KEY,String(!open));}catch{}
+    document.body.classList.toggle('sidebar-collapsed',!open);
+  }else if(!mobile){
+    document.body.classList.toggle('sidebar-collapsed',storeGet(SIDEBAR_COLLAPSED_KEY)==='true');
+  }
+  const visible=mobile?Boolean(open):!document.body.classList.contains('sidebar-collapsed');
+  document.body.classList.toggle('nav-open',mobile&&visible);
+  $('menuToggle').setAttribute('aria-expanded',String(visible));
+  $('menuToggle').setAttribute('aria-label',visible?'Ocultar menú':'Mostrar menú');
+  $('sidebarBackdrop').hidden=!(mobile&&visible);
+  sidebar.inert=!visible;
+  page.inert=mobile&&visible;
+  window.dispatchEvent(new Event('radar-sidebar-visibility-change'));
+  if(mobile&&visible){sidebar.setAttribute('aria-modal','true');sidebar.setAttribute('role','dialog');}
+  else{sidebar.removeAttribute('aria-modal');sidebar.removeAttribute('role');}
+  if(mobile&&visible&&!wasOpen){
+    (sidebar.querySelector('.nav-link.active')||sidebar.querySelector('.nav-link')||$('menuClose'))?.focus({preventScroll:true});
+  }else if(!visible&&restoreFocus&&(wasOpen||sidebar.contains(document.activeElement))){
+    $('menuToggle').focus({preventScroll:true});
   }
 }
 function initMobileNav(){
-  $('menuToggle').addEventListener('click',()=>setNavOpen(!document.body.classList.contains('nav-open')));
-  $('menuClose').addEventListener('click',()=>setNavOpen(false));
+  $('menuToggle').addEventListener('click',()=>{
+    const open=MOBILE_NAV.matches?document.body.classList.contains('nav-open'):!document.body.classList.contains('sidebar-collapsed');
+    setNavOpen(!open,true,true);
+  });
+  $('menuClose').addEventListener('click',()=>setNavOpen(false,true,true));
   $('sidebarBackdrop').addEventListener('click',()=>setNavOpen(false));
   document.addEventListener('keydown',event=>{
-    if(event.key==='Escape'&&document.body.classList.contains('nav-open')&&!document.querySelector('dialog[open]')){
-      event.preventDefault();setNavOpen(false);
+    if(!MOBILE_NAV.matches||!document.body.classList.contains('nav-open')||document.querySelector('dialog[open]'))return;
+    if(event.key==='Escape'){event.preventDefault();setNavOpen(false);return;}
+    if(event.key==='Tab'){
+      const sidebar=$('appSidebar');
+      const focusable=[...sidebar.querySelectorAll('a[href],button:not([disabled]),input:not([disabled]),select:not([disabled]),[tabindex="0"]')]
+        .filter(node=>node.getClientRects().length&&!node.closest('[hidden]'));
+      const first=focusable[0],last=focusable.at(-1);
+      if(!first)return;
+      if(event.shiftKey&&document.activeElement===first){event.preventDefault();last.focus();}
+      else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first.focus();}
     }
   });
   const sync=()=>setNavOpen(false,false);
   MOBILE_NAV.addEventListener?.('change',sync);
+  window.addEventListener('storage',event=>{if(event.key===SIDEBAR_COLLAPSED_KEY)sync();});
   sync();
 }
 function goTo(target){

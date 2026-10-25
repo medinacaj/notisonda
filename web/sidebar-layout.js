@@ -44,10 +44,10 @@
     slider.max=String(desktop?upperBound():MAX_WIDTH);
     slider.value=String(actual);
     slider.disabled=!desktop;
-    handle.tabIndex=desktop?0:-1;
+    handle.tabIndex=desktop&&!document.body.classList.contains('sidebar-collapsed')?0:-1;
     output.textContent=actual+' px';
     help.textContent=desktop
-      ?'Ajusta el ancho del menú desplegable aquí. El valor se guarda solo en este navegador.'
+      ?'Ajusta el ancho del panel lateral aquí. El valor se guarda solo en este navegador.'
       :'En pantallas pequeñas el menú se adapta automáticamente; el ancho elegido se conserva para el escritorio.';
   }
   function setWidth(raw,save=true){
@@ -105,6 +105,7 @@
   reset.addEventListener('click',resetWidth);
   window.addEventListener('resize',()=>{if(active)stopDrag(true);paint();},{passive:true});
   window.addEventListener('storage',event=>{if(event.key===KEY){desiredWidth=fromStorage();paint();}});
+  window.addEventListener('radar-sidebar-visibility-change',paint);
   window.addEventListener('radar-sidebar-pref-sync',()=>{desiredWidth=fromStorage();paint();});
   paint();
 })();

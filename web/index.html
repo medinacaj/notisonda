@@ -44,6 +44,8 @@
   <link rel="stylesheet" href="./cosmic-theme.css?v=1.0.0">
   <link rel="stylesheet" href="./iaadc-editorial.css?v=1.0.2">
   <link rel="stylesheet" href="./usability.css?v=1.0.0">
+  <link rel="stylesheet" href="./homepage.css?v=1.0.0">
+  <link rel="stylesheet" href="./reader-layout.css?v=1.0.0">
   <title>Radar RSS — Actualidad en un solo lugar</title>
 </head>
 <body class="radar-hybrid" data-columns="4">
@@ -51,7 +53,7 @@
     <aside class="sidebar" id="appSidebar" aria-label="Menú de fuentes">
       <div class="sidebar-brand-row">
       <a class="brand" id="brandHome" href="#inicio" aria-label="Radar RSS: ir al inicio">
-        <span class="brand-mark" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="5" cy="19" r="3" fill="currentColor"/><path d="M3 11a10 10 0 0 1 10 10M3 3a18 18 0 0 1 18 18" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg></span>
+        <span class="brand-mark" aria-hidden="true"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h15v15a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8h2z"/><path d="M5 8v11a2 2 0 0 0 2 2M9 8h7M9 12h7M9 16h2M15 16h1"/></svg></span>
         <span><strong>RADAR <em>RSS</em></strong><small>Noticias de múltiples fuentes</small></span>
       </a>
       <button type="button" id="menuClose" class="menu-close" aria-label="Cerrar menú" title="Cerrar menú"><span data-icon="x" class="ui-icon-slot" aria-hidden="true"></span></button>
@@ -94,7 +96,7 @@
           <button id="themeToggle" class="icon-button" type="button" aria-label="Cambiar tema" title="Cambiar modo claro u oscuro"><span id="themeGlyph"></span></button>
         </div>
       </header>
-      <nav class="topic-rail" id="topicRail" aria-label="Secciones de noticias"></nav>
+      <nav class="topic-rail" id="topicRail" aria-label="Secciones de noticias" hidden></nav>
       <div id="stylePreviewNotice" class="style-preview-notice" role="status" hidden>
         <span class="style-preview-label"><strong>REFERENCIA</strong> <span id="stylePreviewName">Diseño anterior</span></span>
         <span class="style-preview-info">Versión de comparación; Radar RSS usa ahora el diseño editorial combinado.</span>
@@ -220,7 +222,7 @@
           <div class="load-more-wrap"><button id="loadMore" class="load-more" type="button" hidden>Cargar más noticias <span class="ui-icon-slot" data-icon="arrow-down" aria-hidden="true"></span></button></div>
         </section>
       </main>
-      <footer class="footer"><span>RADAR RSS <span class="footer-separator">·</span> Una aplicación independiente de lectura de fuentes públicas.</span><span>Créditos y derechos de los artículos pertenecen a sus respectivos medios. <a href="#info" id="footerInfo">Cómo funciona</a></span></footer>
+      <footer class="footer"><span>RADAR RSS <span class="footer-separator">·</span> Una aplicación independiente de lectura de fuentes públicas.</span><span>Créditos y derechos de los artículos pertenecen a sus respectivos medios. <a href="#info" id="footerInfo">Cómo funciona</a></span><a class="footer-profile" href="https://www.linkedin.com/in/medinacaj/" target="_blank" rel="noopener noreferrer" aria-label="Diseñado por @medinacaj, perfil en LinkedIn, abre otra pestaña"><span class="footer-profile-label">Diseñado por</span> <strong>@medinacaj</strong> <span aria-hidden="true">✨</span> <svg aria-hidden="true" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M7 17 17 7M7 7h10v10"/></svg></a></footer>
     </div>
   </div>
   <dialog id="articleReaderDialog" class="article-reader-dialog" aria-labelledby="readerTitle" aria-describedby="readerNote">
@@ -374,13 +376,14 @@
   </div>
   <button id="backTop" class="back-to-top" type="button" aria-label="Volver arriba" title="Volver arriba" hidden><span data-icon="arrow-up" class="ui-icon-slot" aria-hidden="true"></span></button>
   <div id="actionToast" class="action-toast" role="status" aria-live="polite" aria-atomic="true" hidden></div>
-  <script src="./app.js?v=9.0.2" defer></script>
+  <script src="./app.js?v=9.1.0" defer></script>
   <script src="./library.js?v=1.7.6" defer></script>
-  <script src="./sidebar-layout.js?v=1.1.0" defer></script>
+  <script src="./sidebar-layout.js?v=1.2.0" defer></script>
   <script src="./news-effects.js?v=1.0.0" defer></script>
   <script src="./features.js?v=1.0.1" defer></script>
   <script src="./v12.js?v=1.2.7" defer></script>
   <script src="./v13.js?v=1.4.0" defer></script>
   <script src="./usability.js?v=1.0.0" defer></script>
+  <script src="./homepage.js?v=1.0.0" defer></script>
 </body>
 </html>

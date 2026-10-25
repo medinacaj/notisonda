@@ -30,6 +30,7 @@ def main():
             page.reload()
             expect(page.locator('#cardActionHint')).to_be_hidden()
             page.evaluate("location.hash='#inicio'")
+            page.locator('#coverageTools > summary').click()
             expect(page.locator('#radarMapToggle')).to_be_visible()
             expect(page.locator('#radarMapDetails')).not_to_have_attribute('open','')
             expect(page.locator('#radarFigure')).to_be_hidden()

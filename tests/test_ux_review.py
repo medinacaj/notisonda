@@ -35,11 +35,11 @@ class UxReviewTests(unittest.TestCase):
         self.assertIn('aria-controls="appSidebar"', self.html)
         self.assertIn('id="sidebarBackdrop"', self.html)
         self.assertIn('id="menuClose"', self.html)
-        self.assertIn("matchMedia('(min-width: 0px)')", self.app)
+        self.assertIn("matchMedia('(max-width: 950px)')", self.app)
         self.assertIn('id="newsroomLead"', self.html)
         self.assertLess(self.html.index('id="topicRail"'), self.html.index('<main class="main"'))
-        self.assertIn('sidebar.inert=mobile&&!next', self.app)
-        self.assertIn('page.inert=next', self.app)
+        self.assertIn('sidebar.inert=!visible', self.app)
+        self.assertIn('page.inert=mobile&&visible', self.app)
         self.assertIn('body.radar-hybrid.nav-open .sidebar', self.css)
 
     def test_resize_handle_inside_landmark(self):
@@ -71,9 +71,9 @@ class UxReviewTests(unittest.TestCase):
         self.assertIn('id="statusBanner"', main)
         self.assertLess(main.index('id="statusBanner"'), main.index('id="dashboardView"'))
 
-    def test_theme_is_light_by_default_with_explicit_system_option(self):
+    def test_theme_follows_system_by_default_with_manual_option(self):
         self.assertIn("THEME_EXPLICIT_KEY='radar-theme-explicit'", self.app)
-        self.assertIn("return 'light';", js_function(self.app, 'initialTheme'))
+        self.assertIn("return 'system';", js_function(self.app, 'initialTheme'))
 
     def test_multicolor_editorial_identity(self):
         hybrid = (ROOT / 'web/radar-hybrid.css').read_text(encoding='utf-8')

@@ -21,7 +21,8 @@
   function geoCats(geo) {
     // Las carpetas locales conservan acceso propio junto a la agrupación original.
     if (geo === 'chile') return state.categories.filter(cat => /^0[47]\s*-/.test(cat));
-    if (geo === 'latam') return state.categories.filter(cat => /^0[4567]\s*-/.test(cat));
+    if (geo === 'venezuela') return state.categories.filter(cat => /^0[58]\s*-/.test(cat));
+    if (geo === 'latam') return state.categories.filter(cat => /^0[45678]\s*-/.test(cat));
     return [catOf(geo)].filter(Boolean);
   }
   function inGeo(item, geo) {

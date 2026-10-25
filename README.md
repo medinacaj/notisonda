@@ -2,13 +2,13 @@
 
 **Versión pública operativa · octubre 2026:** recopilación y publicación automáticas, monitoreo, historial paginado, tendencias, lectura responsive y pruebas multiplataforma.
 
-Proyecto público sin backend ni cuentas. El catálogo contiene 211 suscripciones RSS y siete carpetas OPML. La cantidad de carpetas se obtiene del catálogo, sin un máximo fijo. Las carpetas personales se configuran localmente sin modificar el catálogo público. El listado ofrece una vista conjunta de Latinoamérica sin ocultar ni modificar las carpetas de fuentes.
+Proyecto público sin backend ni cuentas. El catálogo contiene 226 suscripciones RSS y nueve carpetas OPML. La cantidad de carpetas se obtiene del catálogo, sin un máximo fijo. Las carpetas personales se configuran localmente sin modificar el catálogo público. El listado ofrece una vista conjunta de Latinoamérica sin ocultar ni modificar las carpetas de fuentes.
 
 ## Arquitectura
 
 ```mermaid
 flowchart LR
-  A[OPML: 211 feeds] --> B[GitHub Actions: cada 3 horas]
+  A[OPML: 226 feeds] --> B[GitHub Actions: cada 3 horas]
   B --> C[Python: RSS/Atom y deduplicación]
   C --> D[JSON estáticos]
   D --> E[GitHub Pages]
@@ -29,7 +29,7 @@ flowchart LR
 
 **Concepción (Chile) y Gran Concepción** dispone de carpeta propia, con **33 suscripciones comprobadas el 24-10-2026: 21 RSS/Atom directos y 12 consultas de Google Noticias**. Incluye prensa, radio/TV, noticias universitarias, municipios, cultura y deporte local. Las consultas intermediadas se identifican como RADAR o indican «Google Noticias»; no equivalen a un RSS directo del editor. Las fuentes institucionales llevan el prefijo OFICIAL.
 
-La carpeta se incluye también en las vistas agregadas de Chile y Latinoamérica, conserva su selección individual en Mi Radar y en el resumen, y genera el feed de salida `feeds/concepcion.xml` durante la recopilación. Las 178 suscripciones anteriores conservan URL, identificador y carpeta. El número de carpetas es dinámico: siete es el catálogo actual, no un límite.
+La carpeta se incluye también en las vistas agregadas de Chile y Latinoamérica, conserva su selección individual en Mi Radar y en el resumen, y genera el feed de salida `feeds/concepcion.xml` durante la recopilación. Las 178 suscripciones anteriores conservan URL, identificador y carpeta. El número de carpetas es dinámico: nueve es el catálogo actual, no un límite.
 
 El inventario y las fechas observadas están en [Fuentes de Concepción](docs/fuentes-concepcion.md) y [el registro de verificación](sources/concepcion-verification.json). Algunos RSS publican poco y pueden no aportar noticias dentro de los 45 días de retención. Una consulta vacía o un RSS inaccesible se registra como pendiente; no se presenta como medio inactivo. La investigación es amplia y ampliable, sin prometer que abarque todos los medios existentes.
 
@@ -200,3 +200,11 @@ radar-rss-publico/
 ## Licencia
 
 Código creado para este proyecto. Puedes publicarlo y modificarlo bajo licencia MIT (`LICENSE`); no se transfieren derechos sobre los contenidos de terceros.
+
+## Lectura y fuentes ampliadas
+
+La barra lateral se muestra por defecto en escritorio y se puede ocultar; en móvil se abre a demanda. La cabecera compacta conserva búsqueda, configuración y tema. Las últimas noticias se presentan en un carrusel manual; cobertura y tendencias permanecen accesibles en un bloque plegado.
+
+Las carpetas **Maturín / Monagas** y **Cultura y entretenimiento internacional** añaden 15 canales configurados; Concepción conserva su selección propia y cobertura del Biobío. El registro [fuentes ampliadas](docs/fuentes-ampliadas.md) distingue configuración de disponibilidad: la comprobación HTTP de los canales nuevos está pendiente por la política de red del entorno de desarrollo. No se han inventado fotografías para cubrir fuentes sin imagen.
+
+El tema sigue la configuración del sistema por defecto; una selección manual prevalece. La firma enlaza a LinkedIn en una nueva pestaña.
