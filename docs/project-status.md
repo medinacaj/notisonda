@@ -62,4 +62,6 @@ Rama `feat/radar-noticias-personalizacion-20261024`, incluye las correcciones de
 - Marca más pequeña, botones uniformes y firma «Diseñado por @medinacaj ✨ ↗» enlazada a LinkedIn. Tema del sistema por defecto con selección manual persistente.
 - Catálogo de 226 canales en nueve carpetas: conserva los 211 anteriores; añade Maturín/Monagas y cultura/entretenimiento internacional. Concepción conserva sus 33 fuentes propias del Biobío.
 - Nuevas fuentes: disponibilidad HTTP pendiente por política de red; registro explícito en `sources/discovery-verification.json`. No se certifican licencias individuales ni disponibilidad futura.
-- PR #96: enlace público y referencia Git no accesibles en el repositorio seleccionado; API GitHub bloqueada. Se solicitó URL completa, no se ha aplicado un PR supuesto.
+- PR #96: enlace público y referencia Git no accesibles en el repositorio seleccionado; la consulta API de ese PR devolvió Forbidden. Se solicitó URL completa, no se ha aplicado un PR supuesto.
+
+Revisión publicada como borrador: https://github.com/medinacaj/radar-rss-publico/pull/89. No fusionado ni desplegado. La creación del PR propio sí funcionó; el acceso al PR96 sigue sin acreditarse.
