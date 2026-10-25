@@ -76,7 +76,7 @@
       "verified_at": null
     },
     {
-      "category": "09 - Cultura y entretenimiento internacional",
+      "category": "03 - Internacionales",
       "name": "RADAR — BBC Mundo | Cultura y artistas",
       "website": "https://www.bbc.com/mundo",
       "feed": "https://news.google.com/rss/search?q=site%3Abbc.com%2Fmundo+%28cultura+OR+cine+OR+m%C3%BAsica+OR+artistas%29&hl=es&gl=ES&ceid=ES%3Aes",
@@ -88,55 +88,7 @@
       "verified_at": null
     },
     {
-      "category": "09 - Cultura y entretenimiento internacional",
-      "name": "RADAR — Variety | Cine y televisión",
-      "website": "https://variety.com/",
-      "feed": "https://news.google.com/rss/search?q=site%3Avariety.com+%28film+OR+television+OR+actors%29&hl=en-US&gl=US&ceid=US%3Aen",
-      "query": "site:variety.com (film OR television OR actors)",
-      "kind": "google-noticias",
-      "status": "pendiente_conectividad",
-      "entries_observed": null,
-      "last_published_at": null,
-      "verified_at": null
-    },
-    {
-      "category": "09 - Cultura y entretenimiento internacional",
-      "name": "RADAR — Billboard | Música y artistas",
-      "website": "https://www.billboard.com/",
-      "feed": "https://news.google.com/rss/search?q=site%3Abillboard.com+%28music+OR+artists+OR+charts%29&hl=en-US&gl=US&ceid=US%3Aen",
-      "query": "site:billboard.com (music OR artists OR charts)",
-      "kind": "google-noticias",
-      "status": "pendiente_conectividad",
-      "entries_observed": null,
-      "last_published_at": null,
-      "verified_at": null
-    },
-    {
-      "category": "09 - Cultura y entretenimiento internacional",
-      "name": "RADAR — The Hollywood Reporter | Cine y entretenimiento",
-      "website": "https://www.hollywoodreporter.com/",
-      "feed": "https://news.google.com/rss/search?q=site%3Ahollywoodreporter.com+%28movies+OR+television+OR+entertainment%29&hl=en-US&gl=US&ceid=US%3Aen",
-      "query": "site:hollywoodreporter.com (movies OR television OR entertainment)",
-      "kind": "google-noticias",
-      "status": "pendiente_conectividad",
-      "entries_observed": null,
-      "last_published_at": null,
-      "verified_at": null
-    },
-    {
-      "category": "09 - Cultura y entretenimiento internacional",
-      "name": "RADAR — People | Artistas y actualidad",
-      "website": "https://people.com/",
-      "feed": "https://news.google.com/rss/search?q=site%3Apeople.com+%28celebrity+OR+music+OR+movies%29&hl=en-US&gl=US&ceid=US%3Aen",
-      "query": "site:people.com (celebrity OR music OR movies)",
-      "kind": "google-noticias",
-      "status": "pendiente_conectividad",
-      "entries_observed": null,
-      "last_published_at": null,
-      "verified_at": null
-    },
-    {
-      "category": "09 - Cultura y entretenimiento internacional",
+      "category": "03 - Internacionales",
       "name": "RADAR — EFE | Cultura internacional",
       "website": "https://efe.com/",
       "feed": "https://news.google.com/rss/search?q=site%3Aefe.com+%28cultura+OR+cine+OR+m%C3%BAsica+OR+artistas%29&hl=es&gl=ES&ceid=ES%3Aes",
@@ -148,7 +100,7 @@
       "verified_at": null
     },
     {
-      "category": "09 - Cultura y entretenimiento internacional",
+      "category": "03 - Internacionales",
       "name": "RADAR — El País | Cultura",
       "website": "https://elpais.com/cultura/",
       "feed": "https://news.google.com/rss/search?q=site%3Aelpais.com%2Fcultura+%28cine+OR+m%C3%BAsica+OR+literatura+OR+artistas%29&hl=es&gl=ES&ceid=ES%3Aes",
@@ -160,23 +112,11 @@
       "verified_at": null
     },
     {
-      "category": "09 - Cultura y entretenimiento internacional",
+      "category": "03 - Internacionales",
       "name": "RADAR — Euronews | Cultura internacional",
       "website": "https://es.euronews.com/",
       "feed": "https://news.google.com/rss/search?q=site%3Aes.euronews.com+%28cultura+OR+cine+OR+m%C3%BAsica+OR+artistas%29&hl=es&gl=ES&ceid=ES%3Aes",
       "query": "site:es.euronews.com (cultura OR cine OR música OR artistas)",
-      "kind": "google-noticias",
-      "status": "pendiente_conectividad",
-      "entries_observed": null,
-      "last_published_at": null,
-      "verified_at": null
-    },
-    {
-      "category": "09 - Cultura y entretenimiento internacional",
-      "name": "RADAR — Rolling Stone | Música y cultura",
-      "website": "https://www.rollingstone.com/",
-      "feed": "https://news.google.com/rss/search?q=site%3Arollingstone.com+%28music+OR+artists+OR+culture%29&hl=en-US&gl=US&ceid=US%3Aen",
-      "query": "site:rollingstone.com (music OR artists OR culture)",
       "kind": "google-noticias",
       "status": "pendiente_conectividad",
       "entries_observed": null,

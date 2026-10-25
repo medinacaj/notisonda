@@ -1,13 +1,12 @@
 # Ampliación del catálogo — 24 de octubre de 2026
 
-El catálogo propone **226 suscripciones en nueve carpetas**. Se conservan las
+El catálogo propone **221 suscripciones en ocho carpetas**. Se conservan las
 211 anteriores con los mismos nombres, URL, IDs y categorías, incluidas las
-33 de Concepción. Se añaden seis canales para Maturín/Monagas y nueve para
-cultura y entretenimiento internacional.
+33 de Concepción. Se añaden seis canales para Maturín/Monagas y cuatro culturales en español dentro de Internacionales.
 
 ## Disponibilidad pendiente
 
-**Los 15 canales nuevos no tienen disponibilidad comprobada en esta sesión.**
+**Los diez canales añadidos no tienen disponibilidad comprobada en esta sesión.**
 La política de red del entorno impide consultar Google Noticias y los medios.
 Se validaron la sintaxis de las consultas, la ausencia de URL repetidas, los
 IDs estables y la correspondencia entre OPML y JSON; no se observaron entradas
@@ -38,16 +37,11 @@ deduplica por artículo y calcula medios independientes, no el número de consul
 La vista geográfica de Venezuela y su resumen incluyen 05 y 08; Latinoamérica
 incluye 04–08. La carpeta 08 conserva navegación y selección individuales.
 
-## Cultura y entretenimiento internacional (09)
+## Cultura en español dentro de Internacionales (03)
 
-BBC Mundo, Variety, Billboard, The Hollywood Reporter, People, EFE, El País,
-Euronews y Rolling Stone. Las consultas incluyen cine, música, artistas,
-televisión, literatura o actualidad del entretenimiento, según la especialidad.
-Los canales anglófonos consultan la edición estadounidense en inglés y los
-hispanohablantes la edición española. La selección no se limita a Chile y no se
-incluye automáticamente en filtros geográficos de Chile, Venezuela o
-Latinoamérica. Los artículos pueden estar en español o inglés; no se traducen
-automáticamente ni se inventan titulares.
+Se conservan BBC Mundo, EFE, El País y Euronews en español. Mantienen sus URL e IDs y pasan a la carpeta Internacionales. Se elimina la carpeta independiente 09 y se retiran de esta selección los canales en inglés de Variety, Billboard, The Hollywood Reporter, People y Rolling Stone.
+
+Las noticias del historial se reclasifican según la carpeta actual de sus fuentes; las noticias exclusivas de fuentes retiradas dejan de publicarse. Las fuentes de otras carpetas permanecen intactas. No se traducen automáticamente titulares ni se inventan contenidos.
 
 ## Revalidación
 
