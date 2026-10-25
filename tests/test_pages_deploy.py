@@ -66,6 +66,36 @@ class DeploymentTests(unittest.TestCase):
         result = verify(self.BASE, fetcher(payloads()), now=NOW)
         self.assertEqual(result["sources"], 178)
         self.assertEqual(result["news"], 8)
+        for key in ('events','events_upcoming','events_pending','event_sources_ok','event_sources_total'):
+            self.assertIsNone(result[key])
+
+    def test_agenda_counts_distinguish_current_upcoming_pending_and_source_health(self):
+        files=payloads()
+        files['data/meta.json']['events_version']=1
+        row={'id':'today','title':'Concierto','url':'https://cultura.example/concierto',
+             'source_id':'src1','source_name':'Cultura','category':'07 - Concepción',
+             'timezone':'America/Santiago','start_date':'2026-10-21','end_date':None,
+             'status':'scheduled','location':None,'announced_at':None,
+             'first_seen_at':STAMP,'last_seen_at':STAMP,
+             'date_evidence':{'kind':'rss','value':'2026-10-21','url':'https://cultura.example/concierto'}}
+        files['data/events.json']={'version':1,'generated_at':STAMP,'horizon_days':90,
+            'items':[row,dict(row,id='expired',start_date='2026-10-20'),
+                     dict(row,id='ongoing',start_date='2026-10-19',end_date='2026-10-21'),
+                     dict(row,id='horizon',start_date='2027-01-19'),
+                     dict(row,id='distant',start_date='2027-01-20'),
+                     dict(row,id='cancelled',status='cancelled')],
+            'pending':[dict(row,id='pending',start_date=None,date_evidence=None,reason='date_unverified')],
+            'sources':[{'source_id':'src1','source_name':'Cultura','url':'https://cultura.example/feed/',
+                        'timezone':'America/Santiago','checked_at':STAMP,'status':'ok','error':None},
+                       {'source_id':'src2','source_name':'Agenda','url':'https://agenda.example/feed/',
+                        'timezone':'America/Caracas','checked_at':STAMP,'status':'error','error':'offline'}]}
+        current=datetime(2026,10,21,4,tzinfo=timezone.utc)
+        result=verify(self.BASE,fetcher(files),now=current)
+        self.assertEqual(result['events'],6)
+        self.assertEqual(result['events_upcoming'],3)
+        self.assertEqual(result['events_pending'],1)
+        self.assertEqual(result['event_sources_ok'],1)
+        self.assertEqual(result['event_sources_total'],2)
 
     def test_additional_opml_folders_are_accepted(self):
         for count in (1, 5, 7, 8):

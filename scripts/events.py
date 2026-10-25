@@ -127,6 +127,7 @@ def _status(text):
 
 
 def _text_date(text,zone):
+    """Return (date, rejected), distinguishing contradiction from omission."""
     dates=[]
     for match in TEXT_DATE.finditer(text):
         # Date must directly follow a future realization clause in its sentence.
@@ -138,13 +139,17 @@ def _text_date(text,zone):
         # rather than a later announcement, registration or ticket-sale date.
         if not re.fullmatch(r'(?:\s+(?:el|d[ií]a|este|pr[oó]ximo|lunes|martes|mi[eé]rcoles|jueves|viernes|s[aá]bado|domingo))*\s*',prefix[clause.end():],re.I):continue
         if re.search(r'\b(?:inscripci[oó]n|inscripciones|anuncio|publicaci[oó]n|entradas|reservas|postulaci[oó]n|venta)\b',prefix[:clause.start()],re.I):continue
+        if re.search(r'\b(?:no|nunca|jam[aá]s|tampoco)\s*$',prefix[:clause.start()],re.I):return None,True
+        suffix=re.split(r'[.!?;\n]',text[match.end():],maxsplit=1)[0]
+        alternative=TEXT_DATE.search(suffix)
+        if alternative and re.search(r'\b(?:o|u)\b',suffix[:alternative.start()],re.I):return None,True
         try:
             if match[1]:value=match[1]
             elif match[2]:value=f'{int(match[4]):04}-{MONTHS[match[3].lower()]:02}-{int(match[2]):02}'
             else:value=f'{int(match[7]):04}-{int(match[6]):02}-{int(match[5]):02}'
             dates.append(local_date(value,zone))
-        except (ValueError,TypeError):return None
-    return dates[0] if len(set(dates))==1 else None
+        except (ValueError,TypeError):return None,True
+    return (dates[0],False) if len(set(dates))==1 else (None,len(set(dates))>1)
 
 
 def extract_event(entry, source, now, html=''):
@@ -192,6 +197,13 @@ def extract_event(entry, source, now, html=''):
     try:zone=ZoneInfo(source.get('timezone',''))
     except (ValueError,TypeError,ZoneInfoNotFoundError):
         item['timezone']=None;item['reason']='timezone_missing';return item
+    text_start,text_rejected=_text_date(text,zone) if ACTIVITY.search(title) else (None,False)
+    if text_rejected:
+        # This is not an incomplete repeat: merge must not restore a date
+        # expressly negated or offered as an alternative by this update.
+        item['_date_rejected']=True
+        if item['status']=='postponed':item['reason']='postponed'
+        return item
     start,end,kind,raw=None,None,None,None
     if rescheduled:
         # An explicit reschedule supersedes the original date still in RSS.
@@ -201,8 +213,8 @@ def extract_event(entry, source, now, html=''):
             return item
         obj=objects[0];start=obj['startDate'];end=obj.get('endDate');kind='jsonld';raw=str(start)
         location=obj.get('location')
-        if isinstance(location,str):item['location']=location[:500]
-        elif isinstance(location,dict) and isinstance(location.get('name'),str):item['location']=location['name'][:500]
+        if isinstance(location,str):item['location']=location.strip()[:500] or None
+        elif isinstance(location,dict) and isinstance(location.get('name'),str):item['location']=location['name'].strip()[:500] or None
     elif explicit:
         start=explicit;end=entry.get('ev_enddate') or entry.get('event_enddate');kind='rss';raw=str(explicit)
     elif objects:
@@ -211,10 +223,10 @@ def extract_event(entry, source, now, html=''):
         if len(dated)==1:
             obj=dated[0];start=obj['startDate'];end=obj.get('endDate');kind='jsonld';raw=str(start)
             location=obj.get('location')
-            if isinstance(location,str):item['location']=location[:500]
-            elif isinstance(location,dict) and isinstance(location.get('name'),str):item['location']=location['name'][:500]
+            if isinstance(location,str):item['location']=location.strip()[:500] or None
+            elif isinstance(location,dict) and isinstance(location.get('name'),str):item['location']=location['name'].strip()[:500] or None
     if not start and ACTIVITY.search(title):
-        start=_text_date(text,zone);kind='text';raw=start
+        start=text_start;kind='text';raw=start
     text_rescheduled=bool(re.search(r'\b(?:nueva fecha|reprogramad[oa])\b',text,re.I))
     if item['status']=='postponed' and kind=='text' and start and text_rescheduled and not any(_status(str(obj.get('eventStatus') or ''))!='scheduled' for obj in objects):
         item['status']='scheduled'
@@ -263,12 +275,18 @@ def merge_events(previous, incoming, source_states, now):
     cache={item['id']:dict(item) for item in (previous or {}).get('items',[])+(previous or {}).get('pending',[])}
     for item in incoming:
         item=dict(item);old=cache.get(item['id'])
+        date_rejected=item.pop('_date_rejected',False) is True
         if old:
             item['first_seen_at']=old['first_seen_at']
             if not item.get('announced_at'):item['announced_at']=old.get('announced_at')
             changed_date=bool(old.get('start_date') and item.get('start_date') and old['start_date']!=item['start_date'] and (item.get('date_evidence') or {}).get('kind') in ('rss','jsonld'))
             reactivated=bool(item.get('start_date') and (item.get('status_explicit') is True or changed_date))
-            if old['status'] in ('cancelled','postponed') and item['status']=='scheduled' and not reactivated:
+            if date_rejected:
+                # Preserve known restrictions, without rescuing a rejected date.
+                if old['status'] in ('cancelled','postponed') and item['status']=='scheduled':
+                    item['status']=old['status']
+                    if old['status']=='postponed':item['reason']='postponed'
+            elif old['status'] in ('cancelled','postponed') and item['status']=='scheduled' and not reactivated:
                 # Downloading the original dated announcement again is not a
                 # reactivation. An undated postponed item requires an explicit
                 # reschedule because its old date is deliberately no longer active.
@@ -337,7 +355,7 @@ def validate_document(doc):
                 if not isinstance(evidence,dict) or evidence.get('kind') not in ('rss','jsonld','text') or not string(evidence.get('value'),1000) or not string(evidence.get('url'),4000) or not safe_web_url(evidence['url']):fail('date_evidence')
             else:
                 if item.get('start_date') is not None or item.get('end_date') is not None:fail('pending dates')
-                if not string(item.get('reason'),100):fail('pending reason')
+                if item.get('reason') not in ('date_unverified','timezone_missing','postponed'):fail('pending reason')
                 if item.get('timezone') is not None and not zone(item['timezone']):fail('pending timezone')
                 if item.get('date_evidence') is not None:fail('pending evidence')
     source_ids=set()

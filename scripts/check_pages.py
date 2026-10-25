@@ -67,14 +67,20 @@ def verify(base_url: str, fetch=download, *, now: datetime | None = None, expect
     age = current - timestamp
     if age > timedelta(hours=24) or age < -timedelta(minutes=10):
         raise ValueError(f"El portal está desactualizado: última generación {generated}")
-    agenda_count = None
+    agenda_count = upcoming_count = pending_count = source_ok = source_total = None
     if meta.get('events_version') == 1:
-        from events import validate_document
+        from events import is_upcoming, validate_document
         agenda = validate_document(json.loads(fetch(urljoin(base_url, 'data/events.json')).decode('utf-8')))
         if agenda['generated_at'] != generated:
             raise ValueError('La agenda pública pertenece a otra generación')
         agenda_count = len(agenda['items'])
-    return {"events": agenda_count, "sources": len(sources), "news": len(latest), "total": meta["total_articles"],
+        upcoming_count = sum(is_upcoming(item, current) for item in agenda['items'])
+        pending_count = len(agenda['pending'])
+        source_ok = sum(source['status'] == 'ok' for source in agenda['sources'])
+        source_total = len(agenda['sources'])
+    return {"events": agenda_count, "events_upcoming": upcoming_count, "events_pending": pending_count,
+            "event_sources_ok": source_ok, "event_sources_total": source_total,
+            "sources": len(sources), "news": len(latest), "total": meta["total_articles"],
             "generated_at": generated, "age_minutes": round(age.total_seconds() / 60)}
 
 
@@ -91,7 +97,11 @@ def main() -> int:
     for attempt in range(1, args.attempts + 1):
         try:
             result = verify(args.url, expected_generation=args.expected_generation)
-            print("Pages verificado: " + json.dumps(result, ensure_ascii=False))
+            serialized = json.dumps(result, ensure_ascii=False)
+            print("Pages verificado: " + serialized)
+            if os.environ.get('GITHUB_ACTIONS') == 'true':
+                escaped = serialized.replace('%', '%25').replace('\r', '%0D').replace('\n', '%0A')
+                print('::notice title=Publicación verificada::' + escaped)
             summary = os.environ.get("GITHUB_STEP_SUMMARY")
             if summary:
                 with open(summary, "a", encoding="utf-8") as report:

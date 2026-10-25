@@ -171,6 +171,81 @@ class EventTests(unittest.TestCase):
             {'@type':'Event','startDate':'2026-11-02'}])+'</script>'
         self.assertIsNone(events.extract_event(self.entry(),SOURCE,NOW,html=page)['start_date'])
 
+    def test_negated_or_alternative_text_never_confirms_an_activity_date(self):
+        for summary in (
+            'El concierto no se realizará el 4 de noviembre de 2026.',
+            'El concierto no tendrá lugar el 4 de noviembre de 2026.',
+            'El concierto se realizará el 4 de noviembre de 2026 o el 5 de noviembre de 2026.',
+            'El concierto se realizará el 2026-11-04 o el 2026-11-05.',
+            'El concierto se realizará el 04/11/2026 o el 05/11/2026.',
+        ):
+            with self.subTest(summary=summary):
+                item=events.extract_event(self.entry(summary=summary),SOURCE,NOW)
+                self.assertIsNone(item['start_date'])
+                self.assertIsNone(item['end_date'])
+                self.assertIsNone(item['date_evidence'])
+                self.assertEqual(item['reason'],'date_unverified')
+                self.assertEqual(item['status'],'scheduled')  # No invented cancellation/postponement.
+                self.assertFalse(events.is_upcoming(item,NOW))
+
+    def test_merge_does_not_rescue_a_date_rejected_by_updated_text(self):
+        original=events.extract_event(self.entry(summary='El concierto se realizará el 4 de noviembre de 2026.'),SOURCE,NOW)
+        previous=events.merge_events(None,[original],[],NOW)
+        for summary in (
+            'El concierto no se realizará el 4 de noviembre de 2026.',
+            'El concierto se realizará el 4 de noviembre de 2026 o el 5 de noviembre de 2026.',
+            'Se realizará el 4 de noviembre de 2026 o se realizará el 5 de noviembre de 2026.',
+        ):
+            with self.subTest(summary=summary):
+                incoming=events.extract_event(self.entry(summary=summary),SOURCE,NOW)
+                merged=events.merge_events(previous,[incoming],[],NOW)
+                self.assertEqual(merged['items'],[])
+                self.assertEqual(len(merged['pending']),1)
+                pending=merged['pending'][0]
+                self.assertEqual(pending['id'],original['id'])
+                self.assertEqual(pending['first_seen_at'],original['first_seen_at'])
+                self.assertEqual(pending['reason'],'date_unverified')
+                self.assertNotIn('_date_rejected',pending)
+                self.assertFalse(events.is_upcoming(pending,NOW))
+                # A later incomplete repeat must not bring the withdrawn date back.
+                repeated=events.merge_events(merged,[events.extract_event(self.entry(),SOURCE,NOW)],[],NOW)
+                self.assertEqual(repeated['items'],[])
+                self.assertIsNone(repeated['pending'][0]['start_date'])
+        # Ordinary omission still preserves a verified date.
+        incomplete=events.merge_events(previous,[events.extract_event(self.entry(),SOURCE,NOW)],[],NOW)
+        self.assertEqual(incomplete['items'][0]['start_date'],'2026-11-04')
+
+    def test_jsonld_location_normalizes_optional_blank_or_padded_text(self):
+        for status in ('EventScheduled','EventRescheduled'):
+            for location,expected in (
+                ('',None),('   ',None),({'name':''},None),({'name':' \t '},None),
+                ('  Teatro  ','Teatro'),({'name':'  Teatro  '},'Teatro'),
+            ):
+                with self.subTest(status=status,location=location):
+                    page='<script type="application/ld+json">'+json.dumps({'@type':'Event',
+                        'url':self.entry()['link'],'startDate':'2026-11-04',
+                        'eventStatus':'https://schema.org/'+status,'location':location})+'</script>'
+                    item=events.extract_event(self.entry(),SOURCE,NOW,html=page)
+                    self.assertEqual(item['location'],expected)
+                    doc=events.merge_events(None,[item],[],NOW)
+                    self.assertEqual(doc['items'][0]['start_date'],'2026-11-04')
+        invalid=events.merge_events(None,[self.event()],[],NOW)
+        invalid['items'][0]['location']='   '
+        with self.assertRaisesRegex(ValueError,'location'):events.validate_document(invalid)
+
+    def test_pending_reason_only_accepts_the_v1_browser_enum(self):
+        pending=events.extract_event(self.entry(),SOURCE,NOW)
+        doc=events.merge_events(None,[pending],[],NOW)
+        for reason in ('date_unverified','timezone_missing','postponed'):
+            valid=copy.deepcopy(doc);valid['pending'][0]['reason']=reason
+            events.validate_document(valid)
+        for reason in ('not_a_v1_reason','',None,[],True):
+            with self.subTest(reason=reason):
+                invalid=copy.deepcopy(doc);invalid['pending'][0]['reason']=reason
+                with self.assertRaisesRegex(ValueError,'pending reason'):events.validate_document(invalid)
+                with self.assertRaisesRegex(ValueError,'pending reason'):
+                    events.merge_events(None,[invalid['pending'][0]],[],NOW)
+
     def test_page_widget_text_and_unrelated_jsonld_do_not_confirm(self):
         page='<aside>Festival se realizará el 12 de noviembre de 2026</aside>'
         self.assertIsNone(events.extract_event(self.entry(),SOURCE,NOW,html=page)['start_date'])
@@ -360,6 +435,33 @@ class CollectorTests(unittest.TestCase):
             doc=collect_events.collect_document([SOURCE],previous,NOW)
         self.assertEqual(doc['items'][0]['status'],'cancelled')
         self.assertFalse(events.is_upcoming(doc['items'][0],NOW))
+
+    def test_blank_jsonld_location_does_not_block_collector_output_or_other_events(self):
+        rss=b'<rss version="2.0"><channel><item><title>Concierto de primavera</title><link>https://cultura.example/concierto</link></item><item><title>Festival local</title><link>https://cultura.example/festival</link></item></channel></rss>'
+        cached=events.extract_event({'title':'Taller previo','link':'https://cultura.example/taller',
+            'ev_startdate':'2026-11-10'},SOURCE,NOW)
+        for location in ('','   ',{'name':''},{'name':' \t '}):
+            with self.subTest(location=location),tempfile.TemporaryDirectory() as temp:
+                out=Path(temp)/'events.json'
+                out.write_text(json.dumps(events.merge_events(None,[cached],[],NOW)))
+                def page(url,source):
+                    return '<script type="application/ld+json">'+json.dumps({'@type':'Event',
+                        'url':url,'startDate':'2026-11-04',
+                        'location':location if url.endswith('/concierto') else {'name':'Teatro'}})+'</script>'
+                with patch.object(collect_events,'load_sources',return_value=[SOURCE]), \
+                     patch.object(collect_events,'fetch_feed',return_value=rss), \
+                     patch.object(collect_events,'fetch_event_page',side_effect=page):
+                    self.assertEqual(collect_events.main(['--out',str(out),'--generation','2026-10-25T12:00:00Z']),0)
+                doc=json.loads(out.read_text())
+                events.validate_document(doc)
+                self.assertEqual(len(doc['items']),3)
+                self.assertEqual(doc['pending'],[])
+                by_url={item['url']:item for item in doc['items']}
+                self.assertIsNone(by_url['https://cultura.example/concierto']['location'])
+                self.assertEqual(by_url['https://cultura.example/festival']['location'],'Teatro')
+                self.assertIn(cached['url'],by_url)
+                self.assertEqual(doc['sources'][0]['status'],'ok')
+                self.assertFalse(out.with_name('events.json.tmp').exists())
 
     def test_feed_no_redirects_and_bounded_body(self):
         class Response:
