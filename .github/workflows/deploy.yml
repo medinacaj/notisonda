@@ -8,6 +8,7 @@ on:
       - "scripts/**"
       - "tests/**"
       - "sources/**"
+      - "eventos/**"
       - "requirements.txt"
       - ".github/workflows/deploy.yml"
   workflow_dispatch:
@@ -73,6 +74,8 @@ jobs:
         run: python scripts/audit_feeds.py --opml sources/feeds.opml
       - name: Revisar estructura de fuentes
         run: python -m unittest discover -s tests -v
+      - name: Revisar recolector de eventos sin red
+        run: python -m unittest discover -s eventos/tests -t eventos
       - name: Validar JavaScript de la interfaz
         run: |
           node --check web/app.js
@@ -82,6 +85,7 @@ jobs:
           node --check web/features.js
           node --check web/v12.js
           node --check web/v13.js
+          node --check web/eventos.js
           node --check web/sw.js
           node tests/test_sidebar_behavior.cjs
           node tests/test_news_effects.cjs
@@ -89,6 +93,19 @@ jobs:
         run: python scripts/collect.py --opml sources/feeds.opml --out web/data --days 45 --workers 8 --image-fallback
       - name: Validar JSON antes de publicar
         run: python scripts/validate_data.py web/data
+      # Los eventos vienen del workflow «Rastrear eventos»; si faltan, las noticias se publican igual.
+      - name: Incorporar eventos (no bloquea las noticias)
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p "$RUNNER_TEMP/eventos"
+          run_id=$(gh run list --repo "$GITHUB_REPOSITORY" --workflow eventos.yml --status success --limit 1 --json databaseId --jq '.[0].databaseId' || true)
+          if [ -n "$run_id" ] && [ "$run_id" != "null" ]; then
+            gh run download "$run_id" --repo "$GITHUB_REPOSITORY" --name radar-eventos --dir "$RUNNER_TEMP/eventos" || echo "Artefacto de eventos no disponible; se usa el último publicado"
+          fi
+          python eventos/publicar_web.py recover --from-dir "$RUNNER_TEMP/eventos/data"
+          python eventos/publicar_web.py export --out web/data
       - name: Preparar auditoría editorial orientativa
         run: |
           python scripts/audit_editorial.py web/data --report editorial-audit.md

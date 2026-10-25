@@ -25,6 +25,10 @@ flowchart LR
 - **Publicación:** `.github/workflows/deploy.yml`, GitHub Actions -> GitHub Pages. El navegador consume JSON generado, sin solicitar RSS externos directamente (evita CORS).
 - **UI:** `web/index.html`, `web/app.js` y los módulos `library.js`, `features.js`, `v12.js`. Interfaz sin frameworks con filtros combinables, Mi Radar, búsqueda guardada, vista de lectura, resumen personalizado y modos claro/oscuro.
 
+## Eventos (integrado desde eventos-biobio)
+
+La sección **Eventos** (`#eventos`) reúne la agenda pública de las 33 comunas de la Región del Biobío y de fuentes culturales del resto de Chile: agenda por día, calendario mensual, vista por comuna o región, filtros (texto, comuna, categoría, precio y fechas), ficha con fuentes e historial, exportación a calendario (`.ics`) y guardados en el navegador. El recolector vive en [`eventos/`](eventos/README.md) y se ejecuta una vez al día con `.github/workflows/eventos.yml`; `deploy.yml` incorpora el resultado sin bloquear la publicación de noticias.
+
 ## Funciones para lectores
 
 - **Lo más cubierto y el radar.** Las historias publicadas por más medios distintos en 24 h, en una lista numerada y en un radar (sector = tema, distancia = antigüedad, tamaño = cobertura). Es una señal de importancia que no depende de clics.

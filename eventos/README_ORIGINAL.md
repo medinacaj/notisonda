@@ -1,0 +1,223 @@
+# Eventos Región del Biobío
+
+App **local** (no hosteada) para descubrir eventos públicos presenciales en las **33 comunas de la Región del Biobío**, Chile: cultura, música, teatro, deporte, ferias, actividades familiares, empresariales y comunitarias.
+
+- Backend: solo librería estándar de Python (`sqlite3`, `http.server`, `urllib`, `concurrent.futures`, `html.parser`). Sin pip, sin frameworks.
+- Frontend: HTML + CSS + módulos JavaScript vanilla, sin build step.
+
+## Cómo iniciar
+
+| Sistema | Acción |
+|---|---|
+| Windows | Doble clic en `iniciar_windows.bat` (usa `launcher.py`) |
+| Mac / Linux | `./iniciar_mac_linux.sh` |
+| Manual | `python3 launcher.py` (busca puerto libre y abre el navegador) o `python3 app.py --port 8765` |
+
+Requiere Python 3.9+. Al arrancar se crea `data/eventos.db` y se cargan los eventos semilla (`data/seed_events.json`), sin duplicar si ya estaban.
+
+Opcional: copia `.env.example` a `.env` (puerto, ruta de la BD, `ADMIN_TOKEN`).
+
+## Actualización automática verificable (desde 18-10-2026)
+
+El repositorio incorpora [`.github/workflows/actualizar-eventos.yml`](.github/workflows/actualizar-eventos.yml).
+GitHub Actions ejecuta diariamente el rastreo desde un entorno con acceso a red,
+después de las pruebas offline. La primera ejecución también se activa por un
+`push` de código y puede iniciarse manualmente desde **Actions**.
+
+El proceso **rechaza el resultado completo** si ninguna fuente presenta respuesta
+HTTP 2xx verificable: no se publican snapshots ni estados inventados.
+Si al menos una fuente respondió, se versionan solo
+`data/crawled_events.json` y `config/sources.json`. La pestaña Actions
+registra fuentes consultadas, fuentes HTTP válidas, fallos, eventos y comunas cubiertas.
+La [matriz de cobertura por comuna](reports/coverage.md) se publica con cada corrida válida e indica cuántas fuentes locales respondieron y cuántos candidatos requieren revisión. La cifra de comunas cubiertas se basa en eventos realmente extraídos,
+no en URLs de municipios configuradas. GitHub Pages no se usa para este proyecto: la
+app sigue siendo local y descarga el JSON versionado al actualizar el repositorio.
+
+**Importante:** la tabla de resultados del 03-10-2026 de más abajo es
+histórica; para conocer la cifra actual se debe revisar el último workflow
+y el snapshot versionado. Un HTTP 200 no garantiza que una agenda publique
+eventos estructurados. Si GitHub Actions no logra acceder a ninguna fuente,
+el flujo aparecerá con error y no habrá nueva publicación.
+
+### Primera verificación real y revisión de calidad (18-10-2026)
+
+La primera corrida de GitHub Actions obtuvo **37/45 fuentes con respuesta HTTP 2xx**, 8 fallidas. El recolector detectó inicialmente 12 fichas en el snapshot (de 36 detecciones brutas); la revisión encontró 9 convocatorias electorales administrativas y 3 fichas de ticketing nacional sin garantía geográfica, incluidas referencias a La Florida de Santiago clasificadas erróneamente como Florida, Biobío. Esas 12 fichas quedaron **pendientes de revisión**, no publicadas.
+
+Esto significa **0 eventos del primer snapshot validados para publicación tras aplicar el filtro estricto**, aunque 37 fuentes sí respondieron correctamente. El resultado no se reemplaza por datos de ejemplo. La cobertura real validada del catálogo será recalculada en cada corrida; se requieren más fuentes oficiales con calendario público para las 33 comunas.
+
+El filtro en `scrapers/quality.py` impide publicar convocatorias administrativas internas y eventos obtenidos de ticketeras nacionales sin comuna de origen verificable. El resto pasa a candidatos pendientes de revisión; no se elimina el enlace original ni se usa IA para inventar ciudad, recinto u horario. Para reactivar ticketing regional, incorporar prueba territorial y tests antes de quitar el bloqueo.
+
+## Estado real del proyecto (2026-10-03)
+
+> Las cifras de esta sección vienen de ejecutar el código, no de estimaciones.
+
+| Concepto | Valor | Cómo se obtuvo |
+|---|---|---|
+| Fuentes configuradas | **60** | `config/sources.json` |
+| Fuentes habilitadas | **45** | 15 deshabilitadas: dominio sin confirmar, Instagram, gremios sin URL de agenda |
+| Fuentes **verificadas en vivo** | **0** | El entorno de construcción bloquea la salida HTTP a esos dominios (proxy 403, también desde la herramienta de lectura web). |
+| Actualización real ejecutada | 45 intentadas, **0 OK**, 45 fallidas | `scrapers.runner.refresh()` ejecutado el 2026-10-03: 44 × «Tunnel connection failed: 403», 1 × «HTTP 403». |
+| Eventos rastreados | **0** | Consecuencia de lo anterior |
+| Eventos semilla | **5** | Verificados por búsqueda web (ver abajo) |
+| Eventos vigentes (≥ 2026-10-03) | **4** | `/api/status` |
+| Comunas con eventos cargados | **2 de 33** (Concepción, Tomé) | `/api/coverage` |
+
+**Los scrapers están escritos y probados con HTML de ejemplo (tests offline), pero NUNCA se ejecutaron con éxito contra ningún sitio real.** Pueden fallar ante la estructura real de cada sitio. En particular, si un sitio carga su cartelera con JavaScript, el scraper no verá eventos y lo reportará como 0, sin inventar nada.
+
+### Cómo se investigaron las fuentes
+
+Las URLs de `config/sources.json` se obtuvieron con búsquedas web el 2026-10-03. Cada fuente tiene:
+
+- `verified_live`: `true` solo si este proyecto hizo una petición HTTP real y respondió. Hoy es `false` en todas.
+- `url_evidence`: `observado_en_busqueda` (el dominio apareció en resultados reales), `resumen_de_busqueda` (solo en un resumen; baja confianza, p. ej. Hualpén), `conocimiento_previo` o `no_confirmado` (estas últimas suelen estar deshabilitadas).
+- `notes`: explicación del estado real.
+
+Municipalidades **sin dominio confirmado** (deshabilitadas hasta que alguien verifique la URL a mano): San Pedro de la Paz, Hualqui, Santa Juana, Curanilahue, Tirúa, Antuco, Laja, Quilaco, San Rosendo, Tucapel.
+
+### Eventos semilla
+
+`data/seed_events.json` contiene solo 5 eventos con fuente citable. Como no se pudo abrir ninguna página, cada dato se tomó de lo que el buscador mostraba de esa página; el campo `verification` explica cómo se comprobó cada uno:
+
+1. Inarbolece — 17-10-2026, 19:30, Teatro Biobío, Sala de Cámara ($7.000 / $5.000).
+2. Festival Internacional de Arpas — 17-10-2026, 19:00, Teatro Biobío, Sala Principal (gratis con inscripción).
+3. Día de la Música Chilena, homenaje a Cecilia — 04-10-2026, 15:00–21:00, Gimnasio Municipal de Tomé (entrada liberada).
+4. Mes de la Música, intervención en Plaza de la Independencia — 21-10-2026, **hora y precio por confirmar**, estado «Por confirmar» (el fragmento no mostraba el año explícito).
+5. VI Festival Fío-Fío — 23 al 30-09-2026 (**ya pasado**; se deja como ejemplo de evento no vigente).
+
+Verifícalos con el organizador antes de difundirlos.
+
+### Instagram
+
+No se hace scraping de Instagram (requiere login; no se evade login, CAPTCHA ni se usan cookies). Si hace falta contenido de Instagram, quien administre el proyecto debe aportar capturas de pantalla y cargarlas manualmente, por ejemplo con el formulario «Publica tu evento».
+
+## Fichas de evento sin datos estructurados (desde 24-10-2026)
+
+Aprobado por el responsable («publicar con resguardos»): además del JSON-LD, `scrapers/event_page.py`
+publica eventos desde la página individual de una fuente **oficial** (recinto, municipio o agregador
+oficial) que no trae datos estructurados. Salen con estado **«Por confirmar»** y la etiqueta
+«ficha sin datos estructurados». Resguardos:
+
+- Solo fichas individuales: nunca la portada, listados, categorías ni páginas con más de 15 fechas.
+  En municipios y agregadores la ruta debe tener una pista de evento (`/evento/`, `/actividad/`…).
+- Título propio de la página (`og:title`, luego `h1`, luego `<title>`), sin el sufijo del sitio y
+  distinto del nombre de la fuente.
+- Fecha vigente con año explícito, o sin año pero dentro de los próximos 90 días. Si el texto trae un
+  año que no coincide con la fecha («9 al 19 de diciembre | 2020»), se descarta.
+- Comuna fija del recinto, o detectada junto a la fecha en agregadores. Hora y precio solo si están en
+  el bloque de la fecha o sus vecinos; nunca se completan.
+- Siguen aplicando las cuarentenas de `scrapers/quality.py` (elecciones, ticketeras sin comuna).
+
+También se corrigió la lectura de años escritos tras una coma («28 de octubre, 2020»).
+
+## Eventos nacionales (desde 24-10-2026)
+
+`python3 actualizar.py --nacional` usa el mismo recolector y la misma política de calidad con
+`config/national_sources.json` (fuentes fuera del Biobío: ChileCultura, la agenda cultural del
+Ministerio de las Culturas y teatros o centros culturales de varias regiones) y las 346 comunas de
+`config/chile_communes.json` (fuente: paquete npm `chilean-territorial-divisions@1.0.1`, licencia MIT).
+Escribe `data/national_events.json`; cada evento y posible evento lleva la región de su comuna.
+El flujo del Biobío, su app local y `data/crawled_events.json` no cambian.
+
+- Ninguna fuente nacional está verificada en vivo todavía: los dominios salieron de búsquedas web
+  del 2026-10-24 (`url_evidence`) y se confirmarán en la primera corrida de GitHub Actions.
+- La comuna se toma primero de `addressLocality` del JSON-LD, para no confundir recintos como
+  «Plaza de la Independencia» con la comuna Independencia.
+- El workflow diario ejecuta el rastreo nacional después del regional y lo registra en un commit
+  aparte; si el nacional falla, el snapshot del Biobío ya quedó guardado.
+
+## Actualizar desde la nube (o desde cualquier equipo)
+
+`python3 actualizar.py` rastrea las fuentes habilitadas sin abrir la interfaz y escribe dos archivos **versionables**:
+
+- `data/crawled_events.json`: eventos rastreados con sus fuentes e historial de cambios, el resultado de cada fuente en la corrida, posibles eventos pendientes y fuentes candidatas.
+- `config/sources.json`: `verified_live` y `last_live_check` según lo que respondió **de verdad** cada fuente en esa corrida. Si una fuente antes verificada ahora falla, vuelve a `false`.
+
+Al arrancar, la app local carga `data/crawled_events.json` con la misma deduplicación que el resto de los datos (no se duplica aunque arranque muchas veces).
+
+El flujo previsto es este: una rutina en la nube ejecuta `actualizar.py`, hace commit y push de esos dos archivos, y tú haces `git pull` o descargas el repositorio para verlos en tu app local.
+
+Requisitos para que funcione en la nube:
+
+1. **Acceso a la red del entorno:** en el menú del entorno → *Edit* → *Network access*, elige acceso completo o *Custom* con los dominios de `config/sources.json` (<https://code.claude.com/docs/en/cloud-environments#network-access>). Sin esto, todas las fuentes fallan con «Tunnel connection failed: 403», como ocurrió el 2026-10-03.
+2. **Una rutina programada** (por ejemplo, diaria) con una instrucción como esta:
+
+   > En el repo medinacaj/eventos-biobio, rama claude/eventos-biobio-v1: ejecuta `python3 actualizar.py` y luego `python3 -m unittest discover -s tests -t .`. Si respondieron 0 fuentes, no hagas commit: informa el error. Si los tests pasan y alguna fuente respondió, haz commit de `data/crawled_events.json` y `config/sources.json` con el resumen que imprimió `actualizar.py`, y súbelo.
+
+`actualizar.py` no usa red en los tests (`tests/test_actualizar.py` usa un fetcher falso). **Al 2026-10-03 todavía no existe `data/crawled_events.json`**, porque no ha habido ninguna corrida con acceso a internet.
+
+## Arquitectura
+
+```
+app.py            ThreadingHTTPServer + API JSON sobre SQLite
+actualizar.py     rastreo sin interfaz -> data/crawled_events.json (para rutinas en la nube)
+launcher.py       puerto libre + abre navegador
+db.py             esquema SQLite, dedupe, consultas, cifras de estado/cobertura
+metadata.py       parsing de fecha/hora/precio en español, comuna, categoría
+images.py         imagen oficial (og:image, twitter:image, JSON-LD); nunca se generan
+discovery.py      carga/validación de fuentes y registro de fuentes candidatas
+config/sources.json, config/communes.json (33 comunas, coords aprox. de la cabecera)
+data/seed_events.json
+scrapers/         common, generic_events, deep_crawler, sitemap, rss, ticketing, runner
+static/           index.html, styles.css, state.js, filters.js, views.js, calendar.js,
+                  map.js, actions.js, details.js, submissions.js, admin.js, coverage.js, app.js
+tests/            unittest (sin red)
+```
+
+### Política de publicación del rastreo
+
+- Solo los datos **estructurados** (JSON-LD `schema.org/Event`) con título, fecha y comuna identificables se publican como eventos.
+- El texto con fechas, las notas de prensa y las fuentes `radar_only` (medios, ticketing nacional sin filtro regional) generan **posibles eventos** pendientes de revisión.
+- Los enlaces externos que parecen agendas se guardan como **fuentes candidatas**.
+- Se respeta `robots.txt`, con un User-Agent identificable y límites de páginas y profundidad por fuente.
+- Los envíos del formulario quedan siempre como «Pendiente de revisión»; nunca se publican solos.
+
+### Deduplicación (`db.find_duplicate`)
+
+Fusiona por fecha + comuna + similitud de título (`difflib`, umbral 0,85), **excepto** cuando:
+
+1. ambos horarios existen y difieren en **más de 60 minutos** (dos funciones distintas el mismo día);
+2. el contenido **entre paréntesis** difiere (`"Obra X"` vs `"Obra X (2ª función)"`).
+
+Al fusionar se conservan todas las fuentes en `sources_json`. Los cambios de título, fecha, horario, lugar, precio o estado se registran en `event_changes` (valor anterior, valor nuevo, fuente y fecha). Si una página de un solo evento cambia su fecha, el evento pasa a «Reprogramado». Una fuente de menor prioridad no sobrescribe datos de una fuente oficial.
+
+## API
+
+| Método | Ruta | Notas |
+|---|---|---|
+| GET | `/health` | |
+| GET | `/api/events` | filtros `date_from`, `date_to`, `commune`, `category`, `price_status`, `q` |
+| GET | `/api/events/<id>` | incluye historial de cambios |
+| GET | `/api/status` | cifras calculadas en la petición (semilla / rastreados / vigentes, fuentes configuradas / verificadas) |
+| GET | `/api/coverage` | matriz por comuna, calculada en la petición |
+| GET | `/api/communes`, `/api/sources`, `/api/possible-events`, `/api/source-candidates`, `/api/submissions`, `/api/source-runs` | |
+| POST | `/api/submissions` | valida y deja «Pendiente de revisión» |
+| POST | `/api/admin/refresh` | lanza el rastreo en segundo plano; con `ADMIN_TOKEN` exige `X-Admin-Token` |
+
+El servidor escucha solo en `127.0.0.1` por defecto.
+
+## Frontend
+
+Agenda (lista agrupada por fecha o tarjetas), calendario mensual con conteo por día, GeoMapa, guardados (localStorage, sin login), ficha con historial de cambios y exportación `.ics`, formulario «Publica tu evento» y panel de Administración con la matriz de cobertura real.
+
+**GeoMapa:** intenta cargar Leaflet 1.9.4 desde cdnjs.cloudflare.com con teselas de OpenStreetMap. Si el CDN no responde en 5 s, dibuja un mapa SVG interno con las 33 comunas coloreadas por su categoría dominante, sin depender de la red. En el entorno de construcción el CDN estaba bloqueado y **se comprobó el modo SVG** en Chromium; el modo Leaflet no se pudo probar.
+
+## Tests
+
+```
+python3 -m unittest discover -s tests -t .
+node --check static/*.js   # opcional, solo desarrollo
+```
+
+Cubren el esquema e inserción, la deduplicación (incluidos los dos casos límite), el parsing de fecha, hora y precio, la extracción de imagen, los scrapers con HTML/XML de ejemplo y un fetcher falso, la configuración, y un smoke test end-to-end que levanta el servidor real en un puerto local y prueba la API con `urllib`. Ninguno usa la red externa.
+
+Resultado de la última ejecución (2026-10-03): **66 tests, 66 OK, 0 fallos**.
+
+## Limitaciones conocidas
+
+- 0 fuentes verificadas en vivo; los scrapers no se han probado contra sitios reales.
+- Muchos sitios municipales publican eventos como noticias sin datos estructurados: solo producirán «posibles eventos» para revisión manual.
+- No existe todavía una pantalla para aprobar posibles eventos o envíos; hoy la revisión es de solo lectura en Administración.
+- Las coordenadas son de la cabecera comunal (precisión ~1–3 km), no del recinto.
+- La inferencia del año en fechas sin año asume el año actual, o el siguiente si la fecha quedó más de 60 días atrás.
+- La categoría se infiere por palabras clave y puede equivocarse.
+- Ticketing nacional (PuntoTicket, Passline, TuAcceso, PrimeTicket): sin filtro regional confirmado; se filtra por comuna detectada en el recinto o la dirección.

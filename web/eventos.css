@@ -1,0 +1,124 @@
+/* Radar RSS · Eventos: agenda pública integrada desde eventos-biobio.
+   Usa los tokens del sistema visual vigente (--surface, --line, --accent…). */
+body.radar-hybrid .events-view[hidden]{display:none}
+body.radar-hybrid .events-view{display:grid;gap:16px;min-width:0;font-family:var(--font-ui)}
+body.radar-hybrid .events-head h1{margin:6px 0 6px;font:750 clamp(28px,3vw,38px)/1.1 var(--font-editorial);color:var(--text);letter-spacing:-.02em}
+body.radar-hybrid .events-head p{margin:0;color:var(--muted);font-size:14px;line-height:1.5;max-width:70ch}
+body.radar-hybrid .events-head .events-status{margin-top:8px;font-size:13px}
+
+body.radar-hybrid .events-scope,
+body.radar-hybrid .events-tabs{display:flex;flex-wrap:wrap;gap:8px;min-width:0}
+body.radar-hybrid :is(.events-scope-btn,.events-tab){
+  display:inline-flex;align-items:center;gap:8px;min-height:40px;padding:8px 14px;
+  border:1px solid var(--line);border-radius:999px;background:var(--surface);color:var(--text);
+  font:650 13px/1.2 var(--font-ui);cursor:pointer;
+}
+body.radar-hybrid :is(.events-scope-btn,.events-tab).active{background:var(--text);color:var(--surface);border-color:var(--text)}
+body.radar-hybrid .events-pill{min-width:22px;padding:1px 7px;border-radius:999px;background:var(--surface2);color:var(--text);font:700 11px/1.5 var(--font-ui);text-align:center}
+body.radar-hybrid .active .events-pill{background:var(--surface);color:var(--text)}
+body.radar-hybrid .events-tabs{border-bottom:1px solid var(--line);padding-bottom:12px}
+body.radar-hybrid .events-tab{border-radius:9px}
+
+body.radar-hybrid .events-filters{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;align-items:end;min-width:0}
+body.radar-hybrid .events-filters[hidden]{display:none}
+body.radar-hybrid .events-field{display:grid;gap:5px;min-width:0}
+body.radar-hybrid .events-field-q{grid-column:span 2}
+body.radar-hybrid .events-field span{font:650 12px/1.2 var(--font-ui);color:var(--muted)}
+body.radar-hybrid .events-field :is(input,select){
+  width:100%;min-width:0;min-height:42px;padding:9px 11px;border:1px solid var(--line);border-radius:9px;
+  background:var(--surface);color:var(--text);font:600 13px/1.3 var(--font-ui);
+}
+body.radar-hybrid .events-reset{min-height:42px;padding:8px 14px;border:1px solid var(--line);border-radius:9px;background:var(--surface);color:var(--text);font:650 13px/1.2 var(--font-ui);cursor:pointer}
+body.radar-hybrid .events-count{margin:0;color:var(--muted);font-size:13px}
+body.radar-hybrid .events-panel[hidden]{display:none}
+body.radar-hybrid .events-empty{padding:28px 16px;border:1px dashed var(--line);border-radius:12px;text-align:center;color:var(--muted);margin:0}
+body.radar-hybrid .events-note{margin:8px 0 0;color:var(--muted);font-size:12px;line-height:1.5}
+
+/* Agenda agrupada por día */
+body.radar-hybrid .event-day{display:grid;gap:8px;margin-bottom:18px}
+body.radar-hybrid .event-day-head{display:flex;justify-content:space-between;gap:10px;margin:0;padding:8px 0;border-bottom:2px solid var(--text);font:750 15px/1.3 var(--font-ui);color:var(--text)}
+body.radar-hybrid .event-day-count{font-weight:600;color:var(--muted);font-size:12px;white-space:nowrap}
+body.radar-hybrid .event-row{
+  display:grid;grid-template-columns:76px minmax(0,1fr) auto;gap:12px;align-items:start;
+  padding:12px;border:1px solid var(--line);border-radius:12px;background:var(--card,var(--surface));
+}
+body.radar-hybrid .event-row.is-cancelled .event-title{text-decoration:line-through}
+body.radar-hybrid .event-row.is-gone{align-items:center;opacity:.75}
+body.radar-hybrid .event-time{display:grid;gap:2px;color:var(--text);font-size:15px}
+body.radar-hybrid .event-time small{color:var(--muted);font-size:11px;line-height:1.25}
+body.radar-hybrid .event-body{display:grid;gap:5px;min-width:0}
+body.radar-hybrid .event-title{margin:0;font:700 15px/1.35 var(--font-ui);color:var(--text);overflow-wrap:break-word}
+body.radar-hybrid .event-open{all:unset;cursor:pointer;color:inherit}
+body.radar-hybrid .event-open:hover{text-decoration:underline}
+body.radar-hybrid .event-open:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:4px}
+body.radar-hybrid .event-meta,
+body.radar-hybrid .event-source{margin:0;color:var(--muted);font-size:13px;line-height:1.4}
+body.radar-hybrid .event-source{font-size:12px}
+body.radar-hybrid .event-badges{display:flex;flex-wrap:wrap;gap:5px}
+body.radar-hybrid .event-badge{padding:2px 8px;border-radius:999px;border:1px solid var(--line);background:var(--surface2);color:var(--text);font:650 11px/1.5 var(--font-ui)}
+body.radar-hybrid .event-badge.official{border-color:var(--accent);color:var(--accent)}
+body.radar-hybrid .event-badge.free{border-color:currentColor}
+body.radar-hybrid .event-badge.pending{border-style:dashed}
+body.radar-hybrid .event-badge.cancelled{background:var(--text);color:var(--surface)}
+body.radar-hybrid .event-save{
+  display:grid;place-items:center;width:44px;height:44px;border:1px solid var(--line);border-radius:10px;
+  background:var(--surface);color:var(--text);font-size:20px;cursor:pointer;
+}
+body.radar-hybrid .event-save[aria-pressed="true"]{color:var(--accent);border-color:var(--accent)}
+
+/* Calendario */
+body.radar-hybrid .events-cal-bar{display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap}
+body.radar-hybrid .events-cal-bar h2{margin:0;flex:1;font:750 18px/1.2 var(--font-ui);color:var(--text);text-align:center}
+body.radar-hybrid .events-cal-nav{width:44px;height:44px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--text);font-size:20px;cursor:pointer}
+body.radar-hybrid .events-cal-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px;margin-bottom:16px}
+body.radar-hybrid .events-cal-head{text-align:center;font:700 11px/1.5 var(--font-ui);color:var(--muted);text-transform:uppercase}
+body.radar-hybrid .events-cal-day{
+  position:relative;min-height:56px;padding:6px;border:1px solid var(--line);border-radius:9px;
+  background:var(--surface);color:var(--text);text-align:left;cursor:pointer;font:600 13px/1 var(--font-ui);
+}
+body.radar-hybrid .events-cal-day.has-events{border-color:var(--accent)}
+body.radar-hybrid .events-cal-day.is-today .events-cal-num{text-decoration:underline;text-underline-offset:3px}
+body.radar-hybrid .events-cal-day.is-selected{background:var(--text);color:var(--surface)}
+body.radar-hybrid .events-cal-count{position:absolute;right:5px;bottom:5px;min-width:20px;padding:2px 5px;border-radius:999px;background:var(--accent);color:#fff;font:700 11px/1.2 var(--font-ui);text-align:center}
+
+/* Por comuna / región */
+body.radar-hybrid .events-places-intro{margin:0 0 12px;color:var(--muted);font-size:13px}
+body.radar-hybrid .events-places-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px}
+body.radar-hybrid .events-place{display:grid;gap:3px;min-height:56px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--text);text-align:left;cursor:pointer;font-family:var(--font-ui)}
+body.radar-hybrid .events-place strong{font-size:14px}
+body.radar-hybrid .events-place span{font-size:12px;color:var(--muted)}
+body.radar-hybrid .events-place.is-empty{opacity:.65}
+
+/* Ficha */
+.event-dialog{width:min(640px,calc(100vw - 24px));max-height:calc(100vh - 32px);padding:0;border:1px solid var(--line);border-radius:16px;background:var(--surface);color:var(--text)}
+.event-dialog::backdrop{background:rgba(10,14,18,.55)}
+.event-dialog[open]{display:flex;flex-direction:column}
+.event-dialog-head{display:flex;justify-content:space-between;gap:12px;padding:18px 20px 12px;border-bottom:1px solid var(--line)}
+.event-dialog-head h2{margin:4px 0 8px;font:750 21px/1.25 var(--font-ui,system-ui)}
+.event-dialog-kicker{margin:0;color:var(--muted);font-size:13px}
+.event-dialog-close{display:grid;place-items:center;width:44px;height:44px;flex:0 0 44px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--text);cursor:pointer}
+.event-dialog-body{overflow:auto;padding:14px 20px;display:grid;gap:10px;font-size:14px;line-height:1.5}
+.event-dialog-body h3{margin:8px 0 0;font-size:14px}
+.event-image{width:100%;max-height:240px;object-fit:cover;border-radius:10px}
+.event-facts{display:grid;grid-template-columns:max-content 1fr;gap:6px 14px;margin:0}
+.event-facts dt{color:var(--muted);font-weight:650}
+.event-facts dd{margin:0;overflow-wrap:anywhere}
+.event-sources,.event-history{margin:0;padding-left:18px}
+.event-sources a{color:var(--accent);text-decoration:underline}
+.event-disclaimer{margin:4px 0 0;color:var(--muted);font-size:12px}
+.event-dialog-actions{display:flex;flex-wrap:wrap;gap:8px;padding:12px 20px 16px;border-top:1px solid var(--line)}
+.event-dialog-actions>*{min-height:44px}
+.event-dialog-actions [hidden]{display:none}
+
+@media(max-width:720px){
+  body.radar-hybrid .events-field-q{grid-column:1/-1}
+  body.radar-hybrid .events-filters{grid-template-columns:repeat(2,minmax(0,1fr))}
+  body.radar-hybrid .event-row{grid-template-columns:56px minmax(0,1fr) auto;gap:10px;padding:10px}
+  body.radar-hybrid .events-cal-day{min-height:44px;padding:4px}
+  body.radar-hybrid .events-cal-count{right:3px;bottom:3px;min-width:16px;font-size:10px}
+  .event-facts{grid-template-columns:1fr}
+  .event-facts dd{margin-bottom:6px}
+}
+@media(max-width:380px){
+  body.radar-hybrid .events-filters{grid-template-columns:minmax(0,1fr)}
+}

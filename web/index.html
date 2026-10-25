@@ -43,6 +43,7 @@
   <link rel="stylesheet" href="./home-editorial.css?v=1.0.0">
   <link rel="stylesheet" href="./cosmic-theme.css?v=1.0.0">
   <link rel="stylesheet" href="./iaadc-editorial.css?v=1.0.2">
+  <link rel="stylesheet" href="./eventos.css?v=1.0.0">
   <title>Radar RSS — Actualidad en un solo lugar</title>
 </head>
 <body class="radar-hybrid" data-columns="4">
@@ -218,10 +219,65 @@
           <div id="articleGrid" class="article-grid" aria-live="polite"></div>
           <div class="load-more-wrap"><button id="loadMore" class="load-more" type="button" hidden>Cargar más noticias <span class="ui-icon-slot" data-icon="arrow-down" aria-hidden="true"></span></button></div>
         </section>
+        <section class="events-view" id="eventsView" aria-labelledby="eventsTitle" hidden>
+          <header class="events-head">
+            <span class="section-eyebrow">AGENDA PÚBLICA</span>
+            <h1 id="eventsTitle">Eventos</h1>
+            <p>Cultura, música, teatro, ferias y actividades comunitarias publicadas por recintos, municipios y agendas oficiales. Verifica siempre con el organizador.</p>
+            <p class="events-status" id="eventsStatus" role="status">Cargando eventos…</p>
+          </header>
+          <div class="events-scope" role="group" aria-label="Zona">
+            <button type="button" class="events-scope-btn active" data-scope="biobio" aria-pressed="true">Región del Biobío <span class="events-pill" id="eventsCountBiobio">0</span></button>
+            <button type="button" class="events-scope-btn" data-scope="nacional" aria-pressed="false">Todo Chile <span class="events-pill" id="eventsCountNacional">0</span></button>
+          </div>
+          <nav class="events-tabs" aria-label="Vistas de eventos">
+            <button type="button" class="events-tab active" data-events-view="agenda" aria-current="page">Agenda</button>
+            <button type="button" class="events-tab" data-events-view="calendar" aria-current="false">Calendario</button>
+            <button type="button" class="events-tab" data-events-view="places" aria-current="false">Por comuna</button>
+            <button type="button" class="events-tab" data-events-view="saved" aria-current="false">Guardados <span class="events-pill" id="eventsSavedCount">0</span></button>
+          </nav>
+          <form class="events-filters" id="eventsFilters" role="search" aria-label="Filtrar eventos">
+            <label class="events-field events-field-q"><span>Buscar</span><input id="eventsQuery" type="search" placeholder="Título, lugar, comuna…" autocomplete="off"></label>
+            <label class="events-field"><span id="eventsPlaceLabel">Comuna</span><select id="eventsPlace"><option value="">Todas</option></select></label>
+            <label class="events-field"><span>Categoría</span><select id="eventsCategory"><option value="">Todas</option><option>Cultura</option><option>Comunidad</option><option>Empresarial</option></select></label>
+            <label class="events-field"><span>Precio</span><select id="eventsPrice"><option value="">Todos</option><option value="free">Gratis</option><option value="paid">Pagado</option><option value="pending">Por confirmar</option></select></label>
+            <label class="events-field"><span>Desde</span><input id="eventsFrom" type="date"></label>
+            <label class="events-field"><span>Hasta</span><input id="eventsTo" type="date"></label>
+            <button type="reset" class="events-reset" id="eventsReset">Limpiar</button>
+          </form>
+          <p class="events-count" id="eventsCount" aria-live="polite"></p>
+          <div class="events-panel" id="eventsAgenda"></div>
+          <div class="events-panel" id="eventsCalendar" hidden>
+            <div class="events-cal-bar">
+              <button type="button" id="eventsCalPrev" class="events-cal-nav" aria-label="Mes anterior">‹</button>
+              <h2 id="eventsCalTitle"></h2>
+              <button type="button" id="eventsCalNext" class="events-cal-nav" aria-label="Mes siguiente">›</button>
+              <button type="button" id="eventsCalToday" class="events-reset">Hoy</button>
+            </div>
+            <div class="events-cal-grid" id="eventsCalGrid"></div>
+            <div id="eventsCalDay"></div>
+          </div>
+          <div class="events-panel" id="eventsPlaces" hidden></div>
+          <div class="events-panel" id="eventsSaved" hidden></div>
+          <p class="events-note">Los eventos se rastrean una vez al día desde fuentes públicas y respetan robots.txt. Las fichas marcadas «Por confirmar» salieron de páginas sin datos estructurados: hora, lugar o precio pueden faltar y nunca se completan a mano. Guardados se conserva solo en este navegador.</p>
+        </section>
       </main>
       <footer class="footer"><span>RADAR RSS <span class="footer-separator">·</span> Una aplicación independiente de lectura de fuentes públicas.</span><span>Créditos y derechos de los artículos pertenecen a sus respectivos medios. <a href="#info" id="footerInfo">Cómo funciona</a></span></footer>
     </div>
   </div>
+  <dialog id="eventDialog" class="event-dialog" aria-labelledby="eventDialogTitle">
+    <div class="event-dialog-head">
+      <div><p class="event-dialog-kicker" id="eventDialogKicker"></p><h2 id="eventDialogTitle">Evento</h2><div id="eventDialogBadges" class="event-badges"></div></div>
+      <button type="button" id="eventDialogClose" class="event-dialog-close" aria-label="Cerrar evento"><span data-icon="x" class="ui-icon-slot" aria-hidden="true"></span></button>
+    </div>
+    <div class="event-dialog-body" id="eventDialogBody"></div>
+    <div class="event-dialog-actions">
+      <button type="button" id="eventSave" class="reader-secondary">Guardar</button>
+      <button type="button" id="eventIcs" class="reader-secondary">Añadir a mi calendario</button>
+      <button type="button" id="eventShare" class="reader-secondary">Compartir</button>
+      <a id="eventSource" class="reader-primary" href="#" target="_blank" rel="noopener noreferrer external" referrerpolicy="no-referrer">Ver en la fuente</a>
+    </div>
+  </dialog>
   <dialog id="articleReaderDialog" class="article-reader-dialog" aria-labelledby="readerTitle" aria-describedby="readerNote">
     <div class="reader-topbar">
       <span class="reader-eyebrow"><span data-icon="newspaper" class="ui-icon-slot" aria-hidden="true"></span> Vista previa de la noticia</span>
@@ -380,5 +436,6 @@
   <script src="./features.js?v=1.0.0" defer></script>
   <script src="./v12.js?v=1.2.5" defer></script>
   <script src="./v13.js?v=1.4.0" defer></script>
+  <script src="./eventos.js?v=1.0.0" defer></script>
 </body>
 </html>

@@ -1,0 +1,74 @@
+name: Rastrear eventos (Biobío y Chile)
+
+# Rastreo diario de agendas públicas de eventos (antes en medinacaj/eventos-biobio).
+# No publica ni hace commits: deja los snapshots como artefacto y el workflow
+# «Actualizar noticias y publicar» los incorpora a GitHub Pages.
+on:
+  workflow_dispatch:
+  schedule:
+    # Todos los días 11:35 UTC; GitHub puede retrasar el cron.
+    - cron: '35 11 * * *'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: radar-eventos-rastreo
+  cancel-in-progress: false
+
+jobs:
+  rastrear:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Descargar código
+        uses: actions/checkout@v4
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Validar recolector sin red
+        run: python -m unittest discover -s eventos/tests -t eventos -v
+      - name: Recuperar el último snapshot publicado (continuidad del historial)
+        run: python eventos/publicar_web.py recover
+      - name: Rastreo de fuentes del Biobío
+        id: biobio
+        continue-on-error: true
+        run: |
+          cp eventos/data/crawled_events.json "$RUNNER_TEMP/biobio-anterior.json"
+          python eventos/actualizar.py --workers 4
+          if ! python eventos/scripts/check_snapshot.py eventos/data/crawled_events.json eventos/config/communes.json; then
+            echo "Sin evidencia HTTP verificable: se conserva el snapshot anterior del Biobío" >&2
+            cp "$RUNNER_TEMP/biobio-anterior.json" eventos/data/crawled_events.json
+            exit 1
+          fi
+          python eventos/scripts/report_coverage.py eventos/data/crawled_events.json eventos/config/communes.json eventos/config/sources.json eventos/reports/coverage.md
+          cat eventos/reports/coverage.md >> "$GITHUB_STEP_SUMMARY"
+      - name: Rastreo nacional
+        id: nacional
+        continue-on-error: true
+        run: |
+          cp eventos/data/national_events.json "$RUNNER_TEMP/nacional-anterior.json"
+          python eventos/actualizar.py --nacional --workers 4
+          if ! python eventos/scripts/check_snapshot.py eventos/data/national_events.json eventos/config/chile_communes.json; then
+            echo "Sin evidencia HTTP verificable: se conserva el snapshot nacional anterior" >&2
+            cp "$RUNNER_TEMP/nacional-anterior.json" eventos/data/national_events.json
+            exit 1
+          fi
+      - name: Exigir al menos un rastreo válido
+        if: ${{ steps.biobio.outcome != 'success' && steps.nacional.outcome != 'success' }}
+        run: |
+          echo "Ningún rastreo obtuvo respuestas HTTP verificables; no se entrega artefacto." >&2
+          exit 1
+      - name: Entregar snapshots al workflow de publicación
+        uses: actions/upload-artifact@v4
+        with:
+          name: radar-eventos
+          path: |
+            eventos/data/crawled_events.json
+            eventos/data/national_events.json
+            eventos/config/sources.json
+            eventos/config/national_sources.json
+            eventos/reports/coverage.md
+          retention-days: 30
+          if-no-files-found: error
