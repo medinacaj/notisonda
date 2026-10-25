@@ -15,7 +15,7 @@ class CosmicThemeTests(unittest.TestCase):
     def test_css_loaded_after_layout_overrides(self):
         self.assertLess(self.html.index('home-editorial.css?v='),self.html.index('cosmic-theme.css?v='))
         self.assertIn("'./cosmic-theme.css'",self.sw)
-        self.assertIn('radar-rss-v33',self.sw)
+        self.assertIn('radar-rss-v34',self.sw)
 
     def test_cosmic_palette_and_primary_action(self):
         for token in ('--bg:#0e0f2d','--accent:#5865f2','--text:#ffffff',

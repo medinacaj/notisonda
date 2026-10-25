@@ -18,21 +18,24 @@ class ExpandedCatalogTests(unittest.TestCase):
         self.sources = parse_opml(ROOT / 'sources/feeds.opml')
 
     def test_new_folders_have_local_and_international_channels(self):
-        self.assertEqual(len(self.sources), 226)
+        self.assertEqual(len(self.sources), 221)
         self.assertEqual(sum(s['category'] == '08 - Maturín / Monagas' for s in self.sources), 6)
-        self.assertEqual(sum(s['category'] == '09 - Cultura y entretenimiento internacional' for s in self.sources), 9)
+        self.assertEqual(sum(s['category'].startswith('09 -') for s in self.sources), 0)
         self.assertEqual(audit(ROOT / 'sources/feeds.opml')['problem_count'], 0)
 
     def test_original_211_entries_are_unchanged(self):
-        originals = [s for s in self.sources if s['category'][:2] in {'01','02','03','04','05','06','07'}]
+        records = json.loads((ROOT / 'sources/discovery-verification.json').read_text())['sources']
+        additions = {record['feed'] for record in records}
+        originals = [s for s in self.sources if s['url'] not in additions]
         digest = hashlib.sha256(json.dumps(originals, ensure_ascii=False, sort_keys=True).encode()).hexdigest()
         self.assertEqual(digest, '2e34363f0a62c2e6d348850216a19bf1921db26eb7c4b1ec83b513093b6f303c')
 
     def test_discovery_records_are_explicitly_unverified_and_match_catalog(self):
         records = json.loads((ROOT / 'sources/discovery-verification.json').read_text())['sources']
-        new = [s for s in self.sources if s['category'].startswith(('08 -', '09 -'))]
+        recorded = {record['feed'] for record in records}
+        new = [s for s in self.sources if s['url'] in recorded]
         self.assertEqual({s['url'] for s in new}, {r['feed'] for r in records})
-        self.assertEqual(len(records), 15)
+        self.assertEqual(len(records), 10)
         for record in records:
             self.assertEqual(record['status'], 'pendiente_conectividad')
             self.assertIsNone(record['entries_observed'])
@@ -43,10 +46,25 @@ class ExpandedCatalogTests(unittest.TestCase):
             self.assertEqual(query, record['query'])
             self.assertNotIn('gl=CL', record['feed'])
 
+    def test_spanish_cultural_channels_are_in_international_and_keep_ids(self):
+        records = json.loads((ROOT / 'sources/discovery-verification.json').read_text())['sources']
+        culture = [record for record in records if record['category'] == '03 - Internacionales']
+        self.assertEqual(len(culture), 4)
+        self.assertEqual({urlsplit(record['website']).hostname for record in culture},
+                         {'www.bbc.com', 'efe.com', 'elpais.com', 'es.euronews.com'})
+        by_url = {source['url']: source for source in self.sources}
+        for record in culture:
+            source = by_url[record['feed']]
+            self.assertEqual(source['category'], '03 - Internacionales')
+            self.assertEqual(source['id'], hashlib.sha256(record['feed'].encode()).hexdigest()[:16])
+            self.assertEqual(parse_qs(urlsplit(source['url']).query)['hl'], ['es'])
+        self.assertFalse(any(parse_qs(urlsplit(source['url']).query).get('hl') == ['en-US']
+                             for source in by_url.values() if source['url'] in {r['feed'] for r in records}))
+
     def test_generated_catalog_matches_opml(self):
         data = json.loads((ROOT / 'web/data/sources.json').read_text())
         self.assertEqual(data['sources'], self.sources)
-        self.assertEqual(len(data['categories']), 9)
+        self.assertEqual(len(data['categories']), 8)
 
     def test_monagas_is_venezuelan_and_culture_is_not_a_geographic_subset(self):
         script = """

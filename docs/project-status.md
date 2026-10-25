@@ -65,3 +65,8 @@ Rama `feat/radar-noticias-personalizacion-20261024`, incluye las correcciones de
 - PR #96: enlace público y referencia Git no accesibles en el repositorio seleccionado; la consulta API de ese PR devolvió Forbidden. Se solicitó URL completa, no se ha aplicado un PR supuesto.
 
 Revisión publicada como borrador: https://github.com/medinacaj/radar-rss-publico/pull/89. No fusionado ni desplegado. La creación del PR propio sí funcionó; el acceso al PR96 sigue sin acreditarse.
+
+
+## Ajuste solicitado: cultura en español
+
+Se elimina la carpeta independiente de Cultura y entretenimiento internacional. Sus cuatro canales en español (BBC Mundo, EFE, El País y Euronews) pasan a Internacionales, conservando IDs y URL. Se retiran los cinco canales anglófonos de esa selección. Total: 221 fuentes en ocho carpetas. El historial se reclasifica con el catálogo vigente para evitar referencias a la carpeta eliminada.

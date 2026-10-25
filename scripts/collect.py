@@ -710,6 +710,7 @@ def collect(opml: Path, out: Path, days: int, workers: int, max_per_feed: int, *
         item['source_ids'] = [sid for sid in item.get('source_ids', []) if sid in valid_ids]
         if not item['source_ids']:
             continue
+        item['categories'] = list(dict.fromkeys(catalog[sid]['category'] for sid in item['source_ids']))
         key = item.get('id')
         if not key:
             continue
@@ -731,6 +732,8 @@ def collect(opml: Path, out: Path, days: int, workers: int, max_per_feed: int, *
             item['first_seen_at'] = previous.get('first_seen_at', item['first_seen_at'])
         if alternatives:
             item['also_in'] = retained_alternatives(item, alternatives, valid_ids)
+            for alternative in item['also_in']:
+                alternative['category'] = catalog[alternative['source_id']]['category']
         merged[key] = item
 
     ordered = sorted(merged.values(), key=lambda i: (i.get('published_at') or i.get('first_seen_at') or ''), reverse=True)

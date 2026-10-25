@@ -51,8 +51,8 @@
   renderDashboard=function(...args){
     const result=dashboardBase(...args);
     const items=dashboardEligible(), chosen=[],seenCategories=new Set();
-    // Reserve international and culture slots only among eligible articles.
-    for(const prefix of ['03','09']){
+    // Reserve an international slot only among eligible articles.
+    for(const prefix of ['03']){
       const story=items.find(item=>(item.categories||[]).some(cat=>cat.startsWith(prefix+' -'))&&!chosen.some(row=>row.id===item.id));
       if(story){chosen.push(story);seenCategories.add((story.categories||[])[0]);}
     }

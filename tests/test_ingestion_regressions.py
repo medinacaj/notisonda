@@ -107,6 +107,23 @@ class IngestionRegressionTests(unittest.TestCase):
         self.assertEqual(items[0].get('also_in', []), [])
         self.assertEqual(items[0]['coverage'], 1)
 
+    def test_cached_articles_follow_current_source_folders_after_a_move(self):
+        specs = [('MEDIO — Diario A', 'https://a.example/rss'),
+                 ('MEDIO — Diario B', 'https://b.example/rss')]
+        def cached(sources):
+            lead = collect.make_item({'title': 'Estreno cultural', 'link': 'https://a.example/story'},
+                                     sources[0], datetime.now(timezone.utc))
+            lead['categories'] = ['09 - Cultura y entretenimiento internacional']
+            lead['source_ids'].append(sources[1]['id'])
+            lead['also_in'] = [{'id': 'alternative', 'url': 'https://b.example/story',
+                                'title': 'Otro titular', 'publisher': 'Diario B',
+                                'source_id': sources[1]['id'],
+                                'category': '09 - Cultura y entretenimiento internacional'}]
+            return [lead]
+        items, _ = self.run_collection(specs, {}, cached)
+        self.assertEqual(items[0]['categories'], ['04 - Chile'])
+        self.assertEqual(items[0]['also_in'][0]['category'], '04 - Chile')
+
     def test_distinct_direct_outlets_still_count_as_two_media(self):
         specs = [('MEDIO — Diario A', 'https://a.example/rss'),
                  ('MEDIO — Diario B', 'https://b.example/rss')]

@@ -9,11 +9,10 @@ import responsive_smoke as fixtures
 
 
 def main():
-    # Nine sections all have stories; culture is older than the other sections.
-    # It must still receive one visible editorial slot without bypassing preferences.
-    fixtures.CATEGORIES = (*fixtures.CATEGORIES, '08 - Monagas', '09 - Cultura')
+    # Spanish culture sources share International; no separate ninth folder.
+    fixtures.CATEGORIES = (*fixtures.CATEGORIES, '08 - Monagas')
     for index in (7, 8):
-        category = fixtures.CATEGORIES[index]
+        category = fixtures.CATEGORIES[7 if index == 7 else 2]
         fixtures.SOURCES.append({'id': f'medio-{index}', 'name': f'Medio de referencia {index}',
                                  'category': category, 'url': 'https://example.com/rss',
                                  'website': 'https://example.com', 'is_radar': False})
@@ -48,7 +47,8 @@ def main():
                 expect(page.locator('#latestCarouselNext')).to_be_visible()
                 assert page.locator('#dashboardRecent .dashboard-recent-row').count() >= 3
                 assert page.locator('#dashboardRecent .dashboard-recent-row').first.get_attribute('data-topic') == '3'
-                assert page.locator('#dashboardRecent .dashboard-recent-row').nth(1).get_attribute('data-topic') == '9'
+                assert page.locator('#libraryFolderNav .system-folder-link').count() == 8
+                assert page.locator('#libraryFolderNav [data-topic="9"]').count() == 0
                 assert page.locator('#dashboardRecent .dashboard-recent-row[data-topic="4"]').count() >= 1
                 expect(page.locator('#dashboardRecent .latest-news-image').first).to_have_js_property('naturalWidth', 400)
                 dims = page.locator('#dashboardRecent').evaluate('n => ({width:n.clientWidth,card:n.firstElementChild.getBoundingClientRect().width})')
@@ -69,12 +69,15 @@ def main():
                 page.locator('#coverageTools > summary').click()
                 page.evaluate('window.scrollTo(0,0)')
                 page.screenshot(path=str(screenshots / f'homepage-{width}.png'), full_page=True)
+                page.evaluate("goTo('03 - Internacionales')")
+                expect(page.locator('#articleGrid [data-article-id="noticia-extra-8"]')).to_be_visible()
                 # Hiding a source wins over editorial placement.
                 page.evaluate("localStorage.setItem('radar-hidden-sources', JSON.stringify(['medio-8']))")
                 page.reload()
-                expect(page.locator('#dashboardRecent .dashboard-recent-row').first).to_be_visible()
-                assert page.locator('#dashboardRecent .dashboard-recent-row[data-topic="9"]').count() == 0
-                # An explicit personal homepage also wins over international/culture placement.
+                expect(page.locator('#articleGrid .article-card').first).to_be_visible()
+                assert page.locator('#articleGrid [data-article-id="noticia-extra-8"]').count() == 0
+                page.evaluate("location.hash = '#inicio'")
+                # An explicit personal homepage also wins over editorial placement.
                 page.evaluate("localStorage.setItem('radar-v12-preferences', JSON.stringify({mine:true,categories:['04 - Chile'],briefing:'mine'}))")
                 page.reload()
                 expect(page.locator('#dashboardRecent .dashboard-recent-row').first).to_be_visible()
