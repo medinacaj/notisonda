@@ -715,7 +715,7 @@ def main():
                         page.locator("#sourceSelect").select_option("")
                         page.locator(".v12-saved-open").first.click()
                         assert page.locator("#v12Date").input_value() == "7"
-                        assert page.locator("#sourceSelect").input_value() == "medio-3"
+                        expect(page.locator("#sourceSelect")).to_have_value("medio-3")
                         page.locator(".v12-search-remove").first.click()
                         assert page.locator(".v12-saved-open").count() == 0
                         # Búsquedas antiguas con «geo: chile» deben poderse abrir
@@ -732,7 +732,7 @@ def main():
                         page.locator(".v12-saved-open").first.click()
                         page.wait_for_url("**/#region/chile")
                         expect(page.locator("#feedHeading")).to_have_text("Chile")
-                        assert page.locator("#sourceSelect").input_value() == "medio-3"
+                        expect(page.locator("#sourceSelect")).to_have_value("medio-3")
                         # Restaurar el ámbito Chile conserva disponible Concepción,
                         # incluso cuando la búsqueda elige una fuente específica.
                         assert page.locator('#sourceSelect option[value="medio-6"]').count() == 1
