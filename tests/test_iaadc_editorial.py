@@ -17,7 +17,7 @@ class IAADCEditorialThemeTests(unittest.TestCase):
     def test_theme_is_last_stylesheet_and_cached(self):
         self.assertLess(self.html.index('cosmic-theme.css?v='),self.html.index('iaadc-editorial.css?v='))
         self.assertIn("'./iaadc-editorial.css'",self.sw)
-        self.assertIn("const CACHE = 'radar-rss-v30'",self.sw)
+        self.assertIn("const CACHE = 'radar-rss-v33'",self.sw)
 
     def test_iaadc_exact_light_palette_and_font(self):
         for value in (
@@ -56,11 +56,11 @@ class IAADCEditorialThemeTests(unittest.TestCase):
         self.assertIn('data-card-action="read"',self.html)
         self.assertIn('data-card-action="share"',self.html)
 
-    def test_respect_manual_theme_and_light_default(self):
+    def test_respect_manual_theme_and_system_default(self):
         start=self.app.index("function initialTheme()")
         end=self.app.index("const state =",start)
         initial=self.app[start:end]
-        self.assertIn("return 'light';",initial)
+        self.assertIn("return 'system';",initial)
         self.assertIn("THEME_EXPLICIT_KEY",initial)
         self.assertIn("['system','light','dark']",initial)
 

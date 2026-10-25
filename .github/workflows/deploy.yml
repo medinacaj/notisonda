@@ -30,6 +30,8 @@ concurrency:
 
 jobs:
   build:
+    outputs:
+      generation: ${{ steps.generation.outputs.value }}
     runs-on: ubuntu-latest
     timeout-minutes: 18
     steps:
@@ -89,6 +91,14 @@ jobs:
         run: python scripts/collect.py --opml sources/feeds.opml --out web/data --days 45 --workers 8 --image-fallback
       - name: Validar JSON antes de publicar
         run: python scripts/validate_data.py web/data
+      - name: Registrar generación esperada
+        id: generation
+        run: |
+          python - <<'PYGEN' >> "$GITHUB_OUTPUT"
+          import json
+          from pathlib import Path
+          print("value=" + json.loads(Path("web/data/meta.json").read_text())["generated_at"])
+          PYGEN
       - name: Preparar auditoría editorial orientativa
         run: |
           python scripts/audit_editorial.py web/data --report editorial-audit.md
@@ -132,5 +142,6 @@ jobs:
         uses: actions/deploy-pages@v4
       - name: Comprobar publicación de noticias y estado RSS
         env:
+          RADAR_EXPECTED_GENERATION: ${{ needs.build.outputs.generation }}
           RADAR_PAGE_URL: ${{ steps.deployment.outputs.page_url }}
-        run: python scripts/check_pages.py "$RADAR_PAGE_URL" --attempts 8 --delay 15
+        run: python scripts/check_pages.py "$RADAR_PAGE_URL" --attempts 8 --delay 15 --expected-generation "$RADAR_EXPECTED_GENERATION"

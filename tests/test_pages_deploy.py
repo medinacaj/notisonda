@@ -37,10 +37,42 @@ def fetcher(files):
 class DeploymentTests(unittest.TestCase):
     BASE = "https://example.github.io/radar-rss-publico/"
 
+    def test_previous_generation_rejected_even_when_recent(self):
+        with self.assertRaisesRegex(ValueError, "esperada"):
+            verify(self.BASE, fetcher(payloads()), now=NOW,
+                   expected_generation="2026-10-20T10:30:00Z")
+
+    def test_expected_generation_accepted(self):
+        result = verify(self.BASE, fetcher(payloads()), now=NOW, expected_generation=STAMP)
+        self.assertEqual(result["generated_at"], STAMP)
+
     def test_valid_generated_pages(self):
         result = verify(self.BASE, fetcher(payloads()), now=NOW)
         self.assertEqual(result["sources"], 178)
         self.assertEqual(result["news"], 8)
+
+    def test_additional_opml_folders_are_accepted(self):
+        for count in (1, 5, 7, 8):
+            with self.subTest(categories=count):
+                files = payloads()
+                files["data/sources.json"]["categories"] = [f"folder-{i}" for i in range(count)]
+                self.assertEqual(verify(self.BASE, fetcher(files), now=NOW)["sources"], 178)
+
+    def test_duplicate_folders_are_rejected(self):
+        files = payloads()
+        files["data/sources.json"]["categories"][-1] = "folder-0"
+        with self.assertRaisesRegex(ValueError, "carpetas OPML"):
+            verify(self.BASE, fetcher(files), now=NOW)
+
+    def test_empty_or_invalid_folders_are_rejected(self):
+        for categories in ([], None, "folder-0",
+                           ["folder-0", "folder-1", "folder-2", "folder-3", "folder-4", ""],
+                           ["folder-0", "folder-1", "folder-2", "folder-3", "folder-4", None]):
+            with self.subTest(categories=categories):
+                files = payloads()
+                files["data/sources.json"]["categories"] = categories
+                with self.assertRaisesRegex(ValueError, "carpetas OPML"):
+                    verify(self.BASE, fetcher(files), now=NOW)
 
     def test_inconsistent_generation_rejected(self):
         files = payloads()

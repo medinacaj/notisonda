@@ -15,7 +15,7 @@ class CosmicThemeTests(unittest.TestCase):
     def test_css_loaded_after_layout_overrides(self):
         self.assertLess(self.html.index('home-editorial.css?v='),self.html.index('cosmic-theme.css?v='))
         self.assertIn("'./cosmic-theme.css'",self.sw)
-        self.assertIn('radar-rss-v30',self.sw)
+        self.assertIn('radar-rss-v33',self.sw)
 
     def test_cosmic_palette_and_primary_action(self):
         for token in ('--bg:#0e0f2d','--accent:#5865f2','--text:#ffffff',
@@ -25,9 +25,9 @@ class CosmicThemeTests(unittest.TestCase):
         self.assertIn('.reader-primary',self.css)
         self.assertIn('prefers-reduced-motion:reduce',self.css)
 
-    def test_iaadc_light_default_with_manual_dark_and_system_modes(self):
+    def test_iaadc_system_default_with_manual_theme_modes(self):
         initial=self.app[self.app.index('function initialTheme()'):self.app.index('const state =')]
-        self.assertIn("return 'light';",initial)
+        self.assertIn("return 'system';",initial)
         self.assertIn('THEME_EXPLICIT_KEY',initial)
         self.assertIn("'system','light','dark'",initial)
         self.assertIn('body.radar-hybrid.light',self.css)

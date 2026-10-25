@@ -41,7 +41,30 @@ jobs:
           python -m pip install "playwright>=1.55,<2"
           python -m playwright install --with-deps ${{ matrix.browser }}
       - name: Revisar portada y navegación a múltiples tamaños
-        run: python browser_tests/responsive_smoke.py ${{ matrix.browser }}
+        env:
+          RADAR_TEST_ENGINE: ${{ matrix.browser }}
+        run: |
+          python - <<'PYTEST'
+          import os
+          import subprocess
+          import sys
+          result = subprocess.run([sys.executable, "browser_tests/responsive_smoke.py", os.environ["RADAR_TEST_ENGINE"]], capture_output=True, text=True)
+          print(result.stdout, end="")
+          print(result.stderr, end="", file=sys.stderr)
+          if result.returncode:
+              detail = (result.stdout + result.stderr)[-5000:]
+              detail = detail.replace("%", "%25").replace("\r", "%0D").replace("\n", "%0A")
+              print(f"::error title=Browser smoke failure::{detail}")
+          sys.exit(result.returncode)
+          PYTEST
+      - name: Regresiones de respaldo, Concepción y ayuda de lectura
+        if: matrix.browser == 'chromium'
+        run: |
+          python browser_tests/audit_regressions.py
+          python browser_tests/concepcion_regressions.py
+          python browser_tests/usability_regressions.py
+          python browser_tests/layout_regressions.py
+          python browser_tests/homepage_regressions.py
       - name: Guardar capturas para revisión
         if: always()
         uses: actions/upload-artifact@v4

@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <opml version="1.0">
   <head>
-    <title>Fuentes públicas Radar RSS (178 feeds, 6 categorías)</title>
+    <title>Fuentes públicas Radar RSS (226 feeds, 9 categorías)</title>
   </head>
   <body>
     <outline text="01 - Inteligencia Artificial" title="01 - Inteligencia Artificial">
@@ -196,6 +196,60 @@
       <outline text="RADAR — La República Perú" title="RADAR — La República Perú" type="rss" xmlUrl="https://news.google.com/rss/search?q=site%3Alarepublica.pe&amp;hl=es-419&amp;gl=CL&amp;ceid=CL%3Aes-419" htmlUrl="https://larepublica.pe/" />
       <outline text="RADAR — G1 Brasil" title="RADAR — G1 Brasil" type="rss" xmlUrl="https://news.google.com/rss/search?q=site%3Ag1.globo.com&amp;hl=es-419&amp;gl=CL&amp;ceid=CL%3Aes-419" htmlUrl="https://g1.globo.com/" />
       <outline text="RADAR — La República Colombia" title="RADAR — La República Colombia" type="rss" xmlUrl="https://news.google.com/rss/search?q=site%3Alarepublica.co&amp;hl=es-419&amp;gl=CL&amp;ceid=CL%3Aes-419" htmlUrl="https://www.larepublica.co/" />
+    </outline>
+    <outline text="07 - Concepción" title="07 - Concepción">
+      <outline text="MEDIO — ConceAhora" title="MEDIO — ConceAhora" type="rss" xmlUrl="https://www.conceahora.cl/feed/" htmlUrl="https://www.conceahora.cl/" />
+      <outline text="MEDIO — ConceCultura" title="MEDIO — ConceCultura" type="rss" xmlUrl="https://concecultura.periodismoudec.cl/feed/" htmlUrl="https://concecultura.periodismoudec.cl/" />
+      <outline text="MEDIO — Concepción TV" title="MEDIO — Concepción TV" type="rss" xmlUrl="https://concepciontv.cl/feed/" htmlUrl="https://concepciontv.cl/" />
+      <outline text="MEDIO — El Conquistador Concepción" title="MEDIO — El Conquistador Concepción" type="rss" xmlUrl="https://www.elconquistadorconcepcion.cl/feed/" htmlUrl="https://www.elconquistadorconcepcion.cl/" />
+      <outline text="MEDIO — Hora12" title="MEDIO — Hora12" type="rss" xmlUrl="https://hora12.cl/feed/" htmlUrl="https://hora12.cl/" />
+      <outline text="MEDIO — Koncevisión TV" title="MEDIO — Koncevisión TV" type="rss" xmlUrl="https://www.koncevisiontv.cl/rss.xml" htmlUrl="https://www.koncevisiontv.cl/" />
+      <outline text="MEDIO — Octava Pasión" title="MEDIO — Octava Pasión" type="rss" xmlUrl="https://octavapasion.cl/feed/" htmlUrl="https://octavapasion.cl/" />
+      <outline text="MEDIO — Primera Hora" title="MEDIO — Primera Hora" type="rss" xmlUrl="https://primerahora.cl/feed/" htmlUrl="https://primerahora.cl/" />
+      <outline text="MEDIO — Radio UdeC" title="MEDIO — Radio UdeC" type="rss" xmlUrl="https://www.radioudec.cl/feed/" htmlUrl="https://www.radioudec.cl/" />
+      <outline text="MEDIO — Sala de Prensa" title="MEDIO — Sala de Prensa" type="rss" xmlUrl="https://www.saladeprensa.cl/feed/" htmlUrl="https://www.saladeprensa.cl/" />
+      <outline text="MEDIO — Tomé al Día" title="MEDIO — Tomé al Día" type="rss" xmlUrl="https://www.tomealdia.com/feeds/posts/default" htmlUrl="https://www.tomealdia.com/" />
+      <outline text="OFICIAL — Club Deportivo Huachipato" title="OFICIAL — Club Deportivo Huachipato" type="rss" xmlUrl="https://cdhuachipato.cl/feed/" htmlUrl="https://cdhuachipato.cl/" />
+      <outline text="OFICIAL — Deportes Concepción" title="OFICIAL — Deportes Concepción" type="rss" xmlUrl="https://elconce.cl/feed/" htmlUrl="https://elconce.cl/" />
+      <outline text="OFICIAL — Gobierno Regional del Biobío" title="OFICIAL — Gobierno Regional del Biobío" type="rss" xmlUrl="https://gorebiobio.cl/feed/" htmlUrl="https://gorebiobio.cl/" />
+      <outline text="OFICIAL — Municipalidad de Chiguayante" title="OFICIAL — Municipalidad de Chiguayante" type="rss" xmlUrl="https://chiguayante.cl/Chgte/?feed=rss2" htmlUrl="https://chiguayante.cl/Chgte/" />
+      <outline text="OFICIAL — Municipalidad de Coronel" title="OFICIAL — Municipalidad de Coronel" type="rss" xmlUrl="https://www.coronel.cl/feed/" htmlUrl="https://www.coronel.cl/" />
+      <outline text="OFICIAL — Municipalidad de Lota" title="OFICIAL — Municipalidad de Lota" type="rss" xmlUrl="https://lota.cl/feed/" htmlUrl="https://lota.cl/" />
+      <outline text="OFICIAL — Municipalidad de Penco" title="OFICIAL — Municipalidad de Penco" type="rss" xmlUrl="https://penco.cl/feed/" htmlUrl="https://penco.cl/" />
+      <outline text="OFICIAL — Noticias UdeC" title="OFICIAL — Noticias UdeC" type="rss" xmlUrl="https://noticias.udec.cl/feed/" htmlUrl="https://noticias.udec.cl/" />
+      <outline text="OFICIAL — UCSC" title="OFICIAL — UCSC" type="rss" xmlUrl="https://ucsc.cl/feed/" htmlUrl="https://ucsc.cl/" />
+      <outline text="OFICIAL — Universidad del Bío-Bío" title="OFICIAL — Universidad del Bío-Bío" type="rss" xmlUrl="https://noticias.ubiobio.cl/feed/" htmlUrl="https://noticias.ubiobio.cl/" />
+      <outline text="RADAR — BioBioChile | Región del Biobío" title="RADAR — BioBioChile | Región del Biobío" type="rss" xmlUrl="https://news.google.com/rss/search?q=site%3Abiobiochile.cl%2Fnoticias%2Fnacional%2Fregion-del-bio-bio&amp;hl=es-419&amp;gl=CL&amp;ceid=CL%3Aes-419" htmlUrl="https://www.biobiochile.cl/lista/categorias/region-del-bio-bio" />
+      <outline text="RADAR — Canal 9 Biobío TV | Gran Concepción" title="RADAR — Canal 9 Biobío TV | Gran Concepción" type="rss" xmlUrl="https://news.google.com/rss/search?q=site%3Acanal9.cl+%28Concepci%C3%B3n+OR+Talcahuano+OR+Hualp%C3%A9n+OR+Penco+OR+Chiguayante+OR+%22San+Pedro+de+la+Paz%22+OR+Coronel+OR+Lota+OR+Tom%C3%A9%29&amp;hl=es-419&amp;gl=CL&amp;ceid=CL%3Aes-419" htmlUrl="https://www.canal9.cl/" />
+      <outline text="RADAR — Diario Concepción" title="RADAR — Diario Concepción" type="rss" xmlUrl="https://news.google.com/rss/search?q=site%3Adiarioconcepcion.cl+%28Concepci%C3%B3n+OR+Talcahuano+OR+Hualp%C3%A9n+OR+Penco+OR+Chiguayante+OR+%22San+Pedro+de+la+Paz%22+OR+Coronel+OR+Lota+OR+Tom%C3%A9+OR+Hualqui+OR+%22Santa+Juana%22%29&amp;hl=es-419&amp;gl=CL&amp;ceid=CL%3Aes-419" htmlUrl="https://www.diarioconcepcion.cl/" />
+      <outline text="RADAR — El Concecuente" title="RADAR — El Concecuente" type="rss" xmlUrl="https://news.google.com/rss/search?q=site%3Aelconcecuente.cl&amp;hl=es-419&amp;gl=CL&amp;ceid=CL%3Aes-419" htmlUrl="https://www.elconcecuente.cl/" />
+      <outline text="RADAR — El Sur" title="RADAR — El Sur" type="rss" xmlUrl="https://news.google.com/rss/search?q=site%3Aelsur.cl&amp;hl=es-419&amp;gl=CL&amp;ceid=CL%3Aes-419" htmlUrl="https://www.elsur.cl/" />
+      <outline text="RADAR — La Estrella de Concepción" title="RADAR — La Estrella de Concepción" type="rss" xmlUrl="https://news.google.com/rss/search?q=site%3Aestrellaconcepcion.cl&amp;hl=es-419&amp;gl=CL&amp;ceid=CL%3Aes-419" htmlUrl="https://www.estrellaconcepcion.cl/" />
+      <outline text="RADAR — Resumen" title="RADAR — Resumen" type="rss" xmlUrl="https://news.google.com/rss/search?q=site%3Aresumen.cl&amp;hl=es-419&amp;gl=CL&amp;ceid=CL%3Aes-419" htmlUrl="https://resumen.cl/" />
+      <outline text="RADAR — Sabes | Gran Concepción" title="RADAR — Sabes | Gran Concepción" type="rss" xmlUrl="https://news.google.com/rss/search?q=site%3Asabes.cl+%28Concepci%C3%B3n+OR+Talcahuano+OR+Hualp%C3%A9n+OR+Penco+OR+Chiguayante+OR+%22San+Pedro+de+la+Paz%22+OR+Coronel+OR+Lota+OR+Tom%C3%A9+OR+Hualqui+OR+%22Santa+Juana%22%29&amp;hl=es-419&amp;gl=CL&amp;ceid=CL%3Aes-419" htmlUrl="https://sabes.cl/" />
+      <outline text="RADAR — Soy Concepción" title="RADAR — Soy Concepción" type="rss" xmlUrl="https://news.google.com/rss/search?q=site%3Asoychile.cl%2Fconcepcion&amp;hl=es-419&amp;gl=CL&amp;ceid=CL%3Aes-419" htmlUrl="https://www.soychile.cl/concepcion" />
+      <outline text="RADAR — TVU" title="RADAR — TVU" type="rss" xmlUrl="https://news.google.com/rss/search?q=site%3Atvu.cl&amp;hl=es-419&amp;gl=CL&amp;ceid=CL%3Aes-419" htmlUrl="https://www.tvu.cl/" />
+      <outline text="OFICIAL — Municipalidad de Concepción (Google Noticias)" title="OFICIAL — Municipalidad de Concepción (Google Noticias)" type="rss" xmlUrl="https://news.google.com/rss/search?q=site%3Aconcepcion.cl&amp;hl=es-419&amp;gl=CL&amp;ceid=CL%3Aes-419" htmlUrl="https://concepcion.cl/" />
+      <outline text="OFICIAL — Municipalidad de Talcahuano (Google Noticias)" title="OFICIAL — Municipalidad de Talcahuano (Google Noticias)" type="rss" xmlUrl="https://news.google.com/rss/search?q=site%3Atalcahuano.cl&amp;hl=es-419&amp;gl=CL&amp;ceid=CL%3Aes-419" htmlUrl="https://www.talcahuano.cl/" />
+    </outline>
+    <outline text="08 - Maturín / Monagas" title="08 - Maturín / Monagas">
+      <outline text="RADAR — La Verdad de Monagas | Maturín y Monagas" title="RADAR — La Verdad de Monagas | Maturín y Monagas" type="rss" xmlUrl="https://news.google.com/rss/search?q=site%3Alaverdaddemonagas.com+%28Matur%C3%ADn+OR+Maturin+OR+Monagas%29&amp;hl=es-419&amp;gl=VE&amp;ceid=VE%3Aes-419" htmlUrl="https://laverdaddemonagas.com/" />
+      <outline text="RADAR — La Prensa de Monagas | Maturín" title="RADAR — La Prensa de Monagas | Maturín" type="rss" xmlUrl="https://news.google.com/rss/search?q=site%3Alaprensademonagas.com+%28Matur%C3%ADn+OR+Maturin+OR+Monagas%29&amp;hl=es-419&amp;gl=VE&amp;ceid=VE%3Aes-419" htmlUrl="https://laprensademonagas.com/" />
+      <outline text="RADAR — El Periódico de Monagas | Actualidad local" title="RADAR — El Periódico de Monagas | Actualidad local" type="rss" xmlUrl="https://news.google.com/rss/search?q=site%3Aelperiodicodemonagas.com.ve+%28Matur%C3%ADn+OR+Maturin+OR+Monagas%29&amp;hl=es-419&amp;gl=VE&amp;ceid=VE%3Aes-419" htmlUrl="https://elperiodicodemonagas.com.ve/" />
+      <outline text="RADAR — Diario El Oriental | Maturín" title="RADAR — Diario El Oriental | Maturín" type="rss" xmlUrl="https://news.google.com/rss/search?q=site%3Adiarioeloriental.com+%28Matur%C3%ADn+OR+Maturin%29&amp;hl=es-419&amp;gl=VE&amp;ceid=VE%3Aes-419" htmlUrl="https://diarioeloriental.com/" />
+      <outline text="RADAR — El Nacional | Monagas" title="RADAR — El Nacional | Monagas" type="rss" xmlUrl="https://news.google.com/rss/search?q=site%3Aelnacional.com+%28Matur%C3%ADn+OR+Maturin+OR+Monagas%29&amp;hl=es-419&amp;gl=VE&amp;ceid=VE%3Aes-419" htmlUrl="https://www.elnacional.com/" />
+      <outline text="RADAR — Maturín y Monagas | Actualidad" title="RADAR — Maturín y Monagas | Actualidad" type="rss" xmlUrl="https://news.google.com/rss/search?q=%28Matur%C3%ADn+OR+Maturin+OR+Monagas%29+%28noticias+OR+actualidad%29&amp;hl=es-419&amp;gl=VE&amp;ceid=VE%3Aes-419" htmlUrl="https://news.google.com/" />
+    </outline>
+    <outline text="09 - Cultura y entretenimiento internacional" title="09 - Cultura y entretenimiento internacional">
+      <outline text="RADAR — BBC Mundo | Cultura y artistas" title="RADAR — BBC Mundo | Cultura y artistas" type="rss" xmlUrl="https://news.google.com/rss/search?q=site%3Abbc.com%2Fmundo+%28cultura+OR+cine+OR+m%C3%BAsica+OR+artistas%29&amp;hl=es&amp;gl=ES&amp;ceid=ES%3Aes" htmlUrl="https://www.bbc.com/mundo" />
+      <outline text="RADAR — Variety | Cine y televisión" title="RADAR — Variety | Cine y televisión" type="rss" xmlUrl="https://news.google.com/rss/search?q=site%3Avariety.com+%28film+OR+television+OR+actors%29&amp;hl=en-US&amp;gl=US&amp;ceid=US%3Aen" htmlUrl="https://variety.com/" />
+      <outline text="RADAR — Billboard | Música y artistas" title="RADAR — Billboard | Música y artistas" type="rss" xmlUrl="https://news.google.com/rss/search?q=site%3Abillboard.com+%28music+OR+artists+OR+charts%29&amp;hl=en-US&amp;gl=US&amp;ceid=US%3Aen" htmlUrl="https://www.billboard.com/" />
+      <outline text="RADAR — The Hollywood Reporter | Cine y entretenimiento" title="RADAR — The Hollywood Reporter | Cine y entretenimiento" type="rss" xmlUrl="https://news.google.com/rss/search?q=site%3Ahollywoodreporter.com+%28movies+OR+television+OR+entertainment%29&amp;hl=en-US&amp;gl=US&amp;ceid=US%3Aen" htmlUrl="https://www.hollywoodreporter.com/" />
+      <outline text="RADAR — People | Artistas y actualidad" title="RADAR — People | Artistas y actualidad" type="rss" xmlUrl="https://news.google.com/rss/search?q=site%3Apeople.com+%28celebrity+OR+music+OR+movies%29&amp;hl=en-US&amp;gl=US&amp;ceid=US%3Aen" htmlUrl="https://people.com/" />
+      <outline text="RADAR — EFE | Cultura internacional" title="RADAR — EFE | Cultura internacional" type="rss" xmlUrl="https://news.google.com/rss/search?q=site%3Aefe.com+%28cultura+OR+cine+OR+m%C3%BAsica+OR+artistas%29&amp;hl=es&amp;gl=ES&amp;ceid=ES%3Aes" htmlUrl="https://efe.com/" />
+      <outline text="RADAR — El País | Cultura" title="RADAR — El País | Cultura" type="rss" xmlUrl="https://news.google.com/rss/search?q=site%3Aelpais.com%2Fcultura+%28cine+OR+m%C3%BAsica+OR+literatura+OR+artistas%29&amp;hl=es&amp;gl=ES&amp;ceid=ES%3Aes" htmlUrl="https://elpais.com/cultura/" />
+      <outline text="RADAR — Euronews | Cultura internacional" title="RADAR — Euronews | Cultura internacional" type="rss" xmlUrl="https://news.google.com/rss/search?q=site%3Aes.euronews.com+%28cultura+OR+cine+OR+m%C3%BAsica+OR+artistas%29&amp;hl=es&amp;gl=ES&amp;ceid=ES%3Aes" htmlUrl="https://es.euronews.com/" />
+      <outline text="RADAR — Rolling Stone | Música y cultura" title="RADAR — Rolling Stone | Música y cultura" type="rss" xmlUrl="https://news.google.com/rss/search?q=site%3Arollingstone.com+%28music+OR+artists+OR+culture%29&amp;hl=en-US&amp;gl=US&amp;ceid=US%3Aen" htmlUrl="https://www.rollingstone.com/" />
     </outline>
   </body>
 </opml>

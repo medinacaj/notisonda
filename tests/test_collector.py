@@ -16,7 +16,11 @@ class ReaderTests(unittest.TestCase):
         self.assertGreaterEqual(len(feeds), 100)
         self.assertEqual(len(set(x['url'] for x in feeds)), len(feeds))
         self.assertEqual(len(set(x['id'] for x in feeds)), len(feeds))
-        self.assertEqual(len(set(x['category'] for x in feeds)), 6)
+        original_categories = {
+            '01 - Inteligencia Artificial', '02 - Tecnología', '03 - Internacionales',
+            '04 - Chile', '05 - Venezuela', '06 - Latinoamérica',
+        }
+        self.assertTrue(original_categories.issubset({x['category'] for x in feeds}))
 
     def test_display_name_keeps_informative_prefixes(self):
         self.assertEqual(collect.display_name('MEDIO — El Pitazo'), 'El Pitazo')

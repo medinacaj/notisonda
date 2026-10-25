@@ -25,7 +25,7 @@ REPORTS = ROOT / "test-results" / "responsive"
 WIDTHS = (320, 375, 390, 430, 768, 1024, 1440)
 CATEGORIES = (
     "01 - Inteligencia Artificial", "02 - Tecnología", "03 - Internacionales",
-    "04 - Chile", "05 - Venezuela", "06 - Latinoamérica",
+    "04 - Chile", "05 - Venezuela", "06 - Latinoamérica", "07 - Concepción",
 )
 STAMP = datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
 SOURCES = [
@@ -45,9 +45,9 @@ ITEMS = [
                  "" if i % 7 == 2 else
                  "Resumen informativo de ejemplo para comprobar distribución de tarjetas."),
      "published_at": STAMP, "first_seen_at": STAMP,
-     "publisher": SOURCES[i % 6]["name"], "source": SOURCES[i % 6]["name"],
-     "source_ids": [SOURCES[i % 6]["id"]],
-     "categories": [CATEGORIES[i % 6]], "coverage": 2, "is_radar": False}
+     "publisher": SOURCES[i % len(SOURCES)]["name"], "source": SOURCES[i % len(SOURCES)]["name"],
+     "source_ids": [SOURCES[i % len(SOURCES)]["id"]],
+     "categories": [CATEGORIES[i % len(CATEGORIES)]], "coverage": 2, "is_radar": False}
     for i in range(18)
 ]
 ITEMS[0]["also_in"] = [
@@ -185,10 +185,63 @@ def make_route(route):
         route.fulfill(status=200, content_type="application/json; charset=utf-8",
                       body=json.dumps(payload, ensure_ascii=False))
 
+def ensure_navigation(page):
+    if page.locator('#appSidebar').evaluate('(node) => node.inert'):
+        page.locator('#menuToggle').click()
+    expect(page.locator('#appSidebar')).to_be_visible()
+    assert not page.locator('#appSidebar').evaluate('(node) => node.inert')
+
+
+def check_concepcion_category(page):
+    """The seventh folder stays accessible, exclusive and part of Chile/Latam."""
+    ensure_navigation(page)
+    folder = page.locator("#libraryFolderNav .system-folder-link").filter(has_text="Concepción")
+    expect(folder).to_be_visible()
+    assert folder.get_attribute("data-topic") == "7"
+    folder.focus()
+    folder.press("Shift+F10")
+    page.locator('#folderMenu [data-folder-action="sources"]').click()
+    expect(page.locator("#folderDialog[open]")).to_be_visible()
+    assert page.locator("#folderSourceList input[type='checkbox']").count() == len(SOURCES)
+    page.locator("#folderDialog .folder-dialog-close").click()
+    folder.click()
+    expect(page.locator("#feedHeading")).to_have_text("Concepción")
+    expect(page.locator("#articleGrid .article-card")).to_have_count(2)
+    local_ids = ["noticia-6", "noticia-13"]
+    article_ids = lambda: page.locator("#articleGrid > .article-card").evaluate_all(
+        "nodes => nodes.map(node => node.dataset.articleId)")
+    assert set(article_ids()) == set(local_ids)
+    assert page.locator("#sourceSelect option").evaluate_all("nodes => nodes.map(x => x.value)") == ["", "medio-6"]
+    page.locator("#articleGrid .article-title a").first.click()
+    expect(page.locator("#articleReaderDialog[open]")).to_be_visible()
+    expect(page.locator("#readerCategory")).to_have_text("Concepción")
+    page.locator("#readerClose").click()
+    for slug, expected_ids, expected_sources in (
+        ("chile", ["noticia-3", "noticia-6", "noticia-10", "noticia-13", "noticia-17"], ["medio-3", "medio-6"]),
+        ("latinoamerica", ["noticia-3", "noticia-4", "noticia-5", "noticia-6", "noticia-10", "noticia-11", "noticia-12", "noticia-13", "noticia-17"], ["medio-3", "medio-4", "medio-5", "medio-6"]),
+    ):
+        page.evaluate("slug => { location.hash = '#region/' + slug; }", slug)
+        expect(page.locator("#articleGrid .article-card")).to_have_count(len(expected_ids))
+        assert set(article_ids()) == set(expected_ids)
+        assert set(page.locator("#sourceSelect option").evaluate_all("nodes => nodes.map(x => x.value)")) == {"", *expected_sources}
+    page.evaluate("location.hash = '#resumen'")
+    expect(page.locator("#briefingView")).to_be_visible()
+    for scope, labels in (("chile", ["Chile", "Concepción"]),
+                          ("latam", ["Chile", "Venezuela", "Latinoamérica", "Concepción"]),
+                          ("cat:07 - Concepción", ["Concepción"])):
+        page.locator("#v12BriefingScope").select_option(scope)
+        assert page.locator(".briefing-section h2").all_text_contents() == labels
+        assert set(local_ids).issubset(set(page.locator(".briefing-item").evaluate_all(
+            "nodes => nodes.map(node => node.dataset.articleId)")))
+    page.locator("#v12BriefingScope").select_option("all")
+    page.evaluate("location.hash = '#inicio'")
+    expect(page.locator("#dashboardView")).to_be_visible()
+
 def main():
     browser_name = sys.argv[1] if len(sys.argv) > 1 else "chromium"
     if browser_name not in ("chromium", "firefox", "webkit"):
         raise ValueError(f"Unsupported engine: {browser_name}")
+    categories_only = "--categories-only" in sys.argv[2:]
     output = REPORTS / browser_name
     output.mkdir(parents=True, exist_ok=True)
     # Run over HTTPS like GitHub Pages; WebKit enforces upgrade-insecure-requests
@@ -214,7 +267,7 @@ def main():
             engine = getattr(p, browser_name)
             browser = engine.launch(headless=True, args=["--no-sandbox"] if browser_name == "chromium" else [])
             try:
-                for width in WIDTHS:
+                for width in ((375, 1440) if categories_only else WIDTHS):
                     mobile = width <= 768
                     context = browser.new_context(
                         viewport={"width": width, "height": 812 if mobile else 900},
@@ -226,6 +279,9 @@ def main():
                     javascript_errors = []
                     page.on("pageerror", lambda error: javascript_errors.append(str(error)))
                     page.on("console", lambda msg: javascript_errors.append("console: " + msg.text) if msg.type == "error" else None)
+                    context.route("**/*", lambda route: route.continue_()
+                                  if urlsplit(route.request.url).hostname == "127.0.0.1"
+                                  else route.abort())
                     page.route("**/data/**", make_route)
                     page.route("https://example.com/radar-fixture-cover.svg",
                                lambda route: route.fulfill(
@@ -235,6 +291,11 @@ def main():
                         page.goto(base + "#inicio", wait_until="load")
                         page.locator("#dashboardView:not([hidden])").wait_for(timeout=15000)
                         page.locator("#dashboardFeature .article-card").first.wait_for(timeout=15000)
+                        if categories_only:
+                            check_concepcion_category(page)
+                            assert not javascript_errors, javascript_errors
+                            print(f"OK [{browser_name}]: {width}px, Concepción administrable, lectura, filtros Chile/Latam y resúmenes", flush=True)
+                            continue
                         # Tema editorial IAADC: barra lateral azul noche y acento petróleo.
                         visual=page.evaluate("""() => ({
                           sidebar:getComputedStyle(document.getElementById('appSidebar')).backgroundColor,
@@ -272,7 +333,7 @@ def main():
                         assert page.locator("#dashboardTitle").text_content().strip() == "Portada de Radar RSS"
                         firstNewsOffset=page.evaluate("""() => {
                           const dashboard=document.getElementById('dashboardView').getBoundingClientRect();
-                          const news=document.querySelector('.dashboard-feature-panel').getBoundingClientRect();
+                          const news=document.querySelector('.homepage-latest').getBoundingClientRect();
                           return Math.round(news.top-dashboard.top);
                         }""")
                         assert 0 <= firstNewsOffset <= 20, firstNewsOffset
@@ -296,8 +357,8 @@ def main():
                             surface:getComputedStyle(button).backgroundColor
                           }));
                         }""")
-                        assert [x["topic"] for x in colors] == [str(i) for i in range(1,7)], colors
-                        assert len({x["color"] for x in colors}) == 6, colors
+                        assert [x["topic"] for x in colors] == [str(i) for i in range(1,len(CATEGORIES)+1)], colors
+                        assert len({x["color"] for x in colors[:6]}) == 6, colors
                         featuredTopics=page.locator("#dashboardFeature .article-card[data-topic]").count()
                         assert featuredTopics >= 1, featuredTopics
                         # V9.1: la categoría se lee en la etiqueta; no en una raya
@@ -322,15 +383,14 @@ def main():
                             assert folder.evaluate(
                                 "node => getComputedStyle(node).borderTopWidth === getComputedStyle(node).borderBottomWidth"
                             )
-                        # Las seis carpetas originales deben seguir accesibles y administrables.
+                        # Las seis carpetas originales y Concepción siguen accesibles y administrables.
                         assert page.locator("#libraryFolderNav .system-folder-link").count() == len(CATEGORIES)
                         assert page.locator("#libraryFolderNav .v12-hidden-category").count() == 0
                         assert page.locator("#libraryFolderNav .v12-region-nav").count() == 0
                         actual = page.locator("#libraryFolderNav .system-folder-link .nav-label").all_text_contents()
-                        assert actual == ["Inteligencia Artificial","Tecnología","Internacionales","Chile","Venezuela","Latinoamérica"], actual
-                        page.locator("#menuToggle").click()
-                        page.locator("body.nav-open").wait_for(timeout=3000)
-                        folder = page.locator("#libraryFolderNav .system-folder-link").nth(3)
+                        assert actual == ["Inteligencia Artificial","Tecnología","Internacionales","Chile","Venezuela","Latinoamérica","Concepción"], actual
+                        ensure_navigation(page)
+                        folder = page.locator("#libraryFolderNav .system-folder-link").nth(6)
                         expect(folder).to_be_visible()
                         folder.focus()
                         folder.press("Shift+F10")
@@ -416,7 +476,7 @@ def main():
                             latestCount:document.querySelectorAll('#dashboardRecent .dashboard-recent-row').length
                           };
                         }""")
-                        assert layout["lanes"] == (1 if width <= 1180 else 2), layout
+                        assert layout["lanes"] == 1, layout
                         assert layout["featureColumns"] == (1 if width <= 610 else 2), layout
                         assert len(layout["cards"]) == 3, layout
                         assert layout["latestCount"] >= 1, layout
@@ -429,14 +489,8 @@ def main():
                         else:
                             assert abs(layout["cards"][0]["w"]-layout["cards"][1]["w"]) <= 2, layout
                         assert layout["categories"]["y"] >= layout["story"]["bottom"] + 10, layout
-                        assert layout["radar"]["y"] >= layout["latest"]["bottom"] + 10, layout
-                        if width > 1180:
-                            assert abs(layout["story"]["y"]-layout["latest"]["y"]) <= 3, layout
-                            assert abs(layout["story"]["x"]-layout["categories"]["x"]) <= 2, layout
-                            assert layout["categories"]["right"] < layout["latest"]["x"], layout
-                            assert layout["story"]["right"] < layout["latest"]["x"], layout
-                        else:
-                            assert layout["latest"]["y"] >= layout["categories"]["bottom"] + 10, layout
+                        assert layout["latest"]["bottom"] <= layout["story"]["y"], layout
+                        assert layout["latest"]["y"] < layout["story"]["y"], layout
                         if len(layout["folders"]) >= 2 and width > 610:
                             assert abs(layout["folders"][0]["y"]-layout["folders"][1]["y"]) <= 2, layout
                             assert abs(layout["folders"][0]["w"]-layout["folders"][1]["w"]) <= 2, layout
@@ -458,8 +512,7 @@ def main():
                         # distintas como Ver mis guardadas o la navegación responsive.
                         assert page.locator("#dashboardView .dashboard-feature-panel .dashboard-read-all").count() == 0
                         assert page.locator("#dashboardSavedAll").count() == 1
-                        page.locator("#menuToggle").click()
-                        page.locator("body.nav-open").wait_for(timeout=3000)
+                        ensure_navigation(page)
                         all_news=page.locator("#categoryNav > .nav-link").nth(1)
                         expect(all_news).to_be_visible()
                         all_news.click()
@@ -572,10 +625,10 @@ def main():
                         check_visible_boxes(page, [".topbar", ".topbar-actions", ".filter-bar",
                             ".filter-controls", ".mode-tabs", "#articleGrid",
                             "#articleGrid .article-card"], f"listado {width}px")
-                        page.locator("#menuToggle").click()
-                        page.locator("body.nav-open").wait_for(timeout=2000)
+                        ensure_navigation(page)
                         page.keyboard.press("Escape")
-                        page.locator("body:not(.nav-open)").wait_for(timeout=2000)
+                        if width <= 950:
+                            page.locator("body:not(.nav-open)").wait_for(timeout=2000)
                         if width <= 710:
                             page.locator("#searchToggle").click()
                             page.locator("#topbarSearch").wait_for(state="visible", timeout=2000)
@@ -598,7 +651,7 @@ def main():
                         assert page.locator("#v12BriefingScope").count() == 1
                         page.locator("#v12BriefingScope").select_option("chile")
                         assert page.locator(".briefing-section").count() >= 1
-                        assert all("Chile" in x for x in page.locator(".briefing-section h2").all_text_contents())
+                        assert page.locator(".briefing-section h2").all_text_contents() == ["Chile", "Concepción"]
                         page.locator("#v12BriefingScope").select_option("cat:02 - Tecnología")
                         assert page.locator(".briefing-section").count() == 1
                         assert "Tecnología" in page.locator(".briefing-section h2").first.inner_text()
@@ -677,9 +730,12 @@ def main():
                         page.reload(wait_until="domcontentloaded")
                         page.locator(".v12-saved-open").first.wait_for(timeout=12000)
                         page.locator(".v12-saved-open").first.click()
-                        page.wait_for_url("**/#categoria/04%20-%20Chile")
+                        page.wait_for_url("**/#region/chile")
                         expect(page.locator("#feedHeading")).to_have_text("Chile")
                         assert page.locator("#sourceSelect").input_value() == "medio-3"
+                        # Restaurar el ámbito Chile conserva disponible Concepción,
+                        # incluso cuando la búsqueda elige una fuente específica.
+                        assert page.locator('#sourceSelect option[value="medio-6"]').count() == 1
                         page.locator(".v12-saved-open").nth(1).click()
                         page.wait_for_url("**/#region/latinoamerica")
                         expect(page.locator("#feedHeading")).to_have_text("Latinoamérica")
@@ -698,8 +754,7 @@ def main():
                         page.locator("#articleReaderDialog[open]").wait_for(state="hidden")
                         # Una acción de lectura global confirma antes de modificar
                         # el estado y actualiza los contadores de todas las carpetas.
-                        page.locator("#menuToggle").click()
-                        page.locator("body.nav-open").wait_for()
+                        ensure_navigation(page)
                         all_link=page.locator("#categoryNav > .nav-link").nth(1)
                         all_link.focus()
                         all_link.press("Shift+F10")

@@ -525,7 +525,7 @@
   const baseNavigate = navigateFromHash;
   navigateFromHash = function () {
     if (window.speechSynthesis && speaking) stopSpeech();
-    const hash = decodeURIComponent(location.hash.slice(1));
+    const hash = decodeRouteHash();
     if (!hash || hash === 'inicio' || hash === 'resumen') state.onlyNew = false;
     baseNavigate();
     briefingLink.classList.toggle('active', state.pageView === 'briefing');
@@ -541,6 +541,11 @@
       renderSinceVisit(); renderCovered(); renderTopics(); void loadTrends();
     }
   };
+
+  window.addEventListener('radar-preferences-imported',()=>{
+    state.lite=storeGet('radar-lite')==='true';
+    applyLite();syncSettings();render();
+  });
 
   /* ---------- Sin conexión ---------- */
   if ('serviceWorker' in navigator && (location.protocol === 'https:' || ['localhost', '127.0.0.1'].includes(location.hostname))) {
