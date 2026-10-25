@@ -48,7 +48,14 @@ def check(root):
         # Una caída masiva suele ser un problema de red de GitHub, no de los medios:
         # se conserva la publicación anterior en vez de mostrar un estado alarmante.
         raise ValueError(f'Too many RSS errors: {failed}/{len(feeds)}; keeping previous deploy')
-    print('JSON validated:',len(ids),'articles',len(names),'archive shards',failed,'RSS errors')
+    if meta.get('events_version') != 1:
+        raise ValueError('Agenda manifest absent')
+    from events import validate_document
+    agenda = validate_document(load('events.json'))
+    if agenda['generated_at'] != meta['generated_at']:
+        raise ValueError('Agenda generation differs from news')
+    print('Agenda validated:', len(agenda['items']), 'events', len(agenda['pending']), 'pending')
+    print('JSON validated:' ,len(ids),'articles',len(names),'archive shards',failed,'RSS errors')
 
 if __name__=='__main__':
     check(Path(sys.argv[1] if len(sys.argv)>1 else 'web/data'))

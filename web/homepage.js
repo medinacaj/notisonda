@@ -4,7 +4,9 @@
   const recent=$('dashboardRecent'),columns=$('newsroomColumns');
   const panel=recent?.closest('.newsroom-lead-latest');
   if(!recent||!panel||!columns)return;
-  panel.classList.add('homepage-latest');columns.before(panel);
+  panel.classList.add('homepage-latest');
+  const agenda=$('agendaSection');
+  if(agenda)agenda.before(panel);else columns.before(panel);
   $('dashboardRecentTitle').textContent='Últimas noticias';
   recent.setAttribute('role','region');recent.setAttribute('aria-roledescription','carrusel');
   recent.setAttribute('aria-label','Últimas noticias de distintas secciones');recent.tabIndex=0;

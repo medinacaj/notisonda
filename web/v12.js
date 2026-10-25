@@ -44,8 +44,9 @@
   function persistPrefs() { save(KEY, prefs); }
   function myCats() { return prefs.categories.filter(cat => state.categories.includes(cat)); }
   window.RadarV12 = Object.freeze({
-    dashboardMatch(item) {
-      const selected = myCats();
+    dashboardMatch(item, {useSavedCategories=false}={}) {
+      // The independently loaded agenda must honor Mi Radar before the catalog.
+      const selected = useSavedCategories ? prefs.categories : myCats();
       return !prefs.mine || !selected.length || (item.categories || []).some(cat => selected.includes(cat));
     },
     briefingCategories() {

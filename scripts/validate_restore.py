@@ -32,7 +32,21 @@ def validate(folder: Path) -> dict:
         raise ValueError("El respaldo no contiene suficientes estados RSS")
     if not isinstance(files["articles.json"].get("generated_at"),str):
         raise ValueError("Fecha de generación inexistente")
-    return {"articles":len(articles),"feeds":len(feeds)}
+    result = {"articles":len(articles),"feeds":len(feeds)}
+    manifest = folder / 'meta.json'
+    meta = json.loads(manifest.read_text(encoding='utf-8')) if manifest.is_file() else {}
+    agenda = folder / 'events.json'
+    if isinstance(meta, dict) and meta.get('events_version') == 1 and not agenda.is_file():
+        raise ValueError('Respaldo sin agenda requerida')
+    if agenda.is_file():
+        from events import validate_document
+        if agenda.stat().st_size > 10_000_000:
+            raise ValueError('Agenda excesiva')
+        doc = validate_document(json.loads(agenda.read_text(encoding='utf-8')))
+        if doc['generated_at'] != files['articles.json']['generated_at']:
+            raise ValueError('Agenda de otra generación')
+        result['events'] = len(doc['items'])
+    return result
 
 if __name__=="__main__":
     if len(sys.argv)!=2:

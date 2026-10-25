@@ -1,0 +1,13 @@
+# Noticias y agenda de 90 días
+
+El usuario eligió la recomendación: un único carrusel de noticias y, debajo, próximas actividades ordenadas por fecha; retirar «En portada». Noticias siguen sus criterios actuales; agenda separa fecha del anuncio y fecha de la actividad.
+
+Los eventos fechados se muestran desde hoy hasta 90 días inclusive (fecha local). Se conservan hasta el final del día de fin en la zona del lugar; sin fin se usa el día de inicio. Una actividad en curso permanece aunque su inicio sea pasado. Cancelados y aplazados sin fecha nueva dejan de ofrecerse como próximos, conservando una indicación verificable. La ausencia de una fuente en una recopilación o un anuncio publicado hace más de 45 días no borra una actividad vigente.
+
+Sólo se aceptan fechas de evento explícitas: RSS con campos de actividad, JSON-LD Event, o un anuncio inequívoco con día/mes/año y vocabulario de actividad. No usar pubDate como fecha de evento ni inventar año, lugar, hora o imagen. Una fecha sin zona usa la zona explícitamente configurada para la fuente local. Datos ambiguos se separan en fecha por confirmar, sin figurar como eventos confirmados. Sin fecha de fin no inferir una duración de varios días. Cambios de fecha actualizan la misma actividad; no borrar y duplicar con cada fecha.
+
+La búsqueda revisa más entradas RSS que el límite de noticias, sobre fuentes existentes configuradas de Concepción/Biobío y Monagas. Para fechas estructuradas en páginas sólo consultas limitadas, HTTPS, hosts registrados, validación pública/robots, sin redirecciones ni rastreo exhaustivo. No existe garantía de cubrir todos los eventos anunciados en Internet. Sin credenciales o servicios externos nuevos.
+
+Persistencia: `web/data/events.json`, separado del tope/retención de noticias, recuperado de caché/Pages, validado y respaldado por Actions. Primera adopción permite ausencia del archivo; una vez existente no reemplazar historial válido por contenido corrupto o vacío de otra generación sin criterio. Respaldos antiguos siguen siendo compatibles. La portada filtra actividades por fuentes ocultas y tema elegido cuando corresponde, muestra zona/lugar disponible y enlace al anunciante. Distingue carga, vacío y error; filtros Hoy/7/30/90 días y estado por confirmar. No mostrar fixtures como datos reales.
+
+Arquitectura estática y dependencias existentes (Python3.12/feedparser/requests, JS nativo). Los tests usan fixtures y reloj fijo, incluidos medianoche local, DST, actividad multidiaria, publicación vieja, fallo de red, reprogramación/cancelación, datos malformados y ocho carpetas. La publicación se revisa mediante PR y CI, conforme a la autorización de la sesión.

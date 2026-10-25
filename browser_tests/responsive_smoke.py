@@ -57,6 +57,7 @@ ITEMS[0]["also_in"] = [
 ]
 
 RESPONSES = {
+    "events.json": {"version": 1, "generated_at": STAMP, "horizon_days": 90, "items": [], "pending": [], "sources": []},
     "sources.json": {"version": 1, "sources": SOURCES, "categories": list(CATEGORIES)},
     "latest.json": {"version": 2, "generated_at": STAMP, "items": ITEMS},
     "status.json": {"version": 1, "checked_at": STAMP, "feeds": [], "errors": 0, "stale": 0},
@@ -290,7 +291,7 @@ def main():
                     try:
                         page.goto(base + "#inicio", wait_until="load")
                         page.locator("#dashboardView:not([hidden])").wait_for(timeout=15000)
-                        page.locator("#dashboardFeature .article-card").first.wait_for(timeout=15000)
+                        page.locator("#dashboardRecent .dashboard-recent-row").first.wait_for(timeout=15000)
                         if categories_only:
                             check_concepcion_category(page)
                             assert not javascript_errors, javascript_errors
@@ -442,58 +443,35 @@ def main():
                         page.locator("#closeSettings").click()
                         expect(page.locator("#settingsDialog")).to_be_hidden()
                         check_visible_boxes(page, [".topbar", ".topbar-caption", ".topbar-actions",
-                            "#dashboardView", ".dashboard-panel-head", "#dashboardFeature",
-                            "#dashboardFeature .article-card"], f"portada {width}px")
+                            "#dashboardView", ".homepage-latest .dashboard-panel-head", "#agendaSection",
+                            "#dashboardRecent .dashboard-recent-row"], f"portada {width}px")
                         # Orden editorial: ver noticias antes del radar secundario.
                         assert page.evaluate("""() => {
                           const feature=document.getElementById('dashboardFeature');
                           const radar=document.getElementById('radarFigure');
                           return !!(feature.compareDocumentPosition(radar) & Node.DOCUMENT_POSITION_FOLLOWING);
                         }""")
-                        # Las carpetas de portada deben seguir visibles como cuadrícula.
+                        # Se conserva el contrato de la cuadrícula interna de carpetas.
                         if page.locator("#dashboardFolders .dashboard-folder").count():
                             assert page.locator("#dashboardFolders").evaluate(
                                 "(node) => getComputedStyle(node).display") == "grid"
-                        # Dos carriles independientes sin compensaciones de altura:
-                        # una noticia principal horizontal y dos secundarios iguales.
+                        # Una única selección de noticias precede la agenda; las
+                        # antiguas tarjetas duplicadas quedan fuera de la portada visible.
+                        expect(page.locator("#dashboardFeature")).to_be_hidden()
+                        expect(page.locator("#newsroomDiscovery")).to_be_hidden()
+                        expect(page.locator("#agendaSection")).to_be_visible()
+                        expect(page.locator("#agendaStatus")).to_contain_text("No hay actividades confirmadas")
                         layout = page.evaluate("""() => {
-                          const rect = s => {
-                            const r=document.querySelector(s).getBoundingClientRect();
-                            return {x:r.x,y:r.y,w:r.width,h:r.height,right:r.right,bottom:r.bottom};
+                          const rect = selector => {
+                            const r=document.querySelector(selector).getBoundingClientRect();
+                            return {top:r.top,bottom:r.bottom,width:r.width};
                           };
-                          const cards=[...document.querySelectorAll('#dashboardFeature > .article-card')];
-                          const folders=[...document.querySelectorAll('#dashboardFolders > .dashboard-folder')];
-                          return {
-                            lanes:getComputedStyle(document.getElementById('newsroomColumns')).gridTemplateColumns.split(' ').length,
-                            featureColumns:getComputedStyle(document.getElementById('dashboardFeature')).gridTemplateColumns.split(' ').length,
-                            story:rect('.newsroom-lead-stories'),
-                            latest:rect('.newsroom-lead-latest'),
-                            categories:rect('.newsroom-discovery-categories'),
-                            radar:rect('.newsroom-discovery-aside'),
-                            cards:cards.map(el=>{ const r=el.getBoundingClientRect(); return {x:r.x,y:r.y,w:r.width,h:r.height,bottom:r.bottom}; }),
-                            folders:folders.map(el=>{const r=el.getBoundingClientRect(); return {x:r.x,y:r.y,w:r.width,h:r.height};}),
-                            columns:getComputedStyle(document.getElementById('dashboardFolders')).gridTemplateColumns.split(' ').length,
-                            latestCount:document.querySelectorAll('#dashboardRecent .dashboard-recent-row').length
-                          };
+                          return {latest:rect('.homepage-latest'),agenda:rect('#agendaSection'),
+                            count:document.querySelectorAll('#dashboardRecent .dashboard-recent-row').length};
                         }""")
-                        assert layout["lanes"] == 1, layout
-                        assert layout["featureColumns"] == (1 if width <= 610 else 2), layout
-                        assert len(layout["cards"]) == 3, layout
-                        assert layout["latestCount"] >= 1, layout
-                        assert layout["columns"] == (1 if width <= 610 else 2), layout
-                        assert layout["cards"][0]["y"] < layout["cards"][1]["y"], layout
-                        if width > 610:
-                            assert abs(layout["cards"][1]["y"]-layout["cards"][2]["y"]) <= 2, layout
-                            assert abs(layout["cards"][1]["w"]-layout["cards"][2]["w"]) <= 2, layout
-                            assert layout["cards"][0]["w"] > layout["cards"][1]["w"], layout
-                        else:
-                            assert abs(layout["cards"][0]["w"]-layout["cards"][1]["w"]) <= 2, layout
-                        assert layout["categories"]["y"] >= layout["story"]["bottom"] + 10, layout
-                        assert layout["latest"]["bottom"] <= layout["story"]["y"], layout
-                        assert layout["latest"]["y"] < layout["story"]["y"], layout
-                        if len(layout["folders"]) >= 2 and width > 610:
-                            assert abs(layout["folders"][0]["y"]-layout["folders"][1]["y"]) <= 2, layout
-                            assert abs(layout["folders"][0]["w"]-layout["folders"][1]["w"]) <= 2, layout
+                        assert layout["count"] >= 3, layout
+                        assert layout["agenda"]["top"] >= layout["latest"]["bottom"], layout
+                        assert layout["agenda"]["width"] > 0, layout
                         # Los controles de lectura afectan también al nuevo layout.
                         page.evaluate("document.body.classList.add('hide-images')")
                         assert page.locator("#dashboardFeature .article-card .cover").evaluate_all(

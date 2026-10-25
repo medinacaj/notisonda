@@ -39,6 +39,8 @@ jobs:
           node --check web/features.js
           node --check web/v12.js
           node --check web/v13.js
+          node --check web/homepage.js
+          node --check web/agenda.js
           node --check web/sw.js
       - name: Pruebas JavaScript
         run: |
