@@ -13,7 +13,7 @@ class DimensionThemeTests(unittest.TestCase):
   for obsolete in ('editorial.css','hashnode-preview.css','radar-hybrid.css','copper-theme.css','home-editorial.css','cosmic-theme.css','iaadc-editorial.css'):
    self.assertNotIn("'./"+obsolete+"'",self.sw)
    self.assertNotIn('./'+obsolete+'?v=',self.html)
-  self.assertIn('radar-rss-v39',self.sw)
+  self.assertIn('radar-rss-v40',self.sw)
  def test_system_and_explicit_theme_are_preserved(self):
   initial=self.app[self.app.index('function initialTheme()'):self.app.index('const state =')]
   self.assertIn("return 'system';",initial);self.assertIn('THEME_EXPLICIT_KEY',initial)
@@ -21,7 +21,7 @@ class DimensionThemeTests(unittest.TestCase):
   self.assertIn('id="themeToggle"',self.html);self.assertIn('id="settingTheme"',self.html)
   self.assertIn('body.radar-hybrid.dimension.light',self.css)
  def test_reference_is_one_active_theme_without_remote_resources(self):
-  for token in ('--bg:#0a0a0a','--surface:#161616','--text:#ededed','--muted:#c2c2c2','9999px'):
+  for token in ('--bg:#101326','--surface:#1a2038','--text:#f2f4ff','--muted:#bec7e2','9999px'):
    self.assertIn(token,self.css)
   self.assertNotIn('@import',self.css);self.assertNotIn('url(https:',self.css)
   styles=re.findall(r'href="\./([^"?]+\.css)\?',self.html)
