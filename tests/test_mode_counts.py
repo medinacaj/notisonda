@@ -31,4 +31,4 @@ class ModeCountTests(unittest.TestCase):
   self.assertIn('id="refreshCycle"',self.html)
  def test_cache_changed(self):
   self.assertRegex(self.html,r'<script src="\./app\.js\?v=[^"]+" defer></script>')
-  self.assertRegex(self.html,r'<link rel="stylesheet" href="\./radar-hybrid\.css\?v=[^"]+">')
+  self.assertRegex(self.html,r'<link rel="stylesheet" href="\./dimension\.css\?v=[^"]+">')

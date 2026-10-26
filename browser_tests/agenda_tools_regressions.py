@@ -91,7 +91,7 @@ class AgendaToolsRegressions(unittest.TestCase):
             route.abort()
 
     def open(self):
-        self.page.goto(self.base + '#inicio')
+        self.page.goto(self.base + '#agenda')
         expect(self.page.locator('#agendaSection')).to_have_attribute('aria-busy', 'false')
         expect(self.page.locator('#agendaStatus')).not_to_contain_text('No se pudo')
 

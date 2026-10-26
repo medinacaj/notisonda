@@ -2,11 +2,6 @@
 // Radar RSS: interfaz pública sin autenticación y sin HTML sin sanear de fuentes externas.
 const $ = (id) => document.getElementById(id);
 const format = new Intl.NumberFormat('es-CL');
-// Comparar referencias anteriores sin sustituir el nuevo estilo principal.
-const PREVIEW_STYLE = new URLSearchParams(location.search).get('preview');
-const IS_HASHNODE_PREVIEW = PREVIEW_STYLE === 'hashnode';
-const IS_SUBSTACK_PREVIEW = PREVIEW_STYLE === 'substack';
-const IS_STYLE_PREVIEW = IS_HASHNODE_PREVIEW || IS_SUBSTACK_PREVIEW;
 function storeGet(key) { try { return localStorage.getItem(key); } catch { return null; } }
 // El tema sigue al sistema; una elección explícita (claro/oscuro/sistema) siempre prevalece.
 // Versiones anteriores guardaban "light" en cada visita aunque nadie lo eligiera,
@@ -42,6 +37,7 @@ const state = {
 };
 
 const VECTOR_PATHS={
+  calendar:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 11h18m-13 4h2m4 0h2"/>',
   home:'<path d="m3 10 9-7 9 7v10H5V10M9 21v-7h6v7"/>',
   newspaper:'<rect x="3" y="3" width="18" height="18" rx="2"/><path d="M7 7h5v5H7zM15 8h3M15 12h3M7 16h11"/>',
   brain:'<path d="M12 5A4 4 0 0 0 5 4a5 5 0 0 0-1 8 5 5 0 0 0 6 8l2-2V5Zm0 0a4 4 0 0 1 7-1 5 5 0 0 1 1 8 5 5 0 0 1-6 8l-2-2"/>',
@@ -207,13 +203,13 @@ function categoryLabel(cat) {
 const browserTheme = window.matchMedia?.('(prefers-color-scheme: light)');
 function setTheme(theme, explicit=false) {
   state.theme = ['light','dark','system'].includes(theme) ? theme : 'system';
-  const light=IS_STYLE_PREVIEW || state.theme==='light' || (state.theme==='system' && Boolean(browserTheme?.matches));
+  const light=state.theme==='light' || (state.theme==='system' && Boolean(browserTheme?.matches));
   document.body.classList.toggle('light',light);
   $('themeGlyph').replaceChildren(svgIcon(light?'moon':'sun'));
   $('themeToggle').setAttribute('aria-label',light?'Cambiar a modo oscuro':'Cambiar a modo claro');
   $('themeToggle').title=light?'Modo oscuro':'Modo claro';
-  if(!IS_STYLE_PREVIEW)document.querySelector('meta[name="theme-color"]')?.setAttribute('content',light?'#f3f4ff':'#0e0f2d');
-  if(explicit&&!IS_STYLE_PREVIEW){
+  document.querySelector('meta[name="theme-color"]')?.setAttribute('content',light?'#f6f6f6':'#0a0a0a');
+  if(explicit){
     try{localStorage.setItem('radar-theme',state.theme);localStorage.setItem(THEME_EXPLICIT_KEY,'true');}catch{}
   }
 }
@@ -484,27 +480,27 @@ function initSettingsHandlers(){
 function buildNav() {
   const nav=$('categoryNav');
   nav.replaceChildren();
-  const core=[{id:'home',label:'Inicio'},{id:'all',label:'Todas las noticias'}];
+  const core=[{id:'home',label:'Inicio'},{id:'all',label:'Noticias'},{id:'agenda',label:'Agenda'}];
   const folders=state.categories.map(id=>({id,label:categoryLabel(id)}));
   const sourceFolderNav=document.getElementById('libraryFolderNav');
   if(sourceFolderNav)sourceFolderNav.replaceChildren();
   function addRow(entry,index,parent){
-    const active=entry.id==='home'?state.pageView==='dashboard':
+    const active=entry.id==='home'?state.pageView==='dashboard':entry.id==='agenda'?state.pageView==='agenda':
       state.pageView==='feed'&&state.category===entry.id;
-    const isFolder=index>=2;
+    const isFolder=!['home','all','agenda'].includes(entry.id);
     const button=mk('button','nav-link'+(active?' active':'')+(isFolder?' system-folder-link':''));
-    button.type='button';
+    button.type='button';button.dataset.destination=entry.id;
     if(isFolder){const topic=state.categories.indexOf(entry.id);if(topic>=0)button.dataset.topic=String(topic+1);}
     button.setAttribute('aria-current',active?'page':'false');
     button.title=entry.label;
     if(isFolder)button.setAttribute('aria-label','Carpeta de fuentes: '+entry.label);
     const symbol=mk('span','nav-glyph');
-    symbol.append(svgIcon(index===0?'home':index===1?'newspaper':'folder'));
+    symbol.append(svgIcon(entry.id==='home'?'home':entry.id==='all'?'newspaper':entry.id==='agenda'?'calendar':'folder'));
     const left=mk('span','nav-left');
     left.append(symbol,mk('span','nav-label',entry.label));
     const sources=entry.id==='all'?state.sources.filter(s=>!state.hiddenSources.has(s.id)):
       state.sources.filter(s=>s.category===entry.id&&!state.hiddenSources.has(s.id));
-    button.append(left,mk('span','nav-count',entry.id==='home'?'':String(sources.length)));
+    button.append(left,mk('span','nav-count',['home','agenda'].includes(entry.id)?'':String(sources.length)));
     button.addEventListener('click',()=>goTo(entry.id));
     parent.append(button);
   }
@@ -580,7 +576,7 @@ function initMobileNav(){
   sync();
 }
 function goTo(target){
-  const hash=target==='home'?'#inicio':target==='all'?'#noticias':target==='briefing'?'#resumen':'#categoria/'+encodeURIComponent(target);
+  const hash=target==='home'?'#inicio':target==='all'?'#noticias':target==='briefing'?'#resumen':target==='agenda'?'#agenda':'#categoria/'+encodeURIComponent(target);
   if(window.location.hash===hash)navigateFromHash();
   else window.location.hash=hash;
 }
@@ -590,7 +586,7 @@ function decodeRouteHash(raw=window.location.hash){
 function navigateFromHash(){
   closeColumnsMenu();closeCardMenu();setNavOpen(false,false);
   const hash=decodeRouteHash();
-  state.pageView=(!hash||hash==='inicio')?'dashboard':hash==='resumen'?'briefing':'feed';
+  state.pageView=(!hash||hash==='inicio')?'dashboard':hash==='resumen'?'briefing':hash==='agenda'?'agenda':'feed';
   state.category=hash.startsWith('categoria/')&&state.categories.includes(hash.slice(10))?hash.slice(10):'all';
   state.feed='';
   state.page=1;progressiveLoads=0;
@@ -599,8 +595,10 @@ function navigateFromHash(){
   $('dashboardView').hidden=state.pageView!=='dashboard';
   $('feedView').hidden=state.pageView!=='feed';
   $('briefingView').hidden=state.pageView!=='briefing';
+  $('agendaView').hidden=state.pageView!=='agenda';
   document.body.classList.toggle('on-dashboard',state.pageView==='dashboard');
   document.body.classList.toggle('on-briefing',state.pageView==='briefing');
+  document.body.classList.toggle('on-agenda',state.pageView==='agenda');
   render();
 }
 function fillSelect() {
@@ -643,7 +641,7 @@ function updateSourceCounts(){
 function updateHeader() {
   const name = state.category === 'all' ? 'Todas las noticias' : categoryLabel(state.category);
   $('feedHeading').textContent = name;
-  $('topbarSection').textContent = state.pageView === 'dashboard' ? 'Inicio' : state.pageView === 'briefing' ? 'Resumen del día' : name;
+  $('topbarSection').textContent = state.pageView === 'dashboard' ? 'Inicio' : state.pageView === 'agenda' ? 'Agenda' : state.pageView === 'briefing' ? 'Resumen del día' : name;
   $('sectionEyebrow').textContent = state.category === 'all' ? 'SELECCIÓN EDITORIAL' : 'EXPLORAR CATEGORÍA';
   $('feedDescription').textContent = state.category === 'all' ? 'Titulares y novedades de todas las fuentes.' : `Noticias recientes de ${name}.`;
 }
@@ -1077,7 +1075,7 @@ function editorialCover(item) {
   const wrap=mk('div','article-cover-placeholder-inner');
   const source=sourceLabel(item.publisher||item.source,'Medio de noticias');
   const sourceName=mk('span','article-cover-publisher',source);
-  const note=mk('span','article-cover-note','Sin fotografía disponible');
+  const note=mk('span','article-cover-note','Vista previa');
   wrap.append(svgIcon('newspaper'),sourceName,note);
   tile.append(wrap);
   return tile;
@@ -1620,17 +1618,5 @@ function initHandlers() {
   dialog.addEventListener('click',e=>{if(e.target === dialog) dialog.close();});
   initSettingsHandlers();
   document.addEventListener('keydown',e=>{if(e.key==='/' && !e.ctrlKey && !e.metaKey && !e.altKey && !['INPUT','TEXTAREA','SELECT'].includes(document.activeElement.tagName) && !document.querySelector('dialog[open]') && !document.body.classList.contains('nav-open')){e.preventDefault();$('searchInput').focus();}});
-}
-document.body.classList.toggle('radar-hybrid',!IS_STYLE_PREVIEW);
-if(IS_STYLE_PREVIEW){
-  document.body.classList.remove('radar-hybrid');
-  document.body.classList.add(IS_HASHNODE_PREVIEW?'hashnode-preview':'substack-preview');
-  $('stylePreviewNotice').hidden=false;
-  $('stylePreviewName').textContent=IS_HASHNODE_PREVIEW?'Hashnode':'Substack';
-  $('stylePreviewOther').href=IS_HASHNODE_PREVIEW?'?preview=substack':'?preview=hashnode';
-  $('stylePreviewOther').textContent=IS_HASHNODE_PREVIEW?'Comparar Substack':'Comparar Hashnode';
-  // Ambas referencias se previsualizan en su paleta clara original.
-  $('themeToggle').hidden=true;
-  document.querySelector('meta[name="theme-color"]')?.setAttribute('content',IS_HASHNODE_PREVIEW?'#f9fafb':'#ffffff');
 }
 hydrateIcons(); initHandlers(); updateScheduleProgress(); boot();

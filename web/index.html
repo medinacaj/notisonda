@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Radar RSS: noticias actualizadas de inteligencia artificial, tecnología, Chile, Venezuela, Latinoamérica y el mundo.">
-  <meta name="theme-color" content="#0e0f2d">
+  <meta name="theme-color" content="#0a0a0a">
   <link rel="canonical" href="https://medinacaj.github.io/radar-rss-publico/">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="Radar RSS">
@@ -27,9 +27,6 @@
   <link rel="alternate" type="application/rss+xml" title="Radar RSS · Lo más cubierto" href="./feeds/mas-cubierto.xml">
   <link rel="manifest" href="./manifest.webmanifest">
   <link rel="stylesheet" href="./styles.css?v=5.2.0">
-  <link rel="stylesheet" href="./editorial.css?v=5.0.1">
-  <link rel="stylesheet" href="./hashnode-preview.css?v=1.0.0">
-  <link rel="stylesheet" href="./radar-hybrid.css?v=6.0.0">
   <link rel="stylesheet" href="./library.css?v=1.7.2">
   <link rel="stylesheet" href="./sidebar-layout.css?v=1.0.2">
   <link rel="stylesheet" href="./modal-layout.css?v=1.0.0">
@@ -39,24 +36,21 @@
   <link rel="stylesheet" href="./features.css?v=1.2.2">
   <link rel="stylesheet" href="./v12.css?v=1.2.3">
   <link rel="stylesheet" href="./v13.css?v=7.1.1">
-  <link rel="stylesheet" href="./copper-theme.css?v=3.0.0">
-  <link rel="stylesheet" href="./home-editorial.css?v=1.0.0">
-  <link rel="stylesheet" href="./cosmic-theme.css?v=1.0.0">
-  <link rel="stylesheet" href="./iaadc-editorial.css?v=1.0.2">
   <link rel="stylesheet" href="./usability.css?v=1.0.0">
   <link rel="stylesheet" href="./homepage.css?v=1.0.2">
   <link rel="stylesheet" href="./agenda.css?v=1.1.0">
   <link rel="stylesheet" href="./reader-layout.css?v=1.0.0">
   <link rel="stylesheet" href="./reading-ux.css?v=1.0.0">
+  <link rel="stylesheet" href="./dimension.css?v=1.0.0">
   <title>Radar RSS — Actualidad en un solo lugar</title>
 </head>
-<body class="radar-hybrid" data-columns="4">
+<body class="radar-hybrid dimension" data-columns="4">
   <div class="app-shell">
     <aside class="sidebar" id="appSidebar" aria-label="Menú de fuentes">
       <div class="sidebar-brand-row">
       <a class="brand" id="brandHome" href="#inicio" aria-label="Radar RSS: ir al inicio">
         <span class="brand-mark" aria-hidden="true"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h15v15a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8h2z"/><path d="M5 8v11a2 2 0 0 0 2 2M9 8h7M9 12h7M9 16h2M15 16h1"/></svg></span>
-        <span><strong>RADAR <em>RSS</em></strong><small>Noticias de múltiples fuentes</small></span>
+        <span><strong>RADAR <em>RSS</em></strong><small>Tu espacio de actualidad</small></span>
       </a>
       <button type="button" id="menuClose" class="menu-close" aria-label="Cerrar menú" title="Cerrar menú"><span data-icon="x" class="ui-icon-slot" aria-hidden="true"></span></button>
       </div>
@@ -65,6 +59,10 @@
         <nav id="categoryNav" aria-label="Navegación principal"></nav>
       </div>
       <div class="sidebar-bottom">
+          <div class="topbar-refresh" id="refreshCycle" role="group" aria-label="Actualización de noticias" title="Radar RSS busca noticias nuevas cada 15 minutos. Los medios se recopilan aproximadamente cada 3 horas.">
+            <span class="update-label" id="lastUpdate">Sin sincronizar</span>
+            <button id="refreshNow" class="refresh-now" type="button" title="Comprobar ahora si hay publicaciones nuevas" aria-label="Comprobar novedades ahora"><span data-icon="refresh" class="ui-icon-slot" aria-hidden="true"></span></button>
+          </div>
         <section class="sidebar-feed-status" id="sidebarFeedHealth" aria-label="Estado de las fuentes RSS" hidden>
           <span class="sidebar-feed-status-heading">ESTADO RSS</span>
           <button id="feedHealthIndicator" class="health-indicator sidebar-health-action" type="button" hidden aria-label="Abrir diagnóstico de las fuentes RSS" title="Ver qué fuentes no se pudieron leer">
@@ -90,23 +88,12 @@
           <label class="search-wrap"><span class="sr-only">Buscar en todas las noticias</span><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m16 16 5 5"/></svg><input id="searchInput" type="search" placeholder="Buscar noticias…" autocomplete="off" enterkeyhint="search" aria-keyshortcuts="/"><kbd class="search-shortcut" aria-hidden="true">/</kbd></label>
         </div>
         <div class="topbar-actions">
-          <div class="topbar-refresh" id="refreshCycle" role="group" aria-label="Actualización de noticias" title="Radar RSS busca noticias nuevas cada 15 minutos. Los medios se recopilan aproximadamente cada 3 horas.">
-            <span class="update-label" id="lastUpdate">Sin sincronizar</span>
-            <button id="refreshNow" class="refresh-now" type="button" title="Comprobar ahora si hay publicaciones nuevas" aria-label="Comprobar novedades ahora"><span data-icon="refresh" class="ui-icon-slot" aria-hidden="true"></span></button>
-          </div>
+
           <button id="settingsButton" class="settings-trigger" type="button" title="Configuración" aria-label="Abrir configuración" aria-haspopup="dialog"><span data-icon="settings" class="ui-icon-slot" aria-hidden="true"></span><span class="settings-text">Configuración</span></button>
           <button id="themeToggle" class="icon-button" type="button" aria-label="Cambiar tema" title="Cambiar modo claro u oscuro"><span id="themeGlyph"></span></button>
         </div>
       </header>
       <nav class="topic-rail" id="topicRail" aria-label="Secciones de noticias" hidden></nav>
-      <div id="stylePreviewNotice" class="style-preview-notice" role="status" hidden>
-        <span class="style-preview-label"><strong>REFERENCIA</strong> <span id="stylePreviewName">Diseño anterior</span></span>
-        <span class="style-preview-info">Versión de comparación; Radar RSS usa ahora el diseño editorial combinado.</span>
-        <div class="style-preview-links">
-          <a id="stylePreviewOther" href="?preview=hashnode" class="style-preview-other">Ver otra referencia</a>
-          <a href="./" class="style-preview-exit">Volver a Radar RSS <span data-icon="arrow-right" class="ui-icon-slot" aria-hidden="true"></span></a>
-        </div>
-      </div>
       <main class="main" id="mainContent">
         <div id="statusBanner" class="status-banner" role="status" hidden>
           <span class="status-icon" aria-hidden="true">!</span>
@@ -118,27 +105,9 @@
         </div>
         <div id="publicationNotice" class="publication-notice" role="status" hidden><span id="publicationMessage"></span><button id="publicationApply" type="button">Mostrar noticias</button></div>
         <section id="dashboardView" class="dashboard-view" aria-labelledby="dashboardTitle" hidden>
-          <h1 id="dashboardTitle" class="sr-only">Portada de Radar RSS</h1>
-          <section id="agendaSection" class="agenda-section" aria-labelledby="agendaTitle" aria-busy="true">
-            <div class="agenda-heading">
-              <h2 id="agendaTitle">Próximas actividades</h2>
-              <div class="agenda-controls" role="group" aria-label="Período de actividades">
-                <button type="button" data-agenda-days="0" aria-pressed="false" aria-controls="agendaList">Hoy</button>
-                <button type="button" data-agenda-days="7" aria-pressed="false" aria-controls="agendaList">7 días</button>
-                <button type="button" data-agenda-days="30" aria-pressed="false" aria-controls="agendaList">30 días</button>
-                <button type="button" data-agenda-days="90" aria-pressed="true" aria-controls="agendaList">90 días</button>
-              </div>
-            </div>
-            <p class="agenda-intro">Actividades de Concepción, Biobío y Monagas anunciadas por las fuentes consultadas. Fechas de la actividad, según la zona del lugar. La cobertura puede ser parcial.</p>
-            <p id="agendaStatus" class="agenda-status" role="status" aria-live="polite" aria-atomic="true">Cargando actividades…</p>
-            <button id="agendaRetry" class="agenda-retry" type="button" hidden>Reintentar agenda</button>
-            <ol id="agendaList" class="agenda-list" aria-label="Actividades confirmadas"></ol>
-            <details id="agendaPending" class="agenda-pending" hidden>
-              <summary id="agendaPendingTitle">Fechas por confirmar y cambios</summary>
-              <ul id="agendaPendingList" class="agenda-list" aria-label="Anuncios sin fecha confirmada y cancelaciones"></ul>
-            </details>
-          </section>
-          <div class="newsroom-columns" id="newsroomColumns">
+          <header class="dimension-intro"><div><h1 id="dashboardTitle">En tu radar.</h1></div><span class="dimension-edition" id="dimensionEdition"></span></header>
+
+          <div class="newsroom-columns" id="newsroomColumns" hidden>
             <div class="newsroom-primary-column">
               <div class="newsroom-lead" id="newsroomLead" hidden>
                 <section class="dashboard-panel dashboard-feature-panel newsroom-lead-stories" aria-label="Noticias recientes de diferentes categorías">
@@ -164,7 +133,7 @@
             </div>
             <div class="newsroom-secondary-column">
               <section class="dashboard-panel newsroom-lead-latest" aria-labelledby="dashboardRecentTitle">
-            <div class="dashboard-panel-head"><h2 id="dashboardRecentTitle">Últimas publicaciones</h2></div>
+            <div class="dashboard-panel-head"><h2 id="dashboardRecentTitle">En un vistazo</h2></div>
             <div class="dashboard-recent" id="dashboardRecent"></div>
           </section>
               <div class="newsroom-discovery-aside">
@@ -187,6 +156,28 @@
             </div>
           </div>
           </section>
+        <section id="agendaView" class="agenda-view" aria-labelledby="agendaPageTitle" hidden>
+          <header class="page-heading"><span class="dimension-kicker">TU CALENDARIO</span><h1 id="agendaPageTitle">Agenda</h1><p>Actividades, fechas por confirmar y cambios, en un solo lugar.</p></header>
+          <section id="agendaSection" class="agenda-section" aria-labelledby="agendaTitle" aria-busy="true">
+            <div class="agenda-heading">
+              <h2 id="agendaTitle">Próximas actividades</h2>
+              <div class="agenda-controls" role="group" aria-label="Período de actividades">
+                <button type="button" data-agenda-days="0" aria-pressed="false" aria-controls="agendaList">Hoy</button>
+                <button type="button" data-agenda-days="7" aria-pressed="false" aria-controls="agendaList">7 días</button>
+                <button type="button" data-agenda-days="30" aria-pressed="false" aria-controls="agendaList">30 días</button>
+                <button type="button" data-agenda-days="90" aria-pressed="true" aria-controls="agendaList">90 días</button>
+              </div>
+            </div>
+            <p class="agenda-intro">Actividades de Concepción, Biobío y Monagas anunciadas por las fuentes consultadas. Fechas de la actividad, según la zona del lugar. La cobertura puede ser parcial.</p>
+            <p id="agendaStatus" class="agenda-status" role="status" aria-live="polite" aria-atomic="true">Cargando actividades…</p>
+            <button id="agendaRetry" class="agenda-retry" type="button" hidden>Reintentar agenda</button>
+            <ol id="agendaList" class="agenda-list" aria-label="Actividades confirmadas"></ol>
+            <details id="agendaPending" class="agenda-pending" hidden>
+              <summary id="agendaPendingTitle">Fechas por confirmar y cambios</summary>
+              <ul id="agendaPendingList" class="agenda-list" aria-label="Anuncios sin fecha confirmada y cancelaciones"></ul>
+            </details>
+          </section>
+        </section>
         <section class="briefing-view" id="briefingView" aria-labelledby="briefingTitle" hidden>
           <header class="briefing-head">
             <div><span class="briefing-kicker" id="briefingDate"></span><h1 id="briefingTitle">Resumen del día</h1><p id="briefingIntro">Las historias que más medios publicaron en las últimas 24 horas, por tema.</p></div>
@@ -398,15 +389,15 @@
   </div>
   <button id="backTop" class="back-to-top" type="button" aria-label="Volver arriba" title="Volver arriba" hidden><span data-icon="arrow-up" class="ui-icon-slot" aria-hidden="true"></span></button>
   <div id="actionToast" class="action-toast" role="status" aria-live="polite" aria-atomic="true" hidden></div>
-  <script src="./app.js?v=9.2.0" defer></script>
-  <script src="./library.js?v=1.8.0" defer></script>
+  <script src="./app.js?v=9.3.0" defer></script>
+  <script src="./library.js?v=1.8.1" defer></script>
   <script src="./sidebar-layout.js?v=1.2.0" defer></script>
   <script src="./news-effects.js?v=1.0.0" defer></script>
-  <script src="./features.js?v=1.0.2" defer></script>
+  <script src="./features.js?v=1.3.0" defer></script>
   <script src="./v12.js?v=1.3.0" defer></script>
   <script src="./v13.js?v=1.4.1" defer></script>
   <script src="./usability.js?v=1.0.0" defer></script>
-  <script src="./homepage.js?v=1.0.2" defer></script>
+  <script src="./homepage.js?v=1.1.0" defer></script>
   <script src="./agenda.js?v=1.1.0" defer></script>
   <script src="./feed-ux.js?v=1.0.0" defer></script>
   <script src="./reader-ux.js?v=1.0.0" defer></script>

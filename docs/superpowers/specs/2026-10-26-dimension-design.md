@@ -1,0 +1,13 @@
+# Radar RSS: estructura y estilo Dimension
+
+Solicitud: evaluar el desorden y repeticiones y aplicar la referencia Dimension adjunta. La referencia guía el aspecto; sus ejemplos de marketing, Tailwind y servicios no son instrucciones de incorporar otra aplicación. El propietario ya delegó las decisiones y ejecución en esta conversación.
+
+Diagnóstico confirmado: el shell carga siete hojas de temas/maquetas anteriores, además de los componentes; varios estilos vuelven a definir colores y navegación. Inicio mezcla selección de noticias, agenda con múltiples filtros, guardadas y cobertura. Hay placeholders fotográficos reiterados y acciones/ayudas permanentes que compiten con los titulares.
+
+Decisión del implementador: conservar Python/JS estático y las preferencias, usar un único tema Dimension con canvas#0a0a0a/superficie#161616, texto#ededed/#c2c2c2, vidrio suave, bordes finos, cápsulas y peso500. Variante clara y elección explícita del usuario preservadas; modo sistema conservado conforme a su preferencia previa. Sin fuentes externas/dependencias nuevas: familias locales con fallback de sistema; 72px de marketing adaptados al tamaño de titulares de noticias. Degradado cálido/cobalto reservado a un encabezado editorial compacto, nunca botones ni tarjetas.
+
+Alternativas consideradas: cambiar sólo colores deja el desorden; rehacer todo con framework añade migración sin valor. Elegida reorganización del shell y componentes existentes más una única capa de tema; archivos visuales históricos permanecen como archivo pero salen del index/cache activos.
+
+Estructura: Inicio muestra un destacado y un carrusel de titulares distintos; Noticias conserva archivo completo, modos de lectura y filtros; Agenda dispone de ruta propia#agenda y conserva calendario/guardadas/ICS; Resumen agrupa cobertura y tendencias como herramientas secundarias. Lateral visible en escritorio y ocultable, drawer móvil accesible. Actualización y estado de RSS en una zona secundaria; búsqueda/configuración/tema en cabecera flotante. Sin duplicar controles ni datos. Guardadas continúa en su vista del lector, sin otro bloque de la misma lista en Inicio.
+
+Aceptación: navegación directa/recarga#agenda, contador íntegro y avisos de generación, selección sin IDs repetidos, filtros/foco/undo/respaldo conservados, fuentes ocultas y MiRadar respetados, contraste legible en ambos temas, zoom y320–1440sin overflow, teclado y movimiento reducido. Datos/catalogación/recolección no cambian. Marca/firma/atribución siguen propias; sin imágenes ajenas decorativas ni recopilación personal nueva. Revisión independiente y CI3motores antes de publicar con autorización persistente del propietario.

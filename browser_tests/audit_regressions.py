@@ -6,7 +6,7 @@ import os
 import threading
 import unittest
 from http.server import ThreadingHTTPServer
-from playwright.sync_api import sync_playwright
+from playwright.sync_api import sync_playwright, expect
 import responsive_smoke as fixtures
 
 
@@ -61,8 +61,8 @@ class AuditRegressions(unittest.TestCase):
         self.assertFalse(self.page.locator('#libraryTagFilter').is_visible())
         for item_id in ['noticia-1', 'noticia-0']:
             placeholder = self.page.locator(f'#articleGrid [data-article-id="{item_id}"] .article-cover-placeholder')
-            placeholder.wait_for()
-            placeholder.click()
+            expect(placeholder).to_be_hidden()
+            self.page.locator(f'#articleGrid [data-article-id="{item_id}"] .article-title a').click()
             self.assertTrue(self.page.locator('#articleReaderDialog').is_visible())
             self.page.locator('#readerClose').click()
         self.page.locator('#articleGrid .article-title a').first.click()

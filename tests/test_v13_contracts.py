@@ -27,7 +27,7 @@ class V13Contracts(unittest.TestCase):
         self.assertIn("target===\'all\'?\'#noticias\'",self.app)
 
     def test_home_starts_with_news_not_promotional_copy(self):
-        self.assertIn('<h1 id="dashboardTitle" class="sr-only">Portada de Radar RSS</h1>',self.html)
+        self.assertIn('<h1 id="dashboardTitle">En tu radar.</h1>',self.html)
         self.assertNotIn('Noticias para estar al día.',self.html)
         self.assertNotIn('Una lectura clara de la actualidad',self.html)
         self.assertNotIn('class="dashboard-head"',self.html)
@@ -39,29 +39,12 @@ class V13Contracts(unittest.TestCase):
         self.assertIn('id="dashboardFoldersTitle"',self.html)
         self.assertIn('id="dashboardSavedAll"',self.html)
 
-    def test_home_has_stable_two_lane_editorial_structure(self):
-        css=(ROOT/'web/home-editorial.css').read_text(encoding='utf8')
-        self.assertIn('class="newsroom-columns" id="newsroomColumns"',self.html)
-        self.assertIn('class="newsroom-primary-column"',self.html)
-        self.assertIn('class="newsroom-secondary-column"',self.html)
-        self.assertIn('class="newsroom-lead" id="newsroomLead"',self.html)
-        self.assertIn('class="newsroom-discovery" id="newsroomDiscovery"',self.html)
-        self.assertIn('newsroom-lead-stories',self.html)
-        self.assertIn('newsroom-lead-latest',self.html)
-        self.assertIn('newsroom-discovery-aside',self.html)
-        self.assertLess(self.html.index('id="topicRail"'),self.html.index('<main class="main"'))
-        self.assertIn('grid-template-columns:minmax(0, 1.93fr) minmax(300px, 1fr)',css)
-        self.assertIn('#dashboardFeature',css)
-        self.assertIn('grid-template-columns:repeat(2,minmax(0,1fr))',css)
-        self.assertIn('grid-column:1 / -1;grid-row:auto',css)
-        self.assertNotIn('lead-gap.js',self.html)
-        self.assertNotIn('--lead-free-space',css)
-        self.assertLess(self.html.index('copper-theme.css'),self.html.index('home-editorial.css'))
-        self.assertIn('body.radar-hybrid .sidebar-backdrop:not([hidden])',
-                      (ROOT/'web/v13.css').read_text(encoding='utf8'))
-        self.assertIn("const MOBILE_NAV=window.matchMedia('(max-width: 950px)')",self.app)
-        self.assertIn('sidebar-layout.js?v=1.2.0',self.html)
-        self.assertNotIn('Noticias para estar al día.',self.html)
+    def test_home_has_separate_current_views_and_compatibility_slots(self):
+        self.assertIn('class="newsroom-columns" id="newsroomColumns" hidden',self.html)
+        for slot in ('dashboardFeature','dashboardRecent','dashboardSavedAll','dashboardFoldersTitle','agendaView'):
+            self.assertIn('id="'+slot+'"',self.html)
+        self.assertNotIn('home-editorial.css?v=',self.html)
+        self.assertIn('dimension.css?v=',self.html)
 
     def test_onboarding_actions_are_only_in_reading_settings(self):
         for token in ["v13GuideTitle","aria-labelledby",
@@ -110,7 +93,7 @@ class V13Contracts(unittest.TestCase):
         self.assertIn('v13.css?v=7.1.1',self.html)
         self.assertIn('Portada editorial V5.3',css)
         self.assertIn('grid-template-columns:repeat(3,minmax(0,1fr))',css)
-        self.assertIn("radar-rss-v38",self.sw)
+        self.assertIn("radar-rss-v39",self.sw)
 
     def test_card_read_action_is_visible_and_syncs_values(self):
         self.assertIn("article-action article-read-toggle",self.app)
@@ -136,23 +119,22 @@ class V13Contracts(unittest.TestCase):
 
     def test_missing_photos_are_labeled_not_invented(self):
         self.assertIn("function editorialCover(item)",self.app)
-        self.assertIn("Sin fotografía disponible",self.app)
+        self.assertIn("Vista previa",self.app)
         self.assertIn("article-cover-placeholder",self.app)
         self.assertIn("el.classList.add('no-excerpt')",self.app)
         self.assertIn("state.showImages",self.app)
         self.assertIn("img.addEventListener('error'",self.app)
         self.assertNotIn("images.unsplash.com",self.app)
 
-    def test_read_and_unread_get_distinct_subtle_elevations(self):
+    def test_read_and_unread_are_distinct_without_decorative_elevation(self):
+        css=(ROOT/'web/dimension.css').read_text(encoding='utf8')
         self.assertIn("'unread-card'",self.app)
-        css=(ROOT/'web/v13.css').read_text(encoding="utf8")
-        self.assertIn(".article-card.unread-card",css)
-        self.assertIn(".article-card.read-article",css)
-        self.assertIn("box-shadow:0 1px 2px",css)
-        self.assertIn(".article-card.no-excerpt",css)
-        self.assertIn(".article-cover-placeholder",css)
-        self.assertIn("@media(hover:hover) and (pointer:fine)",css)
-        self.assertIn("@media(prefers-reduced-motion:reduce)",css)
+        self.assertIn('.article-card.unread-card',css)
+        self.assertIn('.article-card.read-article',css)
+        self.assertIn('.article-card.read-article .article-title',css)
+        self.assertIn('font-weight:400',css)
+        self.assertIn('box-shadow:none',css)
+        self.assertIn('prefers-reduced-motion:reduce',css)
 
     def test_backup_is_retained_and_manual_recovery_checks_integrity(self):
         self.assertIn("retention-days: 90",self.workflow)

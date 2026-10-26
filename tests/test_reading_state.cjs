@@ -7,7 +7,7 @@ const vm=require('node:vm');
 const test=require('node:test');
 const assert=require('node:assert/strict');
 const app=fs.readFileSync(path.join(__dirname,'../web/app.js'),'utf8');
-const source=app.slice(0,app.indexOf("document.body.classList.toggle('radar-hybrid',!IS_STYLE_PREVIEW);"));
+const source=app.slice(0,app.indexOf('hydrateIcons(); initHandlers(); updateScheduleProgress(); boot();'));
 const OLD='2026-10-20T10:00:00Z',NEXT='2026-10-21T10:00:00Z',NEWEST='2026-10-21T16:00:00Z';
 
 function harness(){

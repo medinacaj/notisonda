@@ -46,27 +46,31 @@ def main():
                 expect(page.locator('#dashboardRecent .dashboard-recent-row').first).to_be_visible()
                 expect(page.locator('#latestCarouselNext')).to_be_visible()
                 assert page.locator('#dashboardRecent .dashboard-recent-row').count() >= 3
-                assert page.locator('#dashboardRecent .dashboard-recent-row').first.get_attribute('data-topic') == '3'
                 assert page.locator('#libraryFolderNav .system-folder-link').count() == 8
                 assert page.locator('#libraryFolderNav [data-topic="9"]').count() == 0
                 assert page.locator('#dashboardRecent .dashboard-recent-row[data-topic="4"]').count() >= 1
-                expect(page.locator('#dashboardRecent .latest-news-image').first).to_have_js_property('naturalWidth', 400)
+                expect(page.locator('#dashboardFeature > .article-card')).to_have_count(1)
+                assert page.locator('#dashboardFeature .article-card').get_attribute('data-topic') == '3'
                 dims = page.locator('#dashboardRecent').evaluate('n => ({width:n.clientWidth,card:n.firstElementChild.getBoundingClientRect().width})')
                 visible = round(dims['width']/dims['card'])
                 assert visible == (3 if width == 1440 else 1), dims
                 assert page.evaluate("document.documentElement.scrollWidth <= innerWidth + 2")
-                assert page.evaluate("document.querySelector('.newsroom-primary-column').getBoundingClientRect().width >= document.getElementById('newsroomColumns').clientWidth - 2")
+                expect(page.locator('#newsroomColumns')).to_be_hidden()
                 expect(page.locator('.newsroom-secondary-column')).to_be_hidden()
                 expect(page.locator('#latestCarouselNext')).to_be_enabled()
                 page.locator('#latestCarouselNext').click()
                 page.wait_for_function("() => document.getElementById('dashboardRecent').scrollLeft > 0")
                 page.locator('#latestCarouselPrevious').click()
                 page.wait_for_function("() => document.getElementById('dashboardRecent').scrollLeft < 2")
+                page.evaluate("goTo('briefing')")
+                expect(page.locator('#coverageTools')).to_be_visible()
                 expect(page.locator('#coverageTools')).not_to_have_attribute('open', '')
                 page.locator('#coverageTools > summary').click()
                 expect(page.locator('#radarMapDetails')).to_be_attached()
                 assert page.locator('#radarFigure').count() == 1
                 page.locator('#coverageTools > summary').click()
+                page.evaluate("goTo('home')")
+                page.wait_for_function("() => state.pageView==='dashboard'")
                 page.evaluate('window.scrollTo(0,0)')
                 page.screenshot(path=str(screenshots / f'homepage-{width}.png'), full_page=True)
                 page.evaluate("goTo('03 - Internacionales')")

@@ -424,11 +424,12 @@ buildNav=function(){
     ...$('categoryNav').querySelectorAll(':scope > .nav-link'),
     ...$('libraryFolderNav').querySelectorAll('.system-folder-link')
   ];
-  buttons.forEach((button,index)=>{
-    if(index===0)return;
-    const ids=index===1
-      ? state.sources.filter(s=>!state.hiddenSources.has(s.id)).map(s=>s.id)
-      : state.sources.filter(s=>s.category===state.categories[index-2]&&!state.hiddenSources.has(s.id)).map(s=>s.id);
+  buttons.forEach(button=>{
+    const destination=button.dataset.destination;
+    if(!destination||['home','agenda'].includes(destination))return;
+    const ids=destination==='all'
+      ? state.sources.filter(source=>!state.hiddenSources.has(source.id)).map(source=>source.id)
+      : folderSources('default',destination);
     const count=unread(ids);
     const label=button.querySelector('.nav-count');if(label)label.textContent=newsCountText(count);
     button.title=newsUnreadText(count)+' · '+ids.length+' fuentes';
@@ -644,13 +645,13 @@ function updateUnreadCounts(){
     ...$('categoryNav').querySelectorAll(':scope > .nav-link'),
     ...$('libraryFolderNav').querySelectorAll('.system-folder-link')
   ];
-  buttons.forEach((btn,i)=>{
-    if(i===0)return;
-    const ids=i===1?state.sources.map(s=>s.id):state.sources.filter(s=>s.category===state.categories[i-2]).map(s=>s.id);
-    const n=unread(ids);const count=btn.querySelector('.nav-count');
-    const total=i>=2?unread(folderSources('default',state.categories[i-2])):n;
+  buttons.forEach(button=>{
+    const destination=button.dataset.destination;
+    if(!destination||['home','agenda'].includes(destination))return;
+    const ids=destination==='all'?state.sources.map(source=>source.id):folderSources('default',destination);
+    const total=unread(ids),count=button.querySelector('.nav-count');
     if(count)count.textContent=newsCountText(total);
-    btn.title=newsUnreadText(total);
+    button.title=newsUnreadText(total);
   });
   renderFolderNav();
 }
