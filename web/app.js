@@ -1301,8 +1301,14 @@ let historyRequest=null;
 let historyAbort=null;
 function historyFiles(){return (Array.isArray(state.feedMeta?.archive_files)?state.feedMeta.archive_files:[]).filter(x=>/^archive-\d{2}\.json$/.test(x)).slice(0,32);}
 function hasHistory(){return !state.historyLoaded&&historyFiles().length>0;}
-function newsCountsComplete(){return state.ready&&!!state.feedMeta&&state.feedMeta.generated_at===state.generated&&!hasHistory();}
-function newsCountsUnavailable(){return state.ready&&(state.historyFailed||!state.feedMeta||state.feedMeta.generated_at!==state.generated);}
+function newsCountsComplete(){
+  const meta=state.feedMeta,files=meta?.archive_files;
+  return state.ready&&!!meta&&meta.generated_at===state.generated
+    &&Number.isSafeInteger(meta.total_articles)&&meta.total_articles===state.items.length
+    &&Array.isArray(files)&&files.length===historyFiles().length&&new Set(files).size===files.length
+    &&!hasHistory();
+}
+function newsCountsUnavailable(){return state.ready&&(state.historyFailed||!state.feedMeta||state.feedMeta.generated_at!==state.generated||(!hasHistory()&&!newsCountsComplete()));}
 function newsCountText(count){return newsCountsComplete()?format.format(count):newsCountsUnavailable()?'—':'…';}
 function newsUnreadText(count){return newsCountsComplete()?`${format.format(count)} noticias sin leer`:newsCountsUnavailable()?'total no disponible':'calculando noticias sin leer';}
 function updateHistoryButton(){
