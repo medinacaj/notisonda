@@ -632,8 +632,10 @@ function updateSourceCounts(){
   const sourceNames=new Map(state.sources.map(source=>[source.id,sourceLabel(source.name)]));
   for(const option of [...select.options].slice(1)){
     const amount=counts.get(option.value)||0;
-    option.textContent=`${sourceNames.get(option.value)||option.textContent} (${format.format(amount)})`;
-    option.title=`${format.format(amount)} noticias con los filtros actuales`;
+    const amountText=state.mode==='saved'?format.format(amount):newsCountText(amount);
+    option.textContent=`${sourceNames.get(option.value)||option.textContent} (${amountText})`;
+    option.title=state.mode==='saved'||newsCountsComplete()?`${amountText} noticias con los filtros actuales`
+      :newsCountsUnavailable()?'Total no disponible con los filtros actuales':'Calculando noticias con los filtros actuales';
   }
 }
 function updateHeader() {
@@ -650,7 +652,9 @@ function describeSearch(query,count){
   const node=$('feedDescription');
   if(query){
     if(baseDescription===null)baseDescription=node.textContent;
-    node.textContent=`${format.format(count)} ${count===1?'resultado':'resultados'} para «${query}»`+(state.historyLoading?' · buscando en noticias anteriores…':'');
+    node.textContent=state.mode==='saved'||newsCountsComplete()
+      ?`${format.format(count)} ${count===1?'resultado':'resultados'} para «${query}»`
+      :`${newsCountsUnavailable()?'Total no disponible':'Buscando en todo el archivo'} para «${query}»`;
   }else if(baseDescription!==null){
     node.textContent=baseDescription;baseDescription=null;
   }
@@ -872,10 +876,17 @@ function renderDashboard(){
 
 function emptyState(filtered) {
   const isEmpty = !state.items.length;
-  if (!isEmpty && state.search.trim() && state.historyLoading) {
+  if (!isEmpty && state.search.trim() && state.mode!=='saved' && state.historyLoading) {
     const el = mk('div','empty-state');
     const symbol=mk('div','empty-icon');symbol.append(svgIcon('search'));
     el.append(symbol, mk('h3','','Buscando en noticias anteriores…'), mk('p','','Revisamos el archivo completo de los últimos 45 días.'));
+    return el;
+  }
+  if (!isEmpty && state.search.trim() && state.mode!=='saved' && newsCountsUnavailable()) {
+    const el = mk('div','empty-state');
+    const symbol=mk('div','empty-icon');symbol.append(svgIcon('search'));
+    el.append(symbol, mk('h3','','No se pudo completar la búsqueda'),
+      mk('p','','No pudimos revisar todo el archivo. Reintenta cargar el historial o pulsa actualizar para completar la búsqueda.'));
     return el;
   }
   if (!isEmpty && state.search.trim()) {
@@ -1236,9 +1247,13 @@ function markRead(id,value){
 function render() {
   const filtered=applyFilters(), visible=filtered.slice(0,state.page*state.pageSize);
   updateSourceCounts();
-  $('visibleCount').textContent=`${format.format(filtered.length)} ${hasHistory()?'RECIENTES':'ARTÍCULOS'}`;
+  $('visibleCount').textContent=state.mode==='saved'||newsCountsComplete()
+    ?`${format.format(filtered.length)} ARTÍCULOS`
+    :newsCountsUnavailable()?'TOTAL NO DISPONIBLE':'CALCULANDO TOTAL…';
   $('markAllVisible').disabled=!visible.some(item=>!state.read.has(item.id));
-  $('filterSummary').textContent=`${format.format(visible.length)} visibles · ${format.format(applyFilters('unread').length)} sin leer con estos filtros`; 
+  const unreadSummary=newsCountsComplete()?`${format.format(applyFilters('unread').length)} sin leer con estos filtros`
+    :newsCountsUnavailable()?'total no disponible':'calculando total del archivo…';
+  $('filterSummary').textContent=`${format.format(visible.length)} visibles · ${unreadSummary}`;
   const modeCounts={
     all:state.mode==='all'?filtered.length:applyFilters('all').length,
     unread:state.mode==='unread'?filtered.length:applyFilters('unread').length,
@@ -1250,16 +1265,18 @@ function render() {
     ['saved','savedCount','Guardadas']
   ]){
     const count=modeCounts[mode];
-    $(id).textContent=format.format(count);
+    $(id).textContent=mode==='saved'?format.format(count):newsCountText(count);
     const button=document.querySelector(`.mode-tab[data-mode="${mode}"]`);
-    const basis=mode==='saved'?'guardadas disponibles':(hasHistory()?'noticias recientes cargadas':'noticias disponibles');
-    button.title=`${label}: ${format.format(count)} ${basis}. Los contadores respetan los filtros activos.`;
+    const basis=mode==='saved'?'guardadas disponibles':'noticias disponibles';
+    button.title=mode==='saved'||newsCountsComplete()
+      ?`${label}: ${format.format(count)} ${basis}. Los contadores respetan los filtros activos.`
+      :`${label}: ${newsCountsUnavailable()?'total no disponible':'calculando el total del archivo'}.`;
     button.setAttribute('aria-label',button.title);
   }
   const query=state.search.trim();
   describeSearch(query,filtered.length);
-  // Una búsqueda debe cubrir todo el archivo, no solo las 300 noticias recientes.
-  if(query.length>=3&&hasHistory()&&!state.historyLoading&&!state.historyFailed)void loadHistory();
+  // Complete the archive in the background so every count uses real articles.
+  if(state.ready&&hasHistory()&&!state.historyLoading&&!state.historyFailed&&state.feedMeta.generated_at===state.generated)void loadHistory();
   const grid=$('articleGrid'); grid.className='article-grid'+(state.layout === 'list'?' list-view':'');
   // La portada y el resumen tienen sus propios componentes: no construir
   // tarjetas ocultas en cada pulsación o actualización de esos paneles.
@@ -1281,19 +1298,26 @@ function render() {
 }
 
 let historyRequest=null;
+let historyAbort=null;
 function historyFiles(){return (Array.isArray(state.feedMeta?.archive_files)?state.feedMeta.archive_files:[]).filter(x=>/^archive-\d{2}\.json$/.test(x)).slice(0,32);}
 function hasHistory(){return !state.historyLoaded&&historyFiles().length>0;}
+function newsCountsComplete(){return state.ready&&!!state.feedMeta&&state.feedMeta.generated_at===state.generated&&!hasHistory();}
+function newsCountsUnavailable(){return state.ready&&(state.historyFailed||!state.feedMeta||state.feedMeta.generated_at!==state.generated);}
+function newsCountText(count){return newsCountsComplete()?format.format(count):newsCountsUnavailable()?'—':'…';}
+function newsUnreadText(count){return newsCountsComplete()?`${format.format(count)} noticias sin leer`:newsCountsUnavailable()?'total no disponible':'calculando noticias sin leer';}
 function updateHistoryButton(){
+  $('loadMore').disabled=state.historyLoading;
   if(state.historyLoading){$('loadMore').hidden=false;$('loadMore').disabled=true;$('loadMore').textContent='Cargando historial…';}
   else if(hasHistory()&&state.pageView==='feed'){
     $('loadMore').hidden=false;$('loadMore').disabled=false;
-    $('loadMore').replaceChildren(mk('span','','Cargar noticias anteriores'),svgIcon('arrow-down'));
-  }
+    $('loadMore').replaceChildren(mk('span','',state.historyFailed?'Reintentar historial':'Cargar noticias anteriores'),svgIcon('arrow-down'));
+  }else $('loadMore').replaceChildren(mk('span','','Cargar más noticias'),svgIcon('arrow-down'));
 }
 async function loadHistory(){
-  if(!hasHistory()||historyRequest)return historyRequest;
+  if(!hasHistory()||historyRequest||state.feedMeta.generated_at!==state.generated)return historyRequest;
   const manifest=state.feedMeta;
-  state.historyLoading=true;updateHistoryButton();
+  const controller=new AbortController();historyAbort=controller;
+  state.historyFailed=false;state.historyLoading=true;updateHistoryButton();
   historyRequest=(async()=>{
     try{
       // Limitar las descargas simultáneas: 16 fragmentos pueden agotar memoria
@@ -1303,10 +1327,12 @@ async function loadHistory(){
       async function worker(){
         while(next<files.length){
           const i=next++;
-          docs[i]=await dataFetch('./data/'+files[i]);
+          docs[i]=await dataFetch('./data/'+files[i],{signal:controller.signal});
         }
       }
-      await Promise.all(Array.from({length:Math.min(3,files.length)},()=>worker()));
+      const workers=Array.from({length:Math.min(3,files.length)},()=>worker());
+      try{await Promise.all(workers);}
+      catch(error){controller.abort();await Promise.allSettled(workers);throw error;}
       if(manifest!==state.feedMeta)return;
       const items=new Map(state.items.map(x=>[x.id,x]));
       for(const doc of docs){
@@ -1315,8 +1341,8 @@ async function loadHistory(){
       }
       state.items=[...items.values()].sort((a,b)=>String(b.published_at||b.first_seen_at||'').localeCompare(String(a.published_at||a.first_seen_at||'')));
       state.historyLoaded=true;
-    }catch(error){console.warn('Historial RSS:',error);state.historyFailed=true;actionToast('No fue posible cargar noticias anteriores.');}
-    finally{state.historyLoading=false;historyRequest=null;render();}
+    }catch(error){if(manifest===state.feedMeta){console.warn('Historial RSS:',error);state.historyFailed=true;actionToast('No fue posible cargar noticias anteriores.');}}
+    finally{state.historyLoading=false;historyRequest=null;historyAbort=null;render();}
   })();
   return historyRequest;
 }
@@ -1377,7 +1403,13 @@ async function refreshPublishedData(){
   feedRefreshBusy=true;updateScheduleProgress();
   try{
     const meta=await dataFetch('./data/meta.json?check='+Date.now());
-    if(!meta.generated_at||meta.generated_at===state.generated)return;
+    if(!meta.generated_at)return;
+    if(meta.generated_at===state.generated){
+      if(!newsCountsComplete()&&!state.historyLoading){
+        state.feedMeta=meta;state.historyLoaded=false;state.historyFailed=false;render();
+      }
+      return;
+    }
     const [sources,latest,status]=await Promise.all([
       dataFetch('./data/sources.json?check='+Date.now()),
       dataFetch('./data/latest.json?check='+Date.now()),
@@ -1391,6 +1423,7 @@ async function refreshPublishedData(){
     state.feedMeta=meta;state.historyLoaded=false;state.historyFailed=false;
     state.health=Array.isArray(status.feeds)?status.feeds:state.health;
     state.generated=meta.generated_at;
+    historyAbort?.abort();
     updateScheduleProgress();
     buildNav();fillSelect();updateHeader();statusSummary();render();
     publishNewRSSNews(previousIds);
@@ -1398,8 +1431,8 @@ async function refreshPublishedData(){
   finally{feedRefreshBusy=false;scheduleNextCheck();}
 }
 
-async function dataFetch(path, fallback) {
-  const response = await fetch(path,{cache:'no-cache'});
+async function dataFetch(path, options={}) {
+  const response = await fetch(path,{cache:'no-cache',signal:options.signal});
   if (!response.ok) throw new Error(`HTTP ${response.status} al abrir ${path}`);
   return response.json();
 }
@@ -1491,7 +1524,7 @@ function initHandlers() {
   $('searchInput').addEventListener('keydown',e=>{
     if(e.key==='Escape'&&e.target.value){e.preventDefault();e.target.value='';state.search='';state.page=1;render();}
   });
-  $('loadMore').addEventListener('click',()=>{if(hasHistory()&&state.page*state.pageSize>=applyFilters().length){void loadHistory();return;}state.page+=1;render();});
+  $('loadMore').addEventListener('click',()=>{if(hasHistory()&&(state.historyFailed||state.page*state.pageSize>=applyFilters().length)){void loadHistory();return;}state.page+=1;render();});
   $('themeToggle').addEventListener('click',()=>setTheme(document.body.classList.contains('light')?'dark':'light',true));
   $('markAllVisible').addEventListener('click',()=>{const visible=applyFilters().slice(0,state.page*state.pageSize);for(const item of visible)state.read.add(item.id);persist('radar-read',state.read);render();});
   const dialog=$('aboutDialog');

@@ -53,7 +53,7 @@ class UxReviewTests(unittest.TestCase):
         self.assertEqual(self.html.count('id="searchInput"'), 1)
         self.assertIn("if(state.search.trim()&&state.pageView!=='feed'){goTo('all');return;}", self.app)
         # La búsqueda carga el archivo completo y no reintenta en bucle si falla.
-        self.assertIn('query.length>=3&&hasHistory()&&!state.historyLoading&&!state.historyFailed', self.app)
+        self.assertIn('state.ready&&hasHistory()&&!state.historyLoading&&!state.historyFailed', self.app)
 
     def test_cards_without_filler(self):
         self.assertNotIn('Accede a la noticia original', self.app)

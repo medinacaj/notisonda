@@ -206,7 +206,7 @@
     $('followedRow').hidden = !mine.length;
     $('followedChips').replaceChildren(...mine.map(term => {
       const unread = topicMatches(term).filter(x => !state.read.has(x.id)).length;
-      return topicChip(term, unread, { followed: true, title: `${unread} noticias sin leer sobre «${term}»` });
+      return topicChip(term, newsCountText(unread), { followed: true, title: `${newsUnreadText(unread)} sobre «${term}»` });
     }));
     panel.hidden = !topics.length && !mine.length;
   }
@@ -231,8 +231,8 @@
       const unread = topicMatches(term).filter(x => !state.read.has(x.id)).length;
       const left = mk('span', 'nav-left'); const icon = mk('span', 'nav-glyph'); icon.append(svgIcon('bell'));
       left.append(icon, mk('span', 'nav-label', term));
-      go.append(left, mk('span', 'nav-count', String(unread)));
-      go.title = `${unread} noticias sin leer sobre «${term}»`;
+      go.append(left, mk('span', 'nav-count', newsCountText(unread)));
+      go.title = `${newsUnreadText(unread)} sobre «${term}»`;
       go.addEventListener('click', () => searchFor(term));
       const remove = mk('button', 'followed-remove'); remove.type = 'button';
       remove.setAttribute('aria-label', `Dejar de seguir «${term}»`); remove.title = 'Dejar de seguir';
@@ -245,6 +245,7 @@
   /* ---------- Mientras no estabas ---------- */
   function renderSinceVisit() {
     const box = $('sinceVisit');
+    if (!newsCountsComplete()) { box.hidden = true; return; }
     const fresh = state.lastVisit ? eligible().filter(isNewSinceVisit) : [];
     const dismissed = storeGet(SINCE_DISMISS_KEY) === String(state.lastVisit);
     if (fresh.length < 3 || dismissed || Date.now() - state.lastVisit < 20 * 60000) { box.hidden = true; return; }

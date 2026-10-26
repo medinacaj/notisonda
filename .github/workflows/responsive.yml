@@ -57,6 +57,10 @@ jobs:
               print(f"::error title=Browser smoke failure::{detail}")
           sys.exit(result.returncode)
           PYTEST
+      - name: Contadores reales de todo el archivo
+        env:
+          RADAR_TEST_ENGINE: ${{ matrix.browser }}
+        run: python browser_tests/count_regressions.py
       - name: Regresiones de respaldo, Concepción y ayuda de lectura
         if: matrix.browser == 'chromium'
         run: |
