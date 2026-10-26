@@ -4,6 +4,9 @@ from datetime import datetime, timedelta, timezone
 import json
 import os
 from pathlib import Path
+import ssl
+import subprocess
+import tempfile
 import threading
 import unittest
 from urllib.parse import urlsplit
@@ -15,7 +18,19 @@ import responsive_smoke as fixtures
 class CountRegressions(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
+        # Match Pages and the existing smoke server: WebKit upgrades scripts to
+        # HTTPS under the site's CSP, even when the test page uses plain HTTP.
+        cls.tls = tempfile.TemporaryDirectory()
+        cert_dir = Path(cls.tls.name)
+        cert, key = cert_dir / 'cert.pem', cert_dir / 'key.pem'
+        subprocess.run(['openssl', 'req', '-x509', '-newkey', 'rsa:2048', '-nodes', '-days', '1',
+                        '-keyout', str(key), '-out', str(cert), '-subj', '/CN=localhost',
+                        '-addext', 'subjectAltName=IP:127.0.0.1,DNS:localhost'], check=True, capture_output=True)
         cls.server = fixtures.ThreadingHTTPServer(('127.0.0.1', 0), fixtures.QuietHandler)
+        tls_context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+        tls_context.load_cert_chain(certfile=str(cert), keyfile=str(key))
+        cls.server.socket = tls_context.wrap_socket(cls.server.socket, server_side=True)
+        cls.base = f'https://127.0.0.1:{cls.server.server_port}/'
         threading.Thread(target=cls.server.serve_forever, daemon=True).start()
         cls.driver = sync_playwright().start()
         engine = os.environ.get('RADAR_TEST_ENGINE', 'chromium')
@@ -30,10 +45,11 @@ class CountRegressions(unittest.TestCase):
         cls.driver.stop()
         cls.server.shutdown()
         cls.server.server_close()
+        cls.tls.cleanup()
 
     def setUp(self):
-        self.context = self.browser.new_context(viewport={'width': 1440, 'height': 900}, service_workers='block')
-        self.context.route('**/*', lambda r: r.continue_() if r.request.url.startswith('http://127.0.0.1:') else r.abort())
+        self.context = self.browser.new_context(viewport={'width': 1440, 'height': 900}, service_workers='block', ignore_https_errors=True)
+        self.context.route('**/*', lambda r: r.continue_() if r.request.url.startswith(self.base) else r.abort())
         self.page = self.context.new_page()
         self.errors = []
         self.page.on('pageerror', lambda error: self.errors.append(str(error)))
@@ -96,7 +112,7 @@ class CountRegressions(unittest.TestCase):
             route.fulfill(content_type='application/json', body=json.dumps(payload))
 
     def open(self):
-        self.page.goto(f'http://127.0.0.1:{self.server.server_port}/#noticias')
+        self.page.goto(self.base + '#noticias')
         self.page.wait_for_function('() => state.ready')
 
     def release(self, fail=False):
