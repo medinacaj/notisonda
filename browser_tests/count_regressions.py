@@ -261,6 +261,66 @@ class CountRegressions(unittest.TestCase):
         expect(self.page.locator('#followedChips .trend-count')).to_have_text('0')
         self.assertFalse(self.errors)
 
+    def mark_all_news(self):
+        self.page.locator('#categoryNav > .nav-link').nth(1).click(button='right')
+        self.page.once('dialog', lambda dialog: dialog.accept())
+        self.page.locator('#folderMenu [data-folder-action="read"]').click()
+
+    def mark_first_folder(self):
+        self.page.locator('#libraryFolderNav .system-folder-link').first.click(button='right')
+        self.page.locator('#folderMenu [data-folder-action="read"]').click()
+
+    def test_bulk_read_waits_for_verified_metadata_and_recovers(self):
+        self.payloads = self.dataset(900)
+        manifest = self.payloads.pop('meta.json')
+        self.open()
+        expect(self.page.locator('#allCount')).to_have_text('—')
+        self.mark_all_news()
+        expect(self.page.locator('#actionToast')).to_be_visible()
+        self.assertEqual(self.page.evaluate('state.read.size'), 0)
+        self.payloads['meta.json'] = manifest
+        self.page.locator('#refreshNow').click()
+        self.expect_count('#allCount', 900)
+        self.mark_all_news()
+        self.expect_count('#unreadCount', 0)
+        self.assertEqual(self.page.evaluate('state.read.size'), 900)
+        self.assertFalse(self.errors)
+
+    def test_bulk_read_rejects_metadata_of_another_generation(self):
+        self.payloads = self.dataset(900)
+        self.payloads['meta.json']['generated_at'] = '2026-01-01T00:00:00Z'
+        self.open()
+        expect(self.page.locator('#allCount')).to_have_text('—')
+        self.mark_all_news()
+        expect(self.page.locator('#actionToast')).to_be_visible()
+        self.assertEqual(self.page.evaluate('state.read.size'), 0)
+        self.assertFalse(self.errors)
+
+    def test_folder_bulk_read_requires_metadata(self):
+        self.payloads = self.dataset(900)
+        self.payloads.pop('meta.json')
+        self.open()
+        expect(self.page.locator('#allCount')).to_have_text('—')
+        self.mark_first_folder()
+        expect(self.page.locator('#actionToast')).to_be_visible()
+        self.assertEqual(self.page.evaluate('state.read.size'), 0)
+        self.assertFalse(self.errors)
+
+    def test_folder_bulk_read_includes_archived_articles(self):
+        self.payloads = self.dataset(900)
+        self.hold = True
+        self.open()
+        expect(self.page.locator('#allCount')).to_have_text('…')
+        self.mark_first_folder()
+        self.assertEqual(self.page.evaluate('state.read.size'), 0)
+        self.release()
+        self.expect_count('#allCount', 900)
+        self.expect_count('#unreadCount', 787)
+        self.assertEqual(self.page.evaluate('state.read.size'), 113)
+        self.assertTrue(self.page.evaluate("state.read.has('history-896')"))
+        self.assertFalse(self.page.evaluate("state.read.has('history-897')"))
+        self.assertFalse(self.errors)
+
 
 if __name__ == '__main__':
     unittest.main(verbosity=2)

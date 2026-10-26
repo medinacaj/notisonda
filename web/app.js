@@ -1370,7 +1370,7 @@ function publishNewRSSNews(previousIds=null){
 }
 
 // Comprobación LOCAL de publicaciones nuevas: cada 15 min.
-// La recopilación de RSS de origen sigue cada seis horas por GitHub Actions.
+// La recopilación de RSS de origen sigue cada tres horas por GitHub Actions.
 const CHECK_INTERVAL_MS=15*60*1000;
 let nextCheckAt=Date.now()+CHECK_INTERVAL_MS;
 let checkStartedAt=Date.now();
@@ -1384,7 +1384,7 @@ function freshnessLabel(){
 function updateScheduleProgress(){
   $('lastUpdate').textContent=feedRefreshBusy?'Buscando novedades…':freshnessLabel();
   const exact=state.generated?' Última recopilación: '+shortDate(state.generated)+'.':'';
-  const description='Radar RSS busca noticias nuevas cada 15 minutos; los medios se recopilan aproximadamente cada 6 horas.'+exact;
+  const description='Radar RSS busca noticias nuevas cada 15 minutos; los medios se recopilan aproximadamente cada 3 horas.'+exact;
   $('refreshCycle').title=description;
   $('lastUpdate').title=description;
   $('refreshNow').disabled=feedRefreshBusy;
