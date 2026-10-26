@@ -75,7 +75,7 @@ class DimensionRegressions(unittest.TestCase):
         self.page.evaluate("setTheme('dark',true)")
         self.page.emulate_media(reduced_motion='reduce')
         colors=self.page.evaluate("() => ({bg:getComputedStyle(document.body).backgroundColor,text:getComputedStyle(document.body).color})")
-        self.assertEqual(colors['bg'],'rgb(10, 10, 10)')
+        self.assertEqual(colors['bg'],'rgb(16, 19, 38)')
         sheets=self.page.locator('link[rel="stylesheet"]').evaluate_all('nodes=>nodes.map(n=>new URL(n.href).pathname.split("/").pop())')
         self.assertIn('dimension.css',sheets)
         self.assertFalse(set(sheets)&{'editorial.css','hashnode-preview.css','radar-hybrid.css','copper-theme.css','home-editorial.css','cosmic-theme.css','iaadc-editorial.css'})
@@ -118,16 +118,29 @@ class DimensionRegressions(unittest.TestCase):
 
     def test_selected_source_folder_and_icon_remain_legible_in_both_themes(self):
         self.page.emulate_media(reduced_motion='reduce')
-        self.page.evaluate("goTo('07 - Concepción')")
-        expect(self.page.locator('#feedHeading')).to_have_text('Concepción')
+        categories=[*fixtures.CATEGORIES,'08 - Monagas']
+        self.page.evaluate('(categories)=>{state.categories=categories;buildNav()}',categories)
+        failures=[]
+        contrast=r"""node => {
+          const rgba=c=>{const a=c.match(/[\d.]+/g).map(Number);return [a[0],a[1],a[2],a[3]??1]};
+          const background=n=>{const c=rgba(getComputedStyle(n).backgroundColor);if(c[3]>=1||!n.parentElement)return c.slice(0,3);const below=background(n.parentElement);return c.slice(0,3).map((v,i)=>v*c[3]+below[i]*(1-c[3]));};
+          const lum=rgb=>rgb.map(v=>{v/=255;return v<=.04045?v/12.92:((v+.055)/1.055)**2.4}).reduce((s,v,i)=>s+v*[.2126,.7152,.0722][i],0);
+          return [node,...node.querySelectorAll('.nav-glyph,.nav-count')].filter(n=>n.getClientRects().length).map(n=>{const bg=lum(background(n)),fg=lum(rgba(getComputedStyle(n).color).slice(0,3));return (Math.max(fg,bg)+.05)/(Math.min(fg,bg)+.05)});
+        }"""
+        for category in categories:
+            self.page.evaluate('(category)=>goTo(category)',category)
+            expect(self.page.locator('#feedHeading')).to_have_text(category.split(' - ')[1])
+            for theme in ('dark','light'):
+                self.page.evaluate('(theme)=>setTheme(theme,true)',theme)
+                ratios=self.page.locator('#libraryFolderNav .nav-link.active').evaluate(contrast)
+                if min(ratios)<4.5:failures.append((category,theme,ratios))
+        self.page.evaluate("goTo('all')")
+        expect(self.page.locator('#feedHeading')).to_have_text('Todas las noticias')
         for theme in ('dark','light'):
             self.page.evaluate('(theme)=>setTheme(theme,true)',theme)
-            ratios=self.page.locator('#libraryFolderNav .nav-link.active').evaluate(r"""node => {
-              const lum=c=>c.match(/[\d.]+/g).slice(0,3).map(Number).map(v=>{v/=255;return v<=.04045?v/12.92:((v+.055)/1.055)**2.4}).reduce((s,v,i)=>s+v*[.2126,.7152,.0722][i],0);
-              const bg=lum(getComputedStyle(node).backgroundColor);
-              return [node,node.querySelector('.nav-glyph')].map(n=>{const fg=lum(getComputedStyle(n).color);return (Math.max(fg,bg)+.05)/(Math.min(fg,bg)+.05)});
-            }""")
-            self.assertGreaterEqual(min(ratios),4.5,(theme,ratios))
+            ratios=self.page.locator('#categoryNav [data-destination="all"]').evaluate(contrast)
+            if min(ratios)<4.5:failures.append(('Noticias',theme,ratios))
+        self.assertFalse(failures,failures)
 
     def test_mobile_menu_and_routes_do_not_overflow(self):
         for width in (320,390,768,1440):

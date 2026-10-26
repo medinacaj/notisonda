@@ -307,15 +307,15 @@ def main():
                           radius:getComputedStyle(document.querySelector('#dashboardFeature .article-card')).borderTopLeftRadius,
                           shadow:getComputedStyle(document.querySelector('#dashboardFeature .article-card')).boxShadow
                         })""")
-                        assert visual == {'bg':'#f6f6f6','radius':'24px','shadow':'none'},visual
+                        assert visual == {'bg':'#f3f4fc','radius':'24px','shadow':'none'},visual
                         assert page.locator('#dashboardTitle').inner_text() == 'En tu radar.'
                         expect(page.locator('#dashboardFeature')).to_be_visible()
                         expect(page.locator('#dashboardFeature > .article-card')).to_have_count(1)
                         page.evaluate("document.body.classList.remove('light')")
-                        assert page.evaluate("getComputedStyle(document.body).getPropertyValue('--bg').trim()") == '#0a0a0a'
+                        assert page.evaluate("getComputedStyle(document.body).getPropertyValue('--bg').trim()") == '#101326'
                         page.evaluate("document.body.classList.add('light')")
                         colors=page.locator('#libraryFolderNav .system-folder-link .nav-glyph').evaluate_all('nodes=>nodes.map(n=>getComputedStyle(n).color)')
-                        assert len(set(colors)) == 1,colors
+                        assert len(set(colors)) == len(CATEGORIES),colors
                         # Las seis carpetas originales y Concepción siguen accesibles y administrables.
                         assert page.locator("#libraryFolderNav .system-folder-link").count() == len(CATEGORIES)
                         assert page.locator("#libraryFolderNav .v12-hidden-category").count() == 0

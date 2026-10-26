@@ -231,6 +231,6 @@ Los filtros activos se muestran como chips removibles; en móvil, «Filtros» re
 
 ### Interfaz Dimension y organización
 
-La referencia Dimension aportada por el propietario guía la paleta negro/grafito, bordes finos, paneles translúcidos y controles en cápsula. Se conserva una variante clara y el modo del sistema, sin tipografías remotas ni dependencias nuevas. Las siete hojas de temas anteriores permanecen como archivo histórico y dejan de cargarse y precachearse.
+La referencia Dimension aportada por el propietario guía la paleta azul noche, violeta y azul con acentos por categoría, bordes finos, paneles translúcidos y controles en cápsula. Se conserva una variante clara y el modo del sistema, sin tipografías remotas ni dependencias nuevas. Las siete hojas de temas anteriores permanecen como archivo histórico y dejan de cargarse y precachearse.
 
 Inicio ofrece una selección breve, con un destacado y un carrusel sin repetir artículos. Noticias permite consultar el archivo completo y sus filtros. Agenda reúne en una vista propia calendario, actividades guardadas, pendientes y descargaICS. Resumen contiene los resúmenes por carpeta y las herramientas plegadas de cobertura y tendencias. El estado/actualización de RSS queda en el lateral; la cabecera flotante reúne búsqueda, configuración y tema. Guardadas sigue disponible en Noticias, sin otra lista duplicada en Inicio.

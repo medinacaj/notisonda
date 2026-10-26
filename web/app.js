@@ -208,7 +208,7 @@ function setTheme(theme, explicit=false) {
   $('themeGlyph').replaceChildren(svgIcon(light?'moon':'sun'));
   $('themeToggle').setAttribute('aria-label',light?'Cambiar a modo oscuro':'Cambiar a modo claro');
   $('themeToggle').title=light?'Modo oscuro':'Modo claro';
-  document.querySelector('meta[name="theme-color"]')?.setAttribute('content',light?'#f6f6f6':'#0a0a0a');
+  document.querySelector('meta[name="theme-color"]')?.setAttribute('content',light?'#f3f4fc':'#101326');
   if(explicit){
     try{localStorage.setItem('radar-theme',state.theme);localStorage.setItem(THEME_EXPLICIT_KEY,'true');}catch{}
   }
