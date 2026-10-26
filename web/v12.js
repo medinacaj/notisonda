@@ -44,6 +44,7 @@
   function persistPrefs() { save(KEY, prefs); }
   function myCats() { return prefs.categories.filter(cat => state.categories.includes(cat)); }
   window.RadarV12 = Object.freeze({
+    getFeedGeo(){return {id:geo,label:regionName[geo]};},
     dashboardMatch(item, {useSavedCategories=false}={}) {
       // The independently loaded agenda must honor Mi Radar before the catalog.
       const selected = useSavedCategories ? prefs.categories : myCats();

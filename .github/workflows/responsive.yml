@@ -73,6 +73,23 @@ jobs:
               print(f"::error title=Archive counter failure::{detail}")
           sys.exit(result.returncode)
           PYTEST
+      - name: Lectura y herramientas de agenda
+        env:
+          RADAR_TEST_ENGINE: ${{ matrix.browser }}
+        run: |
+          python - <<'PYTEST'
+          import subprocess
+          import sys
+          for suite in ("reading_experience.py", "agenda_tools_regressions.py"):
+              result = subprocess.run([sys.executable, "browser_tests/" + suite], capture_output=True, text=True)
+              print(result.stdout, end="")
+              print(result.stderr, end="", file=sys.stderr)
+              if result.returncode:
+                  detail = (result.stdout + result.stderr)[-6000:]
+                  detail = detail.replace("%", "%25").replace("\r", "%0D").replace("\n", "%0A")
+                  print(f"::error title={suite}::{detail}")
+                  sys.exit(result.returncode)
+          PYTEST
       - name: Regresiones de respaldo, Concepción y ayuda de lectura
         if: matrix.browser == 'chromium'
         run: |
@@ -87,6 +104,9 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: responsive-screenshots-${{ matrix.browser }}
-          path: test-results/responsive/${{ matrix.browser }}/
+          path: |
+            test-results/responsive/${{ matrix.browser }}/
+            test-results/reading-experience/
+            test-results/agenda-tools/
           if-no-files-found: ignore
           retention-days: 7

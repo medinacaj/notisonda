@@ -462,7 +462,7 @@ function initSettingsHandlers(){
       state.sort=select('sort',['newest','oldest','source'],'newest');state.startMode=select('startMode',['all','unread','saved'],'all');state.mutedKeywords=typeof p.mutedKeywords==='string'?p.mutedKeywords.slice(0,600):'';
       const valid=new Set(state.sources.map(x=>x.id));
       for(const [k,key,onlyValid] of [['hiddenSources','radar-hidden-sources',true],['saved','radar-saved',false],['read','radar-read',false]]){
-        state[k]=new Set((Array.isArray(data[k])?data[k]:[]).filter(x=>typeof x==='string'&&x.length<150&&(!onlyValid||valid.has(x))).slice(-4000));persist(key,state[k]);
+        state[k]=new Set((Array.isArray(data[k])?data[k]:[]).filter(x=>typeof x==='string'&&x.length<150&&(!onlyValid||valid.has(x))).slice(k==='read'?-20000:-4000));persist(key,state[k]);
       }
       for(const [key,value] of [['layout',state.layout],['columns',state.columns],['theme',state.theme],['density',state.density],['font',state.fontSize],['page-size',state.pageSize],['max-age',state.maxAge],['show-images',state.showImages],['show-summaries',state.showSummaries],['hide-read',state.hideRead],['new-tab',state.newTab],['sort',state.sort],['start-mode',state.startMode],['keywords',state.mutedKeywords]])savePref(key,value);
       state.mode=state.startMode;state.page=1;setTheme(state.theme,true);applyDisplaySettings();refreshFeedUI();syncSettings();selectedTab('data');$('dataNotice').textContent='Preferencias y datos importados correctamente.';
@@ -472,10 +472,12 @@ function initSettingsHandlers(){
   $('clearSaved').addEventListener('click',()=>{if(confirm('¿Vaciar los artículos guardados en este navegador?')){state.saved.clear();persist('radar-saved',state.saved);state.page=1;render();updateDataCounts();$('dataNotice').textContent='Guardadas vaciadas.';}});
   $('resetSettings').addEventListener('click',()=>{
     if(!confirm('¿Restablecer las preferencias? Tus artículos leídos y guardados no se borrarán.'))return;
+    let agendaResetFailed=false;
+    try{if(window.RadarAgenda)window.RadarAgenda.restorePreferences({...window.RadarAgenda.exportPreferences(),view:'list'});}catch{agendaResetFailed=true;}
     for(const key of ['layout','columns','theme','density','font','page-size','max-age','show-hero','show-images','show-summaries','hide-read','new-tab','sort','start-mode','keywords','hidden-sources','sidebar-width','theme-explicit']){try{localStorage.removeItem('radar-'+key);}catch{}}
     state.theme=initialTheme();state.layout='cards';state.columns='4';state.density='comfortable';state.fontSize='normal';state.pageSize=36;state.maxAge=0;
     state.showImages=true;state.showSummaries=true;state.hideRead=false;state.newTab=true;state.sort='newest';state.startMode='all';state.mode='all';state.mutedKeywords='';state.hiddenSources.clear();state.page=1;
-    setTheme(state.theme);applyDisplaySettings();$('settingsSourceSearch').value='';refreshFeedUI();syncSettings();selectedTab('data');$('dataNotice').textContent='Preferencias restablecidas.';
+    setTheme(state.theme);applyDisplaySettings();$('settingsSourceSearch').value='';refreshFeedUI();syncSettings();selectedTab('data');$('dataNotice').textContent=agendaResetFailed?'Preferencias restablecidas. No se pudo guardar la vista de agenda; tus actividades se conservan.':'Preferencias restablecidas.';
     window.dispatchEvent(new Event('radar-sidebar-pref-sync'));
   });
 }
@@ -905,13 +907,25 @@ function emptyState(filtered) {
     mk('p','',isEmpty ? 'Aún no se han cargado noticias. Revisa el estado de las fuentes RSS o vuelve a intentarlo después de la próxima actualización.' : 'Prueba otra categoría o fuente, desmarca tus filtros o busca con otros términos.'));
   return el;
 }
-let actionToastTimer;
-function actionToast(message){
+let actionToastTimer,actionToastVersion=0;
+function actionToast(message,{undo}={}){
   const toast=$('actionToast');
   toast.textContent=message;
   toast.hidden=false;
+  const version=++actionToastVersion;
+  let undoAvailable=typeof undo==='function';
+  if(undoAvailable){
+    const button=mk('button','toast-undo','Deshacer');button.type='button';
+    button.addEventListener('click',()=>{
+      if(!undoAvailable||version!==actionToastVersion)return;
+      undoAvailable=false;
+      window.clearTimeout(actionToastTimer);
+      undo(button);
+    });
+    toast.append(button);
+  }
   window.clearTimeout(actionToastTimer);
-  actionToastTimer=window.setTimeout(()=>{toast.hidden=true;},3200);
+  actionToastTimer=window.setTimeout(()=>{undoAvailable=false;toast.hidden=true;},undoAvailable?8000:3200);
 }
 async function shareArticle(item) {
   const url=safeURL(item.url);
@@ -1209,7 +1223,7 @@ function initCardMenu(){
     if(!target||!cardMenuItem)return;
     const item=cardMenuItem,action=target.dataset.cardAction;
     if(action==='share'){closeCardMenu(true);void shareArticle(item);}
-    else if(action==='read'){const next=!state.read.has(item.id);closeCardMenu(true);markRead(item.id,next);actionToast(next?'Marcada como leída.':'Marcada como no leída.');}
+    else if(action==='read'){const next=!state.read.has(item.id);closeCardMenu(true);if(next)markArticlesRead([item]);else{markRead(item.id,false);actionToast('Marcada como no leída.');}}
     else if(action==='open'){markRead(item.id,true);closeCardMenu();}
   });
   menu.addEventListener('keydown',event=>{
@@ -1228,10 +1242,13 @@ function initCardMenu(){
   window.addEventListener('wheel',()=>closeCardMenu(),{passive:true});
   document.addEventListener('touchmove',()=>closeCardMenu(),{passive:true});
 }
+// Una revisión por ID impide que Deshacer borre una marca manual posterior.
+const readRevisions=new Map();
 function markRead(id,value){
   const original=state.read.has(id);
   if(value)state.read.add(id);else state.read.delete(id);
   if(original===value)return;
+  readRevisions.set(id,(readRevisions.get(id)||0)+1);
   const active=document.activeElement;
   const returnFocus=active?.classList?.contains('article-read-toggle')===true;
   persist('radar-read',state.read);
@@ -1243,6 +1260,41 @@ function markRead(id,value){
       .find(el=>el.dataset.articleId===id)?.querySelector('.article-read-toggle');
     (target||$('articleGrid').querySelector('.article-read-toggle')||document.querySelector('.mode-tab.active'))?.focus({preventScroll:true});
   }
+}
+function markArticlesRead(items){
+  const focusOrigin=document.activeElement;
+  const readSet=state.read;
+  const changed=[];
+  for(const item of items){
+    const id=item?.id;
+    if(typeof id!=='string'||!id||state.read.has(id))continue;
+    state.read.add(id);
+    const revision=(readRevisions.get(id)||0)+1;
+    readRevisions.set(id,revision);changed.push({id,revision});
+  }
+  if(!changed.length){actionToast('No había noticias pendientes.');return 0;}
+  persist('radar-read',state.read);render();
+  actionToast(changed.length===1?'1 noticia marcada como leída.':format.format(changed.length)+' noticias marcadas como leídas.',{
+    undo:undoButton=>{
+      const restoreFocus=document.activeElement===undoButton;
+      let reverted=0;
+      for(const {id,revision} of changed){
+        if(state.read!==readSet||readRevisions.get(id)!==revision||!state.read.has(id))continue;
+        state.read.delete(id);readRevisions.set(id,revision+1);reverted++;
+      }
+      if(reverted){persist('radar-read',state.read);render();}
+      actionToast(reverted?'Se deshizo la marca de lectura.':'No quedan marcas de este lote por deshacer.');
+      // El mensaje retira Deshacer del DOM. Devolver su foco al control estable
+      // del lote sin interferir con otro diálogo o una acción de foco posterior.
+      if(restoreFocus&&focusOrigin?.isConnected&&!focusOrigin.disabled&&
+        !focusOrigin.matches?.(':disabled')&&!focusOrigin.closest('[hidden],[inert]')&&
+        !document.querySelector('dialog[open]')&&
+        (document.activeElement===undoButton||document.activeElement===document.body)){
+        focusOrigin.focus({preventScroll:true});
+      }
+    }
+  });
+  return changed.length;
 }
 function render() {
   const filtered=applyFilters(), visible=filtered.slice(0,state.page*state.pageSize);
@@ -1382,6 +1434,7 @@ let nextCheckAt=Date.now()+CHECK_INTERVAL_MS;
 let checkStartedAt=Date.now();
 let checkTimer=null;
 let feedRefreshBusy=false;
+let pendingPublication=null;
 function freshnessLabel(){
   if(!state.generated)return state.ready?'Sin sincronizar':'Cargando…';
   const age=ageDate(state.generated);
@@ -1416,25 +1469,51 @@ async function refreshPublishedData(){
       }
       return;
     }
+    if(meta.generated_at===pendingPublication?.meta.generated_at)return;
+    const generatedTime=typeof meta.generated_at==='string'?Date.parse(meta.generated_at):NaN;
+    if(!Number.isFinite(generatedTime))throw Error('Fecha de publicación RSS incompatible');
+    if(generatedTime<=Date.parse(state.generated)||generatedTime<=Date.parse(pendingPublication?.meta.generated_at))return;
     const [sources,latest,status]=await Promise.all([
       dataFetch('./data/sources.json?check='+Date.now()),
       dataFetch('./data/latest.json?check='+Date.now()),
       dataFetch('./data/status.json?check='+Date.now())
     ]);
-    if(latest.generated_at!==meta.generated_at)return;
+    // latest y status llevan la misma generación del manifiesto. sources no
+    // publica sello temporal; se valida su estructura antes de aceptar el lote.
+    if(latest?.generated_at!==meta.generated_at||status?.checked_at!==meta.generated_at||
+      !Array.isArray(latest.items)||!latest.items.every(item=>item&&typeof item.id==='string'&&item.id&&
+        [item.source_ids,item.categories].every(values=>values===undefined||Array.isArray(values)&&values.every(value=>typeof value==='string')))||
+      !Array.isArray(sources?.sources)||!sources.sources.every(source=>source&&typeof source.id==='string'&&
+        typeof source.name==='string'&&typeof source.category==='string')||
+      !Array.isArray(sources.categories)||!sources.categories.every(category=>typeof category==='string')||
+      !Array.isArray(status.feeds)||!status.feeds.every(feed=>feed&&typeof feed.id==='string')||
+      !Array.isArray(meta.archive_files)||!meta.archive_files.every(file=>/^archive-\d{2}\.json$/.test(file))){
+      throw Error('Publicación RSS incompatible');
+    }
+    pendingPublication={meta,sources,latest,status};
     const previousIds=new Set(state.items.map(item=>item.id));
-    state.sources=Array.isArray(sources.sources)?sources.sources:state.sources;
-    state.categories=Array.isArray(sources.categories)?sources.categories:state.categories;
-    state.items=Array.isArray(latest.items)?latest.items:state.items;
-    state.feedMeta=meta;state.historyLoaded=false;state.historyFailed=false;
-    state.health=Array.isArray(status.feeds)?status.feeds:state.health;
-    state.generated=meta.generated_at;
-    historyAbort?.abort();
-    updateScheduleProgress();
-    buildNav();fillSelect();updateHeader();statusSummary();render();
-    publishNewRSSNews(previousIds);
+    const added=new Set(latest.items.filter(item=>!previousIds.has(item.id)).map(item=>item.id)).size;
+    $('publicationMessage').textContent=added?`Hay ${format.format(added)} ${added===1?'noticia nueva':'noticias nuevas'}`:'Hay una actualización disponible';
+    $('publicationNotice').hidden=false;
   }catch(error){console.warn('Comprobación automática RSS:',error);}
   finally{feedRefreshBusy=false;scheduleNextCheck();}
+}
+
+function applyPendingPublication(){
+  if(!pendingPublication)return;
+  const {meta,sources,latest,status}=pendingPublication;
+  const previousIds=new Set(state.items.map(item=>item.id));
+  // Cambiar todo antes de renderizar; cualquier descarga antigua de historial
+  // queda invalidada por la identidad de feedMeta sin cerrar el lector abierto.
+  state.sources=sources.sources;state.categories=sources.categories;
+  state.items=latest.items;state.health=status.feeds;
+  state.feedMeta=meta;state.generated=meta.generated_at;
+  state.historyLoaded=false;state.historyFailed=false;
+  historyAbort?.abort();pendingPublication=null;
+  $('publicationNotice').hidden=true;
+  updateScheduleProgress();
+  buildNav();fillSelect();updateHeader();statusSummary();render();
+  publishNewRSSNews(previousIds);
 }
 
 async function dataFetch(path, options={}) {
@@ -1487,6 +1566,7 @@ function initHandlers() {
   window.setInterval(updateScheduleProgress,30_000);
   scheduleNextCheck();
   $('refreshNow').addEventListener('click',()=>{void refreshPublishedData();});
+  $('publicationApply').addEventListener('click',applyPendingPublication);
   window.addEventListener('focus',()=>{if(document.visibilityState==='visible'&&Date.now()>=nextCheckAt){void refreshPublishedData();}});
   document.addEventListener('visibilitychange',()=>{if(!document.hidden){if(Date.now()>=nextCheckAt){void refreshPublishedData();}else{updateScheduleProgress();}}});
   // Resolver la función en cada cambio: library.js y features.js la amplían después de cargar app.js.
@@ -1532,7 +1612,7 @@ function initHandlers() {
   });
   $('loadMore').addEventListener('click',()=>{if(hasHistory()&&(state.historyFailed||state.page*state.pageSize>=applyFilters().length)){void loadHistory();return;}state.page+=1;render();});
   $('themeToggle').addEventListener('click',()=>setTheme(document.body.classList.contains('light')?'dark':'light',true));
-  $('markAllVisible').addEventListener('click',()=>{const visible=applyFilters().slice(0,state.page*state.pageSize);for(const item of visible)state.read.add(item.id);persist('radar-read',state.read);render();});
+  $('markAllVisible').addEventListener('click',()=>{markArticlesRead(applyFilters().slice(0,state.page*state.pageSize));});
   const dialog=$('aboutDialog');
   const open=e=>{if(e)e.preventDefault();dialog.showModal();};
   $('aboutButton').addEventListener('click',open); $('footerInfo').addEventListener('click',open);

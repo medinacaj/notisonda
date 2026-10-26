@@ -41,8 +41,13 @@ jobs:
           node --check web/v13.js
           node --check web/homepage.js
           node --check web/agenda.js
+          node --check web/feed-ux.js
+          node --check web/reader-ux.js
           node --check web/sw.js
       - name: Pruebas JavaScript
         run: |
           node tests/test_sidebar_behavior.cjs
           node tests/test_news_effects.cjs
+          node tests/test_feed_ux.cjs
+          node tests/test_reader_ux.cjs
+          node tests/test_reading_state.cjs
