@@ -22,8 +22,8 @@
   <meta name="twitter:image" content="https://medinacaj.github.io/radar-rss-publico/social-card.png">
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' https: data:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests">
-  <link rel="icon" href="./favicon.svg" type="image/svg+xml">
-  <link rel="apple-touch-icon" href="./icon-192.png">
+  <link rel="icon" href="./favicon.svg?v=2" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="./radar-logo.png">
   <link rel="alternate" type="application/rss+xml" title="Radar RSS · Lo más cubierto" href="./feeds/mas-cubierto.xml">
   <link rel="manifest" href="./manifest.webmanifest">
   <link rel="stylesheet" href="./styles.css?v=5.2.0">
@@ -41,7 +41,7 @@
   <link rel="stylesheet" href="./agenda.css?v=1.1.0">
   <link rel="stylesheet" href="./reader-layout.css?v=1.0.0">
   <link rel="stylesheet" href="./reading-ux.css?v=1.0.0">
-  <link rel="stylesheet" href="./dimension.css?v=1.1.0">
+  <link rel="stylesheet" href="./dimension.css?v=1.2.0">
   <title>Radar RSS — Actualidad en un solo lugar</title>
 </head>
 <body class="radar-hybrid dimension" data-columns="4">
@@ -49,7 +49,7 @@
     <aside class="sidebar" id="appSidebar" aria-label="Menú de fuentes">
       <div class="sidebar-brand-row">
       <a class="brand" id="brandHome" href="#inicio" aria-label="Radar RSS: ir al inicio">
-        <span class="brand-mark" aria-hidden="true"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h15v15a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8h2z"/><path d="M5 8v11a2 2 0 0 0 2 2M9 8h7M9 12h7M9 16h2M15 16h1"/></svg></span>
+        <span class="brand-mark" aria-hidden="true"><img src="./radar-logo.png" width="1254" height="1254" alt="" decoding="async"></span>
         <span><strong>RADAR <em>RSS</em></strong><small>Tu espacio de actualidad</small></span>
       </a>
       <button type="button" id="menuClose" class="menu-close" aria-label="Cerrar menú" title="Cerrar menú"><span data-icon="x" class="ui-icon-slot" aria-hidden="true"></span></button>
@@ -105,7 +105,7 @@
         </div>
         <div id="publicationNotice" class="publication-notice" role="status" hidden><span id="publicationMessage"></span><button id="publicationApply" type="button">Mostrar noticias</button></div>
         <section id="dashboardView" class="dashboard-view" aria-labelledby="dashboardTitle" hidden>
-          <header class="dimension-intro"><div><h1 id="dashboardTitle">En tu radar.</h1></div><span class="dimension-edition" id="dimensionEdition"></span></header>
+          <header class="dimension-intro"><div class="dimension-heading"><span class="dimension-logo" aria-hidden="true"><img src="./radar-logo.png" width="1254" height="1254" alt="" decoding="async"></span><h1 id="dashboardTitle">Actualidad</h1></div><span class="dimension-edition" id="dimensionEdition"></span></header>
 
           <div class="newsroom-columns" id="newsroomColumns" hidden>
             <div class="newsroom-primary-column">
@@ -389,7 +389,7 @@
   </div>
   <button id="backTop" class="back-to-top" type="button" aria-label="Volver arriba" title="Volver arriba" hidden><span data-icon="arrow-up" class="ui-icon-slot" aria-hidden="true"></span></button>
   <div id="actionToast" class="action-toast" role="status" aria-live="polite" aria-atomic="true" hidden></div>
-  <script src="./app.js?v=9.3.1" defer></script>
+  <script src="./app.js?v=9.4.0" defer></script>
   <script src="./library.js?v=1.8.1" defer></script>
   <script src="./sidebar-layout.js?v=1.2.0" defer></script>
   <script src="./news-effects.js?v=1.0.0" defer></script>

@@ -37,38 +37,42 @@ const state = {
 };
 
 const VECTOR_PATHS={
-  calendar:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 11h18m-13 4h2m4 0h2"/>',
-  home:'<path d="m3 10 9-7 9 7v10H5V10M9 21v-7h6v7"/>',
-  newspaper:'<rect x="3" y="3" width="18" height="18" rx="2"/><path d="M7 7h5v5H7zM15 8h3M15 12h3M7 16h11"/>',
-  brain:'<path d="M12 5A4 4 0 0 0 5 4a5 5 0 0 0-1 8 5 5 0 0 0 6 8l2-2V5Zm0 0a4 4 0 0 1 7-1 5 5 0 0 1 1 8 5 5 0 0 1-6 8l-2-2"/>',
-  cpu:'<rect x="5" y="5" width="14" height="14" rx="2"/><rect x="9" y="9" width="6" height="6"/><path d="M9 1v4M15 1v4M9 19v4M15 19v4M1 9h4M1 15h4M19 9h4M19 15h4"/>',
-  globe:'<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c-7 6-7 12 0 18 7-6 7-12 0-18"/>',
+  'bookmark-filled':'<path d="M6 5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v16l-6-4-6 4Z" fill="currentColor"/>',
+  folder:'<path d="M3 8V6a2 2 0 0 1 2-2h4l3 3h7a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z" fill="currentColor" fill-opacity=".2"/><path d="M3 10h18"/>',
+  leaf:'<path d="M20 3c-9 0-16 4-16 11a6 6 0 0 0 6 6c7 0 10-8 10-17Z" fill="currentColor" fill-opacity=".2"/><path d="m4 21 10-11m-5 6v-5m0 5h5"/>',
+  landmark:'<path d="M3 9 12 4l9 5Z" fill="currentColor" fill-opacity=".3"/><path d="M5 10v8m5-8v8m4-8v8m5-8v8M3 21h18"/>',
+  mountain:'<path d="m2 20 7-14 5 9 3-5 5 10Z" fill="currentColor" fill-opacity=".2"/><path d="m6.5 11 2.5 2 2.5-2"/><circle cx="18" cy="5" r="2" fill="currentColor" stroke="none"/>',
+  calendar:'<rect x="3" y="5" width="18" height="16" rx="4" fill="currentColor" fill-opacity=".18"/><path d="M8 3v4m8-4v4M3 11h18"/><rect x="8" y="14" width="3" height="3" rx="1" fill="currentColor" stroke="none"/>',
+  home:'<path d="M4 10.5 12 4l8 6.5v8A1.5 1.5 0 0 1 18.5 20h-13A1.5 1.5 0 0 1 4 18.5z" fill="currentColor" fill-opacity=".18"/><path d="M9 20v-6h6v6"/>',
+  newspaper:'<rect x="3" y="4" width="18" height="16" rx="4" fill="currentColor" fill-opacity=".18"/><path d="M7 8h4v4H7z" fill="currentColor" stroke="none"/><path d="M14 8h3m-3 4h3M7 16h10"/>',
+  brain:'<path d="m12 3 2.7 5.8L21 12l-6.3 3.2L12 21l-2.7-5.8L3 12l6.3-3.2Z" fill="currentColor" fill-opacity=".2"/><path d="M19 3v4m-2-2h4"/>',
+  cpu:'<rect x="5" y="5" width="14" height="14" rx="4" fill="currentColor" fill-opacity=".2"/><rect x="9" y="9" width="6" height="6" rx="1.5"/><path d="M9 2v3m6-3v3M9 19v3m6-3v3M2 9h3m-3 6h3m14-6h3m-3 6h3"/>',
+  globe:'<circle cx="12" cy="12" r="9" fill="currentColor" fill-opacity=".18"/><ellipse cx="12" cy="12" rx="4" ry="9"/><path d="M3 12h18M5 6.5a16 16 0 0 0 14 0M5 17.5a16 16 0 0 1 14 0"/>',
   map:'<path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/>',
-  flag:'<path d="M5 22V4m0 1c7-5 9 5 16 0v12c-7 5-9-5-16 0"/>',
-  compass:'<circle cx="12" cy="12" r="9"/><path d="m16 8-3 5-5 3 3-5z"/>',
+  flag:'<path d="M5 21V4c5-4 9 4 15 0v11c-6 4-10-4-15 0" fill="currentColor" fill-opacity=".2"/><path d="M5 9c5-4 9 4 15 0"/>',
+  compass:'<circle cx="12" cy="12" r="9" fill="currentColor" fill-opacity=".18"/><path d="m16 8-2 6-6 2 2-6z" fill="currentColor" fill-opacity=".35"/>',
   rss:'<circle cx="5" cy="19" r="1.5" fill="currentColor" stroke="none"/><path d="M4 11a9 9 0 0 1 9 9M4 4a16 16 0 0 1 16 16"/>',
   grid:'<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>',
   list:'<path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" stroke-linecap="round"/>',
   clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l4 2"/>',
-  settings:'<circle cx="12" cy="12" r="3"/><path d="m10 2-.5 2-2 1-2-.7L3 7l1 2-1 2v2l1 2-1 2 2.5 2.7 2-.7 2 1 .5 2h4l.5-2 2-1 2 .7L21 17l-1-2 1-2v-2l-1-2 1-2-2.5-2.7-2 .7-2-1-.5-2z"/>',
-  sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5 19 19M5 19l1.5-1.5M17.5 6.5 19 5"/>',
-  moon:'<path d="M20 15.5A9 9 0 0 1 8.5 4 9 9 0 1 0 20 15.5Z"/>',
+  settings:'<path d="M4 7h16M4 17h16"/><rect x="7" y="4" width="4" height="6" rx="2" fill="currentColor"/><rect x="14" y="14" width="4" height="6" rx="2" fill="currentColor"/>',
+  sun:'<circle cx="12" cy="12" r="4" fill="currentColor" fill-opacity=".25"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5"/>',
+  moon:'<path d="M20.5 14.5A8.5 8.5 0 0 1 9.5 3.5a8.5 8.5 0 1 0 11 11Z" fill="currentColor" fill-opacity=".25"/><path d="M18 3v4m-2-2h4"/>',
   external:'<path d="M12 5H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7M13 3h8v8M10 14 21 3"/>',
   'arrow-right':'<path d="M4 12h16m-7-7 7 7-7 7"/>',
   'arrow-up':'<path d="M12 20V4M5 11l7-7 7 7"/>',
   'arrow-down':'<path d="M12 4v16M5 13l7 7 7-7"/>',
   'chevron-down':'<path d="m6 9 6 6 6-6"/>',
   refresh:'<path d="M20 7v5h-5M4 17v-5h5M5.5 9A7.5 7.5 0 0 1 19 7l1 5M4 12l1 5a7.5 7.5 0 0 0 13.5-2"/>',
-  check:'<path d="m5 12 5 5L20 7"/>',
-  bookmark:'<path d="M6 4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18l-6-4-6 4z"/>',
-  share:'<circle cx="18" cy="5" r="2"/><circle cx="6" cy="12" r="2"/><circle cx="18" cy="19" r="2"/><path d="m8 11 8-5M8 13l8 5"/>',
+  check:'<circle cx="12" cy="12" r="9" fill="currentColor" fill-opacity=".14" stroke="none"/><path d="m7 12 3.5 3.5L17 9"/>',
+  bookmark:'<path d="M6 5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v16l-6-4-6 4Z" fill="currentColor" fill-opacity=".18"/>',
+  share:'<path d="M6 13v6a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-6M12 15V3m-4 4 4-4 4 4"/>',
   undo:'<path d="M3 7v6h6M3 13a9 9 0 1 0 3-7"/>',
   info:'<circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7h.01"/>',
   x:'<path d="M18 6 6 18M6 6l12 12"/>',
   search:'<circle cx="11" cy="11" r="7"/><path d="m16 16 5 5"/>',
-  menu:'<path d="M4 6h16M4 12h16M4 18h16"/>',
+  menu:'<rect x="3" y="4" width="18" height="16" rx="4" fill="currentColor" fill-opacity=".18"/><path d="M9 4v16m4-11h4m-4 6h4"/>',
   more:'<circle cx="5" cy="12" r="1.3" fill="currentColor"/><circle cx="12" cy="12" r="1.3" fill="currentColor"/><circle cx="19" cy="12" r="1.3" fill="currentColor"/>',
-  'bookmark-filled':'<path d="M6 4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18l-6-4-6 4z" fill="currentColor"/>',
   layers:'<path d="m12 3 9 5-9 5-9-5 9-5Z"/><path d="m3 13 9 5 9-5"/>',
   trending:'<path d="m3 17 6-6 4 4 8-8"/><path d="M15 7h6v6"/>',
   radar:'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><path d="M12 12 18.4 5.6"/><circle cx="12" cy="12" r="1" fill="currentColor"/>',
@@ -79,10 +83,10 @@ const VECTOR_PATHS={
   copy:'<rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/>',
   bell:'<path d="M6 8a6 6 0 1 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.9 1.9 0 0 0 3.4 0"/>',
   keyboard:'<rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M7 14h10"/>',
-  sparkle:'<path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5 18 18M6 18l2.5-2.5M15.5 8.5 18 6"/>',
+  sparkle:'<path d="m12 3 2.5 6.5L21 12l-6.5 2.5L12 21l-2.5-6.5L3 12l6.5-2.5Z" fill="currentColor" fill-opacity=".2"/>',
   timeline:'<path d="M12 3v18"/><circle cx="12" cy="7" r="2"/><circle cx="12" cy="17" r="2"/><path d="M14 7h6M4 17h6"/>'
 };
-const CATEGORY_ICONS=['brain','cpu','globe','map','flag','compass'];
+const CATEGORY_ICONS=['brain','cpu','globe','mountain','flag','compass','landmark','leaf'];
 function svgIcon(name){
  const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
  svg.setAttribute('viewBox','0 0 24 24');svg.setAttribute('width','20');svg.setAttribute('height','20');
@@ -495,7 +499,7 @@ function buildNav() {
     button.title=entry.label;
     if(isFolder)button.setAttribute('aria-label','Carpeta de fuentes: '+entry.label);
     const symbol=mk('span','nav-glyph');
-    symbol.append(svgIcon(entry.id==='home'?'home':entry.id==='all'?'newspaper':entry.id==='agenda'?'calendar':'folder'));
+    symbol.append(svgIcon(entry.id==='home'?'home':entry.id==='all'?'newspaper':entry.id==='agenda'?'calendar':CATEGORY_ICONS[state.categories.indexOf(entry.id)]||'folder'));
     const left=mk('span','nav-left');
     left.append(symbol,mk('span','nav-label',entry.label));
     const sources=entry.id==='all'?state.sources.filter(s=>!state.hiddenSources.has(s.id)):
