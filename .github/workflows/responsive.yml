@@ -60,7 +60,19 @@ jobs:
       - name: Contadores reales de todo el archivo
         env:
           RADAR_TEST_ENGINE: ${{ matrix.browser }}
-        run: python browser_tests/count_regressions.py
+        run: |
+          python - <<'PYTEST'
+          import subprocess
+          import sys
+          result = subprocess.run([sys.executable, "browser_tests/count_regressions.py"], capture_output=True, text=True)
+          print(result.stdout, end="")
+          print(result.stderr, end="", file=sys.stderr)
+          if result.returncode:
+              detail = (result.stdout + result.stderr)[:6000]
+              detail = detail.replace("%", "%25").replace("\r", "%0D").replace("\n", "%0A")
+              print(f"::error title=Archive counter failure::{detail}")
+          sys.exit(result.returncode)
+          PYTEST
       - name: Regresiones de respaldo, Concepción y ayuda de lectura
         if: matrix.browser == 'chromium'
         run: |
