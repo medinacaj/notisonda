@@ -1,72 +1,47 @@
 # Estado del proyecto — Radar RSS
 
-Última actualización editorial: 2026-10-24.
+Actualizado el 25 de octubre de 2026. Este archivo distingue código implementado de verificaciones que necesitan evidencia externa. La versión publicada y los resultados más recientes se consultan en GitHub Actions.
 
-## Estado operativo
-- Versión pública: https://medinacaj.github.io/radar-rss-publico/
-- Rama estable y publicación: `main` + `.github/workflows/deploy.yml`.
-- Calidad Python/Node: `.github/workflows/ci.yml`.
-- Navegadores: `.github/workflows/responsive.yml` (Chromium, Firefox, WebKit; siete anchos).
-- Alertas: `.github/workflows/monitor.yml` (issue única, cierre al recuperarse).
-- Historial: hasta 5.000 noticias; ventana máxima 45 días y almacenamiento no permanente.
-- Tendencias: mínimo cuatro medios independientes.
-- **V1.2 interactiva:** navegación Latinoamérica unificada visualmente y con filtros por país, Mi Radar para elegir categorías, búsqueda guardada y filtros cruzados, comparador cronológico, boletín personalizable.
-- **Privacidad V1.2:** preferencias y búsquedas guardadas solo en este navegador; no hay perfiles ni sincronización.
-- **Pruebas V1.2:** suite Python/Node y recorrido E2E en Chromium, Firefox y WebKit, siete anchos incluidos 320 px.
-- **V1.3 — calidad UX:** guía no invasiva y reabrible, estadísticas de lectura únicamente locales; sin analítica central ni seguimiento.
-- **V1.3 — rendimiento:** ningún listado oculto en portada/resumen; descargas históricas limitadas a tres simultáneas.
-- **V1.3 — editorial:** informe orientativo en Actions sobre calidad de fuentes y coincidencias de titulares, sin bajas automáticas.
-- **V1.3 — recuperación:** artefactos JSON públicos de Actions con retención de hasta 90 días y recuperación manual validada.
+## Estado del código
 
-- **Concepción:** séptima carpeta pública, 33 suscripciones comprobadas (21 directas y 12 mediante Google Noticias); 226 suscripciones en el catálogo ampliado. Las carpetas se leen del catálogo sin un máximo fijo. Incluida en Chile/Latinoamérica y con selección individual. Véase `docs/fuentes-concepcion.md`.
+- Web pública: https://medinacaj.github.io/radar-rss-publico/; rama estable `main`.
+- Publicación: `.github/workflows/deploy.yml`, cada tres horas UTC (`17 */3 * * *`), con posibles demoras de GitHub. El navegador comprueba nuevas publicaciones cada 15 minutos.
+- Catálogo: **221 suscripciones en ocho carpetas**. Concepción mantiene 33 canales (21 directos/12 consultas); Maturín/Monagas seis; los cuatro canales culturales en español están dentro de Internacionales.
+- Noticias: archivo de hasta 5000 entradas y 45 días, listado paginado de 36 por defecto. Los contadores completan el archivo en segundo plano, respetan filtros/lectura y anuncian carga o total no disponible si no pueden verificarlo. Hasta tres descargas históricas simultáneas, canceladas al fallar o cambiar generación.
+- Agenda: recopilación independiente, horizonte de 90 días y fecha local de la actividad. Conserva actividades vigentes hasta acabar su último día, separa anuncios pendientes y excluye cancelados de próximos eventos. No deduce la fecha de actividad de la publicación. No garantiza cobertura exhaustiva.
+- Interfaz: lateral visible/ocultable en escritorio, menú accesible móvil, portada con un carrusel de noticias y agenda separada del listado, tema del sistema y firma LinkedIn.
+- Lectura y respaldo: guardadas, marcas, búsquedas y preferencias locales; respaldo v3 compatible con v2. Las marcas masivas globales/de carpeta esperan el archivo completo y no se aplican si falta metadata válida o falla su verificación.
+- Recuperación: Pages y caché se comparan por instantes UTC; fechas inválidas o sin zona no validan un respaldo. Si no hay copia verificable se detiene la recuperación. Artefactos con retención limitada, sin garantía de almacenamiento permanente.
+- Privacidad: preferencias sólo en este navegador, sin cuentas, sincronización ni analítica central.
 
-- **Frecuencia programada:** cada tres horas UTC (GitHub Actions puede demorar la ejecución); antes era cada seis horas.
+## Evidencia publicada y regresiones
+
+- PR89: auditoría, respaldo Concepción, navegación y personalización; PR90: eliminación de carpeta cultural independiente y selección en español.
+- PR91: separación de noticias/agenda de 90 días y preservación de actividades independiente del límite de noticias.
+- PR93: contadores reales, estados de error/reintento y cambio de generación; publicación verificada sobre `ebd1b157169e9189553bdb4ddd9a1a0c17d8dd23`.
+- Referencias: [PR publicados](https://github.com/medinacaj/radar-rss-publico/pulls?q=is%3Apr+is%3Amerged), [Actions](https://github.com/medinacaj/radar-rss-publico/actions) e [incidencias abiertas](https://github.com/medinacaj/radar-rss-publico/issues).
+- Calidad: suite Python/Node sin red real. Pruebas de navegador con fixtures RSS y HTTPS local en Chromium, Firefox y WebKit, siete anchos de 320–1440 px. Las nuevas regresiones de lectura masiva y recuperación acompañan el código; sus resultados de CI constan en cada PR.
+- Verificador público: contrasta la generación esperada del build y valida datos/noticias/agenda. La anotación «Publicación verificada» informa cantidades observadas sin inventar artículos ni actividades.
+
+## Revisión de propuestas anteriores
+
+| Referencia | Situación en este código |
+|---|---|
+| PR76 | Se recupera la corrección de cronología y se añaden regresiones de offsets, equivalencias, fechas inválidas y fallo de red. |
+| PR92 | Encabezado OPML corregido a 221 fuentes/ocho carpetas; cuerpo, fuentes y URL conservados. |
+| PR77 | Contadores resueltos por PR93. No se adoptan de esa rama los cambios a 9000 noticias/90 días ni el contador global que ignora filtros. |
+| PR78 | Paginación rehabilitada por PR93; frecuencia corregida a tres horas. El resto amplía la experiencia de lectura y no se ha fusionado como paquete sobre el diseño actual. |
+| PR88 | Propone una integración adicional de eventos Biobío/Chile; permanece separada de la agenda de 90 días publicada y requiere revisar su convivencia antes de incorporarla. |
+| PR96 | La consulta de ese número en este repositorio devuelve 404. No se ha aplicado un PR supuesto; hace falta una referencia accesible. |
+
+## Verificaciones pendientes y límites
+
+- [Issue #31](https://github.com/medinacaj/radar-rss-publico/issues/31): pruebas físicas Safari/iPhone con VoiceOver, Android con TalkBack, tabletas, teclado, zoom y orientación. WebKit automatizado no sustituye esos dispositivos; no se declara realizado ese trabajo.
+- [Issue #32](https://github.com/medinacaj/radar-rss-publico/issues/32): curación manual de coincidencias de titulares, enlaces, fechas y atribución. Los informes son heurísticos; no se retiran fuentes ni se cambia el deduplicador automáticamente.
+- Disponibilidad de nuevas fuentes: el registro `sources/discovery-verification.json` conserva las observaciones originales pendientes. No equivale a comprobar el estado actual de cada medio. La evidencia de Concepción del 24 de octubre está en `sources/concepcion-verification.json`.
+- Respaldos durables externos y sincronización entre dispositivos siguen fuera de la arquitectura estática. Caché y artefactos caducan; el archivo público no es permanente.
+- La inclusión de una fuente, un HTTP correcto o una prueba automatizada no certifica licencias, derechos de reproducción ni cumplimiento legal. Se mantienen atribución, extractos y enlaces originales.
 
 ## Fuente de verdad
-- [Issues](https://github.com/medinacaj/radar-rss-publico/issues): incidencias sin resolver.
-- [Pull requests](https://github.com/medinacaj/radar-rss-publico/pulls): cambios en revisión.
-- [Actions](https://github.com/medinacaj/radar-rss-publico/actions): evidencia de pruebas y despliegue.
-- `docs/decisions.md`: decisiones técnicas duraderas.
 
-## Plan de estabilización posterior a la auditoría (2026-10-21)
-- P0: estudiar respaldo durable externo y restauración verificable; no eliminar recuperación actual hasta demostrar equivalencia.
-- P1: consolidar progresivamente estilos V9–V11.1 sin alterar navegación, seis carpetas ni controles de lectura; establecer pruebas de regresión visual con datos representativos.
-- P1: validar integridad del historial y detección de feeds obsoletos; medir cobertura efectiva de los 178 feeds y dependencia de Google Noticias.
-- P1: resolver validación física pendiente (issue #31) y curación editorial (issue #32); no declarar completadas pruebas físicas sin dispositivos.
-- P2: optimizar tamaño de CSS/JS y renderizado mediante mediciones antes/después.
-- Criterio de aceptación: CI y pruebas responsivas verdes, despliegue y monitor correctos, y ausencia de regresiones de navegación.
-
-## Limitaciones reconocidas
-WebKit automatizado no certifica Safari en hardware iOS. La prueba de accesibilidad automatizada no sustituye pruebas con lectores de pantalla reales. Una base de datos sería necesaria para garantizar historial permanente o sincronización entre dispositivos.
-
-
-## Correcciones de auditoría preparadas — 2026-10-24
-
-Rama `fix/auditoria-concepcion-20261024`, sin despliegue ni integración en main.
-- Integrado respaldo Concepción: 211 suscripciones, siete carpetas, conservando las 178 originales.
-- Corregidas selección parcial de Mi Radar y restauración de búsquedas geográficas, incluida su fuente al cambiar de URL.
-- Respaldo v3 incluye temas, búsquedas, preferencias V1.2 y modo ligero; importación validada con actualización inmediata, compatible con respaldos v2/v3 anteriores.
-- Fragmentos URL inválidos no interrumpen navegación; restablecer aplica el mismo tema inicial.
-- Ingesta conserva alternativas válidas y cuenta editores independientes, sin inflar cobertura por consultas RSS solapadas.
-- Verificación de Pages compara la generación pública con la salida exacta del build.
-- Cubiertas sin fotografía abren el lector, filtro de etiquetas vacío oculto, ayuda local descartable y mapa opcional móvil; caché v32.
-- Validación local: 148 pruebas Python; tres pruebas Node; cinco regresiones browser de backup/rutas, cuatro de Concepción y recorrido de ayudas; smoke Chromium en siete anchos, todos correctos. Revisión independiente sin hallazgos adicionales.
-- Pendiente externo: CI remota, publicación efectiva, Firefox/WebKit y validación física. No se han revalidado disponibilidad ni licencias de cada feed en red.
-
-
-## Actualización de lectura y fuentes — 2026-10-24
-
-Rama `feat/radar-noticias-personalizacion-20261024`, incluye las correcciones de auditoría previas.
-- Lateral persistente y ocultable en escritorio; menú móvil accesible. Navegación horizontal redundante retirada de la vista; búsqueda y configuración permanecen en cabecera compacta.
-- Carrusel manual de noticias, priorizando variedad internacional y cultura cuando existen artículos elegibles. Cobertura y tendencias plegadas después de las noticias para aprovechar el ancho.
-- Marca más pequeña, botones uniformes y firma «Diseñado por @medinacaj ✨ ↗» enlazada a LinkedIn. Tema del sistema por defecto con selección manual persistente.
-- Catálogo de 226 canales en nueve carpetas: conserva los 211 anteriores; añade Maturín/Monagas y cultura/entretenimiento internacional. Concepción conserva sus 33 fuentes propias del Biobío.
-- Nuevas fuentes: disponibilidad HTTP pendiente por política de red; registro explícito en `sources/discovery-verification.json`. No se certifican licencias individuales ni disponibilidad futura.
-- PR #96: enlace público y referencia Git no accesibles en el repositorio seleccionado; la consulta API de ese PR devolvió Forbidden. Se solicitó URL completa, no se ha aplicado un PR supuesto.
-
-Revisión publicada como borrador: https://github.com/medinacaj/radar-rss-publico/pull/89. No fusionado ni desplegado. La creación del PR propio sí funcionó; el acceso al PR96 sigue sin acreditarse.
-
-
-## Ajuste solicitado: cultura en español
-
-Se elimina la carpeta independiente de Cultura y entretenimiento internacional. Sus cuatro canales en español (BBC Mundo, EFE, El País y Euronews) pasan a Internacionales, conservando IDs y URL. Se retiran los cinco canales anglófonos de esa selección. Total: 221 fuentes en ocho carpetas. El historial se reclasifica con el catálogo vigente para evitar referencias a la carpeta eliminada.
+GitHub Issues/PR/Actions contienen incidencias, diffs y evidencia de integración. `docs/decisions.md` recoge decisiones duraderas; los planes de `docs/superpowers/` explican cambios acotados, sin sustituir la evidencia de CI o de dispositivos reales.

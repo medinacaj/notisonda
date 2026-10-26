@@ -261,6 +261,110 @@ class CountRegressions(unittest.TestCase):
         expect(self.page.locator('#followedChips .trend-count')).to_have_text('0')
         self.assertFalse(self.errors)
 
+    def mark_all_news(self):
+        self.page.locator('#categoryNav > .nav-link').nth(1).click(button='right')
+        self.page.once('dialog', lambda dialog: dialog.accept())
+        self.page.locator('#folderMenu [data-folder-action="read"]').click()
+
+    def mark_first_folder(self):
+        self.page.locator('#libraryFolderNav .system-folder-link').first.click(button='right')
+        self.page.locator('#folderMenu [data-folder-action="read"]').click()
+
+    def test_bulk_read_waits_for_verified_metadata_and_recovers(self):
+        self.payloads = self.dataset(900)
+        manifest = self.payloads.pop('meta.json')
+        self.open()
+        expect(self.page.locator('#allCount')).to_have_text('—')
+        self.mark_all_news()
+        expect(self.page.locator('#actionToast')).to_be_visible()
+        self.assertEqual(self.page.evaluate('state.read.size'), 0)
+        self.payloads['meta.json'] = manifest
+        self.page.locator('#refreshNow').click()
+        self.expect_count('#allCount', 900)
+        self.mark_all_news()
+        self.expect_count('#unreadCount', 0)
+        self.assertEqual(self.page.evaluate('state.read.size'), 900)
+        self.assertFalse(self.errors)
+
+    def test_bulk_read_rejects_metadata_of_another_generation(self):
+        self.payloads = self.dataset(900)
+        self.payloads['meta.json']['generated_at'] = '2026-01-01T00:00:00Z'
+        self.open()
+        expect(self.page.locator('#allCount')).to_have_text('—')
+        self.mark_all_news()
+        expect(self.page.locator('#actionToast')).to_be_visible()
+        self.assertEqual(self.page.evaluate('state.read.size'), 0)
+        self.assertFalse(self.errors)
+
+    def test_folder_bulk_read_requires_metadata(self):
+        self.payloads = self.dataset(900)
+        self.payloads.pop('meta.json')
+        self.open()
+        expect(self.page.locator('#allCount')).to_have_text('—')
+        self.mark_first_folder()
+        expect(self.page.locator('#actionToast')).to_be_visible()
+        self.assertEqual(self.page.evaluate('state.read.size'), 0)
+        self.assertFalse(self.errors)
+
+    def test_folder_bulk_read_includes_archived_articles(self):
+        self.payloads = self.dataset(900)
+        self.hold = True
+        self.open()
+        expect(self.page.locator('#allCount')).to_have_text('…')
+        self.mark_first_folder()
+        self.assertEqual(self.page.evaluate('state.read.size'), 0)
+        self.release()
+        self.expect_count('#allCount', 900)
+        self.expect_count('#unreadCount', 787)
+        self.assertEqual(self.page.evaluate('state.read.size'), 113)
+        self.assertTrue(self.page.evaluate("state.read.has('history-896')"))
+        self.assertFalse(self.page.evaluate("state.read.has('history-897')"))
+        self.assertFalse(self.errors)
+
+    def check_inconsistent_manifests(self, action):
+        self.context.add_init_script("localStorage.removeItem('radar-read')")
+        for case in ['missing', 'empty', 'not_array', 'bad_filename', 'repeated', 'bad_total']:
+            with self.subTest(manifest=case):
+                self.payloads = self.dataset(900)
+                meta = self.payloads['meta.json']
+                if case == 'missing':
+                    meta.pop('archive_files')
+                elif case == 'empty':
+                    meta['archive_files'] = []
+                elif case == 'not_array':
+                    meta['archive_files'] = None
+                elif case == 'bad_filename':
+                    meta['archive_files'] = ['../archive.json']
+                elif case == 'repeated':
+                    meta['archive_files'] = ['archive-01.json', 'archive-01.json']
+                else:
+                    meta['total_articles'] = '900'
+                self.page.goto(self.base + '?manifest_case=' + case + '#noticias')
+                self.page.wait_for_function('() => state.ready')
+                self.page.wait_for_function('() => !state.historyLoading')
+                action()
+                self.assertEqual(self.page.evaluate('state.read.size'), 0)
+                expect(self.page.locator('#allCount')).to_have_text('—')
+        self.assertFalse(self.errors)
+
+    def test_inconsistent_manifest_blocks_global_bulk_read(self):
+        self.check_inconsistent_manifests(self.mark_all_news)
+
+    def test_inconsistent_manifest_blocks_folder_bulk_read(self):
+        self.check_inconsistent_manifests(self.mark_first_folder)
+
+    def test_complete_latest_without_archive_allows_bulk_read(self):
+        self.payloads = self.dataset(24)
+        self.open()
+        self.expect_count('#allCount', 24)
+        self.mark_first_folder()
+        self.expect_count('#unreadCount', 21)
+        self.assertEqual(self.page.evaluate('state.read.size'), 3)
+        self.mark_all_news()
+        self.expect_count('#unreadCount', 0)
+        self.assertEqual(self.page.evaluate('state.read.size'), 24)
+        self.assertFalse(self.errors)
+
 
 if __name__ == '__main__':
     unittest.main(verbosity=2)

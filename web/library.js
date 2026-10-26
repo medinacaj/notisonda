@@ -273,13 +273,18 @@ function deleteFolder(kind,id){
  }
  buildNav();render();actionToast('Carpeta retirada de la lista.');
 }
+async function bulkReadHistoryReady(){
+ if(hasHistory())await loadHistory();
+ if(!newsCountsComplete()){
+  actionToast('No se pudo verificar todo el historial. Actualiza y vuelve a intentarlo. No se cambió la lectura.');
+  return false;
+ }
+ return true;
+}
 async function markAllNewsRead(){
  // Esta acción explícita incluye el historial publicado, no solo una página.
  if(!confirm('¿Marcar como leídas todas las noticias disponibles de las fuentes activas, incluido el historial?'))return;
- if(hasHistory()){
-  await loadHistory();
-  if(state.historyFailed){actionToast('No se pudo cargar el historial. No se cambió la lectura.');return;}
- }
+ if(!await bulkReadHistoryReady())return;
  const active=new Set(state.sources.filter(x=>!state.hiddenSources.has(x.id)).map(x=>x.id));
  let total=0;
  for(const item of state.items){
@@ -289,6 +294,16 @@ async function markAllNewsRead(){
  }
  persist('radar-read',state.read);buildNav();render();
  actionToast(total?total+' noticias marcadas como leídas.':'No había noticias pendientes.');
+}
+async function markFolderRead(kind,id){
+ const ids=new Set(folderSources(kind,id));
+ hideFolderMenu();
+ if(!await bulkReadHistoryReady())return;
+ let count=0;
+ for(const item of state.items)
+  if(!state.read.has(item.id)&&(item.source_ids||[]).some(s=>ids.has(s))){state.read.add(item.id);count++;}
+ persist('radar-read',state.read);render();
+ actionToast(count+' noticias marcadas como leídas.');
 }
 function runFolderAction(command){
  if(!folderSelection)return;
@@ -307,13 +322,7 @@ function runFolderAction(command){
  if(command==='rename')openFolderEditor(kind,id);
  else if(command==='sources')openFolderEditor(kind,id,false,true);
  else if(command==='delete')deleteFolder(kind,id);
- else if(command==='read'){
-  const ids=new Set(folderSources(kind,id));let count=0;
-  for(const item of state.items)
-   if(!state.read.has(item.id)&&(item.source_ids||[]).some(s=>ids.has(s))){state.read.add(item.id);count++;}
-  persist('radar-read',state.read);hideFolderMenu();render();
-  actionToast(count+' noticias marcadas como leídas.');
- }
+ else if(command==='read')void markFolderRead(kind,id);
 }
 function installFolderUI(){
  VECTOR_PATHS['rotate-ccw']='<path d="M3 11a9 9 0 1 1 3 7M3 4v7h7"/>';
