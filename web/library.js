@@ -185,8 +185,8 @@ function equipDefaults(){
   row.hidden=defaults[id]?.hidden===true;
   button.querySelector('.nav-label').textContent=folderName('default',id);
   const ids=folderSources('default',id),count=unread(ids);
-  button.querySelector('.nav-count').textContent=String(count);
-  button.title=count+' sin leer · '+ids.length+' fuentes';
+  button.querySelector('.nav-count').textContent=newsCountText(count);
+  button.title=newsUnreadText(count)+' · '+ids.length+' fuentes';
   equipFolder(row,button,'default',id);
  });
  $('folderRestore').hidden=!state.categories.some(id=>defaults[id]?.hidden);
@@ -420,8 +420,8 @@ buildNav=function(){
       ? state.sources.filter(s=>!state.hiddenSources.has(s.id)).map(s=>s.id)
       : state.sources.filter(s=>s.category===state.categories[index-2]&&!state.hiddenSources.has(s.id)).map(s=>s.id);
     const count=unread(ids);
-    const label=button.querySelector('.nav-count');if(label)label.textContent=String(count);
-    button.title=count+' sin leer · '+ids.length+' fuentes';
+    const label=button.querySelector('.nav-count');if(label)label.textContent=newsCountText(count);
+    button.title=newsUnreadText(count)+' · '+ids.length+' fuentes';
   });
   equipDefaults();
   renderFolderNav();
@@ -441,8 +441,8 @@ function renderFolderNav(){
     b.type='button';b.setAttribute('aria-current',activeFolder===name?'page':'false');
     const icon=mk('span','nav-glyph');icon.append(svgIcon('folder'));
     const left=mk('span','nav-left');left.append(icon,mk('span','nav-label',name));
-    b.append(left,mk('span','nav-count',String(unread(ids))));
-    b.title=ids.length+' fuentes · '+unread(ids)+' sin leer';
+    b.append(left,mk('span','nav-count',newsCountText(unread(ids))));
+    b.title=ids.length+' fuentes · '+newsUnreadText(unread(ids));
     b.addEventListener('click',()=>{window.location.hash='#carpeta/'+encodeURIComponent(name);});
     wrapper.append(b);equipFolder(wrapper,b,'manual',name);nav.append(wrapper);
   });
@@ -639,8 +639,8 @@ function updateUnreadCounts(){
     const ids=i===1?state.sources.map(s=>s.id):state.sources.filter(s=>s.category===state.categories[i-2]).map(s=>s.id);
     const n=unread(ids);const count=btn.querySelector('.nav-count');
     const total=i>=2?unread(folderSources('default',state.categories[i-2])):n;
-    if(count)count.textContent=String(total);
-    btn.title=total+' noticias sin leer';
+    if(count)count.textContent=newsCountText(total);
+    btn.title=newsUnreadText(total);
   });
   renderFolderNav();
 }

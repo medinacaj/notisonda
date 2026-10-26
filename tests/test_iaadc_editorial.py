@@ -17,7 +17,7 @@ class IAADCEditorialThemeTests(unittest.TestCase):
     def test_theme_is_last_stylesheet_and_cached(self):
         self.assertLess(self.html.index('cosmic-theme.css?v='),self.html.index('iaadc-editorial.css?v='))
         self.assertIn("'./iaadc-editorial.css'",self.sw)
-        self.assertIn("const CACHE = 'radar-rss-v35'",self.sw)
+        self.assertIn("const CACHE = 'radar-rss-v36'",self.sw)
 
     def test_iaadc_exact_light_palette_and_font(self):
         for value in (
