@@ -45,8 +45,9 @@
   <link rel="stylesheet" href="./iaadc-editorial.css?v=1.0.2">
   <link rel="stylesheet" href="./usability.css?v=1.0.0">
   <link rel="stylesheet" href="./homepage.css?v=1.0.2">
-  <link rel="stylesheet" href="./agenda.css?v=1.0.0">
+  <link rel="stylesheet" href="./agenda.css?v=1.1.0">
   <link rel="stylesheet" href="./reader-layout.css?v=1.0.0">
+  <link rel="stylesheet" href="./reading-ux.css?v=1.0.0">
   <title>Radar RSS — Actualidad en un solo lugar</title>
 </head>
 <body class="radar-hybrid" data-columns="4">
@@ -115,6 +116,7 @@
             <button id="statusDismiss" class="status-dismiss" type="button" title="Cerrar aviso" aria-label="Cerrar aviso de estado de las fuentes"><span data-icon="x" class="ui-icon-slot" aria-hidden="true"></span></button>
           </span>
         </div>
+        <div id="publicationNotice" class="publication-notice" role="status" hidden><span id="publicationMessage"></span><button id="publicationApply" type="button">Mostrar noticias</button></div>
         <section id="dashboardView" class="dashboard-view" aria-labelledby="dashboardTitle" hidden>
           <h1 id="dashboardTitle" class="sr-only">Portada de Radar RSS</h1>
           <section id="agendaSection" class="agenda-section" aria-labelledby="agendaTitle" aria-busy="true">
@@ -376,7 +378,7 @@
         <section class="settings-pane" data-settings-pane="data" aria-label="Datos y privacidad" hidden>
           <h3>Datos y privacidad</h3><p class="setting-hint">No se solicita cuenta. Tus favoritos, lecturas y preferencias se almacenan en este navegador.</p>
           <div class="data-stats"><div><b id="dataSavedCount">0</b><span>Guardadas</span></div><div><b id="dataReadCount">0</b><span>Leídas</span></div><div><b id="dataMutedCount">0</b><span>Fuentes ocultas</span></div></div>
-          <div class="data-actions"><button type="button" id="exportData" class="settings-secondary">Exportar mis datos (JSON)</button><label class="settings-secondary upload-label" for="importData">Importar datos (JSON)</label><input type="file" id="importData" accept="application/json,.json" hidden><button type="button" id="clearRead" class="settings-secondary">Borrar historial de lectura</button><button type="button" id="clearSaved" class="settings-secondary">Vaciar guardadas</button><button type="button" id="resetSettings" class="settings-secondary danger">Restablecer preferencias</button></div>
+          <div class="data-actions"><button type="button" id="exportData" class="settings-secondary">Exportar mis datos (JSON)</button><label class="settings-secondary upload-label" for="importData">Importar datos (JSON)</label><input type="file" id="importData" accept="application/json,.json" hidden><button type="button" id="clearRead" class="settings-secondary">Borrar historial de lectura</button><button type="button" id="clearSaved" class="settings-secondary">Vaciar guardadas</button><button type="button" id="clearAgendaSaved" class="settings-secondary">Vaciar actividades guardadas</button><button type="button" id="resetSettings" class="settings-secondary danger">Restablecer preferencias</button></div>
           <p id="dataNotice" class="settings-notice" aria-live="polite"></p>
           <p class="setting-admin">Importar o exportar es manual. No existe sincronización entre dispositivos, cuentas ni envío de preferencias a GitHub.</p>
         </section>
@@ -387,7 +389,7 @@
         </section>
       </div>
     </div>
-    <div class="settings-footer"><span>Preferencias del navegador · Radar RSS</span><button type="button" class="dialog-close" id="settingsDone">Guardar y cerrar</button></div>
+    <div class="settings-footer"><span>Los cambios se guardan automáticamente en este navegador.</span><button type="button" class="dialog-close" id="settingsDone">Listo</button></div>
   </dialog>
   <div id="cardMenu" class="card-menu" role="menu" aria-label="Más acciones de la noticia" hidden>
     <button type="button" role="menuitem" data-card-action="share"><span data-icon="share" class="ui-icon-slot" aria-hidden="true"></span><span>Compartir</span></button>
@@ -396,15 +398,17 @@
   </div>
   <button id="backTop" class="back-to-top" type="button" aria-label="Volver arriba" title="Volver arriba" hidden><span data-icon="arrow-up" class="ui-icon-slot" aria-hidden="true"></span></button>
   <div id="actionToast" class="action-toast" role="status" aria-live="polite" aria-atomic="true" hidden></div>
-  <script src="./app.js?v=9.1.2" defer></script>
-  <script src="./library.js?v=1.7.8" defer></script>
+  <script src="./app.js?v=9.2.0" defer></script>
+  <script src="./library.js?v=1.8.0" defer></script>
   <script src="./sidebar-layout.js?v=1.2.0" defer></script>
   <script src="./news-effects.js?v=1.0.0" defer></script>
   <script src="./features.js?v=1.0.2" defer></script>
-  <script src="./v12.js?v=1.2.8" defer></script>
-  <script src="./v13.js?v=1.4.0" defer></script>
+  <script src="./v12.js?v=1.3.0" defer></script>
+  <script src="./v13.js?v=1.4.1" defer></script>
   <script src="./usability.js?v=1.0.0" defer></script>
   <script src="./homepage.js?v=1.0.2" defer></script>
-  <script src="./agenda.js?v=1.0.0" defer></script>
+  <script src="./agenda.js?v=1.1.0" defer></script>
+  <script src="./feed-ux.js?v=1.0.0" defer></script>
+  <script src="./reader-ux.js?v=1.0.0" defer></script>
 </body>
 </html>

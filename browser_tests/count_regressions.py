@@ -93,6 +93,7 @@ class CountRegressions(unittest.TestCase):
         docs['meta.json'] = {'version': 2, 'generated_at': stamp, 'total_articles': total,
                              'latest_count': min(total, 300), 'archive_files': names}
         docs['events.json']['generated_at'] = stamp
+        docs['status.json']['checked_at'] = stamp
         return docs
 
     def route(self, route):
@@ -115,10 +116,10 @@ class CountRegressions(unittest.TestCase):
         self.page.goto(self.base + '#noticias')
         self.page.wait_for_function('() => state.ready')
 
-    def release(self, fail=False):
+    def release(self, fail=False, fail_generation=None):
         self.hold = False
         for route, payload in self.pending:
-            if fail:
+            if fail or fail_generation is not None and payload.get('generated_at') == fail_generation:
                 route.fulfill(status=503, body='Old generation unavailable')
             else:
                 route.fulfill(content_type='application/json', body=json.dumps(payload))
@@ -177,12 +178,17 @@ class CountRegressions(unittest.TestCase):
 
     def test_old_generation_failure_does_not_poison_new_counts(self):
         self.payloads = self.dataset(900)
+        old_generation = self.payloads['meta.json']['generated_at']
         self.hold = True
         self.open()
         expect(self.page.locator('#allCount')).to_have_text('…', timeout=1500)
         self.payloads = self.dataset(600, offset=10000, generation=1)
         self.page.evaluate('() => refreshPublishedData()')
-        self.release(fail=True)
+        expect(self.page.locator('#publicationNotice')).to_be_visible()
+        self.page.locator('#publicationApply').click()
+        # Abort may settle old workers and start current downloads before this
+        # release. Only old responses fail; current generation remains healthy.
+        self.release(fail_generation=old_generation)
         self.expect_count('#allCount', 600)
         self.assertTrue(self.page.evaluate("state.items.every(item => Number(item.id.split('-')[1]) >= 10000)"))
         self.assertFalse(self.page.evaluate('state.historyFailed'))

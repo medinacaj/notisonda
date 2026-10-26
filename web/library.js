@@ -57,11 +57,22 @@ function readTags(data){
 }
 tags=readTags(rawTags);
 let activeFolder=null,activeTag='';
+// Read-only snapshot for the feed's visible filter summary; no library data is removed.
+window.RadarLibrary=Object.freeze({
+ getFeedFilters(){return {
+  folder:activeFolder?{id:activeFolder,label:activeFolder,kind:'manual'}:
+   state.category!=='all'?{id:state.category,label:folderName('default',state.category),kind:'default'}:null,
+  tag:activeTag
+ };},
+ clearTagFilter(){activeTag='';const select=document.getElementById('libraryTagFilter');if(select)select.value='';}
+});
+
 // Keep the backup schema independent of module closures; old v2/v3 backups may omit modules.
 const cleanStrings=(value,limit,maxLength)=>Array.isArray(value)?[...new Set(value.filter(x=>typeof x==='string').map(x=>x.trim().slice(0,maxLength)).filter(Boolean))].slice(0,limit):[];
 function cleanModules(data){
  const input=data&&typeof data==='object'&&!Array.isArray(data)?data:{};
  const result={};
+ if(Object.hasOwn(input,'agendaPreferences'))result.agendaPreferences=window.RadarAgenda.validatePreferences(input.agendaPreferences);
  if(Object.hasOwn(input,'followedTopics'))result.followedTopics=cleanStrings(input.followedTopics,12,40);
  if(Object.hasOwn(input,'v12Preferences')){
   const p=input.v12Preferences&&typeof input.v12Preferences==='object'?input.v12Preferences:{};
@@ -75,11 +86,12 @@ function cleanModules(data){
    category:state.categories.includes(x.category)?x.category:'all',feed:typeof x.feed==='string'&&state.sources.some(source=>source.id===x.feed)?x.feed:''}));
  return result;
 }
-function backupModules(){return cleanModules({followedTopics:read('radar-followed-topics',[]),v12Preferences:read('radar-v12-preferences',{}),savedSearches:read('radar-v12-saved-searches',[])});}
+function backupModules(){return cleanModules({followedTopics:read('radar-followed-topics',[]),v12Preferences:read('radar-v12-preferences',{}),savedSearches:read('radar-v12-saved-searches',[]),agendaPreferences:window.RadarAgenda.exportPreferences()});}
 function restoreModules(data){
  const modules=cleanModules(data);
  for(const [field,key] of [['followedTopics','radar-followed-topics'],['v12Preferences','radar-v12-preferences'],['savedSearches','radar-v12-saved-searches']])
   if(Object.hasOwn(modules,field)&&!write(key,modules[field]))throw Error('No se pudo guardar '+field);
+ if(Object.hasOwn(modules,'agendaPreferences'))window.RadarAgenda.restorePreferences(modules.agendaPreferences);
 }
 
 
@@ -286,24 +298,13 @@ async function markAllNewsRead(){
  if(!confirm('¿Marcar como leídas todas las noticias disponibles de las fuentes activas, incluido el historial?'))return;
  if(!await bulkReadHistoryReady())return;
  const active=new Set(state.sources.filter(x=>!state.hiddenSources.has(x.id)).map(x=>x.id));
- let total=0;
- for(const item of state.items){
-  if(!state.read.has(item.id)&&(item.source_ids||[]).some(id=>active.has(id))){
-   state.read.add(item.id);total++;
-  }
- }
- persist('radar-read',state.read);buildNav();render();
- actionToast(total?total+' noticias marcadas como leídas.':'No había noticias pendientes.');
+ markArticlesRead(state.items.filter(item=>(item.source_ids||[]).some(id=>active.has(id))));
 }
 async function markFolderRead(kind,id){
  const ids=new Set(folderSources(kind,id));
  hideFolderMenu();
  if(!await bulkReadHistoryReady())return;
- let count=0;
- for(const item of state.items)
-  if(!state.read.has(item.id)&&(item.source_ids||[]).some(s=>ids.has(s))){state.read.add(item.id);count++;}
- persist('radar-read',state.read);render();
- actionToast(count+' noticias marcadas como leídas.');
+ markArticlesRead(state.items.filter(item=>(item.source_ids||[]).some(source=>ids.has(source))));
 }
 function runFolderAction(command){
  if(!folderSelection)return;
@@ -757,6 +758,11 @@ function mount(){
     if(!confirm('¿Vaciar las noticias guardadas y sus copias locales?'))return;
     state.saved.clear();archive.clear();saveArchive();persist('radar-saved',state.saved);render();updateDataCounts();$('dataNotice').textContent='Guardadas vaciadas.';
   },true);
+  $('clearAgendaSaved').addEventListener('click',()=>{
+    if(!confirm('¿Vaciar las actividades guardadas en este navegador?'))return;
+    window.RadarAgenda.clearPreferences();
+    $('dataNotice').textContent='Actividades guardadas vaciadas.';
+  });
   $('exportData').addEventListener('click',e=>{
     e.preventDefault();e.stopImmediatePropagation();syncArchive();
     const obj={format:'radar-rss-settings-v3',exported_at:new Date().toISOString(),
@@ -764,7 +770,7 @@ function mount(){
       saved:[...state.saved],read:[...state.read],hiddenSources:[...state.hiddenSources],
       modules:backupModules(),savedArchive:[...archive.values()],sourceFolders:folders,folderDefaults:defaults,articleTags:tags};
     downloadText('radar-rss-respaldo-completo.json',JSON.stringify(obj,null,2),'application/json;charset=utf-8');
-    $('dataNotice').textContent='Respaldo completo generado con guardadas, etiquetas y carpetas.';
+    $('dataNotice').textContent='Respaldo completo generado con noticias, actividades, etiquetas y carpetas.';
   },true);
   $('importData').addEventListener('change',async e=>{
     e.stopImmediatePropagation();
@@ -773,6 +779,8 @@ function mount(){
     try{
       const d=JSON.parse(await file.text());
       if(!['radar-rss-settings-v2','radar-rss-settings-v3'].includes(d.format)||!d.preferences||typeof d.preferences!=='object'||Array.isArray(d.preferences))throw Error('Formato incompatible');
+      // Validate the entire agenda module before changing any live preference.
+      const modules=cleanModules(d.modules);
       const p=d.preferences,choose=(key,options,def)=>options.includes(p[key])?p[key]:def;
       state.theme=choose('theme',['system','light','dark'],'system');
       state.layout=choose('layout',['cards','list'],'cards');
@@ -787,7 +795,7 @@ function mount(){
       state.mutedKeywords=typeof p.mutedKeywords==='string'?p.mutedKeywords.slice(0,600):'';
       const known=new Set(state.sources.map(s=>s.id));
       state.saved=new Set((Array.isArray(d.saved)?d.saved:[]).filter(x=>typeof x==='string'&&x.length<150).slice(-4000));
-      state.read=new Set((Array.isArray(d.read)?d.read:[]).filter(x=>typeof x==='string'&&x.length<150).slice(-4000));
+      state.read=new Set((Array.isArray(d.read)?d.read:[]).filter(x=>typeof x==='string'&&x.length<150).slice(-20000));
       state.hiddenSources=new Set((Array.isArray(d.hiddenSources)?d.hiddenSources:[]).filter(x=>known.has(x)));
       persist('radar-saved',state.saved);persist('radar-read',state.read);persist('radar-hidden-sources',state.hiddenSources);
       archive=new Map((Array.isArray(d.savedArchive)?d.savedArchive:[]).slice(-LIMIT).map(snapshot).filter(Boolean).filter(x=>state.saved.has(x.id)).map(x=>[x.id,x]));
@@ -798,7 +806,7 @@ function mount(){
         window.dispatchEvent(new Event('radar-sidebar-pref-sync'));
       }
       for(const [key,value] of [['layout',state.layout],['columns',state.columns],['theme',state.theme],['density',state.density],['font',state.fontSize],['page-size',state.pageSize],['max-age',state.maxAge],['show-hero',state.showHero],['show-images',state.showImages],['show-summaries',state.showSummaries],['hide-read',state.hideRead],['new-tab',state.newTab],['lite',state.lite],['sort',state.sort],['start-mode',state.startMode],['keywords',state.mutedKeywords]])savePref(key,value);
-      restoreModules(d.modules);
+      restoreModules(modules);
       document.body.classList.toggle('lite',state.lite);
       window.dispatchEvent(new Event('radar-preferences-imported'));
       state.mode=state.startMode;state.page=1;

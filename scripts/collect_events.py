@@ -66,7 +66,7 @@ def fetch_event_page(url,source):
     return None
 
 
-def collect_document(sources,previous,now):
+def collect_document(sources,previous,now,direct_sources=()):
     if previous is not None:validate_document(previous)
     incoming=[];states=[];pages=0
     for source in sources:
@@ -90,6 +90,12 @@ def collect_document(sources,previous,now):
         except (requests.RequestException,ValueError,TypeError,OSError,KeyError) as exc:
             state['status']='error';state['error']=type(exc).__name__+': '+str(exc)[:300]
         states.append(state)
+    if direct_sources:
+        import event_sources
+        rss_ids={source['id'] for source in sources}
+        if any(source['id'] in rss_ids for source in direct_sources):raise ValueError('Duplicate RSS/direct agenda source ID')
+        direct_items,direct_states=event_sources.collect_sources(direct_sources,now)
+        incoming.extend(direct_items);states.extend(direct_states)
     return merge_events(previous,incoming,states,now)
 
 
@@ -98,6 +104,7 @@ def main(argv=None):
     parser.add_argument('--catalog',default='sources/feeds.opml')
     parser.add_argument('--config',default='sources/events.json')
     parser.add_argument('--out',default='web/data/events.json')
+    parser.add_argument('--direct-config',default=None,help='Opt in to bounded official HTML/JSON-LD/ICS calendars')
     generation=parser.add_mutually_exclusive_group()
     generation.add_argument('--generation')
     generation.add_argument('--generation-from',help='Read generated_at from news metadata')
@@ -111,7 +118,11 @@ def main(argv=None):
     if output.exists():
         try:previous=validate_document(json.loads(output.read_text()))
         except (ValueError,TypeError,OSError) as exc:raise ValueError('Existing agenda is corrupt; refusing to overwrite') from exc
-    doc=collect_document(load_sources(args.catalog,args.config),previous,now)
+    direct_sources=[]
+    if args.direct_config:
+        import event_sources
+        direct_sources=event_sources.load_sources(args.direct_config,args.catalog)
+    doc=collect_document(load_sources(args.catalog,args.config),previous,now,direct_sources=direct_sources)
     output.parent.mkdir(parents=True,exist_ok=True)
     temporary=output.with_name(output.name+'.tmp')
     temporary.write_text(json.dumps(doc,ensure_ascii=False,indent=2)+'\n')

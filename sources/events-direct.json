@@ -1,0 +1,1019 @@
+{
+  "version": 1,
+  "provenance": {
+    "repository": "medinacaj/eventos-biobio",
+    "commit": "f6d9eef",
+    "radar_pr": 88,
+    "note": "Portado selectivo de fuentes oficiales HTTPS. No importa seeds ni snapshots. Los checks históricos no prueban disponibilidad actual."
+  },
+  "limits": {
+    "documents_per_run": 60,
+    "documents_per_source": 4,
+    "bytes_per_document": 500000,
+    "note": "Cada documento exige además robots.txt acotado; no se siguen redirecciones."
+  },
+  "sources": [
+    {
+      "id": "direct-fadb8f5bac6cc135",
+      "name": "Municipalidad de Concepción",
+      "url": "https://www.concepcion.cl/",
+      "hosts": [
+        "www.concepcion.cl"
+      ],
+      "category": "07 - Concepción",
+      "timezone": "America/Santiago",
+      "official": true,
+      "enabled": false,
+      "max_pages": 4,
+      "source_type": "municipal",
+      "commune": "Concepción",
+      "url_evidence": "observado_en_busqueda",
+      "previous_live_check": {
+        "at": "2026-10-24T19:53:16",
+        "ok": false,
+        "http_status": null,
+        "error": "URLError: <urlopen error timed out>"
+      },
+      "notes": "Catálogo conservado del PR88; deshabilitada para acotar solicitudes y revisar disponibilidad/identidad antes de activarla."
+    },
+    {
+      "id": "direct-3e2a40498b75bf02",
+      "name": "Municipalidad de Talcahuano",
+      "url": "https://www.talcahuano.cl/actividades",
+      "hosts": [
+        "www.talcahuano.cl"
+      ],
+      "category": "07 - Concepción",
+      "timezone": "America/Santiago",
+      "official": true,
+      "enabled": false,
+      "max_pages": 4,
+      "source_type": "municipal",
+      "commune": "Talcahuano",
+      "url_evidence": "observado_en_busqueda",
+      "previous_live_check": {
+        "at": "2026-10-24T19:47:17",
+        "ok": false,
+        "http_status": null,
+        "error": "URLError: <urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1010)>"
+      },
+      "notes": "Catálogo conservado del PR88; deshabilitada para acotar solicitudes y revisar disponibilidad/identidad antes de activarla."
+    },
+    {
+      "id": "direct-8393a82f57bb6434",
+      "name": "Municipalidad de San Pedro de la Paz",
+      "url": "https://www.sanpedrodelapaz.cl/",
+      "hosts": [
+        "www.sanpedrodelapaz.cl"
+      ],
+      "category": "07 - Concepción",
+      "timezone": "America/Santiago",
+      "official": true,
+      "enabled": false,
+      "max_pages": 4,
+      "source_type": "municipal",
+      "commune": "San Pedro de la Paz",
+      "url_evidence": "no_confirmado",
+      "previous_live_check": {
+        "at": "2026-10-24T19:47:11",
+        "ok": false,
+        "http_status": null,
+        "error": "Ningún dominio candidato se identificó como sitio de la Municipalidad de San Pedro de la Paz"
+      },
+      "notes": "Catálogo conservado del PR88; deshabilitada para acotar solicitudes y revisar disponibilidad/identidad antes de activarla."
+    },
+    {
+      "id": "direct-1b88e9d0a8512a1c",
+      "name": "Municipalidad de Chiguayante",
+      "url": "https://chiguayante.cl/",
+      "hosts": [
+        "chiguayante.cl"
+      ],
+      "category": "07 - Concepción",
+      "timezone": "America/Santiago",
+      "official": true,
+      "enabled": false,
+      "max_pages": 4,
+      "source_type": "municipal",
+      "commune": "Chiguayante",
+      "url_evidence": "observado_en_busqueda",
+      "previous_live_check": {
+        "at": "2026-10-24T19:47:20",
+        "ok": true,
+        "http_status": 200,
+        "error": null
+      },
+      "notes": "Catálogo conservado del PR88; deshabilitada para acotar solicitudes y revisar disponibilidad/identidad antes de activarla."
+    },
+    {
+      "id": "direct-b45e07b7096f495b",
+      "name": "Municipalidad de Penco",
+      "url": "https://penco.cl/",
+      "hosts": [
+        "penco.cl"
+      ],
+      "category": "07 - Concepción",
+      "timezone": "America/Santiago",
+      "official": true,
+      "enabled": false,
+      "max_pages": 4,
+      "source_type": "municipal",
+      "commune": "Penco",
+      "url_evidence": "observado_en_busqueda",
+      "previous_live_check": {
+        "at": "2026-10-24T19:47:22",
+        "ok": true,
+        "http_status": 200,
+        "error": null
+      },
+      "notes": "Catálogo conservado del PR88; deshabilitada para acotar solicitudes y revisar disponibilidad/identidad antes de activarla."
+    },
+    {
+      "id": "direct-f80f80746501c68e",
+      "name": "Municipalidad de Tomé",
+      "url": "https://www.tome.cl/",
+      "hosts": [
+        "www.tome.cl"
+      ],
+      "category": "07 - Concepción",
+      "timezone": "America/Santiago",
+      "official": true,
+      "enabled": false,
+      "max_pages": 4,
+      "source_type": "municipal",
+      "commune": "Tomé",
+      "url_evidence": "observado_en_busqueda",
+      "previous_live_check": {
+        "at": "2026-10-24T19:47:21",
+        "ok": false,
+        "http_status": 403,
+        "error": "HTTP 403"
+      },
+      "notes": "Catálogo conservado del PR88; deshabilitada para acotar solicitudes y revisar disponibilidad/identidad antes de activarla."
+    },
+    {
+      "id": "direct-cbc5b954008fb046",
+      "name": "Municipalidad de Coronel",
+      "url": "https://www.coronel.cl/noticias/",
+      "hosts": [
+        "www.coronel.cl"
+      ],
+      "category": "07 - Concepción",
+      "timezone": "America/Santiago",
+      "official": true,
+      "enabled": false,
+      "max_pages": 4,
+      "source_type": "municipal",
+      "commune": "Coronel",
+      "url_evidence": "observado_en_busqueda",
+      "previous_live_check": {
+        "at": "2026-10-24T19:47:41",
+        "ok": true,
+        "http_status": 200,
+        "error": null
+      },
+      "notes": "Catálogo conservado del PR88; deshabilitada para acotar solicitudes y revisar disponibilidad/identidad antes de activarla."
+    },
+    {
+      "id": "direct-c18d389c2ed95c8c",
+      "name": "Municipalidad de Lota",
+      "url": "https://lota.cl/",
+      "hosts": [
+        "lota.cl"
+      ],
+      "category": "07 - Concepción",
+      "timezone": "America/Santiago",
+      "official": true,
+      "enabled": false,
+      "max_pages": 4,
+      "source_type": "municipal",
+      "commune": "Lota",
+      "url_evidence": "observado_en_busqueda",
+      "previous_live_check": {
+        "at": "2026-10-24T19:47:49",
+        "ok": true,
+        "http_status": 200,
+        "error": null
+      },
+      "notes": "Catálogo conservado del PR88; deshabilitada para acotar solicitudes y revisar disponibilidad/identidad antes de activarla."
+    },
+    {
+      "id": "direct-1a7ed3d7387464cf",
+      "name": "Municipalidad de Hualqui",
+      "url": "https://www.munihualqui.cl/",
+      "hosts": [
+        "www.munihualqui.cl"
+      ],
+      "category": "07 - Concepción",
+      "timezone": "America/Santiago",
+      "official": true,
+      "enabled": false,
+      "max_pages": 4,
+      "source_type": "municipal",
+      "commune": "Hualqui",
+      "url_evidence": "no_confirmado",
+      "previous_live_check": {
+        "at": "2026-10-24T19:49:40",
+        "ok": false,
+        "http_status": 200,
+        "error": "Ningún dominio candidato se identificó como sitio de la Municipalidad de Hualqui"
+      },
+      "notes": "Catálogo conservado del PR88; deshabilitada para acotar solicitudes y revisar disponibilidad/identidad antes de activarla."
+    },
+    {
+      "id": "direct-e74382da52799ce3",
+      "name": "Municipalidad de Santa Juana",
+      "url": "https://www.santajuana.cl/",
+      "hosts": [
+        "www.santajuana.cl"
+      ],
+      "category": "07 - Concepción",
+      "timezone": "America/Santiago",
+      "official": true,
+      "enabled": false,
+      "max_pages": 4,
+      "source_type": "municipal",
+      "commune": "Santa Juana",
+      "url_evidence": "dominio_candidato_verificado_en_vivo",
+      "previous_live_check": {
+        "at": "2026-10-24T19:47:59",
+        "ok": true,
+        "http_status": 200,
+        "error": null
+      },
+      "notes": "Catálogo conservado del PR88; deshabilitada para acotar solicitudes y revisar disponibilidad/identidad antes de activarla."
+    },
+    {
+      "id": "direct-6824b98c3f609baf",
+      "name": "Municipalidad de Florida",
+      "url": "https://muniflorida.cl/",
+      "hosts": [
+        "muniflorida.cl"
+      ],
+      "category": "07 - Concepción",
+      "timezone": "America/Santiago",
+      "official": true,
+      "enabled": false,
+      "max_pages": 4,
+      "source_type": "municipal",
+      "commune": "Florida",
+      "url_evidence": "observado_en_busqueda",
+      "previous_live_check": {
+        "at": "2026-10-24T19:48:09",
+        "ok": true,
+        "http_status": 200,
+        "error": null
+      },
+      "notes": "Catálogo conservado del PR88; deshabilitada para acotar solicitudes y revisar disponibilidad/identidad antes de activarla."
+    },
+    {
+      "id": "direct-0b777ce26542dd7b",
+      "name": "Municipalidad de Arauco",
+      "url": "https://muniarauco.cl/cultura/",
+      "hosts": [
+        "muniarauco.cl"
+      ],
+      "category": "07 - Concepción",
+      "timezone": "America/Santiago",
+      "official": true,
+      "enabled": true,
+      "max_pages": 4,
+      "source_type": "municipal",
+      "commune": "Arauco",
+      "url_evidence": "observado_en_busqueda",
+      "previous_live_check": {
+        "at": "2026-10-24T19:49:23",
+        "ok": true,
+        "http_status": 200,
+        "error": null
+      }
+    },
+    {
+      "id": "direct-ca549933ffb438e4",
+      "name": "Municipalidad de Cañete",
+      "url": "https://municanete.cl/v2/",
+      "hosts": [
+        "municanete.cl"
+      ],
+      "category": "07 - Concepción",
+      "timezone": "America/Santiago",
+      "official": true,
+      "enabled": false,
+      "max_pages": 4,
+      "source_type": "municipal",
+      "commune": "Cañete",
+      "url_evidence": "observado_en_busqueda",
+      "previous_live_check": {
+        "at": "2026-10-24T19:48:43",
+        "ok": true,
+        "http_status": 200,
+        "error": null
+      },
+      "notes": "Catálogo conservado del PR88; deshabilitada para acotar solicitudes y revisar disponibilidad/identidad antes de activarla."
+    },
+    {
+      "id": "direct-6cdd9d95ff850e7b",
+      "name": "Municipalidad de Contulmo",
+      "url": "https://www.contulmo.cl/",
+      "hosts": [
+        "www.contulmo.cl"
+      ],
+      "category": "07 - Concepción",
+      "timezone": "America/Santiago",
+      "official": true,
+      "enabled": false,
+      "max_pages": 4,
+      "source_type": "municipal",
+      "commune": "Contulmo",
+      "url_evidence": "observado_en_busqueda",
+      "previous_live_check": {
+        "at": "2026-10-24T19:48:55",
+        "ok": true,
+        "http_status": 200,
+        "error": null
+      },
+      "notes": "Catálogo conservado del PR88; deshabilitada para acotar solicitudes y revisar disponibilidad/identidad antes de activarla."
+    },
+    {
+      "id": "direct-13d6f240828cbf0f",
+      "name": "Municipalidad de Curanilahue",
+      "url": "https://www.curanilahue.cl/",
+      "hosts": [
+        "www.curanilahue.cl"
+      ],
+      "category": "07 - Concepción",
+      "timezone": "America/Santiago",
+      "official": true,
+      "enabled": false,
+      "max_pages": 4,
+      "source_type": "municipal",
+      "commune": "Curanilahue",
+      "url_evidence": "no_confirmado",
+      "previous_live_check": {
+        "at": "2026-10-24T19:52:01",
+        "ok": false,
+        "http_status": null,
+        "error": "Ningún dominio candidato se identificó como sitio de la Municipalidad de Curanilahue"
+      },
+      "notes": "Catálogo conservado del PR88; deshabilitada para acotar solicitudes y revisar disponibilidad/identidad antes de activarla."
+    },
+    {
+      "id": "direct-1d17e3468e2b6869",
+      "name": "Municipalidad de Lebu",
+      "url": "https://lebu.cl/eventos/",
+      "hosts": [
+        "lebu.cl"
+      ],
+      "category": "07 - Concepción",
+      "timezone": "America/Santiago",
+      "official": true,
+      "enabled": false,
+      "max_pages": 4,
+      "source_type": "municipal",
+      "commune": "Lebu",
+      "url_evidence": "observado_en_busqueda",
+      "previous_live_check": {
+        "at": "2026-10-24T19:49:23",
+        "ok": false,
+        "http_status": 403,
+        "error": "HTTP 403"
+      },
+      "notes": "Catálogo conservado del PR88; deshabilitada para acotar solicitudes y revisar disponibilidad/identidad antes de activarla."
+    },
+    {
+      "id": "direct-3dcae7671220b5e6",
+      "name": "Municipalidad de Los Álamos",
+      "url": "https://munilosalamos.cl/categoria/noticias/",
+      "hosts": [
+        "munilosalamos.cl"
+      ],
+      "category": "07 - Concepción",
+      "timezone": "America/Santiago",
+      "official": true,
+      "enabled": false,
+      "max_pages": 4,
+      "source_type": "municipal",
+      "commune": "Los Álamos",
+      "url_evidence": "observado_en_busqueda",
+      "previous_live_check": {
+        "at": "2026-10-24T19:49:44",
+        "ok": true,
+        "http_status": 200,
+        "error": null
+      },
+      "notes": "Catálogo conservado del PR88; deshabilitada para acotar solicitudes y revisar disponibilidad/identidad antes de activarla."
+    },
+    {
+      "id": "direct-a8b49b4593fa1f9c",
+      "name": "Municipalidad de Tirúa",
+      "url": "https://www.tirua.cl/",
+      "hosts": [
+        "www.tirua.cl"
+      ],
+      "category": "07 - Concepción",
+      "timezone": "America/Santiago",
+      "official": true,
+      "enabled": false,
+      "max_pages": 4,
+      "source_type": "municipal",
+      "commune": "Tirúa",
+      "url_evidence": "no_confirmado",
+      "previous_live_check": {
+        "at": "2026-10-24T19:49:54",
+        "ok": false,
+        "http_status": 200,
+        "error": "Ningún dominio candidato se identificó como sitio de la Municipalidad de Tirúa"
+      },
+      "notes": "Catálogo conservado del PR88; deshabilitada para acotar solicitudes y revisar disponibilidad/identidad antes de activarla."
+    },
+    {
+      "id": "direct-886c9d1638b56ee1",
+      "name": "Municipalidad de Los Ángeles",
+      "url": "https://www.losangeles.cl/category/noticias/",
+      "hosts": [
+        "www.losangeles.cl"
+      ],
+      "category": "07 - Concepción",
+      "timezone": "America/Santiago",
+      "official": true,
+      "enabled": false,
+      "max_pages": 4,
+      "source_type": "municipal",
+      "commune": "Los Ángeles",
+      "url_evidence": "observado_en_busqueda",
+      "previous_live_check": {
+        "at": "2026-10-24T19:49:55",
+        "ok": true,
+        "http_status": 200,
+        "error": null
+      },
+      "notes": "Catálogo conservado del PR88; deshabilitada para acotar solicitudes y revisar disponibilidad/identidad antes de activarla."
+    },
+    {
+      "id": "direct-9dd456cbf6a3577c",
+      "name": "Municipalidad de Antuco",
+      "url": "https://www.antuco.cl/",
+      "hosts": [
+        "www.antuco.cl"
+      ],
+      "category": "07 - Concepción",
+      "timezone": "America/Santiago",
+      "official": true,
+      "enabled": false,
+      "max_pages": 4,
+      "source_type": "municipal",
+      "commune": "Antuco",
+      "url_evidence": "no_confirmado",
+      "previous_live_check": {
+        "at": "2026-10-24T19:50:01",
+        "ok": false,
+        "http_status": 200,
+        "error": "Ningún dominio candidato se identificó como sitio de la Municipalidad de Antuco"
+      },
+      "notes": "Catálogo conservado del PR88; deshabilitada para acotar solicitudes y revisar disponibilidad/identidad antes de activarla."
+    },
+    {
+      "id": "direct-95f3b467a31d1ba7",
+      "name": "Municipalidad de Cabrero",
+      "url": "https://www.cabrero.cl/",
+      "hosts": [
+        "www.cabrero.cl"
+      ],
+      "category": "07 - Concepción",
+      "timezone": "America/Santiago",
+      "official": true,
+      "enabled": false,
+      "max_pages": 4,
+      "source_type": "municipal",
+      "commune": "Cabrero",
+      "url_evidence": "observado_en_busqueda",
+      "previous_live_check": {
+        "at": "2026-10-24T19:50:00",
+        "ok": true,
+        "http_status": 200,
+        "error": null
+      },
+      "notes": "Catálogo conservado del PR88; deshabilitada para acotar solicitudes y revisar disponibilidad/identidad antes de activarla."
+    },
+    {
+      "id": "direct-5a2ba6de0c43b631",
+      "name": "Municipalidad de Laja",
+      "url": "https://www.munilaja.cl/",
+      "hosts": [
+        "www.munilaja.cl"
+      ],
+      "category": "07 - Concepción",
+      "timezone": "America/Santiago",
+      "official": true,
+      "enabled": false,
+      "max_pages": 4,
+      "source_type": "municipal",
+      "commune": "Laja",
+      "url_evidence": "dominio_candidato_verificado_en_vivo",
+      "previous_live_check": {
+        "at": "2026-10-24T19:50:24",
+        "ok": true,
+        "http_status": 200,
+        "error": null
+      },
+      "notes": "Catálogo conservado del PR88; deshabilitada para acotar solicitudes y revisar disponibilidad/identidad antes de activarla."
+    },
+    {
+      "id": "direct-a6eca21cd0768741",
+      "name": "Municipalidad de Mulchén",
+      "url": "https://www.munimulchen.cl/",
+      "hosts": [
+        "www.munimulchen.cl"
+      ],
+      "category": "07 - Concepción",
+      "timezone": "America/Santiago",
+      "official": true,
+      "enabled": false,
+      "max_pages": 4,
+      "source_type": "municipal",
+      "commune": "Mulchén",
+      "url_evidence": "observado_en_busqueda",
+      "previous_live_check": {
+        "at": "2026-10-24T19:50:13",
+        "ok": true,
+        "http_status": 200,
+        "error": null
+      },
+      "notes": "Catálogo conservado del PR88; deshabilitada para acotar solicitudes y revisar disponibilidad/identidad antes de activarla."
+    },
+    {
+      "id": "direct-3f404aef7f16bcb9",
+      "name": "Municipalidad de Nacimiento",
+      "url": "https://www.nacimiento.cl/actividades",
+      "hosts": [
+        "www.nacimiento.cl",
+        "nacimiento.cl"
+      ],
+      "category": "07 - Concepción",
+      "timezone": "America/Santiago",
+      "official": true,
+      "enabled": true,
+      "max_pages": 4,
+      "source_type": "municipal",
+      "commune": "Nacimiento",
+      "url_evidence": "observado_en_busqueda",
+      "previous_live_check": {
+        "at": "2026-10-24T19:50:30",
+        "ok": true,
+        "http_status": 200,
+        "error": null
+      }
+    },
+    {
+      "id": "direct-18518327309086b2",
+      "name": "Municipalidad de Negrete",
+      "url": "https://www.muninegrete.cl/",
+      "hosts": [
+        "www.muninegrete.cl"
+      ],
+      "category": "07 - Concepción",
+      "timezone": "America/Santiago",
+      "official": true,
+      "enabled": false,
+      "max_pages": 4,
+      "source_type": "municipal",
+      "commune": "Negrete",
+      "url_evidence": "observado_en_busqueda",
+      "previous_live_check": {
+        "at": "2026-10-24T19:51:04",
+        "ok": true,
+        "http_status": 200,
+        "error": null
+      },
+      "notes": "Catálogo conservado del PR88; deshabilitada para acotar solicitudes y revisar disponibilidad/identidad antes de activarla."
+    },
+    {
+      "id": "direct-e6c26d7576420e2d",
+      "name": "Municipalidad de Quilaco",
+      "url": "https://www.quilaco.cl/",
+      "hosts": [
+        "www.quilaco.cl"
+      ],
+      "category": "07 - Concepción",
+      "timezone": "America/Santiago",
+      "official": true,
+      "enabled": false,
+      "max_pages": 4,
+      "source_type": "municipal",
+      "commune": "Quilaco",
+      "url_evidence": "no_confirmado",
+      "previous_live_check": {
+        "at": "2026-10-24T19:50:44",
+        "ok": false,
+        "http_status": null,
+        "error": "Ningún dominio candidato se identificó como sitio de la Municipalidad de Quilaco"
+      },
+      "notes": "Catálogo conservado del PR88; deshabilitada para acotar solicitudes y revisar disponibilidad/identidad antes de activarla."
+    },
+    {
+      "id": "direct-e0a6c7ff1e85b90c",
+      "name": "Municipalidad de Quilleco",
+      "url": "https://municipalidadquilleco.cl/",
+      "hosts": [
+        "municipalidadquilleco.cl"
+      ],
+      "category": "07 - Concepción",
+      "timezone": "America/Santiago",
+      "official": true,
+      "enabled": false,
+      "max_pages": 4,
+      "source_type": "municipal",
+      "commune": "Quilleco",
+      "url_evidence": "observado_en_busqueda",
+      "previous_live_check": {
+        "at": "2026-10-24T19:50:51",
+        "ok": true,
+        "http_status": 200,
+        "error": null
+      },
+      "notes": "Catálogo conservado del PR88; deshabilitada para acotar solicitudes y revisar disponibilidad/identidad antes de activarla."
+    },
+    {
+      "id": "direct-3258babea9fc4fd6",
+      "name": "Municipalidad de San Rosendo",
+      "url": "https://www.municipalidadsanrosendo.cl/",
+      "hosts": [
+        "www.municipalidadsanrosendo.cl"
+      ],
+      "category": "07 - Concepción",
+      "timezone": "America/Santiago",
+      "official": true,
+      "enabled": false,
+      "max_pages": 4,
+      "source_type": "municipal",
+      "commune": "San Rosendo",
+      "url_evidence": "dominio_candidato_verificado_en_vivo",
+      "previous_live_check": {
+        "at": "2026-10-24T19:51:42",
+        "ok": true,
+        "http_status": 200,
+        "error": null
+      },
+      "notes": "Catálogo conservado del PR88; deshabilitada para acotar solicitudes y revisar disponibilidad/identidad antes de activarla."
+    },
+    {
+      "id": "direct-7b93a6f052490e29",
+      "name": "Municipalidad de Santa Bárbara",
+      "url": "https://www.santabarbara.cl/noticias/",
+      "hosts": [
+        "www.santabarbara.cl"
+      ],
+      "category": "07 - Concepción",
+      "timezone": "America/Santiago",
+      "official": true,
+      "enabled": false,
+      "max_pages": 4,
+      "source_type": "municipal",
+      "commune": "Santa Bárbara",
+      "url_evidence": "observado_en_busqueda",
+      "previous_live_check": {
+        "at": "2026-10-24T19:51:31",
+        "ok": true,
+        "http_status": 200,
+        "error": null
+      },
+      "notes": "Catálogo conservado del PR88; deshabilitada para acotar solicitudes y revisar disponibilidad/identidad antes de activarla."
+    },
+    {
+      "id": "direct-52d2fc6cb8f184e6",
+      "name": "Municipalidad de Tucapel",
+      "url": "https://www.munitucapel.cl/",
+      "hosts": [
+        "www.munitucapel.cl"
+      ],
+      "category": "07 - Concepción",
+      "timezone": "America/Santiago",
+      "official": true,
+      "enabled": false,
+      "max_pages": 4,
+      "source_type": "municipal",
+      "commune": "Tucapel",
+      "url_evidence": "dominio_candidato_verificado_en_vivo",
+      "previous_live_check": {
+        "at": "2026-10-24T19:51:41",
+        "ok": true,
+        "http_status": 200,
+        "error": null
+      },
+      "notes": "Catálogo conservado del PR88; deshabilitada para acotar solicitudes y revisar disponibilidad/identidad antes de activarla."
+    },
+    {
+      "id": "direct-b866f295504ef5c7",
+      "name": "Municipalidad de Yumbel",
+      "url": "https://yumbel.cl/",
+      "hosts": [
+        "yumbel.cl"
+      ],
+      "category": "07 - Concepción",
+      "timezone": "America/Santiago",
+      "official": true,
+      "enabled": false,
+      "max_pages": 4,
+      "source_type": "municipal",
+      "commune": "Yumbel",
+      "url_evidence": "observado_en_busqueda",
+      "previous_live_check": {
+        "at": "2026-10-24T19:52:06",
+        "ok": true,
+        "http_status": 200,
+        "error": null
+      },
+      "notes": "Catálogo conservado del PR88; deshabilitada para acotar solicitudes y revisar disponibilidad/identidad antes de activarla."
+    },
+    {
+      "id": "direct-de93773d66c21cb0",
+      "name": "Municipalidad de Alto Biobío",
+      "url": "https://munialtobiobio.cl/",
+      "hosts": [
+        "munialtobiobio.cl"
+      ],
+      "category": "07 - Concepción",
+      "timezone": "America/Santiago",
+      "official": true,
+      "enabled": false,
+      "max_pages": 4,
+      "source_type": "municipal",
+      "commune": "Alto Biobío",
+      "url_evidence": "observado_en_busqueda",
+      "previous_live_check": {
+        "at": "2026-10-24T19:52:55",
+        "ok": true,
+        "http_status": 200,
+        "error": null
+      },
+      "notes": "Catálogo conservado del PR88; deshabilitada para acotar solicitudes y revisar disponibilidad/identidad antes de activarla."
+    },
+    {
+      "id": "direct-dea1f511e4aaedf3",
+      "name": "Teatro Biobío",
+      "url": "https://teatrobiobio.cl/",
+      "hosts": [
+        "teatrobiobio.cl"
+      ],
+      "category": "07 - Concepción",
+      "timezone": "America/Santiago",
+      "official": true,
+      "enabled": true,
+      "max_pages": 4,
+      "source_type": "venue",
+      "commune": "Concepción",
+      "url_evidence": "observado_en_busqueda",
+      "previous_live_check": {
+        "at": "2026-10-24T19:52:20",
+        "ok": true,
+        "http_status": 200,
+        "error": null
+      }
+    },
+    {
+      "id": "direct-77ac804d35d690c1",
+      "name": "Corcudec (Teatro UdeC)",
+      "url": "https://www.corcudec.cl/",
+      "hosts": [
+        "www.corcudec.cl"
+      ],
+      "category": "07 - Concepción",
+      "timezone": "America/Santiago",
+      "official": true,
+      "enabled": true,
+      "max_pages": 4,
+      "source_type": "venue",
+      "commune": "Concepción",
+      "url_evidence": "observado_en_busqueda",
+      "previous_live_check": {
+        "at": "2026-10-24T19:54:05",
+        "ok": false,
+        "http_status": null,
+        "error": "URLError: <urlopen error timed out>"
+      }
+    },
+    {
+      "id": "direct-56de95a8224c48ea",
+      "name": "Festival Internacional de Teatro del Biobío (FTB)",
+      "url": "https://ftb.cl/",
+      "hosts": [
+        "ftb.cl"
+      ],
+      "category": "07 - Concepción",
+      "timezone": "America/Santiago",
+      "official": true,
+      "enabled": true,
+      "max_pages": 4,
+      "source_type": "venue",
+      "commune": "Concepción",
+      "url_evidence": "observado_en_busqueda",
+      "previous_live_check": {
+        "at": "2026-10-24T19:52:28",
+        "ok": true,
+        "http_status": 200,
+        "error": null
+      }
+    },
+    {
+      "id": "direct-90c06f723f72530f",
+      "name": "ChileCultura (Ministerio de las Culturas)",
+      "url": "https://chilecultura.gob.cl/",
+      "hosts": [
+        "chilecultura.gob.cl"
+      ],
+      "category": "04 - Chile",
+      "timezone": "America/Santiago",
+      "official": true,
+      "enabled": false,
+      "max_pages": 4,
+      "source_type": "aggregator",
+      "commune": null,
+      "url_evidence": "observado_en_busqueda",
+      "previous_live_check": {
+        "at": "2026-10-24T19:54:57",
+        "ok": false,
+        "http_status": 403,
+        "error": "HTTP 403"
+      },
+      "notes": "Catálogo conservado del PR88; deshabilitada para acotar solicitudes y revisar disponibilidad/identidad antes de activarla."
+    },
+    {
+      "id": "direct-ee83b71b1099e8c2",
+      "name": "Agenda Cultural del Ministerio de las Culturas",
+      "url": "https://www.cultura.gob.cl/agendacultural/",
+      "hosts": [
+        "www.cultura.gob.cl"
+      ],
+      "category": "04 - Chile",
+      "timezone": "America/Santiago",
+      "official": true,
+      "enabled": true,
+      "max_pages": 4,
+      "source_type": "aggregator",
+      "commune": null,
+      "url_evidence": "observado_en_busqueda",
+      "previous_live_check": {
+        "at": "2026-10-24T19:55:11",
+        "ok": true,
+        "http_status": 200,
+        "error": null
+      }
+    },
+    {
+      "id": "direct-1fed371a2aedbbb5",
+      "name": "Centro Cultural Gabriela Mistral (GAM)",
+      "url": "https://gam.cl/",
+      "hosts": [
+        "gam.cl"
+      ],
+      "category": "04 - Chile",
+      "timezone": "America/Santiago",
+      "official": true,
+      "enabled": true,
+      "max_pages": 4,
+      "source_type": "venue",
+      "commune": "Santiago",
+      "url_evidence": "observado_en_busqueda",
+      "previous_live_check": {
+        "at": "2026-10-24T19:55:44",
+        "ok": true,
+        "http_status": 200,
+        "error": null
+      }
+    },
+    {
+      "id": "direct-d5d0732ada5274bb",
+      "name": "Centro Cultural La Moneda",
+      "url": "https://www.cclm.cl/",
+      "hosts": [
+        "www.cclm.cl"
+      ],
+      "category": "04 - Chile",
+      "timezone": "America/Santiago",
+      "official": true,
+      "enabled": true,
+      "max_pages": 4,
+      "source_type": "venue",
+      "commune": "Santiago",
+      "url_evidence": "observado_en_busqueda",
+      "previous_live_check": {
+        "at": "2026-10-24T19:55:08",
+        "ok": true,
+        "http_status": 200,
+        "error": null
+      }
+    },
+    {
+      "id": "direct-7ca1caf8c2d78854",
+      "name": "Teatro Municipal de Santiago",
+      "url": "https://www.municipal.cl/",
+      "hosts": [
+        "www.municipal.cl",
+        "municipal.cl"
+      ],
+      "category": "04 - Chile",
+      "timezone": "America/Santiago",
+      "official": true,
+      "enabled": true,
+      "max_pages": 4,
+      "source_type": "venue",
+      "commune": "Santiago",
+      "url_evidence": "observado_en_busqueda",
+      "previous_live_check": {
+        "at": "2026-10-24T19:55:31",
+        "ok": true,
+        "http_status": 200,
+        "error": null
+      }
+    },
+    {
+      "id": "direct-49ec3c23b4ea507f",
+      "name": "Matucana 100",
+      "url": "https://www.m100.cl/",
+      "hosts": [
+        "www.m100.cl"
+      ],
+      "category": "04 - Chile",
+      "timezone": "America/Santiago",
+      "official": true,
+      "enabled": true,
+      "max_pages": 4,
+      "source_type": "venue",
+      "commune": "Estación Central",
+      "url_evidence": "observado_en_busqueda",
+      "previous_live_check": {
+        "at": "2026-10-24T19:55:29",
+        "ok": true,
+        "http_status": 200,
+        "error": null
+      }
+    },
+    {
+      "id": "direct-3f3a4459b530eab9",
+      "name": "Parque Cultural de Valparaíso",
+      "url": "https://parquecultural.cl/",
+      "hosts": [
+        "parquecultural.cl"
+      ],
+      "category": "04 - Chile",
+      "timezone": "America/Santiago",
+      "official": true,
+      "enabled": true,
+      "max_pages": 4,
+      "source_type": "venue",
+      "commune": "Valparaíso",
+      "url_evidence": "observado_en_busqueda",
+      "previous_live_check": {
+        "at": "2026-10-24T19:56:40",
+        "ok": true,
+        "http_status": 200,
+        "error": null
+      }
+    },
+    {
+      "id": "direct-e32373eca75e0eb5",
+      "name": "Teatro Regional del Maule",
+      "url": "https://www.teatroregional.cl/",
+      "hosts": [
+        "www.teatroregional.cl"
+      ],
+      "category": "04 - Chile",
+      "timezone": "America/Santiago",
+      "official": true,
+      "enabled": true,
+      "max_pages": 4,
+      "source_type": "venue",
+      "commune": "Talca",
+      "url_evidence": "observado_en_busqueda",
+      "previous_live_check": {
+        "at": "2026-10-24T19:56:01",
+        "ok": true,
+        "http_status": 200,
+        "error": null
+      }
+    },
+    {
+      "id": "direct-294a08d1c7785a69",
+      "name": "Teatro Municipal de Temuco",
+      "url": "https://www.teatromunicipaltemuco.cl/",
+      "hosts": [
+        "www.teatromunicipaltemuco.cl"
+      ],
+      "category": "04 - Chile",
+      "timezone": "America/Santiago",
+      "official": true,
+      "enabled": false,
+      "max_pages": 4,
+      "source_type": "venue",
+      "commune": "Temuco",
+      "url_evidence": "resumen_de_busqueda",
+      "previous_live_check": {
+        "at": "2026-10-24T19:55:44",
+        "ok": true,
+        "http_status": 200,
+        "error": null
+      },
+      "notes": "Catálogo conservado del PR88; deshabilitada para acotar solicitudes y revisar disponibilidad/identidad antes de activarla."
+    }
+  ]
+}

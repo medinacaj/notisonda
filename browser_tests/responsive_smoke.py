@@ -7,6 +7,7 @@ Only test code depends on Playwright; production has no new dependencies.
 from __future__ import annotations
 
 import json
+import os
 import ssl
 import subprocess
 import sys
@@ -266,7 +267,10 @@ def main():
     try:
         with sync_playwright() as p:
             engine = getattr(p, browser_name)
-            browser = engine.launch(headless=True, args=["--no-sandbox"] if browser_name == "chromium" else [])
+            options = {"headless": True, "args": ["--no-sandbox"] if browser_name == "chromium" else []}
+            if browser_name == "chromium" and os.environ.get("RADAR_CHROMIUM_EXECUTABLE"):
+                options["executable_path"] = os.environ["RADAR_CHROMIUM_EXECUTABLE"]
+            browser = engine.launch(**options)
             try:
                 for width in ((375, 1440) if categories_only else WIDTHS):
                     mobile = width <= 768
@@ -655,9 +659,12 @@ def main():
                         page.locator("#feedView:not([hidden])").wait_for()
                         assert page.locator("#feedHeading").inner_text() == "Latinoamérica"
                         # Acciones secundarias plegadas sin perder los controles existentes.
-                        expect(page.locator("#feedAdvanced")).not_to_have_attribute("open", "")
                         expect(page.locator("#v12Date")).to_be_hidden()
-                        page.locator("#feedAdvanced summary").click()
+                        if width <= 640:
+                            page.locator("#feedFiltersToggle").click()
+                        else:
+                            expect(page.locator("#feedAdvanced")).not_to_have_attribute("open", "")
+                            page.locator("#feedAdvanced summary").click()
                         expect(page.locator("#v12Date")).to_be_visible()
                         check_visible_boxes(page, [".filter-controls","#v12Date","#v12SaveSearch","#markAllVisible"],
                                             f"barra única de noticias {browser_name} {width}px")
@@ -672,10 +679,12 @@ def main():
                         assert page.locator("#markAllVisible svg").count() == 1
                         assert page.locator("#v12SaveSearch").inner_text() == ""
                         assert page.locator("#markAllVisible").inner_text() == ""
-                        toolbar=page.locator("#feedView .filter-bar").bounding_box()
+                        filter_boxes = [page.locator(selector).bounding_box() for selector in
+                                        ("#feedView .filter-bar", "#feedFilterPanel", "#feedActiveFilters")
+                                        if page.locator(selector).is_visible()]
+                        filter_bottom = max(box['y']+box['height'] for box in filter_boxes)
                         news=page.locator("#articleGrid").bounding_box()
-                        assert news["y"]-toolbar["y"]-toolbar["height"] < 45, (
-                            width,browser_name,news["y"]-toolbar["y"]-toolbar["height"])
+                        assert 0 <= news["y"]-filter_bottom < 45, (width,browser_name,news["y"]-filter_bottom)
                         # El filtro geográfico duplicaba las seis carpetas.
                         assert page.locator("#v12Geo").count() == 0
                         assert page.locator("#v12CountryTabs").count() == 0

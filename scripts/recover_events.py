@@ -37,7 +37,11 @@ def restore_events(root, fetch=download):
             raise ValueError('Published agenda generation does not match manifest')
         if old is None or parse_timestamp(current['generated_at']) > parse_timestamp(old['generated_at']):
             if old is not None:
-                current = merge_events(old, current['items'] + current['pending'], current['sources'], parse_timestamp(current['generated_at']))
+                # A published snapshot has already reconciled incomplete source
+                # updates. Its explicit null details must not resurrect stale
+                # facts (for example a previous free price now contradicted).
+                current = merge_events(old, current['items'] + current['pending'], current['sources'],
+                                       parse_timestamp(current['generated_at']), authoritative_details=True)
             temporary = path.with_suffix('.json.tmp')
             temporary.write_text(json.dumps(current, ensure_ascii=False, separators=(',', ':')) + '\n', encoding='utf-8')
             temporary.replace(path)

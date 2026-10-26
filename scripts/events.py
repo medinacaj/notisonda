@@ -6,6 +6,7 @@ Publication timestamps never stand in for an event date. No HTML is executed.
 from __future__ import annotations
 
 from datetime import date, datetime, timedelta, timezone
+from decimal import Decimal, InvalidOperation
 from hashlib import sha256
 from html.parser import HTMLParser
 import json
@@ -23,6 +24,59 @@ REALIZATION = re.compile(r'(?:se\s+(?:realizar[aá]|celebrar[aá]|desarrollar[a�
 MONTHS = {name:i+1 for i,name in enumerate(('enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'))}
 TEXT_DATE = re.compile(r'\b(?:(\d{4}-\d{2}-\d{2})|(\d{1,2})\s+de\s+('+ '|'.join(MONTHS)+r')\s+(?:de[l]?\s+)?(\d{4})|(\d{1,2})[/-](\d{1,2})[/-](\d{4}))\b',re.I)
 EVENT_TYPES = {'Event','BusinessEvent','ChildrensEvent','ComedyEvent','CourseInstance','DanceEvent','DeliveryEvent','EducationEvent','EventSeries','ExhibitionEvent','Festival','FoodEvent','Hackathon','LiteraryEvent','MusicEvent','PublicationEvent','SaleEvent','ScreeningEvent','SocialEvent','SportsEvent','TheaterEvent','VisualArtsEvent'}
+EVENT_LABELS = {'MusicEvent':'Música','TheaterEvent':'Teatro','DanceEvent':'Danza',
+    'SportsEvent':'Deporte','ExhibitionEvent':'Exposición','VisualArtsEvent':'Artes visuales',
+    'LiteraryEvent':'Literatura','ScreeningEvent':'Cine','Festival':'Festival',
+    'EducationEvent':'Educación','CourseInstance':'Curso','BusinessEvent':'Encuentro empresarial',
+    'ChildrensEvent':'Actividad infantil','ComedyEvent':'Comedia','FoodEvent':'Gastronomía',
+    'SocialEvent':'Encuentro social','Hackathon':'Hackatón','SaleEvent':'Feria',
+    'Event':'Actividad','EventSeries':'Ciclo'}
+OPTIONAL_DETAILS = ('locality','event_type','price_text','is_free','preference_source_id')
+
+
+def _detail_text(value):
+    if not isinstance(value,str):return None
+    return ' '.join(_html(value).text).strip()[:200] or None
+
+
+def structured_details(obj):
+    """Public facts with explicit structured evidence; titles never set price/place."""
+    result={key:None for key in OPTIONAL_DETAILS if key!='preference_source_id'}
+    result['_price_observed']='offers' in obj or 'isAccessibleForFree' in obj
+    location=obj.get('location')
+    if isinstance(location,dict):
+        address=location.get('address')
+        if isinstance(address,dict):result['locality']=_detail_text(address.get('addressLocality'))
+    kinds=obj.get('@type',[])
+    if isinstance(kinds,str):kinds=[kinds]
+    if isinstance(kinds,list):
+        labels=[EVENT_LABELS.get(kind.rsplit('/',1)[-1].rsplit('#',1)[-1]) for kind in kinds if isinstance(kind,str)]
+        result['event_type']=next((label for label in labels if label and label!='Actividad'),None) or next((label for label in labels if label),None)
+    explicit_free=obj.get('isAccessibleForFree')
+    if type(explicit_free) is bool:result['is_free']=explicit_free
+    offers=obj.get('offers',[])
+    if isinstance(offers,dict):offers=[offers]
+    if not isinstance(offers,list):return result
+    prices=[];complete=bool(offers) and len(offers)<=30;labels=[]
+    for offer in offers[:30]:
+        if not isinstance(offer,dict):complete=False;continue
+        value=offer.get('price',offer.get('lowPrice'))
+        try:
+            if type(value) not in (str,int,float):raise InvalidOperation
+            price=Decimal(str(value))
+            if not price.is_finite() or price<0:raise InvalidOperation
+            prices.append(price)
+            currency=_detail_text(offer.get('priceCurrency'))
+            labels.append(str(value)+((' '+currency) if currency else ''))
+        except (InvalidOperation,ValueError):complete=False
+    if labels:result['price_text']=' / '.join(dict.fromkeys(labels))[:200]
+    if prices:
+        any_free=any(price==0 for price in prices);any_paid=any(price>0 for price in prices)
+        if (any_free and any_paid) or (explicit_free is True and any_paid) or (explicit_free is False and any_free):
+            result['is_free']=None
+        elif type(explicit_free) is not bool and complete:
+            result['is_free']=all(price==0 for price in prices)
+    return result
 
 
 def parse_timestamp(value):
@@ -98,6 +152,8 @@ def _jsonld_events(value, depth=0):
         # Only explicit graph/mainEntity containers; never promote a NewsArticle.
         for key in ('@graph','mainEntity'):
             yield from _jsonld_events(value.get(key),depth+1)
+        if 'ItemList' in kinds:yield from _jsonld_events(value.get('itemListElement'),depth+1)
+        if 'ListItem' in kinds:yield from _jsonld_events(value.get('item'),depth+1)
 
 
 def _related_event(obj, title, url):
@@ -186,6 +242,10 @@ def extract_event(entry, source, now, html=''):
           'location':None,'announced_at':iso(entry_date(entry)),
           'first_seen_at':iso(now),'last_seen_at':iso(now),'date_evidence':None,
           'reason':'date_unverified'}
+    item.update({key:None for key in OPTIONAL_DETAILS})
+    parent=source.get('preference_source_id')
+    if isinstance(parent,str) and 0<len(parent)<=128:item['preference_source_id']=parent
+    if len(objects)==1:item.update(structured_details(objects[0]))
     # Status updates need not repeat an old activity date. Contradictory
     # structured/text evidence keeps the more restrictive state.
     priority={'scheduled':0,'postponed':1,'cancelled':2}
@@ -265,7 +325,7 @@ def _active(item,now):
     return parse_timestamp(item['last_seen_at'])>=now-timedelta(days=90)
 
 
-def merge_events(previous, incoming, source_states, now):
+def merge_events(previous, incoming, source_states, now, *, authoritative_details=False):
     """Keep active cache even when sources fail; update source+URL identities.
 
     items also retains dated future events beyond the display horizon, so a
@@ -274,12 +334,36 @@ def merge_events(previous, incoming, source_states, now):
     if previous is not None:validate_document(previous)
     cache={item['id']:dict(item) for item in (previous or {}).get('items',[])+(previous or {}).get('pending',[])}
     for item in incoming:
-        item=dict(item);old=cache.get(item['id'])
+        item=dict(item)
+        # A calendar UID survives URL/title/date changes. Absorb the URL-based
+        # representation of the same official detail when formats overlap or
+        # one feed becomes unavailable; distinct UIDs remain distinct.
+        aliases=[old for old in cache.values() if old['id']!=item['id']
+                 and old['source_id']==item['source_id'] and old['url']==item['url']
+                 and bool(old.get('calendar_uid'))!=bool(item.get('calendar_uid'))]
+        if len(aliases)==1:
+            alias=aliases[0]
+            if item.get('calendar_uid'):cache.pop(alias['id'])
+            else:
+                item['id']=alias['id'];item['calendar_uid']=alias['calendar_uid']
+            old=cache.get(item['id']) or alias
+        else:old=cache.get(item['id'])
+        title_missing=item.pop('_title_missing',False) is True
+        url_missing=item.pop('_calendar_url_missing',False) is True
+        price_observed=item.pop('_price_observed',False) is True
+        if title_missing:
+            if not old:continue
+            item['title']=old['title']
+        if url_missing and old:item['url']=old['url']
         date_rejected=item.pop('_date_rejected',False) is True
         if old:
             item['first_seen_at']=old['first_seen_at']
             if not item.get('announced_at'):item['announced_at']=old.get('announced_at')
-            changed_date=bool(old.get('start_date') and item.get('start_date') and old['start_date']!=item['start_date'] and (item.get('date_evidence') or {}).get('kind') in ('rss','jsonld'))
+            for key in OPTIONAL_DETAILS+('calendar_uid',):
+                if authoritative_details and key in OPTIONAL_DETAILS and key in item:continue
+                if price_observed and key in ('is_free','price_text'):continue
+                if item.get(key) is None and key in old:item[key]=old[key]
+            changed_date=bool(old.get('start_date') and item.get('start_date') and old['start_date']!=item['start_date'] and (item.get('date_evidence') or {}).get('kind') in ('rss','jsonld','calendar'))
             reactivated=bool(item.get('start_date') and (item.get('status_explicit') is True or changed_date))
             if date_rejected:
                 # Preserve known restrictions, without rescuing a rejected date.
@@ -347,12 +431,15 @@ def validate_document(doc):
             if parse_timestamp(item['first_seen_at'])>parse_timestamp(item['last_seen_at']) or parse_timestamp(item['last_seen_at'])>parse_timestamp(doc['generated_at']):fail('seen order')
             if 'announced_at' not in item or (item['announced_at'] is not None and not stamp(item['announced_at'])):fail('announced_at')
             if 'location' not in item or (item['location'] is not None and not string(item['location'],500)):fail('location')
+            for name,limit in (('locality',200),('event_type',200),('price_text',200),('preference_source_id',128),('calendar_uid',1000)):
+                if name in item and item[name] is not None and not string(item[name],limit):fail(name)
+            if 'is_free' in item and item['is_free'] is not None and type(item['is_free']) is not bool:fail('is_free')
             if key=='items':
                 if not zone(item.get('timezone')) or not day(item.get('start_date')):fail('confirmed date/timezone')
                 if item.get('end_date') is not None and (not day(item['end_date']) or item['end_date']<item['start_date']):fail('end_date')
                 if item['status']=='postponed':fail('postponed date')
                 evidence=item.get('date_evidence')
-                if not isinstance(evidence,dict) or evidence.get('kind') not in ('rss','jsonld','text') or not string(evidence.get('value'),1000) or not string(evidence.get('url'),4000) or not safe_web_url(evidence['url']):fail('date_evidence')
+                if not isinstance(evidence,dict) or evidence.get('kind') not in ('rss','jsonld','text','calendar') or not string(evidence.get('value'),1000) or not string(evidence.get('url'),4000) or not safe_web_url(evidence['url']):fail('date_evidence')
             else:
                 if item.get('start_date') is not None or item.get('end_date') is not None:fail('pending dates')
                 if item.get('reason') not in ('date_unverified','timezone_missing','postponed'):fail('pending reason')

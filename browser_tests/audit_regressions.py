@@ -110,7 +110,56 @@ class AuditRegressions(unittest.TestCase):
         self.page.locator('#importData').set_input_files({'name':'backup.json','mimeType':'application/json','buffer':json.dumps(backup).encode()})
         self.page.wait_for_function("() => document.getElementById('dataNotice').textContent==='Respaldo importado correctamente.'")
 
+    def test_read_history_and_agenda_backup_roundtrip(self):
+        agenda = {'version': 1, 'saved': ['event-one', 'expired-event'], 'view': 'calendar'}
+        self.page.evaluate("""value => {
+          state.read=new Set(Array.from({length:5000},(_,i)=>'read-'+i));
+          RadarAgenda.restorePreferences(value);
+        }""", agenda)
+        with self.page.expect_download() as download:
+            self.page.evaluate("document.getElementById('exportData').click()")
+        with open(download.value.path()) as saved:
+            backup = json.load(saved)
+        self.assertEqual(backup['modules']['agendaPreferences'], agenda)
+        self.page.evaluate('() => {state.read.clear();RadarAgenda.clearPreferences();}')
+        self.import_backup(backup)
+        self.assertEqual(self.page.evaluate('state.read.size'), 5000)
+        self.assertTrue(self.page.evaluate("state.read.has('read-0')"))
+        self.assertEqual(self.page.evaluate('RadarAgenda.exportPreferences()'), agenda)
+        self.assertFalse(self.errors)
+
+    def test_invalid_agenda_backup_does_not_partially_import(self):
+        before = self.page.evaluate('() => ({theme:state.theme,read:[...state.read],agenda:RadarAgenda.exportPreferences()})')
+        backup = {'format':'radar-rss-settings-v3', 'preferences':{'theme':'dark' if before['theme'] != 'dark' else 'light'},
+                  'read':['unexpected'], 'modules':{'agendaPreferences':{'version':1,'saved':['duplicate','duplicate'],'view':'calendar'}}}
+        self.page.locator('#importData').set_input_files({'name':'invalid.json','mimeType':'application/json','buffer':json.dumps(backup).encode()})
+        self.page.wait_for_function("() => document.getElementById('dataNotice').textContent==='Archivo inválido o incompatible.'")
+        after = self.page.evaluate('() => ({theme:state.theme,read:[...state.read],agenda:RadarAgenda.exportPreferences()})')
+        self.assertEqual(after, before)
+
+    def test_reset_preserves_saved_activities_and_explicit_clear_removes_them(self):
+        self.page.evaluate("RadarAgenda.restorePreferences({version:1,saved:['keep-event'],view:'calendar'})")
+        self.page.on('dialog', lambda dialog: dialog.accept())
+        self.page.evaluate("document.getElementById('resetSettings').click()")
+        self.assertEqual(self.page.evaluate('RadarAgenda.exportPreferences()'), {'version':1,'saved':['keep-event'],'view':'list'})
+        self.page.evaluate("document.getElementById('clearAgendaSaved').click()")
+        self.assertEqual(self.page.evaluate('RadarAgenda.exportPreferences()'), {'version':1,'saved':[],'view':'list'})
+
+    def test_full_storage_does_not_abort_global_preference_reset(self):
+        self.page.evaluate("""() => {
+          setTheme('dark',true);state.density='compact';
+          RadarAgenda.restorePreferences({version:1,saved:['keep-event'],view:'calendar'});
+          Storage.prototype.setItem=function(){throw new DOMException('Quota exceeded','QuotaExceededError')};
+        }""")
+        self.page.on('dialog',lambda dialog:dialog.accept())
+        self.page.evaluate("document.getElementById('resetSettings').click()")
+        self.assertEqual(self.page.evaluate('state.density'),'comfortable')
+        self.assertEqual(self.page.evaluate('RadarAgenda.exportPreferences().saved'),['keep-event'])
+        self.assertIn('agenda',self.page.locator('#dataNotice').text_content())
+        self.assertFalse(self.errors)
+
     def test_legacy_backups_preserve_module_preferences(self):
+        self.page.evaluate("RadarAgenda.restorePreferences({version:1,saved:['legacy-keep'],view:'calendar'})")
         self.page.evaluate("""() => {
           localStorage.setItem('radar-followed-topics','["robotics"]');
           localStorage.setItem('radar-v12-preferences',JSON.stringify({mine:true,categories:['02 - Tecnología'],briefing:'mine'}));
@@ -121,6 +170,7 @@ class AuditRegressions(unittest.TestCase):
             self.assertEqual(self.page.evaluate("JSON.parse(localStorage.getItem('radar-followed-topics'))"), ['robotics'])
             self.assertEqual(self.page.evaluate("window.RadarV12.briefingCategories()"), ['02 - Tecnología'])
             self.assertIn('Keep this', self.page.locator('#v12SavedSearches').text_content())
+            self.assertEqual(self.page.evaluate('RadarAgenda.exportPreferences()'), {'version':1,'saved':['legacy-keep'],'view':'calendar'})
         self.assertFalse(self.errors)
 
     def test_malformed_modules_are_normalized(self):

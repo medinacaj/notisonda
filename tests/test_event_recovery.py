@@ -8,7 +8,7 @@ from urllib.error import HTTPError
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'scripts'))
 from recover_events import restore_events
-from events import extract_event, parse_timestamp
+from events import extract_event, parse_timestamp, merge_events
 
 
 def document(stamp='2026-10-25T00:00:00Z'):
@@ -17,6 +17,20 @@ def document(stamp='2026-10-25T00:00:00Z'):
 
 
 class EventRecoveryTests(unittest.TestCase):
+    def test_new_snapshot_unknown_price_is_authoritative_over_stale_free_cache(self):
+        from test_event_details import extracted, NOW
+        old=merge_events(None,[extracted(isAccessibleForFree=True)],[],NOW)
+        next_time=parse_timestamp('2026-10-27T12:00:00Z')
+        current=merge_events(old,[extracted(isAccessibleForFree=True,offers={'price':500})],[],next_time)
+        self.assertIsNone(current['items'][0]['is_free'])
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory)
+            (root/'events.json').write_text(json.dumps(old))
+            restore_events(root,fetch=self.fetcher(events=current))
+            recovered=json.loads((root/'events.json').read_text())
+            self.assertIsNone(recovered['items'][0]['is_free'])
+            self.assertEqual(recovered['items'][0]['price_text'],'500')
+
     def fetcher(self, events=None, adopted=True, error=None, generation=None):
         def fetch(name):
             if name == 'meta.json':

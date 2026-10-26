@@ -95,14 +95,19 @@ jobs:
           node --check web/v13.js
           node --check web/homepage.js
           node --check web/agenda.js
+          node --check web/feed-ux.js
+          node --check web/reader-ux.js
           node --check web/sw.js
           node tests/test_sidebar_behavior.cjs
           node tests/test_news_effects.cjs
+          node tests/test_feed_ux.cjs
+          node tests/test_reader_ux.cjs
+          node tests/test_reading_state.cjs
       - name: Obtener noticias
         run: python scripts/collect.py --opml sources/feeds.opml --out web/data --days 45 --workers 8 --image-fallback
       - name: Obtener actividades de los próximos 90 días
         run: |
-          python scripts/collect_events.py --catalog sources/feeds.opml --config sources/events.json --out web/data/events.json --generation-from web/data/meta.json
+          python scripts/collect_events.py --catalog sources/feeds.opml --config sources/events.json --direct-config sources/events-direct.json --out web/data/events.json --generation-from web/data/meta.json
           python - <<'PYAGENDA'
           import json
           from pathlib import Path
