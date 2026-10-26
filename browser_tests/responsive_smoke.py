@@ -301,93 +301,21 @@ def main():
                             assert not javascript_errors, javascript_errors
                             print(f"OK [{browser_name}]: {width}px, Concepción administrable, lectura, filtros Chile/Latam y resúmenes", flush=True)
                             continue
-                        # Tema editorial IAADC: barra lateral azul noche y acento petróleo.
+                        # Dimension replaces the former visual references with one theme.
                         visual=page.evaluate("""() => ({
-                          sidebar:getComputedStyle(document.getElementById('appSidebar')).backgroundColor,
-                          lightBackground:getComputedStyle(document.body).getPropertyValue('--bg').trim(),
-                          brand:getComputedStyle(document.querySelector('.brand-mark')).backgroundColor
+                          bg:getComputedStyle(document.body).getPropertyValue('--bg').trim(),
+                          radius:getComputedStyle(document.querySelector('#dashboardFeature .article-card')).borderTopLeftRadius,
+                          shadow:getComputedStyle(document.querySelector('#dashboardFeature .article-card')).boxShadow
                         })""")
-                        assert visual["sidebar"] == "rgb(25, 41, 52)", visual
-                        assert visual["brand"] == "rgb(58, 140, 131)", visual
-                        # Tema IAADC: fondo claro, tarjetas legibles y acciones petróleo.
-                        editorial=page.evaluate("""() => {
-                          const card=document.querySelector('#dashboardFeature .article-card');
-                          const title=card.querySelector('.article-title');
-                          return {
-                            bg:getComputedStyle(document.body).backgroundColor,
-                            cardShadow:getComputedStyle(card).boxShadow,
-                            cardBorder:getComputedStyle(card).borderTopWidth,
-                            cardRadius:getComputedStyle(card).borderTopLeftRadius,
-                            font:getComputedStyle(title).fontFamily,
-                            accent:getComputedStyle(document.body).getPropertyValue('--action-lime').trim()
-                          };
-                        }""")
-                        assert editorial["bg"] == "rgb(244, 246, 246)", editorial
-                        assert editorial["cardShadow"] != "none", editorial
-                        # Bento: recuadros de alturas/anchos asimétricos, no
-                        # tarjetas idénticas ni rayas cromáticas superiores.
-                        assert editorial["cardBorder"] == "1px", editorial
-                        assert editorial["cardRadius"] == "15px", editorial
-                        assert "Avenir" in editorial["font"], editorial
-                        assert editorial["accent"] == "#3a8c83", editorial
-                        # La portada empieza directamente con noticias; no contiene
-                        # titular promocional, hero oculto ni encabezados redundantes.
-                        assert page.locator("#dashboardView .dashboard-head").count() == 0
-                        assert page.locator(".hero").count() == 0
-                        assert page.locator("#settingHero").count() == 0
-                        assert page.locator("#dashboardTitle").text_content().strip() == "Portada de Radar RSS"
-                        firstNewsOffset=page.evaluate("""() => {
-                          const dashboard=document.getElementById('dashboardView').getBoundingClientRect();
-                          const news=document.querySelector('.homepage-latest').getBoundingClientRect();
-                          return Math.round(news.top-dashboard.top);
-                        }""")
-                        assert 0 <= firstNewsOffset <= 20, firstNewsOffset
-                        assert page.evaluate("""() => {
-                          const news=document.getElementById('dashboardFeature');
-                          const update=document.getElementById('sinceVisit');
-                          return !!(news.compareDocumentPosition(update) & Node.DOCUMENT_POSITION_FOLLOWING);
-                        }""")
-                        # El modo nocturno debe usar su propia paleta sin afectar el DOM.
+                        assert visual == {'bg':'#f6f6f6','radius':'24px','shadow':'none'},visual
+                        assert page.locator('#dashboardTitle').inner_text() == 'En tu radar.'
+                        expect(page.locator('#dashboardFeature')).to_be_visible()
+                        expect(page.locator('#dashboardFeature > .article-card')).to_have_count(1)
                         page.evaluate("document.body.classList.remove('light')")
-                        assert page.evaluate(
-                            "() => getComputedStyle(document.body).getPropertyValue('--bg').trim()"
-                        ) == "#151e25"
+                        assert page.evaluate("getComputedStyle(document.body).getPropertyValue('--bg').trim()") == '#0a0a0a'
                         page.evaluate("document.body.classList.add('light')")
-                        # Seis colores distinguibles, sin repintar el fondo del menú.
-                        colors=page.evaluate("""() => {
-                          const nav=[...document.querySelectorAll('#libraryFolderNav .system-folder-link')];
-                          return nav.map(button=>({
-                            topic:button.dataset.topic,
-                            color:getComputedStyle(button.querySelector('.nav-glyph')).color,
-                            surface:getComputedStyle(button).backgroundColor
-                          }));
-                        }""")
-                        assert [x["topic"] for x in colors] == [str(i) for i in range(1,len(CATEGORIES)+1)], colors
-                        assert len({x["color"] for x in colors[:6]}) == 6, colors
-                        featuredTopics=page.locator("#dashboardFeature .article-card[data-topic]").count()
-                        assert featuredTopics >= 1, featuredTopics
-                        # V9.1: la categoría se lee en la etiqueta; no en una raya
-                        # de color arriba de cada tarjeta o carpeta.
-                        categoryCard=page.locator("#dashboardFeature .article-card[data-topic]").first
-                        identity=categoryCard.evaluate("""node => {
-                          const style=getComputedStyle(node);
-                          const tag=getComputedStyle(node.querySelector('.article-category'));
-                          return {
-                            borderTopWidth:style.borderTopWidth,
-                            borderBottomWidth:style.borderBottomWidth,
-                            labelColor:tag.color,
-                            semanticColor:style.getPropertyValue('--topic-ink').trim()
-                          };
-                        }""")
-                        # Contorno neutro de tarjeta; color semántico solamente en
-                        # la etiqueta. No se reintroduce una banda superior.
-                        assert identity["borderTopWidth"] == identity["borderBottomWidth"] == "1px", identity
-                        assert identity["labelColor"] != "rgb(98, 107, 120)", identity
-                        folder=page.locator("#dashboardFolders .dashboard-folder[data-topic]").first
-                        if folder.count():
-                            assert folder.evaluate(
-                                "node => getComputedStyle(node).borderTopWidth === getComputedStyle(node).borderBottomWidth"
-                            )
+                        colors=page.locator('#libraryFolderNav .system-folder-link .nav-glyph').evaluate_all('nodes=>nodes.map(n=>getComputedStyle(n).color)')
+                        assert len(set(colors)) == 1,colors
                         # Las seis carpetas originales y Concepción siguen accesibles y administrables.
                         assert page.locator("#libraryFolderNav .system-folder-link").count() == len(CATEGORIES)
                         assert page.locator("#libraryFolderNav .v12-hidden-category").count() == 0
@@ -447,44 +375,20 @@ def main():
                         page.locator("#closeSettings").click()
                         expect(page.locator("#settingsDialog")).to_be_hidden()
                         check_visible_boxes(page, [".topbar", ".topbar-caption", ".topbar-actions",
-                            "#dashboardView", ".homepage-latest .dashboard-panel-head", "#agendaSection",
+                            "#dashboardView", ".homepage-latest .dashboard-panel-head", "#dashboardFeature",
                             "#dashboardRecent .dashboard-recent-row"], f"portada {width}px")
-                        # Orden editorial: ver noticias antes del radar secundario.
-                        assert page.evaluate("""() => {
-                          const feature=document.getElementById('dashboardFeature');
-                          const radar=document.getElementById('radarFigure');
-                          return !!(feature.compareDocumentPosition(radar) & Node.DOCUMENT_POSITION_FOLLOWING);
-                        }""")
-                        # Se conserva el contrato de la cuadrícula interna de carpetas.
-                        if page.locator("#dashboardFolders .dashboard-folder").count():
-                            assert page.locator("#dashboardFolders").evaluate(
-                                "(node) => getComputedStyle(node).display") == "grid"
-                        # Una única selección de noticias precede la agenda; las
-                        # antiguas tarjetas duplicadas quedan fuera de la portada visible.
-                        expect(page.locator("#dashboardFeature")).to_be_hidden()
-                        expect(page.locator("#newsroomDiscovery")).to_be_hidden()
-                        expect(page.locator("#agendaSection")).to_be_visible()
-                        expect(page.locator("#agendaStatus")).to_contain_text("No hay actividades confirmadas")
-                        layout = page.evaluate("""() => {
-                          const rect = selector => {
-                            const r=document.querySelector(selector).getBoundingClientRect();
-                            return {top:r.top,bottom:r.bottom,width:r.width};
-                          };
-                          return {latest:rect('.homepage-latest'),agenda:rect('#agendaSection'),
-                            count:document.querySelectorAll('#dashboardRecent .dashboard-recent-row').length};
-                        }""")
-                        assert layout["count"] >= 3, layout
-                        assert layout["agenda"]["top"] >= layout["latest"]["bottom"], layout
-                        assert layout["agenda"]["width"] > 0, layout
-                        # Los controles de lectura afectan también al nuevo layout.
-                        page.evaluate("document.body.classList.add('hide-images')")
-                        assert page.locator("#dashboardFeature .article-card .cover").evaluate_all(
-                            "(nodes) => nodes.every(n => getComputedStyle(n).display === 'none')")
-                        page.evaluate("document.body.classList.remove('hide-images')")
-                        page.evaluate("document.body.classList.add('compact')")
-                        assert page.locator("#dashboardFeature .article-card .cover").first.evaluate(
-                            "(node) => node.getBoundingClientRect().height <= 101")
-                        page.evaluate("document.body.classList.remove('compact')")
+                        # Inicio and Agenda have one purpose each, with no repeated news IDs.
+                        expect(page.locator('#dashboardFeature')).to_be_visible()
+                        expect(page.locator('#newsroomDiscovery')).to_be_hidden()
+                        expect(page.locator('#agendaSection')).to_be_hidden()
+                        visible_ids=page.locator('#dashboardFeature > [data-article-id], #dashboardRecent > [data-article-id]').evaluate_all('nodes=>nodes.map(n=>n.dataset.articleId)')
+                        assert len(visible_ids)>=4 and len(visible_ids)==len(set(visible_ids)),visible_ids
+                        page.evaluate("goTo('agenda')")
+                        expect(page.locator('#agendaSection')).to_be_visible()
+                        expect(page.locator('#dashboardView')).to_be_hidden()
+                        expect(page.locator('#agendaStatus')).to_contain_text('No hay actividades confirmadas')
+                        page.evaluate("goTo('home')")
+                        expect(page.locator('#dashboardView')).to_be_visible()
                         check_header_overlap(page, f"{browser_name} barra superior {width}px")
                         check_accessibility_contract(page, f"{browser_name} portada {width}px")
                         if width in (320, 768, 1440):
@@ -530,16 +434,16 @@ def main():
                         assert page.locator("#articleGrid .article-card.unread-card").count() >= 1
                         assert page.locator("#articleGrid .article-card.no-excerpt").count() >= 1
                         placeholders=page.locator("#articleGrid .article-card.no-cover .article-cover-placeholder")
-                        expect(placeholders.first).to_be_visible()
+                        expect(placeholders.first).to_be_hidden()
                         assert placeholders.first.locator(".article-cover-publisher").inner_text()
-                        expect(placeholders.first.locator(".article-cover-note")).to_have_text("Sin fotografía disponible")
+                        expect(placeholders.first.locator(".article-cover-note")).to_have_text("Vista previa")
                         assert placeholders.first.locator("img").count() == 0
                         assert page.locator("#articleGrid .article-card.no-excerpt .article-excerpt").count() == 0
                         # La elevación de Apple distingue pendientes y leídas
                         # sin alterar alturas ni usar fotos ajenas inventadas.
                         shadow_unread=page.locator("#articleGrid .article-card.unread-card").first.evaluate(
                             "(node) => getComputedStyle(node).boxShadow")
-                        assert shadow_unread != "none", shadow_unread
+                        assert shadow_unread == "none", shadow_unread
                         check_uniform_card_heights(page, f"tarjetas {browser_name} {width}px")
                         # Preferencia Compacto mantiene miniaturas y títulos acotados.
                         # Compacto debe ocultar los resúmenes; no basta con reducir imágenes.
@@ -582,7 +486,7 @@ def main():
                             "(node) => node.classList.contains('read-article')")
                         shadow_read=page.locator("#articleGrid .article-card").first.evaluate(
                             "(node) => getComputedStyle(node).boxShadow")
-                        assert shadow_read != shadow_unread, (shadow_read,shadow_unread)
+                        assert shadow_read == shadow_unread == "none", (shadow_read,shadow_unread)
                         expect(page.locator("#filterSummary")).to_contain_text(str(initial_unread-1)+" sin leer")
                         # El menú contextual debe estar disponible desde cualquier parte de la tarjeta.
                         page.locator("#articleGrid .article-card").first.locator(".article-title").click(button="right")
@@ -603,7 +507,7 @@ def main():
                             first_card.hover()
                             page.wait_for_timeout(240)
                             shadow=first_card.evaluate("(node) => getComputedStyle(node).boxShadow")
-                            assert shadow != "none", (width,browser_name,shadow)
+                            assert shadow == "none", (width,browser_name,shadow)
                         check_visible_boxes(page, [".topbar", ".topbar-actions", ".filter-bar",
                             ".filter-controls", ".mode-tabs", "#articleGrid",
                             "#articleGrid .article-card"], f"listado {width}px")

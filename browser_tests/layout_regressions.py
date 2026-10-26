@@ -113,7 +113,7 @@ class LayoutRegressions(unittest.TestCase):
                 self.assertIn('✨', capsule.text_content())
                 self.assertEqual(capsule.locator('svg[aria-hidden="true"]').count(), 1)
                 self.assertLessEqual(page.evaluate('document.documentElement.scrollWidth'), width)
-                if width <= 950:
+                if not page.locator('#searchInput').is_visible():
                     page.locator('#searchToggle').click()
                     self.assertTrue(page.locator('#searchInput').is_visible())
                     page.locator('#searchInput').fill('referencia')

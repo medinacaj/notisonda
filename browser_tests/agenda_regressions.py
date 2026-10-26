@@ -81,7 +81,7 @@ def review_regressions(browser, server):
         page = context.new_page()
         page.clock.install(time=datetime(2026, 10, 25, 3, 59, 30, tzinfo=timezone.utc))
         page.route('**/data/**', route_data)
-        page.goto(f'http://127.0.0.1:{server.server_port}/#inicio')
+        page.goto(f'http://127.0.0.1:{server.server_port}/#agenda')
         if mine:
             assert page.evaluate('state.categories.length') == 0
             # Hold events until this observer is attached: every rendered output
@@ -237,7 +237,7 @@ def main():
                 page.clock.install(time=datetime(2026, 10, 25, 3, 59, 30, tzinfo=timezone.utc))
                 page.route('**/data/**', data_route)
                 mode['hold'] = True
-                page.goto(f'http://127.0.0.1:{server.server_port}/#inicio')
+                page.goto(f'http://127.0.0.1:{server.server_port}/#agenda')
                 expect(page.locator('#agendaStatus')).to_contain_text('Cargando')
                 page.wait_for_function("() => typeof window.RadarAgenda === 'object'")
                 assert mode['route'] is not None
@@ -266,7 +266,6 @@ def main():
                 expect(page.locator('#dashboardFeature')).to_be_hidden()
                 expect(page.locator('#newsroomDiscovery')).to_be_hidden()
                 assert page.locator('#libraryFolderNav .system-folder-link').count() == 8
-                assert page.locator('#dashboardRecent').evaluate("n => n.closest('.homepage-latest').nextElementSibling.id") == 'agendaSection'
                 page.locator('[data-agenda-days="0"]').click()
                 expect(page.locator('#agendaList [data-event-id="viejo-futuro"]')).to_have_count(0)
                 expect(page.locator('#agendaList [data-event-id="multidia"]')).to_be_visible()
@@ -298,7 +297,7 @@ def main():
                 expect(page.locator('#articleGrid .article-card').first).to_be_visible()
                 page.evaluate("state.mode='saved';goTo('all')")
                 expect(page.locator('#feedView')).to_be_visible()
-                page.evaluate("location.hash='#inicio'")
+                page.evaluate("location.hash='#agenda'")
                 expect(page.locator('#agendaSection')).to_be_visible()
                 payload['items'] = [event('actualizada', '2026-11-05')]
                 payload['pending'] = []

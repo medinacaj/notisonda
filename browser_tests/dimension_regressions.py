@@ -1,0 +1,155 @@
+"""Dimension layout: real routes and content, HTTPS fixtures, no publisher requests."""
+from copy import deepcopy
+from pathlib import Path
+import json
+import os
+import ssl
+import subprocess
+import tempfile
+import threading
+import unittest
+from playwright.sync_api import sync_playwright, expect
+import responsive_smoke as fixtures
+
+
+class DimensionRegressions(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.tls=tempfile.TemporaryDirectory()
+        cert,key=(Path(cls.tls.name)/name for name in ('cert.pem','key.pem'))
+        subprocess.run(['openssl','req','-x509','-newkey','rsa:2048','-nodes','-days','1','-keyout',str(key),'-out',str(cert),'-subj','/CN=localhost'],check=True,capture_output=True)
+        cls.server=fixtures.ThreadingHTTPServer(('127.0.0.1',0),fixtures.QuietHandler)
+        tls=ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER);tls.load_cert_chain(str(cert),str(key))
+        cls.server.socket=tls.wrap_socket(cls.server.socket,server_side=True)
+        cls.base=f'https://127.0.0.1:{cls.server.server_port}/'
+        threading.Thread(target=cls.server.serve_forever,daemon=True).start()
+        cls.driver=sync_playwright().start()
+        engine=os.environ.get('RADAR_TEST_ENGINE','chromium');options={'headless':True}
+        if engine=='chromium' and os.environ.get('RADAR_CHROMIUM_EXECUTABLE'):options['executable_path']=os.environ['RADAR_CHROMIUM_EXECUTABLE']
+        cls.browser=getattr(cls.driver,engine).launch(**options)
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.browser.close();cls.driver.stop();cls.server.shutdown();cls.server.server_close();cls.tls.cleanup()
+
+    def setUp(self):
+        self.context=self.browser.new_context(viewport={'width':1440,'height':1000},service_workers='block',ignore_https_errors=True)
+        self.context.route('**/*',lambda r:r.continue_() if r.request.url.startswith(self.base) else r.abort())
+        self.page=self.context.new_page();self.errors=[]
+        self.page.on('pageerror',lambda error:self.errors.append(str(error)))
+        self.page.route('**/data/**',fixtures.make_route)
+        self.page.goto(self.base+'#inicio')
+        self.page.wait_for_function('() => state.ready')
+
+    def tearDown(self):
+        self.assertFalse(self.errors)
+        self.context.close()
+
+    def test_destinations_are_separate_and_agenda_is_reloadable(self):
+        expect(self.page.locator('#dashboardView')).to_be_visible()
+        expect(self.page.locator('#agendaSection')).to_be_hidden()
+        self.page.locator('#categoryNav [data-destination="agenda"]').click()
+        expect(self.page).to_have_url(self.base+'#agenda')
+        expect(self.page.locator('#agendaSection')).to_be_visible()
+        expect(self.page.locator('#dashboardView')).to_be_hidden()
+        expect(self.page.locator('#feedView')).to_be_hidden()
+        self.page.reload()
+        expect(self.page.locator('#agendaSection')).to_be_visible()
+        expect(self.page.locator('#categoryNav [aria-current="page"]')).to_have_count(1)
+        self.page.evaluate("goTo('all')")
+        expect(self.page.locator('#feedView')).to_be_visible()
+        expect(self.page.locator('#agendaSection')).to_be_hidden()
+
+    def test_homepage_selection_has_one_lead_and_distinct_headlines(self):
+        expect(self.page.locator('#dashboardFeature')).to_be_visible()
+        expect(self.page.locator('#dashboardFeature > .article-card')).to_have_count(1)
+        ids=self.page.locator('#dashboardFeature > [data-article-id],#dashboardRecent > [data-article-id]').evaluate_all('nodes=>nodes.map(n=>n.dataset.articleId)')
+        self.assertGreaterEqual(len(ids),4)
+        self.assertEqual(len(ids),len(set(ids)))
+        expect(self.page.locator('#dashboardSavedPanel')).to_be_hidden()
+        expect(self.page.locator('#coverageTools')).to_be_hidden()
+        self.page.evaluate("goTo('briefing')")
+        expect(self.page.locator('#coverageTools')).to_be_visible()
+
+    def test_one_theme_and_legible_reference_palette(self):
+        self.page.evaluate("setTheme('dark',true)")
+        self.page.emulate_media(reduced_motion='reduce')
+        colors=self.page.evaluate("() => ({bg:getComputedStyle(document.body).backgroundColor,text:getComputedStyle(document.body).color})")
+        self.assertEqual(colors['bg'],'rgb(10, 10, 10)')
+        sheets=self.page.locator('link[rel="stylesheet"]').evaluate_all('nodes=>nodes.map(n=>new URL(n.href).pathname.split("/").pop())')
+        self.assertIn('dimension.css',sheets)
+        self.assertFalse(set(sheets)&{'editorial.css','hashnode-preview.css','radar-hybrid.css','copper-theme.css','home-editorial.css','cosmic-theme.css','iaadc-editorial.css'})
+        self.page.evaluate("setTheme('light',true)")
+        self.assertNotEqual(self.page.evaluate('getComputedStyle(document.body).backgroundColor'),colors['bg'])
+
+    def test_agenda_has_no_news_count_and_folder_counts_follow_their_sources(self):
+        self.page.evaluate("markRead('noticia-0',true)")
+        expect(self.page.locator('#categoryNav [data-destination="agenda"] .nav-count')).to_have_text('')
+        for category in fixtures.CATEGORIES:
+            expected=self.page.evaluate('(category)=>state.items.filter(x=>x.categories.includes(category)&&!state.read.has(x.id)).length',category)
+            expect(self.page.locator('#libraryFolderNav .system-folder-link').filter(has=self.page.locator('.nav-label',has_text=category.split(' - ')[1])).locator('.nav-count')).to_have_text(str(expected))
+
+    def test_direct_summary_loads_secondary_coverage_tools(self):
+        trends=deepcopy(fixtures.RESPONSES['trends.json'])
+        trends['topics']=[{'label':'Tecnología','stories':4,'sources':2,'is_new':True}]
+        self.page.route('**/data/trends.json*',lambda route:route.fulfill(content_type='application/json',body=json.dumps(trends)))
+        self.page.goto(self.base+'#resumen')
+        # Changing only a hash retains the previous JS/trend cache. Reload so
+        # this exercises an actual direct entry with no earlier visit to Inicio.
+        self.page.reload()
+        expect(self.page.locator('#briefingView')).to_be_visible()
+        self.page.locator('#coverageTools > summary').click()
+        expect(self.page.locator('#coveredList > li').first).to_be_visible()
+        expect(self.page.locator('#trendsPanel')).to_be_visible()
+        self.page.evaluate('() => {state.sources.forEach(source=>state.hiddenSources.add(source.id));render()}')
+        expect(self.page.locator('#coveredList .covered-item')).to_have_count(0)
+
+    def test_no_news_shows_one_empty_state_without_an_empty_carousel(self):
+        documents=deepcopy(fixtures.RESPONSES)
+        documents['latest.json']['items']=[]
+        documents['meta.json'].update(total_articles=0,latest_count=0)
+        def route(request):
+            name=request.request.url.split('/')[-1].split('?')[0]
+            request.fulfill(content_type='application/json',body=json.dumps(documents.get(name,{})))
+        self.page.route('**/data/**',route)
+        self.page.reload()
+        expect(self.page.locator('#dashboardFeature .dashboard-empty')).to_be_visible()
+        expect(self.page.locator('.homepage-latest')).to_be_hidden()
+
+    def test_selected_source_folder_and_icon_remain_legible_in_both_themes(self):
+        self.page.emulate_media(reduced_motion='reduce')
+        self.page.evaluate("goTo('07 - Concepción')")
+        expect(self.page.locator('#feedHeading')).to_have_text('Concepción')
+        for theme in ('dark','light'):
+            self.page.evaluate('(theme)=>setTheme(theme,true)',theme)
+            ratios=self.page.locator('#libraryFolderNav .nav-link.active').evaluate(r"""node => {
+              const lum=c=>c.match(/[\d.]+/g).slice(0,3).map(Number).map(v=>{v/=255;return v<=.04045?v/12.92:((v+.055)/1.055)**2.4}).reduce((s,v,i)=>s+v*[.2126,.7152,.0722][i],0);
+              const bg=lum(getComputedStyle(node).backgroundColor);
+              return [node,node.querySelector('.nav-glyph')].map(n=>{const fg=lum(getComputedStyle(n).color);return (Math.max(fg,bg)+.05)/(Math.min(fg,bg)+.05)});
+            }""")
+            self.assertGreaterEqual(min(ratios),4.5,(theme,ratios))
+
+    def test_mobile_menu_and_routes_do_not_overflow(self):
+        for width in (320,390,768,1440):
+            with self.subTest(width=width):
+                self.page.set_viewport_size({'width':width,'height':900})
+                for target in ('home','all','agenda','briefing'):
+                    self.page.evaluate('(target)=>goTo(target)',target)
+                    self.page.wait_for_function('(target)=>state.pageView===target',arg={'home':'dashboard','all':'feed','agenda':'agenda','briefing':'briefing'}[target])
+                    self.assertTrue(self.page.evaluate('document.documentElement.scrollWidth<=innerWidth+2'))
+                if width<=950:
+                    self.page.locator('#menuToggle').click()
+                    expect(self.page.locator('#appSidebar')).to_have_attribute('aria-modal','true')
+                    self.page.keyboard.press('Escape')
+                    expect(self.page.locator('#menuToggle')).to_be_focused()
+        output=Path('test-results/dimension');output.mkdir(parents=True,exist_ok=True)
+        for width in (390,1440):
+            self.page.set_viewport_size({'width':width,'height':1000})
+            for theme in ('dark','light'):
+                self.page.evaluate('(theme)=>setTheme(theme,true)',theme)
+                self.page.evaluate("goTo('home')")
+                expect(self.page.locator('#dashboardView')).to_be_visible()
+                self.page.screenshot(path=str(output/f'{theme}-{width}.png'),full_page=True,animations='disabled')
+
+
+if __name__=='__main__':unittest.main(verbosity=2)

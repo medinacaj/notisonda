@@ -127,10 +127,11 @@
   function renderCovered() {
     const list = $('coveredList');
     // Evita redibujar (y reiniciar el barrido) si los datos no cambiaron.
-    const key = [state.generated, state.items.length, state.hiddenSources.size, state.mutedKeywords, state.maxAge, state.lite, document.body.classList.contains('light')].join('|');
+    const rankedAll = mostCovered(90);
+    const key = [state.generated, rankedAll.map(item=>item.id).join(','), state.lite, document.body.classList.contains('light')].join('|');
     if (key === coveredKey && $('radarStage').firstChild) return;
     coveredKey = key;
-    const ranked = mostCovered(6);
+    const ranked = rankedAll.slice(0,6);
     const multi = ranked.filter(x => coverageOf(x) > 1);
     const shown = multi.length >= 3 ? multi : ranked;
     list.replaceChildren(...shown.map((item, i) => {
@@ -152,7 +153,7 @@
       return li;
     }));
     if (!shown.length) list.replaceChildren(mk('li', 'covered-empty', 'Aún no hay historias en las últimas 24 horas.'));
-    const radarStories = mostCovered(90);
+    const radarStories = rankedAll;
     drawRadar(radarStories, shown);
   }
 
@@ -192,7 +193,7 @@
     trendsFor = state.generated;
     try { trends = await dataFetch('./data/trends.json?v=' + encodeURIComponent(state.generated || '')); }
     catch { trends = null; }
-    if (state.pageView === 'dashboard') renderTopics();
+    if (['dashboard','briefing'].includes(state.pageView)) renderTopics();
   }
   function renderTopics() {
     const panel = $('trendsPanel');
@@ -538,8 +539,9 @@
     restoreKeyboardCard();
     updateFeedContext();
     renderFollowedNav();
-    if (state.pageView === 'dashboard' && state.ready) {
-      renderSinceVisit(); renderCovered(); renderTopics(); void loadTrends();
+    if (state.ready && ['dashboard','briefing'].includes(state.pageView)) {
+      if(state.pageView==='dashboard')renderSinceVisit();
+      renderCovered(); renderTopics(); void loadTrends();
     }
   };
 

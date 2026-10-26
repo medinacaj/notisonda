@@ -211,7 +211,7 @@ El tema sigue la configuración del sistema por defecto; una selección manual p
 
 ## Noticias y próximas actividades
 
-La portada reúne las noticias en un único carrusel y presenta debajo una agenda de actividades. Sus filtros permiten consultar hoy o los próximos 7, 30 y 90 días. Una actividad permanece visible hasta el final de su último día en la zona horaria del lugar; sin fecha de término explícita se conserva sólo el día de inicio. La fecha del anuncio se muestra por separado.
+La portada muestra un destacado y un carrusel de titulares distintos. La agenda tiene su propia vista en el lateral (`#agenda`). Sus filtros permiten consultar hoy o los próximos 7, 30 y 90 días. Una actividad permanece visible hasta el final de su último día en la zona horaria del lugar; sin fecha de término explícita se conserva sólo el día de inicio. La fecha del anuncio se muestra por separado.
 
 La recopilación revisa hasta 50 entradas por cada una de las diez fuentes RSS locales configuradas en [sources/events.json](sources/events.json), en Concepción/Biobío y Monagas, con hasta 12 consultas adicionales a páginas de los mismos medios por ejecución. Sigue la actualización de noticias cada tres horas. El horizonte de 90 días limita lo que se muestra, no la antigüedad del anuncio ni la conservación de futuras actividades ya detectadas. No es una búsqueda exhaustiva de todos los eventos de esas regiones.
 
@@ -228,3 +228,9 @@ Los contadores completan el historial en segundo plano y muestran las cifras rea
 ### Continuidad de lectura
 
 Los filtros activos se muestran como chips removibles; en móvil, «Filtros» reúne fuente y acciones sin duplicar selectores. El lector permite anterior/siguiente, marcar sin leer y volver al artículo o posición cercanos. Las marcas masivas ofrecen «Deshacer» y conservan modificaciones posteriores. Las nuevas publicaciones se anuncian sin reemplazar el listado ni moverlo: «Actualizar» aplica la generación completa cuando el lector lo decide. No cambia la recopilación cada tres horas ni los límites de noticias de 45 días/5000 entradas.
+
+### Interfaz Dimension y organización
+
+La referencia Dimension aportada por el propietario guía la paleta negro/grafito, bordes finos, paneles translúcidos y controles en cápsula. Se conserva una variante clara y el modo del sistema, sin tipografías remotas ni dependencias nuevas. Las siete hojas de temas anteriores permanecen como archivo histórico y dejan de cargarse y precachearse.
+
+Inicio ofrece una selección breve, con un destacado y un carrusel sin repetir artículos. Noticias permite consultar el archivo completo y sus filtros. Agenda reúne en una vista propia calendario, actividades guardadas, pendientes y descargaICS. Resumen contiene los resúmenes por carpeta y las herramientas plegadas de cobertura y tendencias. El estado/actualización de RSS queda en el lateral; la cabecera flotante reúne búsqueda, configuración y tema. Guardadas sigue disponible en Noticias, sin otra lista duplicada en Inicio.

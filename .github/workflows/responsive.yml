@@ -23,7 +23,7 @@ permissions:
 
 jobs:
   browser:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 20
     strategy:
       fail-fast: false
@@ -37,9 +37,14 @@ jobs:
         with:
           python-version: '3.12'
       - name: Instalar Playwright para pruebas (solo CI)
-        run: |
-          python -m pip install "playwright>=1.55,<2"
-          python -m playwright install --with-deps ${{ matrix.browser }}
+        timeout-minutes: 3
+        run: python -m pip install "playwright>=1.55,<2"
+      - name: Preparar dependencias del navegador
+        timeout-minutes: 5
+        run: python -m playwright install-deps ${{ matrix.browser }}
+      - name: Descargar navegador de prueba
+        timeout-minutes: 5
+        run: python -m playwright install ${{ matrix.browser }}
       - name: Revisar portada y navegación a múltiples tamaños
         env:
           RADAR_TEST_ENGINE: ${{ matrix.browser }}
@@ -80,7 +85,7 @@ jobs:
           python - <<'PYTEST'
           import subprocess
           import sys
-          for suite in ("reading_experience.py", "agenda_tools_regressions.py"):
+          for suite in ("reading_experience.py", "agenda_tools_regressions.py", "dimension_regressions.py"):
               result = subprocess.run([sys.executable, "browser_tests/" + suite], capture_output=True, text=True)
               print(result.stdout, end="")
               print(result.stderr, end="", file=sys.stderr)
@@ -108,5 +113,6 @@ jobs:
             test-results/responsive/${{ matrix.browser }}/
             test-results/reading-experience/
             test-results/agenda-tools/
+            test-results/dimension/
           if-no-files-found: ignore
           retention-days: 7
