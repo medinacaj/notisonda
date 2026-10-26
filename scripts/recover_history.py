@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Restore the most recent published JSON first; cache is fallback. No secret tokens."""
 from pathlib import Path
+from datetime import datetime, timezone
 import json
 import sys
 from urllib.request import Request, urlopen
@@ -12,13 +13,23 @@ def valid(doc,name):
     key='items' if name=='articles.json' else 'feeds'
     return isinstance(doc,dict) and isinstance(doc.get(key),list) and (name!='articles.json' or len(doc[key])>=50)
 
+def parsed_stamp(doc,field):
+    value=doc.get(field)
+    if not isinstance(value,str):
+        return None
+    try:
+        stamp=datetime.fromisoformat(value.replace('Z','+00:00'))
+        return stamp.astimezone(timezone.utc) if stamp.tzinfo is not None else None
+    except (ValueError,OverflowError):
+        return None
+
 def restore(root):
     root.mkdir(parents=True,exist_ok=True)
     for name,stamp in [('articles.json','generated_at'),('status.json','checked_at')]:
         dest=root/name
         try:
             old=json.loads(dest.read_text(encoding='utf8'))
-            if not valid(old,name):
+            if not valid(old,name) or parsed_stamp(old,stamp) is None:
                 old=None
         except (OSError,ValueError,TypeError):
             old=None
@@ -31,7 +42,10 @@ def restore(root):
             current=json.loads(content)
             if not valid(current,name):
                 raise ValueError('Invalid published historical JSON')
-            if old is None or str(current.get(stamp,''))>str(old.get(stamp,'')):
+            remote_time=parsed_stamp(current,stamp)
+            if remote_time is None:
+                raise ValueError('Published historical JSON lacks a valid timezone-aware timestamp')
+            if old is None or remote_time>parsed_stamp(old,stamp):
                 dest.write_text(json.dumps(current,ensure_ascii=False,separators=(',',':'))+'\n',encoding='utf8')
                 print('Pages history recovered:',name,flush=True)
             else:
