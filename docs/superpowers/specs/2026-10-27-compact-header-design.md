@@ -1,0 +1,5 @@
+# Cabecera mínima
+
+El propietario rechaza el bloque grande de «Actualidad» porque ocupa espacio. Se elimina de la portada y la única marca se traslada desde el lateral a la barra superior existente: símbolo vectorial de24px, nombre discreto y enlace al inicio con área táctil44px. En320px se conserva solo el símbolo para que los botones no salten de línea; su nombre accesible permanece. El H1 de portada se conserva solo para lectores de pantalla. Sin eslogan, fecha ni otro panel de presentación.
+
+Se reutiliza favicon.svg, sin generación ni tratamiento de imagen nuevos. Se retiran CSS/aurora del bloque y su actualización de fecha; se conservan colores, relieve e interacción de tarjetas. LogoPNG sigue sirviendo a instalación/PWA. Rutas/menú/foco/contadores no cambian. Sin datos, dependencias o conexiones nuevas; no se añaden riesgos jurídico-tecnológicos al cambio visual local ya documentado. Se verifica carga del logo, altura de barra<=64px, responsive320–1440, lector, menú y tema, además de contraste/reduced-motion existentes. Revisión independiente y CI antes de integrar/publicar bajo autorización vigente.
