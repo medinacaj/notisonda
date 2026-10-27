@@ -64,17 +64,6 @@ class V13Contracts(unittest.TestCase):
         self.assertIn("if(state.pageView==='feed')",self.app)
         self.assertIn("grid.replaceChildren();",self.app)
 
-    def test_four_columns_are_default_without_overriding_saved_selection(self):
-        self.assertIn(" : '4',",self.app)
-        self.assertIn("state.columns='4';state.density='comfortable'",self.app)
-        self.assertIn("data-columns=\"4\"",self.html)
-        self.assertIn('id="columnsCurrent" class="columns-current" aria-hidden="true">4</span>',self.html)
-        self.assertIn('aria-checked="true" data-columns="4"',self.html)
-        self.assertIn('aria-checked="false" data-columns="auto"',self.html)
-        self.assertIn("Automático (adaptable al ancho)",self.html)
-        self.assertIn("state.columns=choose('columns',['auto','2','3','4','5','6'],'4')",
-                      (ROOT/'web/library.js').read_text(encoding='utf8'))
-
     def test_save_restores_keyboard_focus(self):
         self.assertIn("const restoreFocus=document.activeElement",self.lib)
         self.assertIn("button.focus({preventScroll:true})",self.lib)
@@ -93,7 +82,7 @@ class V13Contracts(unittest.TestCase):
         self.assertIn('v13.css?v=7.1.1',self.html)
         self.assertIn('Portada editorial V5.3',css)
         self.assertIn('grid-template-columns:repeat(3,minmax(0,1fr))',css)
-        self.assertIn("radar-rss-v43",self.sw)
+        self.assertIn("radar-rss-v44",self.sw)
 
     def test_card_read_action_is_visible_and_syncs_values(self):
         self.assertIn("article-action article-read-toggle",self.app)

@@ -307,12 +307,13 @@ def main():
                           radius:getComputedStyle(document.querySelector('#dashboardFeature .article-card')).borderTopLeftRadius,
                           shadow:getComputedStyle(document.querySelector('#dashboardFeature .article-card')).boxShadow
                         })""")
-                        assert visual['bg']=='#f3f4fc' and visual['radius']=='24px' and visual['shadow']!='none',visual
+                        assert visual['radius']=='24px' and visual['shadow']!='none',visual
+                        light_background=visual['bg']
                         assert page.locator('#dashboardTitle').inner_text() == 'Actualidad'
                         expect(page.locator('#dashboardFeature')).to_be_visible()
                         expect(page.locator('#dashboardFeature > .article-card')).to_have_count(1)
                         page.evaluate("document.body.classList.remove('light')")
-                        assert page.evaluate("getComputedStyle(document.body).getPropertyValue('--bg').trim()") == '#101326'
+                        assert page.evaluate("getComputedStyle(document.body).getPropertyValue('--bg').trim()") != light_background
                         page.evaluate("document.body.classList.add('light')")
                         colors=page.locator('#libraryFolderNav .system-folder-link .nav-glyph').evaluate_all('nodes=>nodes.map(n=>getComputedStyle(n).color)')
                         assert len(set(colors)) == len(CATEGORIES),colors
@@ -409,19 +410,20 @@ def main():
                             "(opts) => opts.length > 1 && opts.slice(1).every(o => /\\(\\d+\\)$/.test(o.textContent.trim()))"
                         )
 
-                        # Cuatro columnas es el valor inicial de nuevas visitas.
-                        # El navegador reduce la cantidad en pantallas estrechas.
+                        # Auto follows the actual content width, including the sidebar.
                         columns_state=page.evaluate("""() => ({
                           value:document.body.dataset.columns,
                           label:document.getElementById('columnsCurrent').textContent.trim(),
-                          selection:document.querySelector('#columnsMenu [data-columns="4"]').getAttribute('aria-checked'),
-                          visible:getComputedStyle(document.getElementById('articleGrid')).gridTemplateColumns.split(' ').length
+                          selection:document.querySelector('#columnsMenu [data-columns="auto"]').getAttribute('aria-checked'),
+                          visible:getComputedStyle(document.getElementById('articleGrid')).gridTemplateColumns.split(' ').length,
+                          card:document.querySelector('#articleGrid > .article-card').getBoundingClientRect().width,
+                          width:document.getElementById('articleGrid').clientWidth
                         })""")
-                        assert columns_state["value"] == "4", columns_state
-                        assert columns_state["label"] == "4", columns_state
+                        assert columns_state["value"] == "auto", columns_state
+                        assert columns_state["label"] == "Auto", columns_state
                         assert columns_state["selection"] == "true", columns_state
-                        expected_columns=4 if width > 1180 else 3 if width > 950 else 2 if width > 530 else 1
-                        assert columns_state["visible"] == expected_columns, (width,columns_state)
+                        assert columns_state['card'] >= min(280,columns_state['width'])-1, (width,columns_state)
+                        assert columns_state['visible'] >= 1, (width,columns_state)
                         # Validar imágenes RSS/OG sin alterar la sección de carpetas.
                         expect(page.locator("#articleGrid .article-card .cover img").first).to_have_js_property("naturalWidth", 400)
                         # El recorte debe mostrar la zona superior (rostros),

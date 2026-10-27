@@ -6,12 +6,12 @@
   "start_url": "./#inicio",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#101326",
-  "theme_color": "#101326",
+  "background_color": "#171c25",
+  "theme_color": "#171c25",
   "icons": [
-    {"src": "./radar-logo.png", "sizes": "1254x1254", "type": "image/png", "purpose": "any"},
-    {"src": "./radar-logo.png", "sizes": "1254x1254", "type": "image/png", "purpose": "maskable"},
-    {"src": "./favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any"}
+    {"src": "./radar-logo.png?v=3", "sizes": "1254x1254", "type": "image/png", "purpose": "any"},
+    {"src": "./favicon.svg?v=3", "sizes": "any", "type": "image/svg+xml", "purpose": "any"},
+    {"src": "./icon-maskable.svg?v=3", "sizes": "any", "type": "image/svg+xml", "purpose": "maskable"}
   ],
   "shortcuts": [
     {"name": "Resumen del día", "url": "./#resumen"},
