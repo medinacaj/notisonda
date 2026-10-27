@@ -176,6 +176,24 @@ class CountRegressions(unittest.TestCase):
         self.expect_count('#unreadCount', 900)
         self.assertFalse(self.errors)
 
+    def test_reaching_retry_does_not_paginate_or_move_the_failed_archive_action(self):
+        self.payloads = self.dataset(900)
+        self.archive_failure = True
+        self.open()
+        expect(self.page.locator('#allCount')).to_have_text('—')
+        expect(self.page.locator('#articleGrid > .article-card')).to_have_count(36)
+        retry = self.page.locator('#loadMore')
+        retry.scroll_into_view_if_needed()
+        self.page.evaluate('() => new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)))')
+        expect(self.page.locator('#articleGrid > .article-card')).to_have_count(36)
+        box = retry.bounding_box()
+        self.assertGreaterEqual(box['y'],0)
+        self.assertLessEqual(box['y']+box['height'],900)
+        self.archive_failure = False
+        retry.click()
+        self.expect_count('#allCount',900)
+        self.assertFalse(self.errors)
+
     def test_old_generation_failure_does_not_poison_new_counts(self):
         self.payloads = self.dataset(900)
         old_generation = self.payloads['meta.json']['generated_at']

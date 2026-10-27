@@ -23,3 +23,5 @@ Solo presentación, valores de diseño existentes, iconos de instalación y docu
 Verificación con fixtures: preferencias por defecto/guardadas/restablecidas, tamaño grande entre rutas y lector, contraste de textos/estados en ambos modos, focos/controles y movimiento, formularios móviles, tamaños320–1440, capturas, Python/Node y navegadores de CI. Una revisión independiente final, PR y publicación verificada.
 
 La revisión independiente encontró dos defectos heredados dentro del alcance: la pista0px al ocultar el lateral y el outline recortado del titular en colores forzados. Se corrigen con pista única al colapsar y anillo externo en la tarjeta. Sus regresiones comprueban recarga/cambio de viewport y captura con foco.
+
+La validación final confirmó otro salto de interfaz: entrar en pantalla con «Reintentar historial» activaba paginación automática y desplazaba el botón fuera de la vista. La paginación automática se pausa mientras el archivo falla o carga; reintentar permanece como acción explícita. No cambia la cifra, el manifiesto ni la carga de datos.

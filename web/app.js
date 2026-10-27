@@ -1554,7 +1554,8 @@ function initSocialNavigation(){
  window.addEventListener('scroll',()=>{back.hidden=window.scrollY<600;},{passive:true});
  if('IntersectionObserver' in window){
   const observer=new IntersectionObserver(entries=>{
-   if(!entries.some(entry=>entry.isIntersecting)||state.pageView!=='feed'||window.scrollY<350||progressiveLoads>=3||$('loadMore').hidden)return;
+   // Reintentar no es paginar: el botón debe quedarse quieto hasta recuperar el archivo.
+   if(!entries.some(entry=>entry.isIntersecting)||state.pageView!=='feed'||state.historyFailed||state.historyLoading||window.scrollY<350||progressiveLoads>=3||$('loadMore').hidden)return;
    progressiveLoads++;state.page+=1;render();
   },{rootMargin:'250px 0px'});
   observer.observe($('loadMore'));
