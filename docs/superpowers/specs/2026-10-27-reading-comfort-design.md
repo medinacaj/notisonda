@@ -21,3 +21,5 @@ La paleta conserva violeta, azul, ámbar y ocho categorías. El claro usa papel 
 Solo presentación, valores de diseño existentes, iconos de instalación y documentación. Sin recolector, fuentes, red adicional, dependencias, contenido de terceros ni datos nuevos. La generación de marca usa formas genéricas sin material privado. Preferencias locales existentes, medios/atribución y jurisdicciones no cambian. No se certifica comodidad individual ni pruebas físicas de iPhone (Issue31).
 
 Verificación con fixtures: preferencias por defecto/guardadas/restablecidas, tamaño grande entre rutas y lector, contraste de textos/estados en ambos modos, focos/controles y movimiento, formularios móviles, tamaños320–1440, capturas, Python/Node y navegadores de CI. Una revisión independiente final, PR y publicación verificada.
+
+La revisión independiente encontró dos defectos heredados dentro del alcance: la pista0px al ocultar el lateral y el outline recortado del titular en colores forzados. Se corrigen con pista única al colapsar y anillo externo en la tarjeta. Sus regresiones comprueban recarga/cambio de viewport y captura con foco.

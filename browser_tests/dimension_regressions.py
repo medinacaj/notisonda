@@ -101,6 +101,51 @@ class DimensionRegressions(unittest.TestCase):
         self.page.reload()
         expect(self.page.locator('#columnsCurrent')).to_have_text('Auto')
 
+    def test_closed_sidebar_keeps_news_visible_after_reload_and_mobile_resize(self):
+        self.page.emulate_media(reduced_motion='reduce')
+        self.page.evaluate("goTo('all')")
+        self.page.locator('#menuToggle').click()
+        expect(self.page.locator('#appSidebar')).to_be_hidden()
+        for theme in ('light','dark'):
+            self.page.evaluate('(theme)=>setTheme(theme,true)',theme)
+            expect(self.page.locator('#articleGrid')).to_be_visible()
+            self.assertGreaterEqual(self.page.locator('.page').bounding_box()['width'],1438)
+            self.assertGreaterEqual(self.page.locator('#articleGrid > .article-card').first.bounding_box()['width'],280)
+        self.page.reload()
+        expect(self.page.locator('#appSidebar')).to_be_hidden()
+        expect(self.page.locator('#articleGrid')).to_be_visible()
+        self.assertGreaterEqual(self.page.locator('.page').bounding_box()['width'],1438)
+        self.page.set_viewport_size({'width':320,'height':900})
+        expect(self.page.locator('#articleGrid')).to_be_visible()
+        self.assertGreaterEqual(self.page.locator('.page').bounding_box()['width'],318)
+        self.page.locator('#menuToggle').click()
+        expect(self.page.locator('#appSidebar')).to_be_visible()
+        self.page.keyboard.press('Escape')
+        expect(self.page.locator('#menuToggle')).to_be_focused()
+        self.page.set_viewport_size({'width':1440,'height':1000})
+        expect(self.page.locator('#appSidebar')).to_be_hidden()
+        self.page.locator('#menuToggle').click()
+        expect(self.page.locator('#appSidebar')).to_be_visible()
+        self.assertGreaterEqual(self.page.locator('#articleGrid > .article-card').first.bounding_box()['width'],280)
+
+    def test_forced_colors_has_an_unclipped_title_focus_indicator(self):
+        self.page.evaluate("goTo('all')")
+        self.page.emulate_media(reduced_motion='reduce',forced_colors='active')
+        card=self.page.locator('#articleGrid > .article-card').first
+        title=card.locator('.article-title a')
+        self.page.keyboard.press('Tab')
+        title.focus()
+        expect(title).to_be_focused()
+        # The inline link's own outline is clipped by its clamped heading;
+        # the card must provide a visible alternative outside that clipping box.
+        style=card.evaluate('n=>({style:getComputedStyle(n).outlineStyle,width:parseFloat(getComputedStyle(n).outlineWidth),offset:parseFloat(getComputedStyle(n).outlineOffset)})')
+        self.assertNotEqual(style['style'],'none')
+        self.assertGreaterEqual(style['width'],2)
+        self.assertGreaterEqual(style['offset'],0)
+        title.scroll_into_view_if_needed()
+        output=Path('test-results/dimension');output.mkdir(parents=True,exist_ok=True)
+        self.page.screenshot(path=str(output/'forced-title-focus.png'))
+
     def test_large_text_setting_reaches_home_agenda_summary_and_reader(self):
         document=deepcopy(fixtures.RESPONSES['events.json'])
         document['items']=[event('lectura',start=fixtures.STAMP[:10],timezone='UTC',title='Una actividad con nombre extenso para leer con comodidad')]
