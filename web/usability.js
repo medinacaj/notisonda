@@ -25,8 +25,8 @@
     const details=document.createElement('details');details.id='radarMapDetails';details.className='radar-map-details';
     const summary=mk('summary','','Ver mapa de las últimas 24 horas');summary.id='radarMapToggle';
     details.append(summary);figure.before(details);details.append(figure);
-    const mobile=window.matchMedia('(max-width: 720px)');
-    const sync=()=>{details.open=!mobile.matches;};
-    sync();mobile.addEventListener('change',sync);
+    layout.append(details); // Match keyboard order to the visible list-then-map order.
+    // Keep the map optional in every viewport; resizing preserves the user's choice.
+    details.open=false;
   }
 })();

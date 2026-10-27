@@ -135,7 +135,7 @@
     const multi = ranked.filter(x => coverageOf(x) > 1);
     const shown = multi.length >= 3 ? multi : ranked;
     list.replaceChildren(...shown.map((item, i) => {
-      const li = mk('li', 'covered-item'); li.dataset.radarId = item.id;
+      const li = mk('li', 'covered-item'); li.dataset.radarId = item.id; li.dataset.articleId = item.id;
       const rank = mk('span', 'covered-rank', String(i + 1)); rank.setAttribute('aria-hidden', 'true');
       const body = mk('div', 'covered-body');
       const a = link(item.url, plain(item.title) || 'Sin título', 'covered-title');
@@ -193,7 +193,7 @@
     trendsFor = state.generated;
     try { trends = await dataFetch('./data/trends.json?v=' + encodeURIComponent(state.generated || '')); }
     catch { trends = null; }
-    if (['dashboard','briefing'].includes(state.pageView)) renderTopics();
+    if (state.pageView === 'dashboard') renderTopics();
   }
   function renderTopics() {
     const panel = $('trendsPanel');
@@ -539,8 +539,8 @@
     restoreKeyboardCard();
     updateFeedContext();
     renderFollowedNav();
-    if (state.ready && ['dashboard','briefing'].includes(state.pageView)) {
-      if(state.pageView==='dashboard')renderSinceVisit();
+    if (state.ready && state.pageView === 'dashboard') {
+      renderSinceVisit();
       renderCovered(); renderTopics(); void loadTrends();
     }
   };

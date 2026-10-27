@@ -32,10 +32,12 @@
   });
   const aside=columns.querySelector('.newsroom-discovery-aside');
   if(aside){
-    const tools=document.createElement('details');tools.id='coverageTools';tools.className='coverage-tools';
-    tools.append(mk('summary','','Explorar cobertura y tendencias'));
+    const tools=document.createElement('section');tools.id='coverageTools';tools.className='coverage-tools';
+    tools.setAttribute('aria-label','Cobertura y temas');
+    for(const child of aside.children)child.classList.add('home-insight-card');
+    aside.querySelector('.radar-panel .dashboard-panel-head').append(mk('span','insight-window','24 h'));
     const secondary=aside.parentElement;
-    $('briefingSections').after(tools);tools.append(aside);
+    panel.after(tools);tools.append(aside);
     if(secondary&&!secondary.children.length)secondary.hidden=true;
   }
   function latestCard(item){

@@ -67,9 +67,9 @@ class DimensionRegressions(unittest.TestCase):
         self.assertGreaterEqual(len(ids),4)
         self.assertEqual(len(ids),len(set(ids)))
         expect(self.page.locator('#dashboardSavedPanel')).to_be_hidden()
-        expect(self.page.locator('#coverageTools')).to_be_hidden()
+        expect(self.page.locator('#dashboardView #coverageTools')).to_be_visible()
         self.page.evaluate("goTo('briefing')")
-        expect(self.page.locator('#coverageTools')).to_be_visible()
+        expect(self.page.locator('#coverageTools')).to_be_hidden()
 
     def test_one_theme_and_legible_reference_palette(self):
         self.page.evaluate("setTheme('dark',true)")
@@ -89,18 +89,30 @@ class DimensionRegressions(unittest.TestCase):
             expected=self.page.evaluate('(category)=>state.items.filter(x=>x.categories.includes(category)&&!state.read.has(x.id)).length',category)
             expect(self.page.locator('#libraryFolderNav .system-folder-link').filter(has=self.page.locator('.nav-label',has_text=category.split(' - ')[1])).locator('.nav-count')).to_have_text(str(expected))
 
-    def test_direct_summary_loads_secondary_coverage_tools(self):
+    def test_direct_home_loads_coverage_and_topics_and_obeys_source_preferences(self):
         trends=deepcopy(fixtures.RESPONSES['trends.json'])
         trends['topics']=[{'label':'Tecnología','stories':4,'sources':2,'is_new':True}]
         self.page.route('**/data/trends.json*',lambda route:route.fulfill(content_type='application/json',body=json.dumps(trends)))
-        self.page.goto(self.base+'#resumen')
-        # Changing only a hash retains the previous JS/trend cache. Reload so
-        # this exercises an actual direct entry with no earlier visit to Inicio.
+        self.page.goto(self.base+'#inicio')
+        # Reload for a direct entry with no earlier route warming the trend cache.
         self.page.reload()
-        expect(self.page.locator('#briefingView')).to_be_visible()
-        self.page.locator('#coverageTools > summary').click()
+        expect(self.page.locator('#dashboardView #coverageTools')).to_be_visible()
         expect(self.page.locator('#coveredList > li').first).to_be_visible()
         expect(self.page.locator('#trendsPanel')).to_be_visible()
+        title=self.page.locator('#coveredList .covered-title').first
+        title.scroll_into_view_if_needed();title.focus()
+        before=title.bounding_box()['y']
+        title.press('Enter')
+        expect(self.page.locator('#articleReaderDialog')).to_be_visible()
+        self.page.keyboard.press('Escape')
+        # The reader restores its logical origin in the next animation frame.
+        self.page.evaluate('() => new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)))')
+        expect(title).to_be_focused()
+        self.assertLess(abs(title.bounding_box()['y']-before),3)
+        self.page.locator('#trendChips .trend-chip').first.click()
+        expect(self.page.locator('#feedView')).to_be_visible()
+        expect(self.page.locator('#searchInput')).to_have_value('Tecnología')
+        self.page.evaluate("goTo('home')")
         self.page.evaluate('() => {state.sources.forEach(source=>state.hiddenSources.add(source.id));render()}')
         expect(self.page.locator('#coveredList .covered-item')).to_have_count(0)
 
