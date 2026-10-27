@@ -1,0 +1,9 @@
+# Cobertura y tendencias en Inicio
+
+El propietario pide «Lo más cubierto» y «Temas en alza» en Inicio y evaluar más contenido útil. Se traslada su única instancia desde Resumen a Inicio, visible debajo del destacado y el carrusel. Se reutilizan Temas que sigo y Mientras no estabas cuando proceden; no se agregan nuevos servicios, datos ni paneles decorativos. Recomendación implementada directamente según autorización y preferencias vigentes.
+
+Escritorio: ranking y temas en dos columnas; móvil: una columna. Si no hay tendencias ni temas seguidos, ese panel permanece oculto y la cobertura ocupa el ancho. El ranking conserva las seis historias de últimas24h y comparación por medios. El mapa es opcional y cerrado inicialmente en todos los tamaños; no anteponer una figura grande. Resumen conserva sus resúmenes por carpeta, escuchar/compartir, sin duplicar los paneles. Se mantiene logo24px/cabecera mínima, colores y relieve.
+
+Contratos: respetar preferencias de fuentes y selección personal, primera entrada directa a Inicio sin visitar Resumen, respuesta asíncrona de tendencias al cambiar de ruta, búsquedas por tema, lector/comparación y regreso con foco/posición a la fila de cobertura. Filas de cobertura deben identificarse como artículos para el lector existente. No inventar tendencias ni cifras; conservar exclusión de fuentes. Sin nuevo tratamiento de datos, imágenes ajenas, dependencias ni cambios de jurisdicción a los flujos locales ya documentados; pruebas físicas continúan enIssue31.
+
+Verificación: adaptar regresiones existentes de rutas/mapa y ampliar interacción de ranking/tema y vuelta del lector; observar RED→GREEN. Capturas claro/oscuro/móvil, smoke320–1440, Python/Node y lector. Revisión independiente, CI3motores y publicación verificada antes de cerrar, bajo autorización vigente.

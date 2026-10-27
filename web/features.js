@@ -135,7 +135,7 @@
     const multi = ranked.filter(x => coverageOf(x) > 1);
     const shown = multi.length >= 3 ? multi : ranked;
     list.replaceChildren(...shown.map((item, i) => {
-      const li = mk('li', 'covered-item'); li.dataset.radarId = item.id;
+      const li = mk('li', 'covered-item'); li.dataset.radarId = item.id; li.dataset.articleId = item.id;
       const rank = mk('span', 'covered-rank', String(i + 1)); rank.setAttribute('aria-hidden', 'true');
       const body = mk('div', 'covered-body');
       const a = link(item.url, plain(item.title) || 'Sin título', 'covered-title');
@@ -145,7 +145,11 @@
       const bar = mk('span', 'covered-bar'); bar.style.setProperty('--w', Math.min(100, 12 + coverage * 9) + '%');
       const count = mk('button', 'covered-count', `${coverage} ${coverage === 1 ? 'medio' : 'medios'}`); count.type = 'button';
       count.setAttribute('aria-label', `Cubierta por ${coverage} medios. Comparar titulares`);
-      count.addEventListener('click', () => openArticleReader(item, null, 'compare'));
+      count.addEventListener('click', () => {
+        // Pointer or assistive activation does not focus buttons on every platform.
+        count.focus({preventScroll:true});
+        openArticleReader(item, null, 'compare');
+      });
       meta.append(bar, count, mk('span', '', `${categoryLabel((item.categories || [])[0] || '')} · ${ageDate(item.published_at || item.first_seen_at)}`));
       body.append(a, meta); li.append(rank, body);
       li.addEventListener('pointerenter', () => highlight(item.id, true));
@@ -193,7 +197,7 @@
     trendsFor = state.generated;
     try { trends = await dataFetch('./data/trends.json?v=' + encodeURIComponent(state.generated || '')); }
     catch { trends = null; }
-    if (['dashboard','briefing'].includes(state.pageView)) renderTopics();
+    if (state.pageView === 'dashboard') renderTopics();
   }
   function renderTopics() {
     const panel = $('trendsPanel');
@@ -539,8 +543,8 @@
     restoreKeyboardCard();
     updateFeedContext();
     renderFollowedNav();
-    if (state.ready && ['dashboard','briefing'].includes(state.pageView)) {
-      if(state.pageView==='dashboard')renderSinceVisit();
+    if (state.ready && state.pageView === 'dashboard') {
+      renderSinceVisit();
       renderCovered(); renderTopics(); void loadTrends();
     }
   };

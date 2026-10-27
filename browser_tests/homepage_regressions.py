@@ -1,4 +1,4 @@
-"""Offline tests for the homepage carousel and secondary coverage tools."""
+"""Offline tests for the homepage carousel and visible coverage tools."""
 import os
 from copy import deepcopy
 import threading
@@ -26,6 +26,7 @@ def main():
     fixtures.RESPONSES['sources.json']['categories'] = list(fixtures.CATEGORIES)
     fixtures.RESPONSES['meta.json']['total_articles'] = len(fixtures.ITEMS)
     fixtures.RESPONSES['meta.json']['latest_count'] = len(fixtures.ITEMS)
+    fixtures.RESPONSES['trends.json']['topics'] = [{'label':'Inteligencia artificial','stories':9,'sources':4,'is_new':True},{'label':'Tecnología','stories':6,'sources':3,'previous_daily':2},{'label':'Concepción y Biobío','stories':4,'sources':3,'is_new':True}]
     server = ThreadingHTTPServer(('127.0.0.1', 0), fixtures.QuietHandler)
     threading.Thread(target=server.serve_forever, daemon=True).start()
     screenshots = Path(os.environ.get('RADAR_SCREENSHOTS', '/tmp/radar-homepage'))
@@ -62,13 +63,15 @@ def main():
                 page.wait_for_function("() => document.getElementById('dashboardRecent').scrollLeft > 0")
                 page.locator('#latestCarouselPrevious').click()
                 page.wait_for_function("() => document.getElementById('dashboardRecent').scrollLeft < 2")
+                expect(page.locator('#dashboardView #coverageTools')).to_be_visible()
+                expect(page.locator('#trendsPanel')).to_be_visible()
+                fixtures.check_visible_boxes(page,['#coverageTools','.home-insight-card','#trendChips .trend-chip'],f'cobertura {width}px')
+                expect(page.locator('#coveredList .covered-item').first).to_be_visible()
+                expect(page.locator('#radarMapDetails')).not_to_have_attribute('open', '')
+                expect(page.locator('#radarFigure')).to_be_hidden()
                 page.evaluate("goTo('briefing')")
-                expect(page.locator('#coverageTools')).to_be_visible()
-                expect(page.locator('#coverageTools')).not_to_have_attribute('open', '')
-                page.locator('#coverageTools > summary').click()
-                expect(page.locator('#radarMapDetails')).to_be_attached()
+                expect(page.locator('#coverageTools')).to_be_hidden()
                 assert page.locator('#radarFigure').count() == 1
-                page.locator('#coverageTools > summary').click()
                 page.evaluate("goTo('home')")
                 page.wait_for_function("() => state.pageView==='dashboard'")
                 page.evaluate('window.scrollTo(0,0)')
@@ -92,7 +95,7 @@ def main():
     finally:
         server.shutdown()
         server.server_close()
-    print('OK: homepage carousel, three desktop cards, mobile swipe, international and Chile, secondary tools')
+    print('OK: homepage carousel, three desktop cards, mobile swipe, international and Chile, homepage coverage tools')
 
 if __name__ == '__main__':
     main()

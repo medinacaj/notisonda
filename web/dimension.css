@@ -180,9 +180,29 @@ body.radar-hybrid.dimension .agenda-actions button {border-radius:9999px;font-we
 body.radar-hybrid.dimension .agenda-calendar {background:var(--surface);border-radius:18px;border-color:var(--line);}
 body.radar-hybrid.dimension .agenda-calendar button[aria-pressed="true"] {background:var(--agenda-accent);color:var(--agenda-on-accent);}
 body.radar-hybrid.dimension .agenda-pending {border-color:var(--line);}
-body.radar-hybrid.dimension .coverage-tools {margin:40px 0 0;border-top:1px solid var(--line);padding-top:22px;}
-body.radar-hybrid.dimension .coverage-tools > summary {font-size:14px;color:var(--muted);cursor:pointer;}
-body.radar-hybrid.dimension .coverage-tools .newsroom-discovery-aside {display:grid;gap:32px;padding-top:26px;}
+body.radar-hybrid.dimension .coverage-tools {margin:8px 0 0;border:0;padding:0;}
+body.radar-hybrid.dimension .coverage-tools .newsroom-discovery-aside {display:grid;grid-template-columns:minmax(0,1fr);gap:20px;padding:0;align-items:start;}
+body.radar-hybrid.dimension .coverage-tools .newsroom-discovery-aside:has(> .trends-panel:not([hidden])) {grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);}
+body.radar-hybrid.dimension .coverage-tools .home-insight-card {border-radius:24px;padding:22px;min-width:0;}
+body.radar-hybrid.dimension .coverage-tools .dashboard-panel-head {margin-bottom:16px;}
+body.radar-hybrid.dimension .insight-window {font-size:11px;color:var(--muted);border:1px solid var(--line);border-radius:9999px;padding:3px 9px;white-space:nowrap;}
+body.radar-hybrid.dimension .coverage-tools .radar-layout {display:flex;flex-direction:column;gap:12px;}
+body.radar-hybrid.dimension .coverage-tools .covered-list {order:0;width:100%;}
+body.radar-hybrid.dimension .coverage-tools .covered-title {font-size:14px;font-weight:500;line-height:1.45;overflow-wrap:anywhere;}
+body.radar-hybrid.dimension .coverage-tools .covered-rank {color:var(--action-ink);background:var(--action-lime);}
+body.radar-hybrid.dimension .coverage-tools .covered-meta {font-size:11px;}
+body.radar-hybrid.dimension .coverage-tools .covered-bar {display:none;}
+body.radar-hybrid.dimension .coverage-tools .radar-map-details {order:1;}
+body.radar-hybrid.dimension #radarMapToggle {display:list-item;padding:10px 12px;min-height:44px;border:1px solid var(--line);border-radius:12px;background:var(--surface2);color:var(--muted);font-size:12px;font-weight:500;cursor:pointer;}
+body.radar-hybrid.dimension .radar-map-details[open] #radarMapToggle {margin-bottom:12px;}
+body.radar-hybrid.dimension .coverage-tools .radar-stage {max-width:260px;}
+body.radar-hybrid.dimension .coverage-tools .trend-chip {border-radius:9999px;min-height:40px;font-size:13px;font-weight:500;max-width:100%;white-space:normal;overflow-wrap:anywhere;}
+body.radar-hybrid.dimension .coverage-tools .trend-label {min-width:0;}
+@media(max-width:1100px) {
+  body.radar-hybrid.dimension .coverage-tools .newsroom-discovery-aside:has(> .trends-panel:not([hidden])) {grid-template-columns:minmax(0,1fr);}
+}
+@media(max-width:710px) {body.radar-hybrid.dimension .coverage-tools .home-insight-card {padding:18px;}body.radar-hybrid.dimension .coverage-tools .trend-chip {min-height:44px;}}
+
 body.radar-hybrid.dimension .covered-title,body.radar-hybrid.dimension .trend-chip {color:var(--text);}
 body.radar-hybrid.dimension .briefing-head {gap:24px;margin-bottom:28px;}
 body.radar-hybrid.dimension .briefing-kicker {color:var(--muted);font-weight:400;}
@@ -343,7 +363,7 @@ body.radar-hybrid.dimension .nav-link.active {box-shadow:inset 0 1px 0 #ffffff40
 body.radar-hybrid.dimension #libraryFolderNav .nav-link.active {box-shadow:inset 0 1px 0 var(--glass-shine),0 3px 14px color-mix(in srgb,var(--topic-ink) 14%,transparent);}
 body.radar-hybrid.dimension :is(#articleGrid.article-grid,#dashboardFeature) > .article-card,
 body.radar-hybrid.dimension #dashboardRecent > .dashboard-latest-card,
-body.radar-hybrid.dimension :is(.agenda-card,.briefing-section) {
+body.radar-hybrid.dimension :is(.agenda-card,.briefing-section,.home-insight-card) {
   --edge-color:var(--topic-ink,var(--accent));
   border:1px solid transparent;
   background:linear-gradient(145deg,color-mix(in srgb,var(--surface) 94%,var(--edge-color)),var(--surface) 65%) padding-box,
@@ -355,14 +375,14 @@ body.radar-hybrid.dimension .agenda-card {--edge-color:var(--agenda-accent);}
 /* No overlay: links and the save/read/menu controls keep their normal hit areas. */
 body.radar-hybrid.dimension :is(#articleGrid.article-grid,#dashboardFeature) > .article-card:focus-within,
 body.radar-hybrid.dimension #dashboardRecent > .dashboard-latest-card:focus-within,
-body.radar-hybrid.dimension :is(.agenda-card,.briefing-section):focus-within {
+body.radar-hybrid.dimension :is(.agenda-card,.briefing-section,.home-insight-card):focus-within {
   border-color:var(--edge-color);
   box-shadow:inset 0 1px 0 var(--glass-shine),0 0 0 3px color-mix(in srgb,var(--edge-color) 22%,transparent),0 10px 32px color-mix(in srgb,var(--edge-color) var(--halo-strength),transparent);
 }
 @media(hover:hover) and (pointer:fine) {
   body.radar-hybrid.dimension :is(#articleGrid.article-grid,#dashboardFeature) > .article-card:hover,
   body.radar-hybrid.dimension #dashboardRecent > .dashboard-latest-card:hover,
-  body.radar-hybrid.dimension :is(.agenda-card,.briefing-section):hover {
+  body.radar-hybrid.dimension :is(.agenda-card,.briefing-section,.home-insight-card):hover {
     border-color:var(--edge-color);transform:translateY(-3px);
     box-shadow:inset 0 1px 0 var(--glass-shine),0 0 0 1px color-mix(in srgb,var(--edge-color) 38%,transparent),0 12px 30px color-mix(in srgb,var(--edge-color) var(--halo-strength),transparent);
   }
@@ -393,7 +413,7 @@ body.radar-hybrid.dimension .topbar-brand strong {font-size:14px;font-weight:600
 /* Last in cascade so every new effect respects system accessibility preferences. */
 @media(prefers-reduced-motion:reduce) {
   body.radar-hybrid.dimension *,body.radar-hybrid.dimension *::before,body.radar-hybrid.dimension *::after {scroll-behavior:auto!important;transition:none!important;animation:none!important;}
-  body.radar-hybrid.dimension :is(.article-card,.dashboard-latest-card,.agenda-card,.briefing-section,button,.nav-glyph) {transform:none!important;}
+  body.radar-hybrid.dimension :is(.article-card,.dashboard-latest-card,.agenda-card,.briefing-section,.home-insight-card,button,.nav-glyph) {transform:none!important;}
 }
 @media(forced-colors:active) {
   body.radar-hybrid.dimension :is(button,a,input,select,summary,.article-card,.dashboard-latest-card,.agenda-card,.briefing-section) {border-color:ButtonText!important;box-shadow:none!important;}
