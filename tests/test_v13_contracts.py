@@ -27,7 +27,7 @@ class V13Contracts(unittest.TestCase):
         self.assertIn("target===\'all\'?\'#noticias\'",self.app)
 
     def test_home_starts_with_news_not_promotional_copy(self):
-        self.assertIn('<h1 id="dashboardTitle">Actualidad</h1>',self.html)
+        self.assertIn('<h1 id="dashboardTitle" class="sr-only">Actualidad</h1>',self.html)
         self.assertNotIn('Noticias para estar al día.',self.html)
         self.assertNotIn('Una lectura clara de la actualidad',self.html)
         self.assertNotIn('class="dashboard-head"',self.html)
@@ -93,7 +93,7 @@ class V13Contracts(unittest.TestCase):
         self.assertIn('v13.css?v=7.1.1',self.html)
         self.assertIn('Portada editorial V5.3',css)
         self.assertIn('grid-template-columns:repeat(3,minmax(0,1fr))',css)
-        self.assertIn("radar-rss-v41",self.sw)
+        self.assertIn("radar-rss-v42",self.sw)
 
     def test_card_read_action_is_visible_and_syncs_values(self):
         self.assertIn("article-action article-read-toggle",self.app)

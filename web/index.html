@@ -41,17 +41,13 @@
   <link rel="stylesheet" href="./agenda.css?v=1.1.0">
   <link rel="stylesheet" href="./reader-layout.css?v=1.0.0">
   <link rel="stylesheet" href="./reading-ux.css?v=1.0.0">
-  <link rel="stylesheet" href="./dimension.css?v=1.2.0">
+  <link rel="stylesheet" href="./dimension.css?v=1.2.1">
   <title>Radar RSS — Actualidad en un solo lugar</title>
 </head>
 <body class="radar-hybrid dimension" data-columns="4">
   <div class="app-shell">
     <aside class="sidebar" id="appSidebar" aria-label="Menú de fuentes">
       <div class="sidebar-brand-row">
-      <a class="brand" id="brandHome" href="#inicio" aria-label="Radar RSS: ir al inicio">
-        <span class="brand-mark" aria-hidden="true"><img src="./radar-logo.png" width="1254" height="1254" alt="" decoding="async"></span>
-        <span><strong>RADAR <em>RSS</em></strong><small>Tu espacio de actualidad</small></span>
-      </a>
       <button type="button" id="menuClose" class="menu-close" aria-label="Cerrar menú" title="Cerrar menú"><span data-icon="x" class="ui-icon-slot" aria-hidden="true"></span></button>
       </div>
       <div class="sidebar-navigation" id="sidebarNavigation">
@@ -82,7 +78,7 @@
     <div class="page">
       <header class="topbar">
         <button type="button" id="menuToggle" class="menu-toggle" aria-label="Abrir menú" aria-controls="appSidebar" aria-expanded="false" title="Menú"><span data-icon="menu" class="ui-icon-slot" aria-hidden="true"></span></button>
-        <div class="topbar-caption"><strong>Radar RSS</strong><span class="topbar-separator">/</span><span id="topbarSection">Actualidad</span></div>
+        <div class="topbar-caption"><a class="brand topbar-brand" id="brandHome" href="#inicio" aria-label="Radar RSS: ir al inicio"><span class="brand-mark" aria-hidden="true"><img src="./favicon.svg" width="24" height="24" alt=""></span><strong>Radar <em>RSS</em></strong></a><span id="topbarSection" class="sr-only">Actualidad</span></div>
         <button type="button" id="searchToggle" class="search-toggle icon-button" aria-label="Buscar noticias" aria-controls="topbarSearch" aria-expanded="false" title="Buscar"><span data-icon="search" class="ui-icon-slot" aria-hidden="true"></span></button>
         <div class="topbar-search" id="topbarSearch" role="search">
           <label class="search-wrap"><span class="sr-only">Buscar en todas las noticias</span><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m16 16 5 5"/></svg><input id="searchInput" type="search" placeholder="Buscar noticias…" autocomplete="off" enterkeyhint="search" aria-keyshortcuts="/"><kbd class="search-shortcut" aria-hidden="true">/</kbd></label>
@@ -105,7 +101,7 @@
         </div>
         <div id="publicationNotice" class="publication-notice" role="status" hidden><span id="publicationMessage"></span><button id="publicationApply" type="button">Mostrar noticias</button></div>
         <section id="dashboardView" class="dashboard-view" aria-labelledby="dashboardTitle" hidden>
-          <header class="dimension-intro"><div class="dimension-heading"><span class="dimension-logo" aria-hidden="true"><img src="./radar-logo.png" width="1254" height="1254" alt="" decoding="async"></span><h1 id="dashboardTitle">Actualidad</h1></div><span class="dimension-edition" id="dimensionEdition"></span></header>
+          <h1 id="dashboardTitle" class="sr-only">Actualidad</h1>
 
           <div class="newsroom-columns" id="newsroomColumns" hidden>
             <div class="newsroom-primary-column">
@@ -397,7 +393,7 @@
   <script src="./v12.js?v=1.3.0" defer></script>
   <script src="./v13.js?v=1.4.1" defer></script>
   <script src="./usability.js?v=1.0.0" defer></script>
-  <script src="./homepage.js?v=1.1.0" defer></script>
+  <script src="./homepage.js?v=1.1.1" defer></script>
   <script src="./agenda.js?v=1.1.0" defer></script>
   <script src="./feed-ux.js?v=1.0.0" defer></script>
   <script src="./reader-ux.js?v=1.0.0" defer></script>

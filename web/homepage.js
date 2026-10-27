@@ -74,7 +74,6 @@
     panel.hidden=chosen.length<2;
     if(chosen.length){feature.replaceChildren(card(chosen[0]));recent.replaceChildren(...chosen.slice(1).map(latestCard));}
     else{feature.replaceChildren(mk('p','dashboard-empty','No hay noticias con tus preferencias actuales.'));recent.replaceChildren();}
-    $('dimensionEdition').textContent=state.generated?new Intl.DateTimeFormat('es-CL',{day:'numeric',month:'long',timeZone:'America/Santiago'}).format(new Date(state.generated)):'';
     recent.scrollLeft=0;requestAnimationFrame(sync);
     return result;
   };

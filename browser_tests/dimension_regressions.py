@@ -169,8 +169,8 @@ class DimensionRegressions(unittest.TestCase):
         self.page.emulate_media(reduced_motion='reduce',forced_colors='active')
         self.assertNotEqual(title.evaluate('n=>getComputedStyle(n).outlineStyle'),'none')
         self.page.emulate_media(reduced_motion='reduce',forced_colors='none')
-        active=self.page.locator('.dimension-intro').evaluate('n=>[getComputedStyle(n).animationName,getComputedStyle(n,"::before").animationName]')
-        self.assertEqual(active,['none','none'])
+        active=card.evaluate('n=>[getComputedStyle(n).animationName,getComputedStyle(n).transitionDuration]')
+        self.assertEqual(active,['none','0s'])
 
     def test_mobile_menu_and_routes_do_not_overflow(self):
         for width in (320,390,768,1440):
