@@ -209,10 +209,12 @@ class DimensionRegressions(unittest.TestCase):
             expect(self.page.locator('#libraryFolderNav .system-folder-link').filter(has=self.page.locator('.nav-label',has_text=category.split(' - ')[1])).locator('.nav-count')).to_have_text(str(expected))
 
     def test_direct_home_loads_coverage_and_topics_and_obeys_source_preferences(self):
+        # Finish the initial fixture request before replacing it and reloading.
+        # WebKit reports an access-control error if that old request is torn down.
+        self.page.wait_for_load_state('networkidle')
         trends=deepcopy(fixtures.RESPONSES['trends.json'])
         trends['topics']=[{'label':'Tecnología','stories':4,'sources':2,'is_new':True}]
         self.page.route('**/data/trends.json*',lambda route:route.fulfill(content_type='application/json',body=json.dumps(trends)))
-        self.page.goto(self.base+'#inicio')
         # Reload for a direct entry with no earlier route warming the trend cache.
         self.page.reload()
         expect(self.page.locator('#dashboardView #coverageTools')).to_be_visible()
