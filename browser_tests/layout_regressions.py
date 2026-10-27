@@ -104,7 +104,7 @@ class LayoutRegressions(unittest.TestCase):
                 self.assertFalse(page.locator('#topicRail').is_visible())
                 self.assertLessEqual(page.locator('.topbar').bounding_box()['height'], 64)
                 self.assertTrue(page.locator('#settingsButton').is_visible())
-                self.assertGreater(page.locator('#brandHome svg').count(), 0)
+                self.assertTrue(page.locator('#brandHome .brand-mark img').evaluate('img => img.complete && img.naturalWidth > 0'))
                 capsule = page.locator('.footer-profile')
                 self.assertEqual(capsule.get_attribute('href'), 'https://www.linkedin.com/in/medinacaj/')
                 self.assertEqual(capsule.get_attribute('target'), '_blank')

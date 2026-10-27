@@ -30,11 +30,11 @@ Files: web/dimension.css; browser_tests/dimension_regressions.py.
 Interfaces: usar :focus-within/:active/:hover, sin estado JS añadido.
 - [x] Regresión RED de relieve y foco en tarjeta, conservar funciones de guardar/leer.
 - [x] Aplicar relieve, bordes degradados, iconos con color y animaciones breves/aurora.
-- [ ] Verificar GREEN, reduced-motion sin animación y colores forzados con foco/borde.
-- [ ] Verificar capturas claro/oscuro390/1440, responsive y regresiones de lectura/agenda.
+- [x] Verificar GREEN, reduced-motion sin animación y colores forzados con foco/borde.
+- [x] Verificar capturas claro/oscuro390/1440, responsive y regresiones de lectura/agenda.
 
 ### Task 3: Entrega
 Files: README.md, docs/architecture.md, docs/project-status.md, tests/test_dimension_theme.py.
-- [ ] Actualizar documentación/cache, ejecutar251Python y suites Node pertinentes.
+- [x] Actualizar documentación/cache, ejecutar251Python y suites Node pertinentes.
 - [ ] Revisar diff independiente y resolver hallazgos importantes con regresión.
 - [ ] PR y CI3motores, integrar con autorización vigente, verificar Pages y árbol publicado.
