@@ -19,7 +19,7 @@ const state = {
   theme: initialTheme(),
   search: '', page: 1, ready: false,
   density: storeGet('radar-density') === 'compact' ? 'compact' : 'comfortable',
-  columns: ['auto','2','3','4','5','6'].includes(storeGet('radar-columns')) ? storeGet('radar-columns') : '4',
+  columns: ['auto','2','3','4','5','6'].includes(storeGet('radar-columns')) ? storeGet('radar-columns') : 'auto',
   pageSize: [12,24,36,60].includes(Number(storeGet('radar-page-size'))) ? Number(storeGet('radar-page-size')) : 36,
   maxAge: [0,1,7,30,90].includes(Number(storeGet('radar-max-age'))) ? Number(storeGet('radar-max-age')) : 0,
   fontSize: storeGet('radar-font') === 'large' ? 'large' : 'normal',
@@ -212,13 +212,13 @@ function setTheme(theme, explicit=false) {
   $('themeGlyph').replaceChildren(svgIcon(light?'moon':'sun'));
   $('themeToggle').setAttribute('aria-label',light?'Cambiar a modo oscuro':'Cambiar a modo claro');
   $('themeToggle').title=light?'Modo oscuro':'Modo claro';
-  document.querySelector('meta[name="theme-color"]')?.setAttribute('content',light?'#f3f4fc':'#101326');
+  document.querySelector('meta[name="theme-color"]')?.setAttribute('content',light?'#f3f1eb':'#171c25');
   if(explicit){
     try{localStorage.setItem('radar-theme',state.theme);localStorage.setItem(THEME_EXPLICIT_KEY,'true');}catch{}
   }
 }
 function setColumns(value){
-  state.columns=['auto','2','3','4','5','6'].includes(value)?value:'4';
+  state.columns=['auto','2','3','4','5','6'].includes(value)?value:'auto';
   savePref('columns',state.columns);
   applyDisplaySettings();
   $('settingColumns').value=state.columns;
@@ -456,7 +456,7 @@ function initSettingsHandlers(){
     try{
       const data=JSON.parse(await file.text());if(data.format!=='radar-rss-settings-v2'||typeof data.preferences!=='object')throw Error('Formato incompatible');
       const p=data.preferences,select=(key,allowed,def)=>allowed.includes(p[key])?p[key]:def;
-      state.theme=select('theme',['system','light','dark'],'system');state.layout=select('layout',['cards','list'],'cards');state.columns=select('columns',['auto','2','3','4','5','6'],'4');state.density=select('density',['comfortable','compact'],'comfortable');
+      state.theme=select('theme',['system','light','dark'],'system');state.layout=select('layout',['cards','list'],'cards');state.columns=select('columns',['auto','2','3','4','5','6'],'auto');state.density=select('density',['comfortable','compact'],'comfortable');
       state.pageSize=select('pageSize',[12,24,36,60],36);state.maxAge=select('maxAge',[0,1,7,30,90],0);state.fontSize=select('fontSize',['normal','large'],'normal');
       for(const field of ['showImages','showSummaries','hideRead','newTab'])if(typeof p[field]==='boolean')state[field]=p[field];
       state.sort=select('sort',['newest','oldest','source'],'newest');state.startMode=select('startMode',['all','unread','saved'],'all');state.mutedKeywords=typeof p.mutedKeywords==='string'?p.mutedKeywords.slice(0,600):'';
@@ -475,7 +475,7 @@ function initSettingsHandlers(){
     let agendaResetFailed=false;
     try{if(window.RadarAgenda)window.RadarAgenda.restorePreferences({...window.RadarAgenda.exportPreferences(),view:'list'});}catch{agendaResetFailed=true;}
     for(const key of ['layout','columns','theme','density','font','page-size','max-age','show-hero','show-images','show-summaries','hide-read','new-tab','sort','start-mode','keywords','hidden-sources','sidebar-width','theme-explicit']){try{localStorage.removeItem('radar-'+key);}catch{}}
-    state.theme=initialTheme();state.layout='cards';state.columns='4';state.density='comfortable';state.fontSize='normal';state.pageSize=36;state.maxAge=0;
+    state.theme=initialTheme();state.layout='cards';state.columns='auto';state.density='comfortable';state.fontSize='normal';state.pageSize=36;state.maxAge=0;
     state.showImages=true;state.showSummaries=true;state.hideRead=false;state.newTab=true;state.sort='newest';state.startMode='all';state.mode='all';state.mutedKeywords='';state.hiddenSources.clear();state.page=1;
     setTheme(state.theme);applyDisplaySettings();$('settingsSourceSearch').value='';refreshFeedUI();syncSettings();selectedTab('data');$('dataNotice').textContent=agendaResetFailed?'Preferencias restablecidas. No se pudo guardar la vista de agenda; tus actividades se conservan.':'Preferencias restablecidas.';
     window.dispatchEvent(new Event('radar-sidebar-pref-sync'));

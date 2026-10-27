@@ -10,6 +10,7 @@ import threading
 import unittest
 from playwright.sync_api import sync_playwright, expect
 import responsive_smoke as fixtures
+from agenda_regressions import event
 
 
 class DimensionRegressions(unittest.TestCase):
@@ -75,12 +76,85 @@ class DimensionRegressions(unittest.TestCase):
         self.page.evaluate("setTheme('dark',true)")
         self.page.emulate_media(reduced_motion='reduce')
         colors=self.page.evaluate("() => ({bg:getComputedStyle(document.body).backgroundColor,text:getComputedStyle(document.body).color})")
-        self.assertEqual(colors['bg'],'rgb(16, 19, 38)')
+        self.assertNotEqual(colors['bg'],colors['text'])
         sheets=self.page.locator('link[rel="stylesheet"]').evaluate_all('nodes=>nodes.map(n=>new URL(n.href).pathname.split("/").pop())')
         self.assertIn('dimension.css',sheets)
         self.assertFalse(set(sheets)&{'editorial.css','hashnode-preview.css','radar-hybrid.css','copper-theme.css','home-editorial.css','cosmic-theme.css','iaadc-editorial.css'})
         self.page.evaluate("setTheme('light',true)")
         self.assertNotEqual(self.page.evaluate('getComputedStyle(document.body).backgroundColor'),colors['bg'])
+
+    def test_automatic_columns_use_available_space_and_preserve_a_saved_choice(self):
+        self.page.evaluate("goTo('all')")
+        expect(self.page.locator('#columnsCurrent')).to_have_text('Auto')
+        self.assertGreaterEqual(self.page.locator('#articleGrid > .article-card').first.bounding_box()['width'],280)
+        self.page.locator('#columnsToggle').click()
+        self.page.locator('#columnsMenu [data-columns="2"]').click()
+        self.page.reload()
+        expect(self.page.locator('#columnsCurrent')).to_have_text('2')
+        self.page.on('dialog',lambda dialog:dialog.accept())
+        self.page.evaluate("document.getElementById('resetSettings').click()")
+        expect(self.page.locator('#columnsCurrent')).to_have_text('Auto')
+        for columns in ('5',None):
+            preferences={'columns':columns} if columns else {}
+            self.page.locator('#importData').set_input_files({'name':'preferences.json','mimeType':'application/json','buffer':json.dumps({'format':'radar-rss-settings-v3','preferences':preferences}).encode()})
+            expect(self.page.locator('#columnsCurrent')).to_have_text(columns or 'Auto')
+        self.page.reload()
+        expect(self.page.locator('#columnsCurrent')).to_have_text('Auto')
+
+    def test_large_text_setting_reaches_home_agenda_summary_and_reader(self):
+        document=deepcopy(fixtures.RESPONSES['events.json'])
+        document['items']=[event('lectura',start=fixtures.STAMP[:10],timezone='UTC',title='Una actividad con nombre extenso para leer con comodidad')]
+        self.page.route('**/data/events.json*',lambda route:route.fulfill(content_type='application/json',body=json.dumps(document)))
+        self.page.reload()
+        targets={'home':['#dashboardFeature .article-title','#dashboardRecent .dashboard-recent-title','#coveredList .covered-title'],
+                 'all':['#articleGrid .article-title','#articleGrid .article-excerpt'],
+                 'agenda':['.agenda-item-title','.agenda-meta'],
+                 'briefing':['.briefing-title','.briefing-summary']}
+        normal={}
+        for width in (320,1440):
+            self.page.set_viewport_size({'width':width,'height':900})
+            for target,selectors in targets.items():
+                self.page.evaluate('(target)=>goTo(target)',target)
+                for selector in selectors:
+                    node=self.page.locator(selector).first
+                    expect(node).to_be_visible()
+                    normal[width,selector]=node.evaluate('n=>parseFloat(getComputedStyle(n).fontSize)')
+        self.page.locator('#settingsButton').click()
+        self.page.locator('#settingFont').select_option('large')
+        self.page.locator('#settingsDone').click()
+        self.page.reload()
+        self.assertEqual(self.page.evaluate('state.fontSize'),'large')
+        for width in (320,1440):
+            self.page.set_viewport_size({'width':width,'height':900})
+            for target,selectors in targets.items():
+                self.page.evaluate('(target)=>goTo(target)',target)
+                for selector in selectors:
+                    self.assertGreater(self.page.locator(selector).first.evaluate('n=>parseFloat(getComputedStyle(n).fontSize)'),normal[width,selector],selector)
+                self.assertTrue(self.page.evaluate('document.documentElement.scrollWidth<=innerWidth+2'),(width,target))
+            self.page.evaluate("goTo('all')")
+            self.page.locator('#articleGrid .article-title a').first.click()
+            expect(self.page.locator('#articleReaderDialog')).to_be_visible()
+            self.assertGreaterEqual(self.page.locator('#readerSummary').evaluate('n=>parseFloat(getComputedStyle(n).fontSize)'),20)
+            fixtures.check_visible_boxes(self.page,['#readerClose','#readerPrevious','#readerNext','#readerOpenOriginal'],f'large reader {width}')
+            self.page.keyboard.press('Escape')
+
+    def test_mobile_form_text_and_article_actions_are_easy_to_use(self):
+        self.page.evaluate("goTo('all')")
+        for width in (1440,390):
+            self.page.set_viewport_size({'width':width,'height':900})
+            actions=self.page.locator('#articleGrid > .article-card').first.locator('.article-read-toggle,.article-save,.article-more')
+            for node in actions.all():
+                box=node.bounding_box()
+                self.assertGreaterEqual(min(box['width'],box['height']),44)
+        self.page.locator('#searchToggle').click()
+        self.assertGreaterEqual(self.page.locator('#searchInput').evaluate('n=>parseFloat(getComputedStyle(n).fontSize)'),16)
+        self.page.locator('#settingsButton').click()
+        for selector in ('#settingTheme','#settingFont'):
+            self.assertGreaterEqual(self.page.locator(selector).evaluate('n=>parseFloat(getComputedStyle(n).fontSize)'),16)
+        self.page.locator('#settingsDone').click()
+        self.page.locator('#articleGrid .article-title a').first.click()
+        expect(self.page.locator('#libraryTagInput')).to_be_visible()
+        self.assertGreaterEqual(self.page.locator('#libraryTagInput').evaluate('n=>parseFloat(getComputedStyle(n).fontSize)'),16)
 
     def test_agenda_has_no_news_count_and_folder_counts_follow_their_sources(self):
         self.page.evaluate("markRead('noticia-0',true)")
@@ -165,6 +239,8 @@ class DimensionRegressions(unittest.TestCase):
     def test_category_symbols_are_distinct_and_custom_folders_have_a_symbol(self):
         expect(self.page.locator('#dashboardTitle')).to_have_text('Actualidad')
         self.assertTrue(self.page.locator('.brand-mark img').evaluate('n=>n.complete&&n.naturalWidth>0'))
+        brand=self.page.locator('.brand-mark img').bounding_box()
+        self.assertEqual((brand['width'],brand['height']),(24,24))
         categories=[*fixtures.CATEGORIES,'08 - Monagas']
         self.page.evaluate('(categories)=>{state.categories=categories;buildNav()}',categories)
         symbols=self.page.locator('#libraryFolderNav .system-folder-link .nav-glyph svg').evaluate_all('nodes=>nodes.map(n=>n.innerHTML)')

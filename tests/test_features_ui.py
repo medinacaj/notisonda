@@ -3,6 +3,7 @@ import json
 import re
 import unittest
 from pathlib import Path
+from urllib.parse import urlsplit
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -57,7 +58,7 @@ class FeaturesUiTests(unittest.TestCase):
         purposes = {icon['purpose'] for icon in manifest['icons']}
         self.assertIn('maskable', purposes)
         for icon in manifest['icons']:
-            self.assertTrue((ROOT / 'web' / icon['src']).exists(), icon['src'])
+            self.assertTrue((ROOT / 'web' / urlsplit(icon['src']).path).exists(), icon['src'])
 
     def test_followed_topics_live_outside_category_nav(self):
         # library.js cuenta los botones de #categoryNav por posición: no agregar ahí.
