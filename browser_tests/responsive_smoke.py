@@ -307,8 +307,8 @@ def main():
                           radius:getComputedStyle(document.querySelector('#dashboardFeature .article-card')).borderTopLeftRadius,
                           shadow:getComputedStyle(document.querySelector('#dashboardFeature .article-card')).boxShadow
                         })""")
-                        assert visual == {'bg':'#f3f4fc','radius':'24px','shadow':'none'},visual
-                        assert page.locator('#dashboardTitle').inner_text() == 'En tu radar.'
+                        assert visual['bg']=='#f3f4fc' and visual['radius']=='24px' and visual['shadow']!='none',visual
+                        assert page.locator('#dashboardTitle').inner_text() == 'Actualidad'
                         expect(page.locator('#dashboardFeature')).to_be_visible()
                         expect(page.locator('#dashboardFeature > .article-card')).to_have_count(1)
                         page.evaluate("document.body.classList.remove('light')")
@@ -439,11 +439,11 @@ def main():
                         expect(placeholders.first.locator(".article-cover-note")).to_have_text("Vista previa")
                         assert placeholders.first.locator("img").count() == 0
                         assert page.locator("#articleGrid .article-card.no-excerpt .article-excerpt").count() == 0
-                        # La elevación de Apple distingue pendientes y leídas
-                        # sin alterar alturas ni usar fotos ajenas inventadas.
+                        # El cristal aporta relieve a leídas y pendientes sin cambiar
+                        # la geometría de las filas ni inventar fotografías.
                         shadow_unread=page.locator("#articleGrid .article-card.unread-card").first.evaluate(
                             "(node) => getComputedStyle(node).boxShadow")
-                        assert shadow_unread == "none", shadow_unread
+                        assert shadow_unread != "none", shadow_unread
                         check_uniform_card_heights(page, f"tarjetas {browser_name} {width}px")
                         # Preferencia Compacto mantiene miniaturas y títulos acotados.
                         # Compacto debe ocultar los resúmenes; no basta con reducir imágenes.
@@ -486,7 +486,7 @@ def main():
                             "(node) => node.classList.contains('read-article')")
                         shadow_read=page.locator("#articleGrid .article-card").first.evaluate(
                             "(node) => getComputedStyle(node).boxShadow")
-                        assert shadow_read == shadow_unread == "none", (shadow_read,shadow_unread)
+                        assert shadow_read != "none", shadow_read
                         expect(page.locator("#filterSummary")).to_contain_text(str(initial_unread-1)+" sin leer")
                         # El menú contextual debe estar disponible desde cualquier parte de la tarjeta.
                         page.locator("#articleGrid .article-card").first.locator(".article-title").click(button="right")
@@ -507,7 +507,7 @@ def main():
                             first_card.hover()
                             page.wait_for_timeout(240)
                             shadow=first_card.evaluate("(node) => getComputedStyle(node).boxShadow")
-                            assert shadow == "none", (width,browser_name,shadow)
+                            assert shadow != "none", (width,browser_name,shadow)
                         check_visible_boxes(page, [".topbar", ".topbar-actions", ".filter-bar",
                             ".filter-controls", ".mode-tabs", "#articleGrid",
                             "#articleGrid .article-card"], f"listado {width}px")

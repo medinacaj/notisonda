@@ -142,6 +142,36 @@ class DimensionRegressions(unittest.TestCase):
             if min(ratios)<4.5:failures.append(('Noticias',theme,ratios))
         self.assertFalse(failures,failures)
 
+    def test_category_symbols_are_distinct_and_custom_folders_have_a_symbol(self):
+        expect(self.page.locator('#dashboardTitle')).to_have_text('Actualidad')
+        self.assertTrue(self.page.locator('.brand-mark img').evaluate('n=>n.complete&&n.naturalWidth>0'))
+        categories=[*fixtures.CATEGORIES,'08 - Monagas']
+        self.page.evaluate('(categories)=>{state.categories=categories;buildNav()}',categories)
+        symbols=self.page.locator('#libraryFolderNav .system-folder-link .nav-glyph svg').evaluate_all('nodes=>nodes.map(n=>n.innerHTML)')
+        self.assertEqual(len(set(symbols)),8,'Each category needs its own recognizable symbol')
+        folder=self.page.evaluate("svgIcon('folder').innerHTML")
+        fallback=self.page.evaluate("svgIcon('unknown').innerHTML")
+        self.assertNotEqual(folder,fallback,'Manual folders must not fall back to a newspaper')
+
+    def test_cards_have_depth_and_focus_feedback_without_breaking_the_reader(self):
+        self.page.emulate_media(reduced_motion='reduce')
+        self.page.evaluate("goTo('all')")
+        card=self.page.locator('#articleGrid > .article-card').first
+        idle=card.evaluate('n=>({shadow:getComputedStyle(n).boxShadow,border:getComputedStyle(n).borderTopColor})')
+        self.assertNotEqual(idle['shadow'],'none','Cards need visible depth at rest')
+        title=card.locator('.article-title a');title.focus()
+        focused=card.evaluate('n=>({shadow:getComputedStyle(n).boxShadow,border:getComputedStyle(n).borderTopColor})')
+        self.assertNotEqual(focused,idle,'Focusing a card must highlight its edge')
+        title.press('Enter')
+        expect(self.page.locator('#articleReaderDialog')).to_be_visible()
+        self.page.keyboard.press('Escape')
+        expect(title).to_be_focused()
+        self.page.emulate_media(reduced_motion='reduce',forced_colors='active')
+        self.assertNotEqual(title.evaluate('n=>getComputedStyle(n).outlineStyle'),'none')
+        self.page.emulate_media(reduced_motion='reduce',forced_colors='none')
+        active=self.page.locator('.dimension-intro').evaluate('n=>[getComputedStyle(n).animationName,getComputedStyle(n,"::before").animationName]')
+        self.assertEqual(active,['none','none'])
+
     def test_mobile_menu_and_routes_do_not_overflow(self):
         for width in (320,390,768,1440):
             with self.subTest(width=width):
