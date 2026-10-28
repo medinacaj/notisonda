@@ -41,7 +41,7 @@
   <link rel="stylesheet" href="./agenda.css?v=1.1.0">
   <link rel="stylesheet" href="./reader-layout.css?v=1.0.0">
   <link rel="stylesheet" href="./reading-ux.css?v=1.0.0">
-  <link rel="stylesheet" href="./dimension.css?v=1.5.2">
+  <link rel="stylesheet" href="./dimension.css?v=1.5.3">
   <title>Radar RSS — Actualidad en un solo lugar</title>
 </head>
 <body class="radar-hybrid dimension" data-columns="auto">
@@ -142,14 +142,21 @@
           </section>
               <div class="newsroom-discovery-aside">
         <section class="dashboard-panel radar-panel" aria-labelledby="radarTitle">
-            <div class="dashboard-panel-head"><h2 id="radarTitle" title="Historias publicadas por más medios en las últimas 24 horas">Lo más cubierto</h2></div>
+            <div class="dashboard-panel-head">
+              <h2 id="radarTitle" title="Distribución de noticias por categoría y actualidad">Radar de noticias</h2>
+            </div>
             <div class="radar-layout">
               <figure class="radar-figure" id="radarFigure">
                 <div class="radar-stage" id="radarStage"></div>
                 <figcaption class="radar-caption" id="radarCaption"></figcaption>
               </figure>
-              <ol class="covered-list" id="coveredList"></ol>
             </div>
+          </section>
+          <section class="dashboard-panel covered-panel" aria-labelledby="coveredTitle">
+            <div class="dashboard-panel-head">
+              <h2 id="coveredTitle" title="Historias publicadas por más medios en las últimas 24 horas">Lo más cubierto</h2>
+            </div>
+            <ol class="covered-list" id="coveredList"></ol>
           </section>
           <section class="dashboard-panel trends-panel" id="trendsPanel" aria-labelledby="trendsTitle" hidden>
             <div class="dashboard-panel-head"><h2 id="trendsTitle" title="Palabras que más crecen en los titulares frente a la última semana">Temas en alza</h2><span id="trendsHint" class="sr-only">Palabras que más crecen en los titulares frente a la última semana</span></div>
@@ -406,7 +413,7 @@
   <script src="./v12.js?v=1.3.0" defer></script>
   <script src="./v13.js?v=1.4.1" defer></script>
   <script src="./usability.js?v=1.1.0" defer></script>
-  <script src="./homepage.js?v=1.2.0" defer></script>
+  <script src="./homepage.js?v=1.2.1" defer></script>
   <script src="./agenda.js?v=1.1.0" defer></script>
   <script src="./feed-ux.js?v=1.0.0" defer></script>
   <script src="./reader-ux.js?v=1.0.0" defer></script>

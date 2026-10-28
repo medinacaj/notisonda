@@ -34,7 +34,12 @@
   if(aside){
     const tools=document.createElement('section');tools.id='coverageTools';tools.className='coverage-tools';
     tools.setAttribute('aria-label','Cobertura y temas');
+    // Gráfico y clasificación conservan módulos independientes y no comparten una ficha.
     for(const child of aside.children)child.classList.add('home-insight-card');
+    const radarPanel=aside.querySelector('.radar-panel');
+    const coveredPanel=aside.querySelector('.covered-panel');
+    if(radarPanel)radarPanel.classList.add('radar-standalone-card');
+    if(coveredPanel)coveredPanel.classList.add('covered-standalone-card');
     aside.querySelector('.radar-panel .dashboard-panel-head').append(mk('span','insight-window','24 h'));
     const secondary=aside.parentElement;
     panel.after(tools);tools.append(aside);
