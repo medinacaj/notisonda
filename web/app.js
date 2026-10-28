@@ -477,18 +477,18 @@ function initSettingsHandlers(){
   for(const id of ['settingsSourceVisibility','settingsSourceStatus','settingsSourceType'])$(id).addEventListener('change',()=>renderSettingsSources());
   $('showAllSources').addEventListener('click',()=>{state.hiddenSources.clear();persist('radar-hidden-sources',state.hiddenSources);state.page=1;refreshFeedUI();renderSettingsSources();});
   $('exportOPML').addEventListener('click',()=>{
-    downloadText('radar-rss-mis-fuentes.opml',RadarSourceTools.buildOPML(settingsSourceGroups(),state.sources,state.hiddenSources),'application/xml;charset=utf-8');
+    downloadText('notisonda-mis-fuentes.opml',RadarSourceTools.buildOPML(settingsSourceGroups(),state.sources,state.hiddenSources),'application/xml;charset=utf-8');
   });
   $('exportSourceCatalog').addEventListener('click',()=>{
     const groups=settingsSourceGroups(),health=new Map(state.health.map(row=>[row.id,row]));
     const rows=state.sources.map(source=>({id:source.id,name:source.name,rss:source.url,website:source.website,
       folders:groups.filter(group=>group.ids.includes(source.id)).map(group=>group.name).join(' | ')||'Sin carpeta',
       visible:!state.hiddenSources.has(source.id),type:RadarSourceTools.sourceKind(source)==='radar'?'RADAR · Google Noticias':'RSS directo',status:RadarSourceTools.healthState(health.get(source.id))}));
-    downloadText('radar-rss-catalogo.csv',RadarSourceTools.buildCSV(rows),'text/csv;charset=utf-8');
+    downloadText('notisonda-catalogo.csv',RadarSourceTools.buildCSV(rows),'text/csv;charset=utf-8');
   });
   $('exportData').addEventListener('click',()=>{
     const data={format:'radar-rss-settings-v2',exported_at:new Date().toISOString(),preferences:{theme:state.theme,layout:state.layout,columns:state.columns,density:state.density,pageSize:state.pageSize,maxAge:state.maxAge,fontSize:state.fontSize,cardTitleSize:state.cardTitleSize,showImages:state.showImages,showSummaries:state.showSummaries,hideRead:state.hideRead,newTab:state.newTab,sort:state.sort,startMode:state.startMode,mutedKeywords:state.mutedKeywords},hiddenSources:[...state.hiddenSources],saved:[...state.saved],read:[...state.read]};
-    downloadText('radar-rss-preferencias.json',JSON.stringify(data,null,2),'application/json;charset=utf-8');
+    downloadText('notisonda-preferencias.json',JSON.stringify(data,null,2),'application/json;charset=utf-8');
     $('dataNotice').textContent='Archivo de respaldo generado.';
   });
   $('importData').addEventListener('change',async e=>{
