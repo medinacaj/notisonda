@@ -104,13 +104,36 @@ let defaults=(()=>{try{const obj=JSON.parse(localStorage.getItem(FOLDER_OVERLAY_
   for(const [id,v] of Object.entries(obj).slice(0,40)){
    if(id.length>150||!v||typeof v!=='object')continue;
    result[id]={name:typeof v.name==='string'?v.name.slice(0,45):'',
-    hidden:v.hidden===true,sources:Array.isArray(v.sources)?[...new Set(v.sources.filter(x=>typeof x==='string'))].slice(0,SOURCE_LIMIT):null};
+    hidden:v.hidden===true,sources:Array.isArray(v.sources)?[...new Set(v.sources.filter(x=>typeof x==='string'))].slice(0,SOURCE_LIMIT):null,
+    excluded:Array.isArray(v.excluded)?v.excluded.filter(x=>typeof x==='string').slice(0,SOURCE_LIMIT):null};
   }
  return result;
 }catch{return Object.create(null);}})();
 const saveDefaults=()=>write(FOLDER_OVERLAY_KEY,defaults);
 const folderName=(kind,id)=>kind==='default'?(defaults[id]?.name||categoryLabel(id)):id;
-const folderSources=(kind,id)=>kind==='default'?(Array.isArray(defaults[id]?.sources)?defaults[id].sources:state.sources.filter(x=>x.category===id).map(x=>x.id)):(folders[id]||[]);
+const originalSourceIds=id=>state.sources.filter(source=>source.category===id).map(source=>source.id);
+function defaultSourceIds(id,preference){
+ const original=originalSourceIds(id);
+ if(!Array.isArray(preference?.sources))return original;
+ const selected=new Set(preference.sources.filter(value=>typeof value==='string'));
+ const excluded=new Set(Array.isArray(preference.excluded)?preference.excluded:original.filter(value=>!selected.has(value)));
+ return [...new Set([...selected,...original.filter(value=>!excluded.has(value))])];
+}
+function defaultSourceSelection(id,ids,previous=defaults[id]||{}){
+ const sources=[...new Set(ids)],selected=new Set(sources);
+ return {...previous,sources,excluded:originalSourceIds(id).filter(value=>!selected.has(value))};
+}
+function folderSources(kind,id){
+ if(kind!=='default')return folders[id]||[];
+ const preference=defaults[id];
+ // Migrate old explicit selections once the catalogue is available. Preserve
+ // their current exclusions, then allow later published IDs to inherit a folder.
+ if(Array.isArray(preference?.sources)&&!Array.isArray(preference.excluded)&&state.sources.length){
+  preference.excluded=originalSourceIds(id).filter(value=>!preference.sources.includes(value));
+  saveDefaults();
+ }
+ return defaultSourceIds(id,preference);
+}
 function sourceGroups(){
  return [...state.categories.map(id=>({key:'default:'+id,name:folderName('default',id),ids:folderSources('default',id)})),
    ...Object.entries(folders).map(([name,ids])=>({key:'manual:'+name,name,ids}))];
@@ -247,7 +270,7 @@ function saveFolderEditor(){
  if(e.sources){
   const ids=[...e.selected];
   if(e.kind==='default'){
-   const old=defaults[e.id]||{};defaults[e.id]={...old,sources:ids};
+   const old=defaults[e.id]||{};defaults[e.id]=defaultSourceSelection(e.id,ids,old);
    if(!saveDefaults()){defaults[e.id]=old;return $('folderError').textContent='No se pudieron guardar las fuentes.';}
   }else{
    const old=folders[e.id];folders[e.id]=ids;
@@ -509,7 +532,7 @@ function decorateSources(){
   wrapper.dataset.sourceId=source.id;
   select.setAttribute('aria-label','Mover '+name+' a otra carpeta');
   select.title='Mover a una carpeta de este navegador';
-  select.append(new Option('Sin carpeta asignada',''));
+  const unassigned=new Option('Sin carpeta asignada','');unassigned.disabled=true;select.append(unassigned);
   for(const id of state.categories)select.append(new Option(folderName('default',id),'default:'+id));
   for(const folder of Object.keys(folders))select.append(new Option(folder,'manual:'+folder));
   const currentManual=Object.entries(folders).find(([,ids])=>ids.includes(source.id))?.[0];
@@ -520,8 +543,7 @@ function decorateSources(){
    if(!target.startsWith('default:')&&!target.startsWith('manual:'))return;
    const oldFolders=JSON.stringify(folders),oldDefaults=JSON.stringify(defaults);
    for(const id of state.categories){
-    const old=defaults[id]||{};
-    defaults[id]={...old,sources:folderSources('default',id).filter(x=>x!==source.id)};
+    defaults[id]=defaultSourceSelection(id,folderSources('default',id).filter(x=>x!==source.id));
    }
    for(const ids of Object.values(folders)){
     const pos=ids.indexOf(source.id);if(pos>=0)ids.splice(pos,1);
@@ -529,7 +551,7 @@ function decorateSources(){
    if(target.startsWith('default:')){
     const id=target.slice(8);
     if(!state.categories.includes(id))return;
-    defaults[id].sources.push(source.id);
+    defaults[id]=defaultSourceSelection(id,[...defaults[id].sources,source.id]);
    }else{
     const name=target.slice(7);
     if(!Object.prototype.hasOwnProperty.call(folders,name))return;
@@ -634,7 +656,7 @@ function mountSourceImport(){
     const existing=groups.find(group=>group.name.toLocaleLowerCase('es')===row.folder.toLocaleLowerCase('es'));
     if(existing?.key.startsWith('default:')){
      const id=existing.key.slice(8),old=nextDefaults[id]||{};
-     nextDefaults[id]={...old,sources:[...new Set([...(old.sources||folderSources('default',id)),row.id])]};
+     nextDefaults[id]=defaultSourceSelection(id,[...defaultSourceIds(id,old),row.id],old);
     }else{
      const name=existing?.name||row.folder;
      if(!Object.hasOwn(nextFolders,name)&&Object.keys(nextFolders).length>=25)throw Error('Máximo de 25 carpetas personales. Libera una carpeta o ajusta el OPML.');

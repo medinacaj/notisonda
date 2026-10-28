@@ -540,6 +540,55 @@ class DimensionRegressions(unittest.TestCase):
             allowed={item['id'] for item in fixtures.ITEMS if 'medio-0' in item['source_ids']}
             self.assertTrue(set(ids)<=allowed)
 
+    def test_default_folders_receive_new_catalog_sources_after_a_move_and_reload(self):
+        self.open_source_settings()
+        self.page.locator('#settingsSources [data-source-id="medio-0"] .library-source-folder').select_option('default:'+fixtures.CATEGORIES[1])
+        source={**fixtures.SOURCES[0],'id':'new-published','name':'Nueva fuente publicada','url':'https://new-published.example/rss'}
+        updated={**fixtures.RESPONSES['sources.json'],'sources':[*fixtures.SOURCES,source]}
+        self.page.evaluate("""source=>{
+            const stamp=new Date(Date.now()+1000).toISOString();
+            pendingPublication={meta:{version:2,generated_at:stamp,total_articles:state.items.length,archive_files:[]},sources:{sources:[...state.sources,source],categories:state.categories},latest:{items:state.items},status:{checked_at:stamp,feeds:[]}};
+            applyPendingPublication();
+        }""",source)
+        def check():
+            group=self.page.evaluate('(cat)=>RadarLibrary.getSourceGroups().find(g=>g.key==="default:"+cat)',fixtures.CATEGORIES[0])
+            self.assertIn('new-published',group['ids'])
+            self.assertNotIn('medio-0',group['ids'])
+        check()
+        self.page.route('**/data/sources.json',lambda route:route.fulfill(status=200,content_type='application/json',body=json.dumps(updated)))
+        self.page.reload();self.page.wait_for_function('()=>state.ready');check()
+
+    def test_default_folder_import_preserves_future_auto_membership_and_exclusions(self):
+        self.open_source_settings()
+        # Make a deliberate removal from the original category before importing there.
+        self.page.locator('#settingsSources [data-source-id="medio-0"] .library-source-folder').select_option('default:'+fixtures.CATEGORIES[1])
+        xml=('<opml><body><outline text="Inteligencia Artificial"><outline xmlUrl="https://example.com/rss"/></outline></body></opml>').encode()
+        self.page.locator('#importOPML').set_input_files({'name':'known.opml','mimeType':'application/xml','buffer':xml})
+        self.page.locator('#applySourceImport').click()
+        # A fresh source inherits its original default category even after an explicit selection.
+        self.page.evaluate("""()=>{
+            state.sources.push({...state.sources[0],id:'future-after-import',name:'Después de importar',url:'https://after-import.example/rss'});
+            renderSettingsSources();
+        }""")
+        group=self.page.evaluate('(cat)=>RadarLibrary.getSourceGroups().find(g=>g.key==="default:"+cat)',fixtures.CATEGORIES[0])
+        self.assertIn('future-after-import',group['ids'])
+        self.assertIn('medio-0',group['ids'])
+
+    def test_unassigned_source_option_cannot_claim_a_move_without_changing_membership(self):
+        self.open_source_settings()
+        select=self.page.locator('#settingsSources [data-source-id="medio-0"] .library-source-folder')
+        self.assertTrue(select.locator('option[value=""]').evaluate('node=>node.matches(":disabled")'))
+        select.focus();self.page.keyboard.press('Home')
+        expect(select).to_have_value('default:'+fixtures.CATEGORIES[0])
+
+    def test_legacy_default_folder_selections_preserve_exclusions_and_allow_future_sources(self):
+        self.page.evaluate('()=>localStorage.setItem("radar-default-folders-v1",JSON.stringify({[state.categories[0]]:{sources:[]}}))')
+        self.page.reload();self.page.wait_for_function('()=>state.ready')
+        self.page.evaluate('()=>{state.sources.push({...state.sources[0],id:"after-legacy",url:"https://after-legacy.example/rss"});}')
+        group=self.page.evaluate('(cat)=>RadarLibrary.getSourceGroups().find(g=>g.key==="default:"+cat)',fixtures.CATEGORIES[0])
+        self.assertIn('after-legacy',group['ids'])
+        self.assertNotIn('medio-0',group['ids'])
+
     def test_opml_nested_atom_duplicate_and_size_limits_are_explicit(self):
         result=self.page.evaluate("""()=>{
             const xml='<opml><body><outline text="A"><outline text="B"><outline type="atom" title="Atom" xmlUrl="https://example.com/rss"/><outline xmlUrl="https://example.com/rss"/></outline></outline></body></opml>';

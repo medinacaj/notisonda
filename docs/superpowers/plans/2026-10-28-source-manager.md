@@ -36,6 +36,6 @@
 - [x] Documentar resultados/alcance Feedly/limitaciones y versionar shell/caché; revisar diff y commit.
 
 ### Task 3: Revisión e integración
-- [ ] Una revisión independiente final del diff contra base; resolver hallazgos importantes con RED→GREEN y suite completa, sin segunda revisión.
+- [x] Una revisión independiente final del diff contra base; resolver hallazgos importantes con RED→GREEN y suite completa, sin segunda revisión.
 - [ ] PR/CI exacta, integrar/publicar con autorización persistente; comprobar assets/datos web y árbol local limpio/equivalente.
 - [ ] Informar funciones reales y límites (importación de desconocidas necesita catálogo público; sin sincronización).
