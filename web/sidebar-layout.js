@@ -5,6 +5,15 @@
    At <=950px the mobile layout owns the navigation; stored desktop width survives.
 */
 (() => {
+  const navigationToggle=document.getElementById('sidebarNavigationToggle');
+  const navigationContent=document.getElementById('sidebarCoreContent');
+  if(navigationToggle&&navigationContent){
+    navigationToggle.addEventListener('click',()=>{
+      const expanded=navigationContent.hidden;
+      navigationContent.hidden=!expanded;
+      navigationToggle.setAttribute('aria-expanded',String(expanded));
+    });
+  }
   const KEY='radar-sidebar-width';
   const DEFAULT_WIDTH=310;
   const MIN_WIDTH=240;
