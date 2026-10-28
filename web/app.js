@@ -13,7 +13,7 @@ function initialTheme(){
   return 'system';
 }
 const state = {
-  sources: [], categories: [], items: [], health: [], generated: null,
+  sources: [], categories: [], items: [], health: [], healthCheckedAt:null, generated: null,
   feedMeta:null,historyLoaded:false,historyLoading:false,historyFailed:false,
   pageView: 'dashboard', category: 'all', feed: '', mode: 'all', layout: storeGet('radar-layout') === 'list' ? 'list' : 'cards',
   theme: initialTheme(),
@@ -320,18 +320,19 @@ function selectedTab(name) {
   if(scroll)scroll.scrollTop=0;
   if(name==='health')renderFeedHealth();
   if(name==='data')updateDataCounts();
+  if(name==='sources')renderSettingsSources();
 }
 function updateDataCounts(){
   $('dataSavedCount').textContent=state.saved.size;
   $('dataReadCount').textContent=state.read.size;
-  $('dataMutedCount').textContent=state.hiddenSources.size;
+  $('dataMutedCount').textContent=state.sources.filter(source=>state.hiddenSources.has(source.id)).length;
 }
 function renderFeedHealth(){
   const total=state.health.length,ok=state.health.filter(x=>x.state==='ok').length,
     empty=state.health.filter(x=>x.state==='empty').length,
     broken=state.health.filter(x=>x.state==='error').length,
     stale=state.health.filter(x=>x.state==='stale').length;
-  $('healthSummary').textContent=total?`${ok} de ${total} fuentes se leyeron bien · ${broken} no disponibles · ${empty} sin noticias · ${stale} sin novedades hace más de un año`:'';
+  $('healthSummary').textContent=total?`${ok} de ${total} fuentes se leyeron bien · ${broken} no disponibles · ${empty} sin noticias · ${stale} sin novedades hace más de un año`+(state.healthCheckedAt?' · Chequeo: '+shortDate(state.healthCheckedAt):''):'';
   const list=$('healthFeedList');list.replaceChildren();
   const issues=state.health.filter(x=>x.state!=='ok');
   if(!issues.length){list.append(mk('p','setting-hint',total?'Sin incidencias detectadas en la última actualización.':'Aún no hay un diagnóstico disponible.'));return;}
@@ -341,21 +342,31 @@ function renderFeedHealth(){
     const meta=mk('small','',feedProblemLabel(source));
     const detail=mk('span','',friendlyFeedProblem(source));
     if(source.error)detail.title='Detalle técnico: '+source.error;
-    row.append(heading,meta,detail);list.append(row);
+    row.append(heading,meta,detail);
+    const catalog=state.sources.find(item=>item.id===source.id),url=RadarSourceTools.feedKey(catalog?.url);
+    if(url){const a=link(url,url,'source-rss-url');a.referrerPolicy='no-referrer';row.append(a);}
+    list.append(row);
   }
+}
+function settingsSourceGroups(){
+  return window.RadarLibrary?.getSourceGroups?.()||state.categories.map(category=>({key:'default:'+category,name:categoryLabel(category),ids:state.sources.filter(source=>source.category===category).map(source=>source.id)}));
 }
 function renderCategoryToggles(){
   const area=$('settingsCategories');area.replaceChildren();
-  for(const category of state.categories){
-    const sources=state.sources.filter(x=>x.category===category);
+  for(const group of settingsSourceGroups()){
+    const ids=new Set(group.ids),sources=state.sources.filter(x=>ids.has(x.id));
     const visible=sources.filter(x=>!state.hiddenSources.has(x.id)).length;
-    const btn=mk('button','settings-category-toggle',`${categoryLabel(category)} · ${visible}/${sources.length}`);
-    btn.type='button';btn.setAttribute('aria-label',`Alternar categoría ${categoryLabel(category)}`);
+    const btn=mk('button','settings-category-toggle',`${group.name} · ${visible}/${sources.length}`);
+    btn.type='button';btn.dataset.sourceGroup=group.key;
+    btn.setAttribute('aria-label',`${visible===sources.length?'Ocultar':'Mostrar'} las fuentes de ${group.name}`);
+    btn.disabled=!sources.length;
     btn.addEventListener('click',()=>{
-      if(visible===sources.length) sources.forEach(x=>state.hiddenSources.add(x.id));
+      const allVisible=sources.every(x=>!state.hiddenSources.has(x.id));
+      if(allVisible) sources.forEach(x=>state.hiddenSources.add(x.id));
       else sources.forEach(x=>state.hiddenSources.delete(x.id));
       persist('radar-hidden-sources',state.hiddenSources);
       state.page=1;refreshFeedUI();renderSettingsSources();
+      area.querySelector(`[data-source-group="${CSS.escape(group.key)}"]`)?.focus({preventScroll:true});
     });area.append(btn);
   }
 }
@@ -385,31 +396,47 @@ function syncSettings() {
   selectedTab('appearance');
 }
 function renderSettingsSources() {
-  const search=stripAccents($('settingsSourceSearch').value.trim());
+  const focusRow=document.activeElement?.closest('#settingsSources [data-source-id]');
+  const focusId=focusRow?.dataset.sourceId;
+  const focusSelector=document.activeElement?.matches('select')?'.library-source-folder':document.activeElement?.matches('.source-row-actions button')?'.'+document.activeElement.className.split(' ')[0]:'input[type="checkbox"]';
+  const groups=settingsSourceGroups(),foldersById=new Map();
+  for(const group of groups)for(const id of group.ids){
+    if(!foldersById.has(id))foldersById.set(id,[]);
+    foldersById.get(id).push(group.name);
+  }
   const list=$('settingsSources'); list.replaceChildren();
-  const ordered=state.sources.slice().sort((a,b)=>a.category.localeCompare(b.category,'es') || a.name.localeCompare(b.name,'es'));
+  const ordered=RadarSourceTools.filterSources(state.sources,{
+    query:$('settingsSourceSearch').value,visibility:$('settingsSourceVisibility').value,
+    status:$('settingsSourceStatus').value,type:$('settingsSourceType').value,
+    hiddenIds:state.hiddenSources,healthById:new Map(state.health.map(row=>[row.id,row])),foldersById
+  }).sort((a,b)=>a.name.localeCompare(b.name,'es')||a.id.localeCompare(b.id));
   let displayed=0;
   for (const source of ordered) {
-    if (search && !stripAccents(source.name + ' ' + categoryLabel(source.category)).includes(search)) continue;
     displayed++;
     const label=mk('label','settings-source-row');
+    label.dataset.sourceId=source.id;
     const checkbox=document.createElement('input'); checkbox.type='checkbox'; checkbox.checked=!state.hiddenSources.has(source.id);
     checkbox.setAttribute('aria-label','Mostrar '+source.name);
-    const line=mk('span','settings-source-details'); line.append(mk('span','settings-source-name',sourceLabel(source.name)),mk('small','',categoryLabel(source.category)));
+    const line=mk('span','settings-source-details'); line.append(mk('span','settings-source-name',sourceLabel(source.name)),mk('small','source-original-category',categoryLabel(source.category)));
     label.append(checkbox,line); list.append(label);
     checkbox.addEventListener('change',()=>{
       if (checkbox.checked) state.hiddenSources.delete(source.id); else state.hiddenSources.add(source.id);
       persist('radar-hidden-sources',state.hiddenSources);
       state.page=1; refreshFeedUI();
-      updateSettingsSourceCount(displayed);
+      renderSettingsSources();
     });
   }
   updateSettingsSourceCount(displayed);
+  if(!displayed){const empty=mk('p','setting-hint','No hay fuentes con estos filtros. Prueba otra búsqueda o selecciona Todas las fuentes.');empty.id='sourceSearchEmpty';list.append(empty);}
   renderCategoryToggles();
+  if(focusId)queueMicrotask(()=>{
+    const row=list.querySelector(`[data-source-id="${CSS.escape(focusId)}"]`);
+    (row?.querySelector(focusSelector)||$('settingsSourceSearch')).focus({preventScroll:true});
+  });
 }
 function updateSettingsSourceCount(visibleInSearch) {
   const visible=state.sources.filter(x=>!state.hiddenSources.has(x.id)).length;
-  $('settingsSourceCount').textContent=`${visible} de ${state.sources.length} fuentes activas en este navegador · ${visibleInSearch} en esta búsqueda`;
+  $('settingsSourceCount').textContent=`${visible} visibles de ${state.sources.length} en el catálogo · ${visibleInSearch} resultados`;
 
 }
 function initSettingsHandlers(){
@@ -446,16 +473,18 @@ function initSettingsHandlers(){
   $('settingSort').addEventListener('change',e=>{state.sort=e.target.value;savePref('sort',state.sort);state.page=1;render();});
   $('settingStartMode').addEventListener('change',e=>{state.startMode=e.target.value;savePref('start-mode',state.startMode);state.mode=state.startMode;state.page=1;render();});
   $('settingKeywords').addEventListener('input',e=>{state.mutedKeywords=e.target.value.slice(0,600);savePref('keywords',state.mutedKeywords);state.page=1;render();});
-  $('settingsSourceSearch').addEventListener('input',renderSettingsSources);
+  $('settingsSourceSearch').addEventListener('input',()=>renderSettingsSources());
+  for(const id of ['settingsSourceVisibility','settingsSourceStatus','settingsSourceType'])$(id).addEventListener('change',()=>renderSettingsSources());
   $('showAllSources').addEventListener('click',()=>{state.hiddenSources.clear();persist('radar-hidden-sources',state.hiddenSources);state.page=1;refreshFeedUI();renderSettingsSources();});
   $('exportOPML').addEventListener('click',()=>{
-    let lines=['<?xml version="1.0" encoding="UTF-8"?>','<opml version="2.0"><head><title>Mis fuentes Radar RSS</title></head><body>'];
-    for(const category of state.categories){
-      lines.push(`<outline text="${escapeXML(category)}">`);
-      for(const f of state.sources.filter(x=>x.category===category&&!state.hiddenSources.has(x.id))){
-        lines.push(`<outline type="rss" text="${escapeXML(f.name)}" title="${escapeXML(f.name)}" xmlUrl="${escapeXML(f.url)}" htmlUrl="${escapeXML(f.website||'')}"/>`);
-      }lines.push('</outline>');
-    }lines.push('</body></opml>');downloadText('radar-rss-mis-fuentes.opml',lines.join('\n'),'application/xml;charset=utf-8');
+    downloadText('radar-rss-mis-fuentes.opml',RadarSourceTools.buildOPML(settingsSourceGroups(),state.sources,state.hiddenSources),'application/xml;charset=utf-8');
+  });
+  $('exportSourceCatalog').addEventListener('click',()=>{
+    const groups=settingsSourceGroups(),health=new Map(state.health.map(row=>[row.id,row]));
+    const rows=state.sources.map(source=>({id:source.id,name:source.name,rss:source.url,website:source.website,
+      folders:groups.filter(group=>group.ids.includes(source.id)).map(group=>group.name).join(' | ')||'Sin carpeta',
+      visible:!state.hiddenSources.has(source.id),type:RadarSourceTools.sourceKind(source)==='radar'?'RADAR · Google Noticias':'RSS directo',status:RadarSourceTools.healthState(health.get(source.id))}));
+    downloadText('radar-rss-catalogo.csv',RadarSourceTools.buildCSV(rows),'text/csv;charset=utf-8');
   });
   $('exportData').addEventListener('click',()=>{
     const data={format:'radar-rss-settings-v2',exported_at:new Date().toISOString(),preferences:{theme:state.theme,layout:state.layout,columns:state.columns,density:state.density,pageSize:state.pageSize,maxAge:state.maxAge,fontSize:state.fontSize,cardTitleSize:state.cardTitleSize,showImages:state.showImages,showSummaries:state.showSummaries,hideRead:state.hideRead,newTab:state.newTab,sort:state.sort,startMode:state.startMode,mutedKeywords:state.mutedKeywords},hiddenSources:[...state.hiddenSources],saved:[...state.saved],read:[...state.read]};
@@ -486,9 +515,11 @@ function initSettingsHandlers(){
     if(!confirm('¿Restablecer las preferencias? Tus artículos leídos y guardados no se borrarán.'))return;
     let agendaResetFailed=false;
     try{if(window.RadarAgenda)window.RadarAgenda.restorePreferences({...window.RadarAgenda.exportPreferences(),view:'list'});}catch{agendaResetFailed=true;}
-    for(const key of ['layout','columns','theme','density','font','card-title-size','page-size','max-age','show-hero','show-images','show-summaries','hide-read','new-tab','sort','start-mode','keywords','hidden-sources','sidebar-width','theme-explicit']){try{localStorage.removeItem('radar-'+key);}catch{}}
+    for(const key of ['layout','columns','theme','density','font','card-title-size','page-size','max-age','show-hero','show-images','show-summaries','hide-read','new-tab','sort','start-mode','keywords','hidden-sources','sidebar-width','theme-explicit','lite']){try{localStorage.removeItem('radar-'+key);}catch{}}
     state.theme=initialTheme();state.layout='cards';state.columns='auto';state.density='comfortable';state.fontSize='normal';state.cardTitleSize=16;state.pageSize=36;state.maxAge=0;
     state.showImages=true;state.showSummaries=true;state.hideRead=false;state.newTab=true;state.sort='newest';state.startMode='all';state.mode='all';state.mutedKeywords='';state.hiddenSources.clear();state.page=1;
+    state.lite=false;savePref('lite',false);document.body.classList.remove('lite');
+    for(const id of ['settingsSourceVisibility','settingsSourceStatus','settingsSourceType'])$(id).value='all';
     setTheme(state.theme);applyDisplaySettings();$('settingsSourceSearch').value='';refreshFeedUI();syncSettings();selectedTab('data');$('dataNotice').textContent=agendaResetFailed?'Preferencias restablecidas. No se pudo guardar la vista de agenda; tus actividades se conservan.':'Preferencias restablecidas.';
     window.dispatchEvent(new Event('radar-sidebar-pref-sync'));
   });
@@ -718,7 +749,8 @@ function openFeedHealth() {
       if(source.last_success_at)extra.push('Última lectura correcta: '+shortDate(source.last_success_at));
       if(source.error)extra.push('Detalle técnico: '+source.error);
       if(extra.length)row.append(mk('p','feed-health-tech',extra.join(' · ')));
-      const original=safeURL(source.url||source.xmlUrl||source.xml_url||'');
+      const catalog=state.sources.find(item=>item.id===source.id);
+      const original=RadarSourceTools.feedKey(catalog?.url||source.url||source.xmlUrl||source.xml_url||'');
       if(original){
         const a=link(original,'Consultar fuente RSS','feed-health-source-link');a.append(svgIcon('external'));
         row.append(a);
@@ -1507,13 +1539,14 @@ function applyPendingPublication(){
   // Cambiar todo antes de renderizar; cualquier descarga antigua de historial
   // queda invalidada por la identidad de feedMeta sin cerrar el lector abierto.
   state.sources=sources.sources;state.categories=sources.categories;
-  state.items=latest.items;state.health=status.feeds;
+  state.items=latest.items;state.health=status.feeds;state.healthCheckedAt=status.checked_at||null;
   state.feedMeta=meta;state.generated=meta.generated_at;
   state.historyLoaded=false;state.historyFailed=false;
   historyAbort?.abort();pendingPublication=null;
   $('publicationNotice').hidden=true;
   updateScheduleProgress();
   buildNav();fillSelect();updateHeader();statusSummary();render();
+  if($('settingsDialog').open){renderSettingsSources();renderFeedHealth();updateDataCounts();}
   publishNewRSSNews(previousIds);
 }
 
@@ -1533,7 +1566,7 @@ async function boot() {
     state.sources=Array.isArray(sources.sources)?sources.sources:[];
     state.categories=Array.isArray(sources.categories)?sources.categories:[];
     state.items=Array.isArray(articles.items)?articles.items:[];
-    state.health=Array.isArray(status.feeds)?status.feeds:[];
+    state.health=Array.isArray(status.feeds)?status.feeds:[];state.healthCheckedAt=status.checked_at||null;
     state.generated=articles.generated_at;
     try{state.feedMeta=await dataFetch('./data/meta.json');}catch{state.feedMeta=null;state.historyLoaded=true;}
     state.ready=true;

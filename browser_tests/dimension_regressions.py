@@ -383,5 +383,249 @@ class DimensionRegressions(unittest.TestCase):
                 expect(self.page.locator('#dashboardView')).to_be_visible()
                 self.page.screenshot(path=str(output/f'{theme}-{width}.png'),full_page=True,animations='disabled')
 
+    def open_source_settings(self):
+        self.page.locator('#settingsButton').click()
+        self.page.locator('[data-settings-tab="sources"]').click()
+
+    def test_source_addresses_search_filters_and_stable_identity(self):
+        self.page.evaluate("""()=>{
+            state.sources[1]={...state.sources[1],name:state.sources[0].name,category:state.sources[0].category,url:'https://second.example/atom',website:'https://second.example',is_radar:true};
+            state.health=[{id:state.sources[0].id,state:'ok',last_success_at:new Date().toISOString()},{id:state.sources[1].id,state:'error',error:'HTTP 404'}];
+        }""")
+        self.open_source_settings()
+        first=self.page.locator('#settingsSources [data-source-id="medio-0"]')
+        second=self.page.locator('#settingsSources [data-source-id="medio-1"]')
+        expect(first.locator('.source-rss-url')).to_have_text('https://example.com/rss')
+        expect(second.locator('.source-rss-url')).to_have_text('https://second.example/atom')
+        expect(second.locator('.source-health')).to_contain_text('No disponible')
+        second.locator('input[type="checkbox"]').uncheck()
+        self.assertEqual(self.page.evaluate('[...state.hiddenSources]'),['medio-1'])
+        self.page.locator('#settingsSourceSearch').fill('second.example/atom')
+        expect(self.page.locator('#settingsSources .library-source-row')).to_have_count(1)
+        self.page.locator('#settingsSourceVisibility').select_option('visible')
+        expect(self.page.locator('#settingsSources .library-source-row')).to_have_count(0)
+        expect(self.page.locator('#sourceSearchEmpty')).to_be_visible()
+        self.page.locator('#settingsSourceVisibility').select_option('hidden')
+        self.page.locator('#settingsSourceStatus').select_option('error')
+        self.page.locator('#settingsSourceType').select_option('radar')
+        expect(second).to_be_visible()
+        self.page.evaluate('()=>{window.copiedRSS="";Object.defineProperty(navigator,"clipboard",{configurable:true,value:{writeText:async value=>{window.copiedRSS=value;}}});}')
+        second.locator('.source-copy-rss').click()
+        self.assertEqual(self.page.evaluate('window.copiedRSS'),'https://second.example/atom')
+        expect(second.locator('input[type="checkbox"]')).not_to_be_checked()
+
+    def test_source_folder_toggle_refreshes_counts_after_individual_change(self):
+        self.page.evaluate('()=>{state.sources[1].category=state.sources[0].category;}')
+        self.open_source_settings()
+        self.page.locator('#settingsSources [data-source-id="medio-0"] input[type="checkbox"]').uncheck()
+        category=self.page.locator('#settingsCategories button').first
+        expect(category).to_contain_text('1/2')
+        category.click()
+        self.assertFalse(self.page.evaluate('state.hiddenSources.has("medio-0")||state.hiddenSources.has("medio-1")'))
+        expect(category).to_contain_text('2/2')
+
+    def test_personal_source_folders_export_their_real_names_and_memberships(self):
+        self.page.evaluate("""()=>{
+            localStorage.setItem('radar-source-folders-v1',JSON.stringify({'Mi investigación':['medio-0']}));
+            localStorage.setItem('radar-default-folders-v1',JSON.stringify({[state.categories[0]]:{name:'Lecturas IA',sources:[]}}));
+        }""")
+        self.page.reload();self.open_source_settings()
+        row=self.page.locator('#settingsSources [data-source-id="medio-0"]')
+        expect(row.locator('.source-folder-caption')).to_contain_text('Mi investigación')
+        self.page.evaluate('()=>{window.downloads=[];downloadText=(name,body,mime)=>window.downloads.push({name,body,mime});}')
+        self.page.locator('#exportOPML').click()
+        xml=self.page.evaluate('window.downloads.at(-1).body')
+        self.assertIn('Mi investigación',xml)
+        parsed=self.page.evaluate('(xml)=>RadarSourceTools.readOPML(xml)',xml)
+        self.assertTrue(any(x['folder']=='Mi investigación' and x['url']=='https://example.com/rss' for x in parsed))
+        row.locator('.library-source-folder').select_option('default:'+fixtures.CATEGORIES[1])
+        expect(row.locator('.source-folder-caption')).to_contain_text('Tecnología')
+        self.page.locator('#settingsSourceSearch').fill('Tecnología')
+        expect(self.page.locator('#settingsSources [data-source-id="medio-0"]')).to_be_visible()
+        self.page.locator('#exportSourceCatalog').click()
+        self.assertIn('URL RSS',self.page.evaluate('window.downloads.at(-1).body'))
+
+    def test_opml_import_previews_cancels_and_only_applies_known_feeds(self):
+        self.open_source_settings()
+        xml=b'<opml version="2.0"><body><outline text="Feedly"><outline text="Known" xmlUrl="https://example.com/rss"/><outline text="Other" xmlUrl="https://unknown.example/rss"/><outline text="Unsafe" xmlUrl="javascript:alert(1)"/></outline></body></opml>'
+        before=self.page.evaluate('JSON.stringify([...state.hiddenSources])')
+        self.page.locator('#importOPML').set_input_files({'name':'feedly.opml','mimeType':'application/xml','buffer':xml})
+        expect(self.page.locator('#sourceImportPreview')).to_be_visible()
+        expect(self.page.locator('#sourceImportSummary')).to_contain_text('2 sin incorporar')
+        expect(self.page.locator('#sourceImportUnknown')).to_contain_text('unknown.example')
+        self.page.locator('#cancelSourceImport').click()
+        self.assertEqual(before,self.page.evaluate('JSON.stringify([...state.hiddenSources])'))
+        self.assertNotIn('Feedly',self.page.evaluate('localStorage.getItem("radar-source-folders-v1")||""'))
+        self.page.locator('#importOPML').set_input_files({'name':'feedly.opml','mimeType':'application/xml','buffer':xml})
+        self.page.locator('#applySourceImport').click()
+        expect(self.page.locator('#sourceImportNotice')).to_contain_text('aplicada')
+        self.assertEqual(len(self.page.evaluate('state.sources')),len(fixtures.SOURCES))
+        self.assertTrue(self.page.evaluate('JSON.parse(localStorage.getItem("radar-source-folders-v1")).Feedly.length>0'))
+        self.page.reload();self.open_source_settings()
+        expect(self.page.locator('#settingsSources [data-source-id="medio-0"] .source-folder-caption')).to_contain_text('Feedly')
+
+    def test_opml_rejects_malformed_entities_and_rolls_back_failed_storage(self):
+        self.open_source_settings()
+        for xml in ('<opml><body>', '<!DOCTYPE opml [<!ENTITY x "bad">]><opml><body/></opml>'):
+            self.page.locator('#importOPML').set_input_files({'name':'bad.opml','mimeType':'application/xml','buffer':xml.encode()})
+            expect(self.page.locator('#sourceImportNotice')).to_contain_text('No se pudo')
+            expect(self.page.locator('#sourceImportPreview')).to_be_hidden()
+        xml=b'<opml><body><outline text="Imported"><outline xmlUrl="https://example.com/rss"/></outline></body></opml>'
+        self.page.locator('#importOPML').set_input_files({'name':'ok.opml','mimeType':'application/xml','buffer':xml})
+        before=self.page.evaluate('JSON.stringify({folders:localStorage.getItem("radar-source-folders-v1"),defaults:localStorage.getItem("radar-default-folders-v1"),hidden:[...state.hiddenSources]})')
+        self.page.evaluate("""()=>{const original=Storage.prototype.setItem;window.restoreStorage=()=>{Storage.prototype.setItem=original;};
+            Storage.prototype.setItem=function(key,value){if(key==='radar-default-folders-v1')throw Error('blocked');return original.call(this,key,value);};}""")
+        self.page.locator('#applySourceImport').click()
+        expect(self.page.locator('#sourceImportNotice')).to_contain_text('No se pudo guardar')
+        self.assertEqual(before,self.page.evaluate('JSON.stringify({folders:localStorage.getItem("radar-source-folders-v1"),defaults:localStorage.getItem("radar-default-folders-v1"),hidden:[...state.hiddenSources]})'))
+        self.page.evaluate('window.restoreStorage()')
+
+    def test_source_folders_preserve_more_than_160_members_after_reload(self):
+        self.page.evaluate("""()=>{
+            localStorage.setItem('radar-source-folders-v1',JSON.stringify({'Grande':Array.from({length:200},(_,i)=>'source-'+i)}));
+        }""")
+        self.page.reload();self.open_source_settings()
+        self.page.evaluate('()=>{window.capture=null;downloadText=(name,body)=>window.capture=body;}')
+        self.page.locator('[data-settings-tab="data"]').click()
+        self.page.locator('#exportData').click()
+        self.assertEqual(len(json.loads(self.page.evaluate('window.capture'))['sourceFolders']['Grande']),200)
+
+    def test_source_health_views_resolve_rss_addresses_from_catalog_by_id(self):
+        self.page.evaluate("()=>{state.health=[{id:'medio-0',name:'Medio de referencia 0',state:'error',error:'HTTP 404'}];}")
+        self.page.locator('#settingsButton').click()
+        self.page.locator('[data-settings-tab="health"]').click()
+        expect(self.page.locator('#healthFeedList a')).to_have_attribute('href','https://example.com/rss')
+        self.page.locator('#settingsDone').click()
+        self.page.evaluate('openFeedHealth()')
+        expect(self.page.locator('#feedHealthIssues a')).to_have_attribute('href','https://example.com/rss')
+
+    def test_source_manager_updates_when_a_new_publication_changes_catalog(self):
+        self.open_source_settings()
+        self.page.locator('#settingsSourceSearch').fill('new.example')
+        self.page.evaluate("""()=>{
+            const stamp=new Date(Date.now()+1000).toISOString();
+            const source={...state.sources[0],id:'new-feed',name:'Una fuente nueva',url:'https://new.example/rss',website:'https://new.example'};
+            pendingPublication={meta:{version:2,generated_at:stamp,total_articles:state.items.length,archive_files:[]},sources:{sources:[...state.sources,source],categories:state.categories},latest:{items:state.items},status:{checked_at:stamp,feeds:[{id:'new-feed',state:'ok'}]}};
+            applyPendingPublication();
+        }""")
+        expect(self.page.locator('#settingsSources [data-source-id="new-feed"]')).to_be_visible()
+        expect(self.page.locator('#settingsSourceCount')).to_contain_text('1 resultados')
+
+    def test_source_portability_actions_precede_the_long_catalog(self):
+        self.open_source_settings()
+        export=self.page.locator('#exportOPML').bounding_box()
+        first=self.page.locator('#settingsSources .library-source-row').first.bounding_box()
+        self.assertLess(export['y'],first['y'])
+
+    def test_long_radar_url_stays_compact_and_full_address_is_available_in_details(self):
+        url='https://news.google.com/rss/search?q='+('region%20noticias%20'*40)
+        self.page.evaluate('(url)=>{state.sources[0].url=url;}',url)
+        self.open_source_settings();self.page.set_viewport_size({'width':320,'height':900})
+        row=self.page.locator('#settingsSources [data-source-id="medio-0"]')
+        self.assertLessEqual(row.locator('.source-rss-url').bounding_box()['height'],65)
+        expect(row.locator('.source-rss-url')).to_have_attribute('href',url)
+        row.locator('.library-source-details-trigger').click()
+        expect(self.page.locator('#librarySourceDetailsDialog')).to_contain_text(url)
+        self.page.locator('#librarySourceDetailsDialog button').last.click()
+
+    def test_source_news_action_keeps_the_requested_source_after_navigation(self):
+        for route in ('home','all'):
+            self.page.evaluate('(route)=>goTo(route)',route)
+            self.open_source_settings()
+            self.page.locator('#settingsSources [data-source-id="medio-0"] .source-view-news').click()
+            self.page.wait_for_function('()=>state.pageView==="feed"')
+            expect(self.page.locator('#sourceSelect')).to_have_value('medio-0')
+            ids=self.page.locator('#articleGrid .article-card').evaluate_all('nodes=>nodes.map(n=>n.dataset.articleId)')
+            self.assertTrue(ids)
+            allowed={item['id'] for item in fixtures.ITEMS if 'medio-0' in item['source_ids']}
+            self.assertTrue(set(ids)<=allowed)
+
+    def test_default_folders_receive_new_catalog_sources_after_a_move_and_reload(self):
+        self.open_source_settings()
+        self.page.locator('#settingsSources [data-source-id="medio-0"] .library-source-folder').select_option('default:'+fixtures.CATEGORIES[1])
+        source={**fixtures.SOURCES[0],'id':'new-published','name':'Nueva fuente publicada','url':'https://new-published.example/rss'}
+        updated={**fixtures.RESPONSES['sources.json'],'sources':[*fixtures.SOURCES,source]}
+        self.page.evaluate("""source=>{
+            const stamp=new Date(Date.now()+1000).toISOString();
+            pendingPublication={meta:{version:2,generated_at:stamp,total_articles:state.items.length,archive_files:[]},sources:{sources:[...state.sources,source],categories:state.categories},latest:{items:state.items},status:{checked_at:stamp,feeds:[]}};
+            applyPendingPublication();
+        }""",source)
+        def check():
+            group=self.page.evaluate('(cat)=>RadarLibrary.getSourceGroups().find(g=>g.key==="default:"+cat)',fixtures.CATEGORIES[0])
+            self.assertIn('new-published',group['ids'])
+            self.assertNotIn('medio-0',group['ids'])
+        check()
+        self.page.route('**/data/sources.json',lambda route:route.fulfill(status=200,content_type='application/json',body=json.dumps(updated)))
+        self.page.reload();self.page.wait_for_function('()=>state.ready');check()
+
+    def test_default_folder_import_preserves_future_auto_membership_and_exclusions(self):
+        self.open_source_settings()
+        # Make a deliberate removal from the original category before importing there.
+        self.page.locator('#settingsSources [data-source-id="medio-0"] .library-source-folder').select_option('default:'+fixtures.CATEGORIES[1])
+        xml=('<opml><body><outline text="Inteligencia Artificial"><outline xmlUrl="https://example.com/rss"/></outline></body></opml>').encode()
+        self.page.locator('#importOPML').set_input_files({'name':'known.opml','mimeType':'application/xml','buffer':xml})
+        self.page.locator('#applySourceImport').click()
+        # A fresh source inherits its original default category even after an explicit selection.
+        self.page.evaluate("""()=>{
+            state.sources.push({...state.sources[0],id:'future-after-import',name:'Después de importar',url:'https://after-import.example/rss'});
+            renderSettingsSources();
+        }""")
+        group=self.page.evaluate('(cat)=>RadarLibrary.getSourceGroups().find(g=>g.key==="default:"+cat)',fixtures.CATEGORIES[0])
+        self.assertIn('future-after-import',group['ids'])
+        self.assertIn('medio-0',group['ids'])
+
+    def test_unassigned_source_option_cannot_claim_a_move_without_changing_membership(self):
+        self.open_source_settings()
+        select=self.page.locator('#settingsSources [data-source-id="medio-0"] .library-source-folder')
+        self.assertTrue(select.locator('option[value=""]').evaluate('node=>node.matches(":disabled")'))
+        select.focus();self.page.keyboard.press('Home')
+        expect(select).to_have_value('default:'+fixtures.CATEGORIES[0])
+
+    def test_legacy_default_folder_selections_preserve_exclusions_and_allow_future_sources(self):
+        self.page.evaluate('()=>localStorage.setItem("radar-default-folders-v1",JSON.stringify({[state.categories[0]]:{sources:[]}}))')
+        self.page.reload();self.page.wait_for_function('()=>state.ready')
+        self.page.evaluate('()=>{state.sources.push({...state.sources[0],id:"after-legacy",url:"https://after-legacy.example/rss"});}')
+        group=self.page.evaluate('(cat)=>RadarLibrary.getSourceGroups().find(g=>g.key==="default:"+cat)',fixtures.CATEGORIES[0])
+        self.assertIn('after-legacy',group['ids'])
+        self.assertNotIn('medio-0',group['ids'])
+
+    def test_opml_nested_atom_duplicate_and_size_limits_are_explicit(self):
+        result=self.page.evaluate("""()=>{
+            const xml='<opml><body><outline text="A"><outline text="B"><outline type="atom" title="Atom" xmlUrl="https://example.com/rss"/><outline xmlUrl="https://example.com/rss"/></outline></outline></body></opml>';
+            const records=RadarSourceTools.readOPML(xml),match=RadarSourceTools.matchOPML(records,state.sources);
+            const errors=[];
+            for(const text of ['x'.repeat(1000001),'<opml><body>'+Array.from({length:1001},()=>'<outline xmlUrl="https://example.com/rss"/>').join('')+'</body></opml>']){
+                try{RadarSourceTools.readOPML(text);}catch(error){errors.push(error.message);}
+            }
+            return {records,match,errors};
+        }""")
+        self.assertEqual(result['records'][0]['folder'],'A / B')
+        self.assertEqual(result['match']['knownCount'],1)
+        self.assertEqual(result['match']['duplicates'],1)
+        self.assertEqual(len(result['errors']),2)
+
+    def test_reset_preferences_resets_lite_without_erasing_read_or_saved(self):
+        self.page.evaluate("()=>{state.lite=true;savePref('lite',true);document.body.classList.add('lite');state.read.add('keep-read');state.saved.add('keep-saved');}")
+        self.page.on('dialog',lambda dialog:dialog.accept())
+        self.page.locator('#settingsButton').click()
+        self.page.locator('[data-settings-tab="data"]').click()
+        self.page.locator('#resetSettings').click()
+        self.assertFalse(self.page.evaluate('state.lite||document.body.classList.contains("lite")'))
+        self.assertTrue(self.page.evaluate('state.read.has("keep-read")&&state.saved.has("keep-saved")'))
+        self.page.reload();self.page.locator('#settingsButton').click()
+        expect(self.page.locator('#settingLite')).not_to_be_checked()
+
+    def test_source_manager_is_readable_in_both_themes_on_small_screens(self):
+        self.open_source_settings()
+        for width in (320,768,1440):
+            self.page.set_viewport_size({'width':width,'height':900})
+            for theme in ('light','dark'):
+                self.page.evaluate('(theme)=>{setTheme(theme,true);state.fontSize="large";applyDisplaySettings();}',theme)
+                expect(self.page.locator('#settingsSources .source-rss-url').first).to_be_visible()
+                self.assertTrue(self.page.locator('#settingsPages').evaluate('n=>n.scrollWidth<=n.clientWidth+2'))
+                self.assertTrue(self.page.evaluate('document.documentElement.scrollWidth<=innerWidth+2'))
+        self.page.locator('#settingsSourceSearch').focus();self.page.keyboard.press('Tab')
+        expect(self.page.locator('#settingsSourceVisibility')).to_be_focused()
+
 
 if __name__=='__main__':unittest.main(verbosity=2)

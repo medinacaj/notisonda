@@ -27,7 +27,7 @@
   <link rel="alternate" type="application/rss+xml" title="Radar RSS · Lo más cubierto" href="./feeds/mas-cubierto.xml">
   <link rel="manifest" href="./manifest.webmanifest">
   <link rel="stylesheet" href="./styles.css?v=5.2.0">
-  <link rel="stylesheet" href="./library.css?v=1.7.2">
+  <link rel="stylesheet" href="./library.css?v=1.8.0">
   <link rel="stylesheet" href="./sidebar-layout.css?v=1.0.3">
   <link rel="stylesheet" href="./modal-layout.css?v=1.0.0">
   <link rel="stylesheet" href="./news-effects.css?v=1.0.0">
@@ -310,7 +310,7 @@
       </nav>
       <div class="settings-pages" id="settingsPages" tabindex="0" role="region" aria-label="Contenido de configuración, desplazable">
         <section class="settings-pane active" data-settings-pane="appearance" aria-label="Apariencia">
-          <h3>Apariencia</h3><p class="setting-hint">Personaliza cómo ves las noticias en todos los dispositivos desde cada navegador.</p>
+          <h3>Apariencia</h3><p class="setting-hint">Personaliza la lectura en este navegador. Para llevar tus ajustes a otro dispositivo, exporta e importa un respaldo en Datos y privacidad.</p>
           <div class="setting-grid editorial-primary-settings">
             <label class="setting-field" for="settingTheme"><span>Tema</span><select id="settingTheme"><option value="system">Automático (sistema)</option><option value="dark">Oscuro</option><option value="light">Claro</option></select></label>
             <label class="setting-field" for="settingFont"><span>Tamaño del texto</span><select id="settingFont" aria-describedby="settingFontHelp"><option value="normal">Normal</option><option value="large">Grande</option></select><small id="settingFontHelp">Se aplica en Inicio, Noticias, Agenda, Resumen y el lector.</small></label>
@@ -321,7 +321,7 @@
             </div>
           </div>
           <div class="settings-divider"></div>
-          <label class="setting-toggle"><span><b>Modo ligero</b><small>Para conexiones lentas: no descarga imágenes ni animaciones. Se activa solo si tu navegador indica ahorro de datos.</small></span><input id="settingLite" type="checkbox"></label>
+          <label class="setting-toggle"><span><b>Modo ligero</b><small>Evita descargar fotografías y reduce los efectos. Puedes activarlo a mano; en la primera visita también puede activarse por ahorro de datos o una conexión muy lenta. Tiene prioridad sobre Mostrar imágenes.</small></span><input id="settingLite" type="checkbox"></label>
           <label class="setting-toggle"><span><b>Mostrar imágenes</b><small>Ocultar fotografías para una lectura más limpia y rápida.</small></span><input id="settingImages" type="checkbox"></label>
           <label class="setting-toggle"><span><b>Mostrar resúmenes</b><small>Ver u ocultar los extractos de cada artículo.</small></span><input id="settingSummaries" type="checkbox"></label>
           <details class="settings-design-advanced" id="settingsDesignAdvanced">
@@ -354,6 +354,7 @@
             <label class="setting-field" for="settingSort"><span>Orden de noticias</span><select id="settingSort"><option value="newest">Más recientes primero</option><option value="oldest">Más antiguas primero</option><option value="source">Por fuente (A–Z)</option></select></label>
             <label class="setting-field" for="settingStartMode"><span>Al abrir la aplicación</span><select id="settingStartMode"><option value="all">Todas</option><option value="unread">Sin leer</option><option value="saved">Guardadas</option></select></label>
           </div>
+          <p class="setting-hint">La antigüedad filtra el archivo disponible: hasta 45 días o 5000 noticias. Elegir 90 días o Sin límite no amplía ese archivo. Las copias guardadas se conservan en este navegador.</p>
           <div class="settings-divider"></div>
           <label class="setting-toggle"><span><b>Ocultar artículos leídos</b><small>Solo aparecen los que aún no has abierto (excepto en Guardadas).</small></span><input id="settingHideRead" type="checkbox"></label>
           <label class="setting-toggle"><span><b>Abrir el artículo completo en pestaña nueva</b><small>La tarjeta abre primero una vista previa. Este ajuste se aplica al enlace del sitio original.</small></span><input id="settingNewTab" type="checkbox"></label>
@@ -363,10 +364,29 @@
           <h3>Mis fuentes</h3><p class="setting-hint">Elige los medios que quieres visualizar sin modificar el catálogo público.</p>
           <div class="setting-source-head"><div id="settingsSourceCount" class="settings-count" aria-live="polite"></div><button type="button" id="showAllSources" class="settings-secondary">Activar todas</button></div>
           <label for="settingsSourceSearch" class="sr-only">Buscar fuente</label><input type="search" id="settingsSourceSearch" class="settings-search" placeholder="Buscar entre las fuentes…" autocomplete="off">
+          <div class="source-filters">
+            <label for="settingsSourceVisibility">Visibilidad<select id="settingsSourceVisibility"><option value="all">Todas las fuentes</option><option value="visible">Visibles</option><option value="hidden">Ocultas</option></select></label>
+            <label for="settingsSourceStatus">Último chequeo<select id="settingsSourceStatus"><option value="all">Cualquier estado</option><option value="ok">Lectura correcta</option><option value="error">No disponibles</option><option value="empty">Sin noticias</option><option value="stale">Sin novedades</option><option value="unknown">Sin diagnóstico</option></select></label>
+            <label for="settingsSourceType">Tipo de canal<select id="settingsSourceType"><option value="all">RSS y RADAR</option><option value="direct">RSS directo</option><option value="radar">RADAR · Google Noticias</option></select></label>
+          </div>
+          <p class="setting-hint">Busca por nombre, carpeta, dominio o dirección RSS. Los enlaces largos muestran hasta tres líneas; puedes copiar la URL completa o verla en Detalles. Visible u oculta es tu preferencia personal; el estado corresponde a la última lectura del servidor, no a una comprobación en vivo.</p>
           <div id="settingsCategories" class="settings-category-actions"></div>
+          <div class="source-portability">
+            <button type="button" id="exportOPML" class="settings-secondary">Exportar fuentes visibles (OPML)</button>
+            <button type="button" id="exportSourceCatalog" class="settings-secondary">Exportar catálogo completo (CSV)</button>
+            <label class="settings-secondary upload-label" for="importOPML" tabindex="0" role="button">Importar desde Feedly u otro lector (OPML)</label><input type="file" id="importOPML" accept=".opml,.xml,text/xml,application/xml" hidden>
+          </div>
+          <p class="setting-hint">La importación reconoce fuentes que ya están en el catálogo y permite recuperar sus carpetas. Verás las que faltan antes de aplicar. El archivo se procesa solo en tu navegador.</p>
+          <section id="sourceImportPreview" class="source-import-preview" aria-label="Vista previa de importación OPML" hidden>
+            <h4>Revisar importación</h4><p id="sourceImportSummary" aria-live="polite"></p>
+            <ul id="sourceImportFolders"></ul>
+            <details><summary>Fuentes sin incorporar</summary><ul id="sourceImportUnknown"></ul></details>
+            <p class="setting-hint">Al aplicar se activan las fuentes reconocidas y se añaden a estas carpetas. Se conservan tus otras fuentes, carpetas y noticias guardadas.</p>
+            <div class="source-portability"><button type="button" id="applySourceImport" class="settings-secondary">Aplicar importación</button><button type="button" id="cancelSourceImport" class="settings-secondary">Cancelar</button><button type="button" id="exportSourceImportReport" class="settings-secondary">Descargar informe (CSV)</button></div>
+          </section>
+          <p id="sourceImportNotice" class="settings-notice" aria-live="polite"></p>
           <div id="settingsSources" class="settings-source-list" role="group" aria-label="Seleccionar fuentes visibles"></div>
           <p class="setting-admin">Para añadir o eliminar fuentes <strong>para todos los visitantes</strong>, hay que actualizar <a href="https://github.com/medinacaj/radar-rss-publico/blob/main/sources/feeds.opml" rel="noopener noreferrer" target="_blank">el OPML del repositorio</a>. Los cambios de este panel son personales.</p>
-          <button type="button" id="exportOPML" class="settings-secondary">Descargar OPML de mis fuentes visibles</button>
         </section>
         <section class="settings-pane" data-settings-pane="data" aria-label="Datos y privacidad" hidden>
           <h3>Datos y privacidad</h3><p class="setting-hint">No se solicita cuenta. Tus favoritos, lecturas y preferencias se almacenan en este navegador.</p>
@@ -391,8 +411,9 @@
   </div>
   <button id="backTop" class="back-to-top" type="button" aria-label="Volver arriba" title="Volver arriba" hidden><span data-icon="arrow-up" class="ui-icon-slot" aria-hidden="true"></span></button>
   <div id="actionToast" class="action-toast" role="status" aria-live="polite" aria-atomic="true" hidden></div>
-  <script src="./app.js?v=9.7.0" defer></script>
-  <script src="./library.js?v=1.9.0" defer></script>
+  <script src="./source-tools.js?v=1.0.0" defer></script>
+  <script src="./app.js?v=9.8.0" defer></script>
+  <script src="./library.js?v=2.0.0" defer></script>
   <script src="./sidebar-layout.js?v=1.2.3" defer></script>
   <script src="./news-effects.js?v=1.0.0" defer></script>
   <script src="./features.js?v=1.3.1" defer></script>
