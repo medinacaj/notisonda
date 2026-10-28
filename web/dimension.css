@@ -756,3 +756,73 @@ body.radar-hybrid.dimension .footer{
   body.radar-hybrid.dimension .sidebar-section-toggle,
   body.radar-hybrid.dimension .sidebar-section-chevron{transition:none}
 }
+
+
+/* Igualar las fichas cuando el medio no aporta una miniatura real.
+   Mantener una cubierta tipográfica identificada, nunca una foto inventada. */
+body.radar-hybrid.dimension #articleGrid.article-grid:not(.list-view)>.article-card.no-cover>.article-cover-placeholder{
+  display:flex;
+  align-items:center;justify-content:center;
+  width:100%;height:148px;min-height:148px;max-height:148px;flex:0 0 148px;
+  padding:15px 12px;overflow:hidden;
+  border:0;border-bottom:1px solid var(--line);border-radius:0;
+  background:linear-gradient(135deg,var(--surface2) 4%,color-mix(in srgb,var(--topic-ink,var(--accent)) 12%,var(--surface)) 100%);
+  color:var(--text);
+}
+body.radar-hybrid.dimension #articleGrid.article-grid:not(.list-view)>.article-card.no-cover>.article-cover-placeholder .article-cover-placeholder-inner{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:7px;max-width:100%;text-align:center;
+}
+body.radar-hybrid.dimension #articleGrid.article-grid:not(.list-view)>.article-card.no-cover>.article-cover-placeholder .article-cover-publisher{
+  display:block;color:var(--text);font-size:12px;font-weight:700;
+  max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+body.radar-hybrid.dimension #articleGrid.article-grid:not(.list-view)>.article-card.no-cover>.article-cover-placeholder .ui-icon{
+  display:block;width:24px;height:24px;color:var(--topic-ink,var(--accent));opacity:.9;
+}
+body.radar-hybrid.dimension #articleGrid.article-grid:not(.list-view)>.article-card.no-cover>.article-cover-placeholder .article-cover-note{
+  display:block;color:var(--muted);font-size:10px;
+}
+body.radar-hybrid.dimension.compact #articleGrid.article-grid:not(.list-view)>.article-card.no-cover>.article-cover-placeholder{
+  height:96px;min-height:96px;max-height:96px;flex-basis:96px;
+}
+body.radar-hybrid.dimension #articleGrid.article-grid.list-view>.article-card.no-cover>.article-cover-placeholder,
+body.radar-hybrid.dimension.hide-images #articleGrid .article-cover-placeholder,
+body.radar-hybrid.dimension.lite #articleGrid .article-cover-placeholder{
+  display:none;
+}
+/* Ajuste independiente del título de las fichas: no altera cuerpo ni lector. */
+body.radar-hybrid.dimension{--radar-card-title-size:16px}
+body.radar-hybrid.dimension[data-card-title-size="14"]{--radar-card-title-size:14px}
+body.radar-hybrid.dimension[data-card-title-size="15"]{--radar-card-title-size:15px}
+body.radar-hybrid.dimension[data-card-title-size="16"]{--radar-card-title-size:16px}
+body.radar-hybrid.dimension[data-card-title-size="17"]{--radar-card-title-size:17px}
+body.radar-hybrid.dimension[data-card-title-size="18"]{--radar-card-title-size:18px}
+body.radar-hybrid.dimension[data-card-title-size="19"]{--radar-card-title-size:19px}
+body.radar-hybrid.dimension[data-card-title-size="20"]{--radar-card-title-size:20px}
+body.radar-hybrid.dimension[data-card-title-size="21"]{--radar-card-title-size:21px}
+body.radar-hybrid.dimension[data-card-title-size="22"]{--radar-card-title-size:22px}
+body.radar-hybrid.dimension #articleGrid.article-grid .article-card .article-title{
+  font-size:var(--radar-card-title-size)!important;line-height:1.4;
+}
+body.radar-hybrid.dimension #dashboardFeature .article-card .article-title{
+  font-size:clamp(18px,calc(var(--radar-card-title-size) * 1.25),28px)!important;
+  line-height:1.32;
+}
+body.radar-hybrid.dimension #dashboardRecent .dashboard-recent-title,
+body.radar-hybrid.dimension #dashboardSavedPanel .dashboard-saved-title{
+  font-size:var(--radar-card-title-size)!important;line-height:1.36;
+}
+body.radar-hybrid.dimension .card-title-size-setting{
+  min-width:0;display:flex;flex-direction:column;gap:9px;
+}
+body.radar-hybrid.dimension .setting-title-size-heading{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+}
+body.radar-hybrid.dimension #cardTitleSizeValue{
+  flex:0 0 auto;color:var(--text);font-weight:700;font-size:13px;
+  font-variant-numeric:tabular-nums;
+}
+body.radar-hybrid.dimension #settingCardTitleSize{
+  width:100%;min-height:32px;cursor:pointer;accent-color:var(--accent);
+}

@@ -76,7 +76,7 @@ class LayoutRegressions(unittest.TestCase):
         self.assertTrue(page.locator('#appSidebar').is_visible())
         self.assertTrue(page.locator('.page').evaluate('node => node.inert'))
         self.assertTrue(page.evaluate("document.getElementById('appSidebar').contains(document.activeElement)"))
-        page.locator('#aboutButton').focus()
+        page.locator('#sidebarNavigationToggle').focus()
         page.keyboard.press('Tab')
         self.assertTrue(page.evaluate("document.getElementById('appSidebar').contains(document.activeElement)"))
         page.keyboard.press('Escape')

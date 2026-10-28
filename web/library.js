@@ -783,7 +783,7 @@ function mount(){
   $('exportData').addEventListener('click',e=>{
     e.preventDefault();e.stopImmediatePropagation();syncArchive();
     const obj={format:'radar-rss-settings-v3',exported_at:new Date().toISOString(),
-      preferences:{theme:state.theme,layout:state.layout,columns:state.columns,density:state.density,pageSize:state.pageSize,maxAge:state.maxAge,fontSize:state.fontSize,showHero:state.showHero,showImages:state.showImages,showSummaries:state.showSummaries,hideRead:state.hideRead,newTab:state.newTab,lite:state.lite,sort:state.sort,startMode:state.startMode,mutedKeywords:state.mutedKeywords,sidebarWidth:Number(storeGet('radar-sidebar-width'))||310},
+      preferences:{theme:state.theme,layout:state.layout,columns:state.columns,density:state.density,pageSize:state.pageSize,maxAge:state.maxAge,fontSize:state.fontSize,cardTitleSize:state.cardTitleSize,showHero:state.showHero,showImages:state.showImages,showSummaries:state.showSummaries,hideRead:state.hideRead,newTab:state.newTab,lite:state.lite,sort:state.sort,startMode:state.startMode,mutedKeywords:state.mutedKeywords,sidebarWidth:Number(storeGet('radar-sidebar-width'))||310},
       saved:[...state.saved],read:[...state.read],hiddenSources:[...state.hiddenSources],
       modules:backupModules(),savedArchive:[...archive.values()],sourceFolders:folders,folderDefaults:defaults,articleTags:tags};
     downloadText('radar-rss-respaldo-completo.json',JSON.stringify(obj,null,2),'application/json;charset=utf-8');
@@ -806,6 +806,7 @@ function mount(){
       state.pageSize=choose('pageSize',[12,24,36,60],36);
       state.maxAge=choose('maxAge',[0,1,7,30,90],0);
       state.fontSize=choose('fontSize',['normal','large'],'normal');
+      state.cardTitleSize=Number.isInteger(p.cardTitleSize)&&p.cardTitleSize>=14&&p.cardTitleSize<=22?p.cardTitleSize:16;
       for(const key of ['showHero','showImages','showSummaries','hideRead','newTab','lite'])if(typeof p[key]==='boolean')state[key]=p[key];
       state.sort=choose('sort',['newest','oldest','source'],'newest');
       state.startMode=choose('startMode',['all','unread','saved'],'all');
@@ -822,7 +823,7 @@ function mount(){
         try{localStorage.setItem('radar-sidebar-width',String(Math.round(Number(p.sidebarWidth))));}catch{}
         window.dispatchEvent(new Event('radar-sidebar-pref-sync'));
       }
-      for(const [key,value] of [['layout',state.layout],['columns',state.columns],['theme',state.theme],['density',state.density],['font',state.fontSize],['page-size',state.pageSize],['max-age',state.maxAge],['show-hero',state.showHero],['show-images',state.showImages],['show-summaries',state.showSummaries],['hide-read',state.hideRead],['new-tab',state.newTab],['lite',state.lite],['sort',state.sort],['start-mode',state.startMode],['keywords',state.mutedKeywords]])savePref(key,value);
+      for(const [key,value] of [['layout',state.layout],['columns',state.columns],['theme',state.theme],['density',state.density],['font',state.fontSize],['card-title-size',state.cardTitleSize],['page-size',state.pageSize],['max-age',state.maxAge],['show-hero',state.showHero],['show-images',state.showImages],['show-summaries',state.showSummaries],['hide-read',state.hideRead],['new-tab',state.newTab],['lite',state.lite],['sort',state.sort],['start-mode',state.startMode],['keywords',state.mutedKeywords]])savePref(key,value);
       restoreModules(modules);
       document.body.classList.toggle('lite',state.lite);
       window.dispatchEvent(new Event('radar-preferences-imported'));

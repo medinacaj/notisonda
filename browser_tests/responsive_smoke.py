@@ -105,7 +105,7 @@ def check_uniform_card_heights(page, label):
     for heights in rows:
         if max(heights)-min(heights)>2:
             raise AssertionError(f"{label}: cards in same row differ in height: {result}")
-    if result["maxImageHeight"]>153 or result["maxPlaceholderHeight"]>80:
+    if result["maxImageHeight"]>153 or result["maxPlaceholderHeight"]>153:
         raise AssertionError(f"{label}: image/placeholder unnecessarily tall: {result}")
 
 
@@ -468,7 +468,10 @@ def main():
                         assert page.locator("#articleGrid .article-card.unread-card").count() >= 1
                         assert page.locator("#articleGrid .article-card.no-excerpt").count() >= 1
                         placeholders=page.locator("#articleGrid .article-card.no-cover .article-cover-placeholder")
-                        expect(placeholders.first).to_be_hidden()
+                        expect(placeholders.first).to_be_visible()
+                        image_height=page.locator("#articleGrid .article-card .cover").first.evaluate("(el)=>el.getBoundingClientRect().height")
+                        fallback_height=placeholders.first.evaluate("(el)=>el.getBoundingClientRect().height")
+                        assert abs(image_height-fallback_height)<=1,(image_height,fallback_height)
                         assert placeholders.first.locator(".article-cover-publisher").inner_text()
                         expect(placeholders.first.locator(".article-cover-note")).to_have_text("Vista previa")
                         assert placeholders.first.locator("img").count() == 0
@@ -479,13 +482,28 @@ def main():
                             "(node) => getComputedStyle(node).boxShadow")
                         assert shadow_unread != "none", shadow_unread
                         check_uniform_card_heights(page, f"tarjetas {browser_name} {width}px")
+                        # El tamaño de los titulares se configura sin cambiar los resúmenes.
+                        page.locator("#settingsButton").click()
+                        size_control=page.locator("#settingCardTitleSize")
+                        expect(size_control).to_have_value("16")
+                        size_control.fill("14")
+                        expect(page.locator("#cardTitleSizeValue")).to_have_text("14 px")
+                        page.locator("#settingsDone").click()
+                        computed_title_size=page.locator("#articleGrid .article-title").first.evaluate("(el)=>getComputedStyle(el).fontSize")
+                        assert computed_title_size=="14px",computed_title_size
+                        page.reload(wait_until="load")
+                        page.locator("#settingsButton").click()
+                        expect(page.locator("#settingCardTitleSize")).to_have_value("14")
+                        page.locator("#settingCardTitleSize").fill("16")
+                        page.locator("#settingsDone").click()
+                        page.locator("#articleGrid .article-card").first.wait_for()
                         # Preferencia Compacto mantiene miniaturas y títulos acotados.
                         # Compacto debe ocultar los resúmenes; no basta con reducir imágenes.
                         page.evaluate("document.body.classList.add('compact')")
                         assert page.locator("#articleGrid .article-card .cover").first.evaluate(
                             "(node) => node.getBoundingClientRect().height") <= 101
                         assert placeholders.first.evaluate(
-                            "(node) => node.getBoundingClientRect().height") <= 61
+                            "(node) => node.getBoundingClientRect().height") <= 101
                         excerpt=page.locator("#articleGrid .article-card:not(.no-excerpt) .article-excerpt").first
                         assert excerpt.count() > 0
                         assert excerpt.evaluate("(node) => getComputedStyle(node).display") == "none"
