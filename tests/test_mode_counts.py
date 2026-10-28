@@ -27,7 +27,8 @@ class ModeCountTests(unittest.TestCase):
   self.assertNotIn('Seguimiento automático',self.html)
   self.assertNotIn('id="sidebarSources"',self.html)
   self.assertNotIn("('sidebarSources')",self.app)
-  self.assertIn('id="aboutButton"',self.html)
+  self.assertIn('id="footerInfo"',self.html)
+  self.assertNotIn('id="aboutButton"',self.html)
   self.assertIn('id="refreshCycle"',self.html)
  def test_cache_changed(self):
   self.assertRegex(self.html,r'<script src="\./app\.js\?v=[^"]+" defer></script>')
