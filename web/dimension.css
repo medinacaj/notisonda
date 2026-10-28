@@ -651,7 +651,7 @@ body.radar-hybrid.dimension .sidebar [data-topic="8"]{--topic-ink:#f3b8ec}
 body.radar-hybrid.dimension .sidebar #libraryFolderNav .nav-link[data-topic] .nav-glyph{
   color:var(--topic-ink);background:transparent;
 }
-/* Cabeceras compactas de los grupos. Pistas explícitas Abrir/Ocultar. */
+/* Cabeceras compactas con chevron como único indicador visible. */
 body.radar-hybrid.dimension .sidebar-navigation{padding-bottom:4px}
 body.radar-hybrid.dimension .sidebar-section-toggle{
   min-height:34px;padding:6px 8px;color:#f2f8ff;
@@ -659,13 +659,8 @@ body.radar-hybrid.dimension .sidebar-section-toggle{
   border-radius:6px;
 }
 body.radar-hybrid.dimension .sidebar-section-toggle>span:first-child{flex:1;min-width:0}
-body.radar-hybrid.dimension .sidebar-section-toggle::after{
-  content:"Mostrar";order:2;flex:0 0 auto;
-  font-size:10px;letter-spacing:0;font-weight:500;color:#b9d0e5;
-}
-body.radar-hybrid.dimension .sidebar-section-toggle[aria-expanded="true"]::after{content:"Ocultar"}
 body.radar-hybrid.dimension .sidebar-section-chevron{
-  order:3;flex:0 0 9px;width:9px;height:9px;margin:0 2px 0 3px;
+  order:2;flex:0 0 9px;width:9px;height:9px;margin:0 2px 0 3px;
   color:#92e7dc;border-width:2px;
 }
 body.radar-hybrid.dimension .sidebar-section-toggle:hover{
