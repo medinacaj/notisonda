@@ -329,7 +329,7 @@ def main():
                             content=page.locator('#'+content_id)
                             expect(toggle).to_have_attribute('aria-expanded','false')
                             expect(content).to_be_hidden()
-                            ensure_navigation(page)
+                            toggle.click()
                             expect(toggle).to_have_attribute('aria-expanded','true')
                             expect(content).to_be_visible()
                             toggle.click()
