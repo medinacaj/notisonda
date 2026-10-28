@@ -1,6 +1,6 @@
 {
-  "name": "Radar RSS — Noticias en un solo lugar",
-  "short_name": "Radar RSS",
+  "name": "Notisonda — Noticias en un solo lugar",
+  "short_name": "Notisonda",
   "description": "Lector público de noticias por RSS: lo más cubierto, temas en alza y resumen del día",
   "lang": "es",
   "start_url": "./#inicio",
