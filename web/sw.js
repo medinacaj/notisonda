@@ -1,8 +1,8 @@
-/* Radar RSS — lectura sin conexión.
+/* Notisonda — lectura sin conexión.
    Estrategia: primero la red (siempre lo más reciente); si no hay conexión, la última
    copia guardada. Solo se guardan archivos del propio sitio, nunca imágenes ni enlaces externos.
    Las URL se guardan sin parámetros (?v=, ?check=) para que la caché no crezca sin límite. */
-const CACHE = 'radar-rss-v55';
+const CACHE = 'notisonda-v1';
 const SHELL = [
   './', './index.html', './manifest.webmanifest', './favicon.svg', './radar-logo.png', './icon-maskable.svg',
   './styles.css', './dimension.css', './library.css',
@@ -25,7 +25,7 @@ self.addEventListener('install', event => {
 
 self.addEventListener('activate', event => {
   event.waitUntil(caches.keys()
-    .then(keys => Promise.all(keys.filter(key => key.startsWith('radar-rss-') && key !== CACHE).map(key => caches.delete(key))))
+    .then(keys => Promise.all(keys.filter(key => (key.startsWith('radar-rss-') || key.startsWith('notisonda-')) && key !== CACHE).map(key => caches.delete(key))))
     .then(() => self.clients.claim()));
 });
 
