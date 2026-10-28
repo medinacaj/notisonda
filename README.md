@@ -2,13 +2,13 @@
 
 **Versión pública operativa · octubre 2026:** recopilación y publicación automáticas, monitoreo, historial paginado, tendencias, lectura responsive y pruebas multiplataforma.
 
-Proyecto público sin backend ni cuentas. El catálogo contiene 221 suscripciones RSS y ocho carpetas OPML. La cantidad de carpetas se obtiene del catálogo, sin un máximo fijo. Las carpetas personales se configuran localmente sin modificar el catálogo público. El listado ofrece una vista conjunta de Latinoamérica sin ocultar ni modificar las carpetas de fuentes.
+Proyecto público sin backend ni cuentas. El catálogo contiene 248 suscripciones RSS y ocho carpetas OPML. La cantidad de carpetas se obtiene del catálogo, sin un máximo fijo. Las carpetas personales se configuran localmente sin modificar el catálogo público. El listado ofrece una vista conjunta de Latinoamérica sin ocultar ni modificar las carpetas de fuentes.
 
 ## Arquitectura
 
 ```mermaid
 flowchart LR
-  A[OPML: 221 feeds] --> B[GitHub Actions: cada 3 horas]
+  A[OPML: 248 feeds] --> B[GitHub Actions: cada 3 horas]
   B --> C[Python: RSS/Atom y deduplicación]
   C --> D[JSON estáticos]
   D --> E[GitHub Pages]
