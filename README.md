@@ -2,13 +2,13 @@
 
 **Versión pública operativa · octubre 2026:** recopilación y publicación automáticas, monitoreo, historial paginado, tendencias, lectura responsive y pruebas multiplataforma.
 
-Proyecto público sin backend ni cuentas. El catálogo contiene 276 suscripciones RSS y ocho carpetas OPML. La cantidad de carpetas se obtiene del catálogo, sin un máximo fijo. Las carpetas personales se configuran localmente sin modificar el catálogo público. El listado ofrece una vista conjunta de Latinoamérica sin ocultar ni modificar las carpetas de fuentes.
+Proyecto público sin backend ni cuentas. El catálogo contiene 311 suscripciones RSS y ocho carpetas OPML. La cantidad de carpetas se obtiene del catálogo, sin un máximo fijo. Las carpetas personales se configuran localmente sin modificar el catálogo público. El listado ofrece una vista conjunta de Latinoamérica sin ocultar ni modificar las carpetas de fuentes.
 
 ## Arquitectura
 
 ```mermaid
 flowchart LR
-  A[OPML: 276 feeds] --> B[GitHub Actions: cada 3 horas]
+  A[OPML: 311 feeds] --> B[GitHub Actions: cada 3 horas]
   B --> C[Python: RSS/Atom y deduplicación]
   C --> D[JSON estáticos]
   D --> E[GitHub Pages]
@@ -205,7 +205,7 @@ Código creado para este proyecto. Puedes publicarlo y modificarlo bajo licencia
 
 La barra lateral se muestra por defecto en escritorio y se puede ocultar; en móvil se abre a demanda. La cabecera compacta conserva búsqueda, configuración y tema. Las últimas noticias se presentan en un carrusel manual; cobertura y tendencias aparecen directamente debajo en Inicio, con mapa opcional desplegable.
 
-El catálogo integrado contiene **276 suscripciones**: conserva las 248 publicadas y añade **23 canales generales (1 RSS directo y 22 RADAR)** y **5 canales de IA en español**. Incluye RTVE, RFI, AFP Factual, Maldita.es, Newtral, Chequeado, ciencia, prensa latinoamericana y Billboard/Rolling Stone en español. Maturín/Monagas dispone de **ocho canales**; cultura y música siguen dentro de Internacionales, sin carpeta aparte. Las fuentes previas y Concepción se conservan. La [selección y evidencia actual](docs/fuentes-verificadas-2026-10-28.md) registra disponibilidad puntual y revalida los diez canales de la ampliación anterior, cuyo [registro histórico](docs/fuentes-ampliadas.md) permanece intacto. Un canal observado no equivale a garantía de exactitud ni a un ranking de audiencia. No se han inventado fotografías para fuentes sin imagen.
+La ampliación PR111 dejó **276 suscripciones**: conserva las 248 publicadas y añade **23 canales generales (1 RSS directo y 22 RADAR)** y **5 canales de IA en español**. Incluye RTVE, RFI, AFP Factual, Maldita.es, Newtral, Chequeado, ciencia, prensa latinoamericana y Billboard/Rolling Stone en español. Maturín/Monagas dispone de **ocho canales**; cultura y música siguen dentro de Internacionales, sin carpeta aparte. Las fuentes previas y Concepción se conservan. La [selección y evidencia actual](docs/fuentes-verificadas-2026-10-28.md) registra disponibilidad puntual y revalida los diez canales de la ampliación anterior, cuyo [registro histórico](docs/fuentes-ampliadas.md) permanece intacto. Un canal observado no equivale a garantía de exactitud ni a un ranking de audiencia. No se han inventado fotografías para fuentes sin imagen.
 
 El tema sigue la configuración del sistema por defecto; una selección manual prevalece. La firma enlaza a LinkedIn en una nueva pestaña.
 
@@ -237,4 +237,6 @@ Las columnas son automáticas por defecto y responden al espacio disponible, inc
 
 Inicio ofrece una selección breve, con un destacado y un carrusel sin repetir artículos. Noticias permite consultar el archivo completo y sus filtros. Agenda reúne en una vista propia calendario, actividades guardadas, pendientes y descargaICS. Inicio añade «Lo más cubierto» y «Temas en alza», además de los temas seguidos y las novedades desde tu última visita cuando corresponden. El mapa de cobertura queda plegado a elección del lector. Resumen contiene los resúmenes por carpeta. El estado/actualización de RSS queda en el lateral; la cabecera flotante reúne búsqueda, configuración y tema. Guardadas sigue disponible en Noticias, sin otra lista duplicada en Inicio.
 
-La ampliación de [IA en español y revisión de estructura](docs/fuentes-ia-espanol-2026-10-28.md) conserva las 27 altas anteriores y suma cinco canales temáticos observados, sin duplicar los RSS ya configurados. El catálogo queda en 276 suscripciones; los intermediarios y las comprobaciones pendientes están identificados.
+La ampliación de [IA en español y revisión de estructura](docs/fuentes-ia-espanol-2026-10-28.md) conserva las 27 altas anteriores y suma cinco canales temáticos observados, sin duplicar los RSS ya configurados. Ese registro dejó 276 suscripciones; los intermediarios y las comprobaciones pendientes están identificados.
+
+La [ampliación de cobertura mundial](docs/fuentes-cobertura-mundial-2026-10-28.md) añade 35 canales observados en español y conserva todos los anteriores: **311 suscripciones en ocho carpetas**. Refuerza diez ámbitos regionales y doce temáticos, incorpora medios/agencias y MIT en español nativo, revalida siete RSS y prioriza cobertura editorial reciente en portada. El conteo de medios normaliza secciones y variantes de una misma cabecera. No garantiza cobertura exhaustiva ni alertas en tiempo real.

@@ -22,6 +22,55 @@ def story(i, title, hours_ago, source, category='04 - Chile'):
 
 
 class InsightsTests(unittest.TestCase):
+    def test_topic_descriptors_and_brand_aliases_do_not_inflate_coverage(self):
+        for native, credited in [
+            ('MEDIO — Xataka | Inteligencia Artificial', 'Xataka'),
+            ('MEDIO — BBC Mundo', 'BBC'),
+            ('MEDIO — DW Español | Titulares', 'DW.com'),
+            ('MEDIO — France 24 en Español', 'France 24'),
+            ('INVESTIGACIÓN — Agencia SINC | Tecnología', 'Sinc'),
+            ('EVENTOS — Agencia SINC | Agenda', 'Sinc'),
+        ]:
+            with self.subTest(native=native):
+                catalog = {'direct': {'name': native, 'is_radar': False},
+                           'search': {'name': 'RADAR — Consulta', 'is_radar': True}}
+                item = {'source_ids': ['direct', 'search'], 'publisher': native,
+                        'also_in': [{'source_id': 'search', 'publisher': credited}]}
+                self.assertEqual(len(insights.independent_publishers(item, catalog)), 1)
+                self.assertEqual(catalog['direct']['name'], native)
+
+    def test_country_specific_outlets_remain_distinct(self):
+        catalog = {'cr': {'name': 'MEDIO — La Nación Costa Rica | Noticias', 'is_radar': False},
+                   'ar': {'name': 'MEDIO — La Nación Argentina | Noticias', 'is_radar': False}}
+        item = {'source_ids': ['cr', 'ar']}
+        self.assertEqual(len(insights.independent_publishers(item, catalog)), 2)
+
+    def test_real_cloudflare_catalog_channels_count_as_one_editorial_outlet(self):
+        sources = collect.parse_opml(ROOT / 'sources/feeds.opml')
+        names = {'OFICIAL — Cloudflare Blog', 'OFICIAL — Cloudflare AI',
+                 'TÉCNICO — Cloudflare | Networking'}
+        channels = [source for source in sources if source['name'] in names]
+        self.assertEqual({source['name'] for source in channels}, names)
+        catalog = {source['id']: source for source in channels}
+        item = {'source_ids': list(catalog), 'publisher': channels[0]['name']}
+        self.assertEqual(len(insights.independent_publishers(item, catalog)), 1)
+        # Counting must not remove the official/technical labels from public names.
+        self.assertEqual({insights.public_source_name(s['name']) for s in channels}, names)
+
+    def test_native_mit_and_existing_radar_merge_without_double_counting(self):
+        native = 'MEDIO — MIT Technology Review en español'
+        title = 'Un nuevo estudio explica los avances de los modelos de inteligencia artificial'
+        direct = story(1, title, 1, 'direct', '02 - Tecnología')
+        radar = story(2, title, 1, 'radar', '01 - Inteligencia Artificial')
+        direct.update(publisher='MIT Technology Review en español', source=native)
+        radar.update(publisher='MIT Technology Review en español', is_radar=True)
+        grouped = collect.group_related_articles([direct, radar])
+        self.assertEqual(len(grouped), 1)
+        catalog = {'direct': {'name': native, 'is_radar': False},
+                   'radar': {'name': 'RADAR — MIT en español', 'is_radar': True}}
+        self.assertEqual(len(insights.independent_publishers(grouped[0], catalog)), 1)
+        self.assertEqual(set(grouped[0]['categories']), {'01 - Inteligencia Artificial', '02 - Tecnología'})
+
     def test_clean_cached_google_alt_with_non_google_lead(self):
         lead = story(1, 'Cobertura regional del anuncio', 1, 'Diario Directo')
         lead['is_radar'] = False
