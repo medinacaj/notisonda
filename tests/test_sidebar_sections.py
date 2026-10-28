@@ -12,7 +12,7 @@ class SidebarSectionsTests(unittest.TestCase):
         cls.html = (ROOT / 'web/index.html').read_text(encoding='utf-8')
         cls.library = (ROOT / 'web/library.js').read_text(encoding='utf-8')
         cls.layout = (ROOT / 'web/sidebar-layout.js').read_text(encoding='utf-8')
-        cls.style = (ROOT / 'web/sidebar-sections.css').read_text(encoding='utf-8')
+        cls.style = (ROOT / 'web/dimension.css').read_text(encoding='utf-8')
         cls.app = (ROOT / 'web/app.js').read_text(encoding='utf-8')
 
     def test_navigation_starts_closed_with_accessible_toggle(self):
@@ -44,7 +44,8 @@ class SidebarSectionsTests(unittest.TestCase):
         self.assertIn('.nav-link.active::before', self.style)
         self.assertIn('.nav-glyph', self.style)
         self.assertIn('background:transparent', self.style)
-        self.assertLess(self.html.index('dimension.css?v='), self.html.index('sidebar-sections.css?v='))
+        self.assertIn('dimension.css?v=', self.html)
+        self.assertNotIn('sidebar-sections.css', self.html)
         self.assertIn('@media(prefers-reduced-motion:reduce)', self.style)
 
 
