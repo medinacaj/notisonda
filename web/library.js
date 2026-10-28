@@ -709,8 +709,17 @@ function mount(){
   const foldersSection=mk('section','source-folders-section');
   foldersSection.setAttribute('aria-labelledby','sourceFoldersHeading');
   const header=mk('div','folder-group-head');
+  const titleWrap=mk('div','sidebar-folder-title');
+  const toggle=mk('button','sidebar-section-toggle');
+  toggle.id='sourceFoldersToggle';toggle.type='button';
+  toggle.setAttribute('aria-controls','libraryFolderNav');
+  toggle.setAttribute('aria-expanded','true');
+  toggle.setAttribute('aria-label','Contraer carpetas de fuentes');
   const heading=mk('span','','CARPETAS DE FUENTES');
-  heading.id='sourceFoldersHeading';header.append(heading);
+  heading.id='sourceFoldersHeading';
+  const arrow=mk('span','sidebar-section-chevron');
+  arrow.setAttribute('aria-hidden','true');
+  toggle.append(heading,arrow);titleWrap.append(toggle);header.append(titleWrap);
   const add=mk('button');add.type='button';add.title='Crear carpeta de fuentes';add.setAttribute('aria-label','Crear carpeta de fuentes');
   add.append(svgIcon('folder-plus'));header.append(add);
   const restore=mk('button','folder-restore');restore.id='folderRestore';
@@ -724,10 +733,17 @@ function mount(){
   });
   const nav=mk('nav','library-folder-nav library-system-folders');
   nav.id='libraryFolderNav';
+  nav.hidden=false;
   nav.setAttribute('aria-label','Carpetas de fuentes del catálogo y creadas por ti');
   foldersSection.append(header,nav);
-  $('categoryNav').after(foldersSection);
-  add.addEventListener('click',createFolder);
+  $('sidebarCoreSection').after(foldersSection);
+  const setExpanded=expanded=>{
+    nav.hidden=!expanded;
+    toggle.setAttribute('aria-expanded',String(expanded));
+    toggle.setAttribute('aria-label',expanded?'Contraer carpetas de fuentes':'Expandir carpetas de fuentes');
+  };
+  toggle.addEventListener('click',()=>setExpanded(nav.hidden));
+  add.addEventListener('click',()=>{setExpanded(true);createFolder();});
   const wrapper=mk('label','library-tag-filter-wrap'),filter=mk('select','library-tag-filter');
   filter.id='libraryTagFilter';filter.setAttribute('aria-label','Filtrar por etiqueta');wrapper.append(filter);
   $('sourceSelect').closest('label').after(wrapper);
@@ -767,7 +783,7 @@ function mount(){
   $('exportData').addEventListener('click',e=>{
     e.preventDefault();e.stopImmediatePropagation();syncArchive();
     const obj={format:'radar-rss-settings-v3',exported_at:new Date().toISOString(),
-      preferences:{theme:state.theme,layout:state.layout,columns:state.columns,density:state.density,pageSize:state.pageSize,maxAge:state.maxAge,fontSize:state.fontSize,showHero:state.showHero,showImages:state.showImages,showSummaries:state.showSummaries,hideRead:state.hideRead,newTab:state.newTab,lite:state.lite,sort:state.sort,startMode:state.startMode,mutedKeywords:state.mutedKeywords,sidebarWidth:Number(storeGet('radar-sidebar-width'))||310},
+      preferences:{theme:state.theme,layout:state.layout,columns:state.columns,density:state.density,pageSize:state.pageSize,maxAge:state.maxAge,fontSize:state.fontSize,cardTitleSize:state.cardTitleSize,showHero:state.showHero,showImages:state.showImages,showSummaries:state.showSummaries,hideRead:state.hideRead,newTab:state.newTab,lite:state.lite,sort:state.sort,startMode:state.startMode,mutedKeywords:state.mutedKeywords,sidebarWidth:Number(storeGet('radar-sidebar-width'))||310},
       saved:[...state.saved],read:[...state.read],hiddenSources:[...state.hiddenSources],
       modules:backupModules(),savedArchive:[...archive.values()],sourceFolders:folders,folderDefaults:defaults,articleTags:tags};
     downloadText('radar-rss-respaldo-completo.json',JSON.stringify(obj,null,2),'application/json;charset=utf-8');
@@ -790,6 +806,7 @@ function mount(){
       state.pageSize=choose('pageSize',[12,24,36,60],36);
       state.maxAge=choose('maxAge',[0,1,7,30,90],0);
       state.fontSize=choose('fontSize',['normal','large'],'normal');
+      state.cardTitleSize=Number.isInteger(p.cardTitleSize)&&p.cardTitleSize>=14&&p.cardTitleSize<=22?p.cardTitleSize:16;
       for(const key of ['showHero','showImages','showSummaries','hideRead','newTab','lite'])if(typeof p[key]==='boolean')state[key]=p[key];
       state.sort=choose('sort',['newest','oldest','source'],'newest');
       state.startMode=choose('startMode',['all','unread','saved'],'all');
@@ -806,7 +823,7 @@ function mount(){
         try{localStorage.setItem('radar-sidebar-width',String(Math.round(Number(p.sidebarWidth))));}catch{}
         window.dispatchEvent(new Event('radar-sidebar-pref-sync'));
       }
-      for(const [key,value] of [['layout',state.layout],['columns',state.columns],['theme',state.theme],['density',state.density],['font',state.fontSize],['page-size',state.pageSize],['max-age',state.maxAge],['show-hero',state.showHero],['show-images',state.showImages],['show-summaries',state.showSummaries],['hide-read',state.hideRead],['new-tab',state.newTab],['lite',state.lite],['sort',state.sort],['start-mode',state.startMode],['keywords',state.mutedKeywords]])savePref(key,value);
+      for(const [key,value] of [['layout',state.layout],['columns',state.columns],['theme',state.theme],['density',state.density],['font',state.fontSize],['card-title-size',state.cardTitleSize],['page-size',state.pageSize],['max-age',state.maxAge],['show-hero',state.showHero],['show-images',state.showImages],['show-summaries',state.showSummaries],['hide-read',state.hideRead],['new-tab',state.newTab],['lite',state.lite],['sort',state.sort],['start-mode',state.startMode],['keywords',state.mutedKeywords]])savePref(key,value);
       restoreModules(modules);
       document.body.classList.toggle('lite',state.lite);
       window.dispatchEvent(new Event('radar-preferences-imported'));

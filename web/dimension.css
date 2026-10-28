@@ -439,3 +439,448 @@ body.radar-hybrid.dimension .topbar-brand strong {font-size:14px;font-weight:600
   body.radar-hybrid.dimension :is(a,button,input,select,summary):focus-visible {outline:2px solid Highlight;}
 
 }
+
+/* Radar RSS — navegación lateral editorial compacta, cierre de tema Dimension. */
+body.radar-hybrid.dimension .sidebar-core-section{min-width:0}
+body.radar-hybrid.dimension .sidebar-section-heading{margin:0;padding:0;font-size:inherit;font-weight:inherit}
+body.radar-hybrid.dimension .sidebar-section-toggle{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  width:100%;min-height:37px;min-width:0;padding:8px 10px;
+  color:var(--muted);background:transparent;border:0;border-radius:6px;
+  font:inherit;font-size:11px;font-weight:650;letter-spacing:.045em;
+  text-align:left;cursor:pointer;transition:background-color .15s ease,color .15s ease;
+}
+body.radar-hybrid.dimension .sidebar-section-toggle:hover{color:var(--text);background:var(--hover)}
+body.radar-hybrid.dimension .sidebar-section-toggle:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+body.radar-hybrid.dimension .sidebar-section-chevron{
+  width:8px;height:8px;flex:0 0 8px;margin-right:5px;
+  border-top:1.6px solid currentColor;border-right:1.6px solid currentColor;
+  transform:rotate(45deg);transition:transform .16s ease;
+}
+body.radar-hybrid.dimension .sidebar-section-toggle[aria-expanded="true"] .sidebar-section-chevron{
+  transform:rotate(135deg);
+}
+body.radar-hybrid.dimension #sidebarCoreContent[hidden],
+body.radar-hybrid.dimension #libraryFolderNav[hidden]{display:none!important}
+body.radar-hybrid.dimension .source-folders-section{
+  margin-top:10px;padding-top:10px;border-top:1px solid var(--line);
+}
+body.radar-hybrid.dimension .source-folders-section .folder-group-head{
+  display:flex;align-items:center;gap:8px;margin:0;padding:0 5px 5px;
+  min-height:42px;
+}
+body.radar-hybrid.dimension .sidebar-folder-title{flex:1 1 auto;min-width:0}
+body.radar-hybrid.dimension .source-folders-section .folder-group-head .sidebar-section-toggle{
+  padding:8px 5px;min-height:36px;letter-spacing:.045em;
+  color:var(--muted);font-size:11px;font-weight:650;
+}
+body.radar-hybrid.dimension .source-folders-section .folder-group-head .sidebar-section-toggle:hover{
+  color:var(--text);background:var(--hover);
+}
+body.radar-hybrid.dimension .source-folders-section .folder-group-head>button{
+  flex:0 0 26px;width:26px;height:26px;border:0;border-radius:6px;
+  background:transparent;color:var(--muted);
+}
+body.radar-hybrid.dimension .source-folders-section .folder-group-head>button:hover{
+  color:var(--text);background:var(--hover);
+}
+/* En lugar de cápsulas: filas sobrias, un indicador de selección y pictogramas sin fondo. */
+body.radar-hybrid.dimension .sidebar :is(.nav-link,.briefing-nav-link){
+  position:relative;min-height:40px;padding:8px 11px;margin:2px 0;
+  border:0;border-radius:6px;background:transparent;color:var(--muted);
+  box-shadow:none;font-size:13px;font-weight:460;letter-spacing:0;
+}
+body.radar-hybrid.dimension .sidebar :is(.nav-link,.briefing-nav-link):hover{
+  background:var(--hover);color:var(--text);border-color:transparent;box-shadow:none;
+}
+body.radar-hybrid.dimension .sidebar .nav-link.active,
+body.radar-hybrid.dimension #libraryFolderNav .nav-link.active,
+body.radar-hybrid.dimension #categoryNav .nav-link.active{
+  background:color-mix(in srgb,var(--text) 7%,transparent);
+  color:var(--text);border:0;box-shadow:none;font-weight:650;
+}
+body.radar-hybrid.dimension .sidebar .nav-link.active::before,
+body.radar-hybrid.dimension #libraryFolderNav .nav-link.active::before,
+body.radar-hybrid.dimension #categoryNav .nav-link.active::before{
+  content:"";display:block;position:absolute;left:0;top:8px;bottom:8px;
+  width:2px;border-radius:2px;background:var(--accent);
+}
+body.radar-hybrid.dimension .sidebar #categoryNav .nav-glyph,
+body.radar-hybrid.dimension .sidebar #libraryFolderNav .nav-glyph,
+body.radar-hybrid.dimension .sidebar .briefing-nav-link .nav-glyph,
+body.radar-hybrid.dimension .sidebar #libraryFolderNav .nav-link[data-topic] .nav-glyph{
+  display:grid;place-items:center;flex:0 0 21px;width:21px;height:21px;
+  background:transparent;border:0;border-radius:0;color:var(--muted);
+  box-shadow:none;transform:none;
+}
+body.radar-hybrid.dimension .sidebar :is(#categoryNav,#libraryFolderNav) .nav-link.active .nav-glyph{
+  color:var(--text);background:transparent;
+}
+body.radar-hybrid.dimension .sidebar :is(#categoryNav,#libraryFolderNav) .nav-glyph .ui-icon,
+body.radar-hybrid.dimension .sidebar .briefing-nav-link .nav-glyph .ui-icon{
+  width:17px;height:17px;stroke-width:1.7;
+}
+body.radar-hybrid.dimension .sidebar :is(#categoryNav,#libraryFolderNav) .nav-count{
+  flex:0 0 auto;color:var(--muted);font-size:11px;font-weight:450;background:transparent;
+}
+body.radar-hybrid.dimension .sidebar :is(#categoryNav,#libraryFolderNav) .nav-link.active .nav-count{color:var(--muted)}
+body.radar-hybrid.dimension .source-folders-section .library-folder-nav{padding-bottom:7px}
+body.radar-hybrid.dimension .footer #footerInfo{
+  color:var(--muted);font-size:inherit;font-weight:450;
+  text-decoration:underline;text-underline-offset:3px;text-decoration-color:var(--line);
+}
+body.radar-hybrid.dimension .footer #footerInfo:hover,
+body.radar-hybrid.dimension .footer #footerInfo:focus-visible{
+  color:var(--text);text-decoration-color:currentColor;
+}
+@media(prefers-reduced-motion:reduce){
+  body.radar-hybrid.dimension .sidebar-section-toggle,
+  body.radar-hybrid.dimension .sidebar-section-chevron{transition:none}
+}
+
+
+/* Acciones de noticia: iconos compactos sin círculos ni rellenos permanentes. */
+body.radar-hybrid.dimension .article-card .article-footer .article-actions{
+  gap:4px;align-items:center;
+}
+body.radar-hybrid.dimension .article-card .article-footer :is(.article-read-toggle,.article-save,.article-more){
+  display:inline-grid;place-items:center;
+  flex:0 0 44px;width:44px;height:44px;min-width:44px;min-height:44px;
+  padding:0;border:1px solid transparent;border-radius:9px;
+  background:transparent;color:var(--muted);box-shadow:none;
+  transition:color .14s ease,background-color .14s ease,border-color .14s ease;
+}
+body.radar-hybrid.dimension .article-card .article-footer :is(.article-read-toggle,.article-save,.article-more):hover{
+  background:var(--hover);border-color:var(--line);color:var(--text);
+}
+body.radar-hybrid.dimension .article-card .article-footer :is(.article-read-toggle,.article-save,.article-more):focus-visible{
+  outline:2px solid var(--accent);outline-offset:1px;
+  background:var(--hover);border-color:var(--line);
+}
+body.radar-hybrid.dimension .article-card .article-footer .article-read-toggle[aria-pressed="true"],
+body.radar-hybrid.dimension .article-card .article-footer .article-save[aria-pressed="true"],
+body.radar-hybrid.dimension .article-card .article-footer .article-save.saved{
+  background:transparent;border-color:transparent;color:var(--accent);
+}
+body.radar-hybrid.dimension .article-card .article-footer .article-more[aria-expanded="true"]{
+  background:var(--hover);border-color:var(--line);color:var(--text);
+}
+body.radar-hybrid.dimension .article-card .article-footer .article-actions .ui-icon{
+  width:18px;height:18px;stroke-width:1.8;
+}
+@media(prefers-reduced-motion:reduce){
+  body.radar-hybrid.dimension .article-card .article-footer :is(.article-read-toggle,.article-save,.article-more){transition:none}
+}
+
+/* Radar RSS V14 — lectura con jerarquía cromática y lateral compacto.
+   Colores de alto contraste para el contenido; identidad de las categorías
+   limitada a iconos y acentos, no fondos decorativos pesados. */
+body.radar-hybrid.dimension{
+  --bg:#111d2d;--surface:#1d2e43;--surface2:#16263b;--card:var(--surface);
+  --text:#f0f6fc;--muted:#bed0e1;--dim:#adbed0;--line:#3a5068;
+  --accent:#8de5dc;--blue:#9bcaff;--hover:#2b445f;
+  --action-lime:#8de5dc;--action-ink:#102a38;
+  --agenda-accent:#ffcb85;--agenda-on-accent:#32200a;
+  --glass-shadow:0 8px 24px #02060d42,0 1px 3px #02060d2b;
+}
+body.radar-hybrid.dimension.light{
+  --bg:#eaf1f8;--surface:#ffffff;--surface2:#e3ebf5;--card:#ffffff;
+  --text:#14273d;--muted:#425872;--dim:#526983;--line:#bfd0e1;
+  --accent:#126d85;--blue:#235fa8;--hover:#dbeaf7;
+  --action-lime:#245ba2;--action-ink:#ffffff;
+  --agenda-accent:#a25214;--agenda-on-accent:#ffffff;
+  --glass-shadow:0 8px 26px #18355714,0 2px 5px #1835570c;
+}
+/* Un lateral oscuro distingue la navegación del papel de lectura claro. */
+body.radar-hybrid.dimension .sidebar,
+body.radar-hybrid.dimension.light .sidebar{
+  --surface2:#14283f;--surface:#1c3752;--line:#38536e;
+  --text:#f4f8ff;--muted:#c4d5e6;--dim:#b7c9dc;
+  --accent:#8fe9dd;--blue:#9bccff;--hover:#25435e;
+  color:var(--text);background:#14283f;
+  margin:10px 0 10px 10px;width:calc(100% - 10px);
+  top:10px;height:calc(100dvh - 20px);
+  border:1px solid #344e69;border-radius:16px;
+  padding:12px 10px 10px;box-shadow:0 8px 28px #071b2d1f;
+}
+@media(min-width:951px){
+  body.radar-hybrid.dimension .sidebar-brand-row{display:none!important}
+}
+/* Filas de acceso más densas, con selección clara sin botones tipo cápsula. */
+body.radar-hybrid.dimension .sidebar :is(.nav-link,.briefing-nav-link){
+  display:flex;min-height:35px;margin:1px 0;padding:6px 10px;
+  border-radius:6px;font-size:12.5px;line-height:1.35;
+  color:var(--muted);font-weight:500;
+}
+body.radar-hybrid.dimension .sidebar :is(.nav-link,.briefing-nav-link):hover{
+  background:#294b67;color:#ffffff;
+}
+body.radar-hybrid.dimension .sidebar .nav-link.active,
+body.radar-hybrid.dimension #categoryNav .nav-link.active,
+body.radar-hybrid.dimension #libraryFolderNav .nav-link.active{
+  background:#28516c;color:#ffffff;box-shadow:none;font-weight:700;
+}
+body.radar-hybrid.dimension .sidebar .nav-link.active::before,
+body.radar-hybrid.dimension #categoryNav .nav-link.active::before,
+body.radar-hybrid.dimension #libraryFolderNav .nav-link.active::before{
+  background:#8fe9dd;width:3px;top:6px;bottom:6px;
+}
+body.radar-hybrid.dimension .sidebar :is(#categoryNav,#libraryFolderNav) .nav-count{
+  color:#c5d7e7;font-size:11px;
+}
+body.radar-hybrid.dimension .sidebar :is(#categoryNav,#libraryFolderNav) .nav-link.active .nav-count{
+  color:#e4f2fd;
+}
+body.radar-hybrid.dimension .sidebar :is(#categoryNav,#libraryFolderNav) .nav-glyph,
+body.radar-hybrid.dimension .sidebar .briefing-nav-link .nav-glyph{
+  background:transparent;border:0;width:20px;height:20px;flex:0 0 20px;
+}
+body.radar-hybrid.dimension .sidebar :is(#categoryNav,#libraryFolderNav) .nav-glyph .ui-icon,
+body.radar-hybrid.dimension .sidebar .briefing-nav-link .nav-glyph .ui-icon{
+  width:16px;height:16px;stroke-width:1.9;
+}
+/* Las categorías recuperan personalidad mediante el color del icono, no una placa. */
+body.radar-hybrid.dimension .sidebar [data-topic="1"]{--topic-ink:#d5b5ff}
+body.radar-hybrid.dimension .sidebar [data-topic="2"]{--topic-ink:#9bd0ff}
+body.radar-hybrid.dimension .sidebar [data-topic="3"]{--topic-ink:#84e2d9}
+body.radar-hybrid.dimension .sidebar [data-topic="4"]{--topic-ink:#ffacb6}
+body.radar-hybrid.dimension .sidebar [data-topic="5"]{--topic-ink:#ffce8b}
+body.radar-hybrid.dimension .sidebar [data-topic="6"]{--topic-ink:#a1e5b6}
+body.radar-hybrid.dimension .sidebar [data-topic="7"]{--topic-ink:#9ee7f5}
+body.radar-hybrid.dimension .sidebar [data-topic="8"]{--topic-ink:#f3b8ec}
+body.radar-hybrid.dimension .sidebar #libraryFolderNav .nav-link[data-topic] .nav-glyph{
+  color:var(--topic-ink);background:transparent;
+}
+/* Cabeceras compactas con chevron como único indicador visible. */
+body.radar-hybrid.dimension .sidebar-navigation{padding-bottom:4px}
+body.radar-hybrid.dimension .sidebar-section-toggle{
+  min-height:34px;padding:6px 8px;color:#f2f8ff;
+  font-size:12px;font-weight:740;letter-spacing:.025em;
+  border-radius:6px;
+}
+body.radar-hybrid.dimension .sidebar-section-toggle>span:first-child{flex:1;min-width:0}
+body.radar-hybrid.dimension .sidebar-section-chevron{
+  order:2;flex:0 0 9px;width:9px;height:9px;margin:0 2px 0 3px;
+  color:#92e7dc;border-width:2px;
+}
+body.radar-hybrid.dimension .sidebar-section-toggle:hover{
+  color:#ffffff;background:#25435e;
+}
+body.radar-hybrid.dimension .source-folders-section{
+  margin-top:5px;padding-top:6px;border-top:1px solid #3a536b;
+}
+body.radar-hybrid.dimension .source-folders-section .folder-group-head{
+  min-height:38px;padding:0 4px;margin:0;gap:5px;
+}
+body.radar-hybrid.dimension .source-folders-section .folder-group-head .sidebar-section-toggle{
+  min-height:34px;padding:6px 4px;font-size:12px;font-weight:740;color:#f2f8ff;
+}
+body.radar-hybrid.dimension .source-folders-section .folder-group-head>button{
+  min-width:29px;min-height:29px;width:29px;height:29px;
+  border:1px solid #4d6884;border-radius:7px;color:#cce2f5;
+}
+body.radar-hybrid.dimension .sidebar-bottom{
+  margin-top:auto;padding:8px 5px 0;border-color:#3a536b;
+  background:transparent;color:#c4d5e6;
+}
+body.radar-hybrid.dimension .sidebar-bottom .update-label{color:#c4d5e6}
+body.radar-hybrid.dimension .sidebar-bottom .topbar-refresh{margin-bottom:4px}
+body.radar-hybrid.dimension .sidebar-bottom .refresh-now{
+  border-radius:8px;background:#213d57;color:#9debe0;border-color:#476582;
+}
+/* Fondo, cabeceras y tarjetas diferenciados para reducir fatiga visual. */
+body.radar-hybrid.dimension .page{background:var(--bg)}
+body.radar-hybrid.dimension .main{padding:22px 24px 42px}
+body.radar-hybrid.dimension .topbar{
+  background:var(--surface);border-color:var(--line);
+  border-radius:15px;min-height:60px;box-shadow:var(--glass-shadow);
+  margin:10px 24px 0;top:10px;
+}
+body.radar-hybrid.dimension .page-heading{margin-bottom:19px}
+body.radar-hybrid.dimension .page-heading h1,
+body.radar-hybrid.dimension .section-heading h2{
+  font-weight:720;letter-spacing:-.03em;
+}
+body.radar-hybrid.dimension .dashboard-panel-head{
+  margin-bottom:12px;border-left:3px solid var(--accent);padding-left:11px;
+}
+body.radar-hybrid.dimension .dashboard-panel-head h2{font-weight:720;font-size:19px}
+body.radar-hybrid.dimension .dashboard-feature-panel{margin-bottom:26px}
+body.radar-hybrid.dimension .homepage-latest{margin-bottom:29px}
+body.radar-hybrid.dimension #dashboardFeature>.article-card,
+body.radar-hybrid.dimension #articleGrid>.article-card,
+body.radar-hybrid.dimension #dashboardRecent>.dashboard-latest-card,
+body.radar-hybrid.dimension :is(.agenda-item,.briefing-section,.home-insight-card){
+  background:var(--surface);
+  border-color:var(--line);
+  box-shadow:var(--glass-shadow);
+}
+body.radar-hybrid.dimension #articleGrid>.article-card,
+body.radar-hybrid.dimension #dashboardRecent>.dashboard-latest-card{
+  border-radius:16px;
+}
+body.radar-hybrid.dimension #articleGrid>.article-card[data-topic]{
+  border-top:3px solid var(--topic-ink,var(--accent));
+}
+body.radar-hybrid.dimension #dashboardRecent>.dashboard-latest-card{padding:16px}
+body.radar-hybrid.dimension #dashboardRecent{gap:12px}
+body.radar-hybrid.dimension #dashboardRecent>.dashboard-latest-card .latest-news-image{
+  width:calc(100% + 32px);margin:-16px -16px 5px;border-radius:16px 16px 0 0;
+}
+body.radar-hybrid.dimension #articleGrid.article-grid .article-card .article-content{padding:16px}
+body.radar-hybrid.dimension #articleGrid{gap:14px}
+body.radar-hybrid.dimension .article-card .article-title{color:var(--text)}
+body.radar-hybrid.dimension .mode-tabs{background:var(--surface);border-color:var(--line)}
+body.radar-hybrid.dimension .mode-tab.active{
+  background:var(--action-lime);color:var(--action-ink);font-weight:700;
+}
+body.radar-hybrid.dimension .footer{
+  background:var(--surface);border-top:2px solid var(--accent);
+  color:var(--muted);padding-top:15px;padding-bottom:17px;
+}
+/* Mantener gestos cómodos en móviles incluso con densidad compacta. */
+@media(max-width:950px){
+  body.radar-hybrid.dimension .sidebar,
+  body.radar-hybrid.dimension.light .sidebar{
+    margin:0;top:0;height:100dvh;width:min(86vw,330px);
+    border-radius:0 16px 16px 0;padding:14px 12px;
+  }
+  body.radar-hybrid.dimension .sidebar-brand-row{display:flex}
+  body.radar-hybrid.dimension .sidebar :is(.nav-link,.briefing-nav-link){min-height:44px;padding:10px 11px}
+  body.radar-hybrid.dimension .sidebar-section-toggle{min-height:44px}
+  body.radar-hybrid.dimension .source-folders-section .folder-group-head .sidebar-section-toggle{min-height:44px}
+  body.radar-hybrid.dimension .topbar{margin:8px 10px 0;top:8px}
+  body.radar-hybrid.dimension .main{padding:18px 15px 36px}
+}
+@media(prefers-reduced-motion:reduce){
+  body.radar-hybrid.dimension .sidebar-section-toggle,
+  body.radar-hybrid.dimension .sidebar-section-chevron{transition:none}
+}
+
+
+/* Igualar las fichas cuando el medio no aporta una miniatura real.
+   Mantener una cubierta tipográfica identificada, nunca una foto inventada. */
+body.radar-hybrid.dimension #articleGrid.article-grid:not(.list-view)>.article-card.no-cover>.article-cover-placeholder{
+  display:flex;
+  align-items:center;justify-content:center;
+  width:100%;height:148px;min-height:148px;max-height:148px;flex:0 0 148px;
+  padding:15px 12px;overflow:hidden;
+  border:0;border-bottom:1px solid var(--line);border-radius:0;
+  background:linear-gradient(135deg,var(--surface2) 4%,color-mix(in srgb,var(--topic-ink,var(--accent)) 12%,var(--surface)) 100%);
+  color:var(--text);
+}
+body.radar-hybrid.dimension #articleGrid.article-grid:not(.list-view)>.article-card.no-cover>.article-cover-placeholder .article-cover-placeholder-inner{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:7px;max-width:100%;text-align:center;
+}
+body.radar-hybrid.dimension #articleGrid.article-grid:not(.list-view)>.article-card.no-cover>.article-cover-placeholder .article-cover-publisher{
+  display:block;color:var(--text);font-size:12px;font-weight:700;
+  max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+body.radar-hybrid.dimension #articleGrid.article-grid:not(.list-view)>.article-card.no-cover>.article-cover-placeholder .ui-icon{
+  display:block;width:24px;height:24px;color:var(--topic-ink,var(--accent));opacity:.9;
+}
+body.radar-hybrid.dimension #articleGrid.article-grid:not(.list-view)>.article-card.no-cover>.article-cover-placeholder .article-cover-note{
+  display:block;color:var(--muted);font-size:10px;
+}
+body.radar-hybrid.dimension.compact #articleGrid.article-grid:not(.list-view)>.article-card.no-cover>.article-cover-placeholder{
+  height:96px;min-height:96px;max-height:96px;flex-basis:96px;
+}
+body.radar-hybrid.dimension #articleGrid.article-grid.list-view>.article-card.no-cover>.article-cover-placeholder,
+body.radar-hybrid.dimension.hide-images #articleGrid .article-cover-placeholder,
+body.radar-hybrid.dimension.lite #articleGrid .article-cover-placeholder{
+  display:none;
+}
+/* Ajuste independiente del título de las fichas: no altera cuerpo ni lector. */
+body.radar-hybrid.dimension{--radar-card-title-size:16px}
+body.radar-hybrid.dimension[data-card-title-size="14"]{--radar-card-title-size:14px}
+body.radar-hybrid.dimension[data-card-title-size="15"]{--radar-card-title-size:15px}
+body.radar-hybrid.dimension[data-card-title-size="16"]{--radar-card-title-size:16px}
+body.radar-hybrid.dimension[data-card-title-size="17"]{--radar-card-title-size:17px}
+body.radar-hybrid.dimension[data-card-title-size="18"]{--radar-card-title-size:18px}
+body.radar-hybrid.dimension[data-card-title-size="19"]{--radar-card-title-size:19px}
+body.radar-hybrid.dimension[data-card-title-size="20"]{--radar-card-title-size:20px}
+body.radar-hybrid.dimension[data-card-title-size="21"]{--radar-card-title-size:21px}
+body.radar-hybrid.dimension[data-card-title-size="22"]{--radar-card-title-size:22px}
+body.radar-hybrid.dimension #articleGrid.article-grid .article-card .article-title{
+  font-size:var(--radar-card-title-size)!important;line-height:1.4;
+}
+body.radar-hybrid.dimension #dashboardFeature .article-card .article-title{
+  font-size:clamp(18px,calc(var(--radar-card-title-size) * 1.25),28px)!important;
+  line-height:1.32;
+}
+body.radar-hybrid.dimension #dashboardRecent .dashboard-recent-title,
+body.radar-hybrid.dimension #dashboardSavedPanel .dashboard-saved-title{
+  font-size:var(--radar-card-title-size)!important;line-height:1.36;
+}
+body.radar-hybrid.dimension .card-title-size-setting{
+  min-width:0;display:flex;flex-direction:column;gap:9px;
+}
+body.radar-hybrid.dimension .setting-title-size-heading{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+}
+body.radar-hybrid.dimension #cardTitleSizeValue{
+  flex:0 0 auto;color:var(--text);font-weight:700;font-size:13px;
+  font-variant-numeric:tabular-nums;
+}
+body.radar-hybrid.dimension #settingCardTitleSize{
+  width:100%;min-height:32px;cursor:pointer;accent-color:var(--accent);
+}
+
+
+/* La visualización circular es su propia ficha, distinta de la clasificación
+   "Lo más cubierto". No se mezclan ambos contenidos en una única superficie. */
+body.radar-hybrid.dimension #coverageTools{
+  margin-top:23px;padding-top:0;border-top:0;min-width:0;
+}
+body.radar-hybrid.dimension #coverageTools .newsroom-discovery-aside{
+  display:grid;grid-template-columns:minmax(0,0.9fr) minmax(0,1.1fr);
+  align-items:start;column-gap:18px;row-gap:18px;min-width:0;
+}
+body.radar-hybrid.dimension #coverageTools .radar-standalone-card,
+body.radar-hybrid.dimension #coverageTools .covered-standalone-card{
+  display:flex;flex-direction:column;min-width:0;
+  margin:0;padding:20px 22px;
+  border:1px solid var(--line);border-radius:18px;
+  background:var(--surface);box-shadow:var(--glass-shadow);
+}
+body.radar-hybrid.dimension #coverageTools .radar-standalone-card .dashboard-panel-head,
+body.radar-hybrid.dimension #coverageTools .covered-standalone-card .dashboard-panel-head{
+  margin-bottom:14px;
+}
+body.radar-hybrid.dimension #coverageTools .radar-standalone-card .radar-layout{
+  display:block;min-width:0;
+}
+body.radar-hybrid.dimension #coverageTools .radar-standalone-card .radar-figure{
+  margin:0 auto;width:100%;min-width:0;max-width:380px;
+}
+body.radar-hybrid.dimension #coverageTools .radar-standalone-card .radar-stage{
+  width:100%;max-width:340px;margin:0 auto;aspect-ratio:1;
+}
+body.radar-hybrid.dimension #coverageTools .radar-standalone-card .radar-caption{
+  max-width:46ch;margin:10px auto 0;text-align:center;
+  font-size:12px;line-height:1.5;color:var(--muted);
+}
+body.radar-hybrid.dimension #coverageTools .covered-standalone-card .covered-list{
+  margin:0;padding:0;min-width:0;
+}
+body.radar-hybrid.dimension #coverageTools .covered-standalone-card .covered-item{
+  padding:10px 4px;
+}
+body.radar-hybrid.dimension #coverageTools .trends-panel{
+  grid-column:1/-1;min-width:0;
+}
+@media(max-width:940px){
+  body.radar-hybrid.dimension #coverageTools .newsroom-discovery-aside{
+    grid-template-columns:minmax(0,1fr);gap:14px;
+  }
+  body.radar-hybrid.dimension #coverageTools .radar-standalone-card,
+  body.radar-hybrid.dimension #coverageTools .covered-standalone-card{
+    padding:17px 16px;
+  }
+}
+@media(max-width:480px){
+  body.radar-hybrid.dimension #coverageTools .radar-standalone-card .radar-stage{
+    max-width:300px;
+  }
+}

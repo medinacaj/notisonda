@@ -21,7 +21,8 @@ class SidebarHealthTests(unittest.TestCase):
   self.assertLess(html.index('id="feedHealthIndicator"'),html.index('</aside>'))
   self.assertNotIn('id="feedHealthIndicator"',html[html.index('<header class="topbar">'):html.index('</header>')])
   self.assertIn('fuentes no disponibles',html)
-  self.assertIn('id="aboutButton"',html)
+  self.assertIn('id="footerInfo"',html)
+  self.assertNotIn('id="aboutButton"',html)
 
  def test_scrollable_navigation_and_persistent_footer(self):
   html=self.html

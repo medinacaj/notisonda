@@ -2,13 +2,13 @@
 
 **Versión pública operativa · octubre 2026:** recopilación y publicación automáticas, monitoreo, historial paginado, tendencias, lectura responsive y pruebas multiplataforma.
 
-Proyecto público sin backend ni cuentas. El catálogo contiene 244 suscripciones RSS y ocho carpetas OPML. La cantidad de carpetas se obtiene del catálogo, sin un máximo fijo. Las carpetas personales se configuran localmente sin modificar el catálogo público. El listado ofrece una vista conjunta de Latinoamérica sin ocultar ni modificar las carpetas de fuentes.
+Proyecto público sin backend ni cuentas. El catálogo contiene 271 suscripciones RSS y ocho carpetas OPML. La cantidad de carpetas se obtiene del catálogo, sin un máximo fijo. Las carpetas personales se configuran localmente sin modificar el catálogo público. El listado ofrece una vista conjunta de Latinoamérica sin ocultar ni modificar las carpetas de fuentes.
 
 ## Arquitectura
 
 ```mermaid
 flowchart LR
-  A[OPML: 244 feeds] --> B[GitHub Actions: cada 3 horas]
+  A[OPML: 271 feeds] --> B[GitHub Actions: cada 3 horas]
   B --> C[Python: RSS/Atom y deduplicación]
   C --> D[JSON estáticos]
   D --> E[GitHub Pages]
@@ -205,7 +205,7 @@ Código creado para este proyecto. Puedes publicarlo y modificarlo bajo licencia
 
 La barra lateral se muestra por defecto en escritorio y se puede ocultar; en móvil se abre a demanda. La cabecera compacta conserva búsqueda, configuración y tema. Las últimas noticias se presentan en un carrusel manual; cobertura y tendencias aparecen directamente debajo en Inicio, con mapa opcional desplegable.
 
-La ampliación del 28 de octubre añade **23 canales comprobados:1 RSS directo y 22 RADAR de Google Noticias**, para un total de244 suscripciones. Incluye RTVE, RFI, AFP Factual, Maldita.es, Newtral, Chequeado, ciencia, prensa latinoamericana y Billboard/Rolling Stone en español. Maturín/Monagas dispone de **ocho canales**; cultura y música siguen dentro de Internacionales, sin carpeta aparte. Las221 suscripciones previas y Concepción se conservan. La [selección y evidencia actual](docs/fuentes-verificadas-2026-10-28.md) registra disponibilidad puntual y revalida los diez canales de la ampliación anterior, cuyo [registro histórico](docs/fuentes-ampliadas.md) permanece intacto. Un canal observado no equivale a garantía de exactitud ni a un ranking de audiencia. No se han inventado fotografías para fuentes sin imagen.
+La ampliación del 28 de octubre añade **23 canales comprobados:1 RSS directo y 22 RADAR de Google Noticias**, para un total de271 suscripciones. Incluye RTVE, RFI, AFP Factual, Maldita.es, Newtral, Chequeado, ciencia, prensa latinoamericana y Billboard/Rolling Stone en español. Maturín/Monagas dispone de **ocho canales**; cultura y música siguen dentro de Internacionales, sin carpeta aparte. Las221 suscripciones previas y Concepción se conservan. La [selección y evidencia actual](docs/fuentes-verificadas-2026-10-28.md) registra disponibilidad puntual y revalida los diez canales de la ampliación anterior, cuyo [registro histórico](docs/fuentes-ampliadas.md) permanece intacto. Un canal observado no equivale a garantía de exactitud ni a un ranking de audiencia. No se han inventado fotografías para fuentes sin imagen.
 
 El tema sigue la configuración del sistema por defecto; una selección manual prevalece. La firma enlaza a LinkedIn en una nueva pestaña.
 

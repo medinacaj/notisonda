@@ -105,7 +105,7 @@ def check_uniform_card_heights(page, label):
     for heights in rows:
         if max(heights)-min(heights)>2:
             raise AssertionError(f"{label}: cards in same row differ in height: {result}")
-    if result["maxImageHeight"]>153 or result["maxPlaceholderHeight"]>80:
+    if result["maxImageHeight"]>153 or result["maxPlaceholderHeight"]>153:
         raise AssertionError(f"{label}: image/placeholder unnecessarily tall: {result}")
 
 
@@ -192,6 +192,12 @@ def ensure_navigation(page):
         page.locator('#menuToggle').click()
     expect(page.locator('#appSidebar')).to_be_visible()
     assert not page.locator('#appSidebar').evaluate('(node) => node.inert')
+    # Por defecto visibles; se reabren si otra prueba los contrajo.
+    for toggle_id in ('sidebarNavigationToggle', 'sourceFoldersToggle'):
+        toggle = page.locator('#' + toggle_id)
+        if toggle.get_attribute('aria-expanded') == 'false':
+            toggle.click()
+        expect(toggle).to_have_attribute('aria-expanded', 'true')
 
 
 def check_concepcion_category(page):
@@ -296,6 +302,31 @@ def main():
                         page.goto(base + "#inicio", wait_until="load")
                         page.locator("#dashboardView:not([hidden])").wait_for(timeout=15000)
                         page.locator("#dashboardRecent .dashboard-recent-row").first.wait_for(timeout=15000)
+                        # El radar tiene su propia ficha, separada del listado "Lo más cubierto".
+                        radar_card=page.locator("#coverageTools .radar-standalone-card")
+                        covered_card=page.locator("#coverageTools .covered-standalone-card")
+                        expect(radar_card).to_be_visible()
+                        expect(covered_card).to_be_visible()
+                        expect(radar_card.locator("#radarStage svg")).to_have_count(1)
+                        expect(radar_card.locator("#radarStage svg")).to_be_visible()
+                        expect(radar_card.locator("#radarFigure")).to_be_visible()
+                        expect(radar_card.locator("#radarCaption")).to_be_visible()
+                        assert page.locator("#radarMapToggle, #radarMapDetails").count() == 0
+                        assert radar_card.evaluate("(node)=>node.closest('#newsroomColumns') === null")
+                        assert radar_card.evaluate("(node)=>node.closest('#dashboardView') !== null")
+                        expect(covered_card.locator("#coveredList")).to_be_visible()
+                        assert radar_card.locator("#coveredList").count()==0
+                        separate=page.evaluate("""() => {
+                          const a=document.querySelector('#coverageTools .radar-standalone-card');
+                          const b=document.querySelector('#coverageTools .covered-standalone-card');
+                          const ar=a.getBoundingClientRect(),br=b.getBoundingClientRect();
+                          return {distinct:a!==b,fill:getComputedStyle(a).backgroundColor,
+                            border:getComputedStyle(a).borderTopWidth,
+                            overlap:Math.min(ar.right,br.right)>Math.max(ar.left,br.left)
+                                 &&Math.min(ar.bottom,br.bottom)>Math.max(ar.top,br.top)};
+                        }""")
+                        assert separate["distinct"] and not separate["overlap"],separate
+                        assert separate["border"]!="0px",separate
                         if categories_only:
                             check_concepcion_category(page)
                             assert not javascript_errors, javascript_errors
@@ -315,8 +346,34 @@ def main():
                         page.evaluate("document.body.classList.remove('light')")
                         assert page.evaluate("getComputedStyle(document.body).getPropertyValue('--bg').trim()") != light_background
                         page.evaluate("document.body.classList.add('light')")
-                        colors=page.locator('#libraryFolderNav .system-folder-link .nav-glyph').evaluate_all('nodes=>nodes.map(n=>getComputedStyle(n).color)')
-                        assert len(set(colors)) == len(CATEGORIES),colors
+                        # En móvil la barra está fuera de pantalla hasta abrir el cajón.
+                        if page.locator('#appSidebar').evaluate('(node) => node.inert'):
+                            page.locator('#menuToggle').click()
+                        expect(page.locator('#appSidebar')).to_be_visible()
+                        # Ambas listas son visibles al iniciar, se cierran por separado
+                        # y vuelven a abrirse para continuar las pruebas de navegación.
+                        for control_id, content_id in (('sidebarNavigationToggle','sidebarCoreContent'),
+                                                       ('sourceFoldersToggle','libraryFolderNav')):
+                            toggle=page.locator('#'+control_id)
+                            content=page.locator('#'+content_id)
+                            expect(toggle).to_have_attribute('aria-expanded','true')
+                            expect(content).to_be_visible()
+                            toggle.click()
+                            expect(toggle).to_have_attribute('aria-expanded','false')
+                            expect(content).to_be_hidden()
+                            toggle.click()
+                            expect(toggle).to_have_attribute('aria-expanded','true')
+                            expect(content).to_be_visible()
+                        # Fondo de lectura y barra lateral claramente diferenciados.
+                        colors=page.evaluate("""() => ({
+                           background:getComputedStyle(document.body).getPropertyValue('--bg').trim(),
+                           sidebar:getComputedStyle(document.querySelector('#appSidebar')).backgroundColor,
+                           page:getComputedStyle(document.querySelector('.page')).backgroundColor
+                        })""")
+                        assert colors['sidebar'] != colors['page'], colors
+                        # Identidad cromática solo en los iconos, sin pastillas decorativas.
+                        icon_colors=page.locator('#libraryFolderNav .system-folder-link .nav-glyph').evaluate_all('nodes=>nodes.map(n=>getComputedStyle(n).color)')
+                        assert len(icon_colors) == len(CATEGORIES) and len(set(icon_colors)) == len(CATEGORIES),icon_colors
                         # Las seis carpetas originales y Concepción siguen accesibles y administrables.
                         assert page.locator("#libraryFolderNav .system-folder-link").count() == len(CATEGORIES)
                         assert page.locator("#libraryFolderNav .v12-hidden-category").count() == 0
@@ -436,7 +493,10 @@ def main():
                         assert page.locator("#articleGrid .article-card.unread-card").count() >= 1
                         assert page.locator("#articleGrid .article-card.no-excerpt").count() >= 1
                         placeholders=page.locator("#articleGrid .article-card.no-cover .article-cover-placeholder")
-                        expect(placeholders.first).to_be_hidden()
+                        expect(placeholders.first).to_be_visible()
+                        image_height=page.locator("#articleGrid .article-card .cover").first.evaluate("(el)=>el.getBoundingClientRect().height")
+                        fallback_height=placeholders.first.evaluate("(el)=>el.getBoundingClientRect().height")
+                        assert abs(image_height-fallback_height)<=1,(image_height,fallback_height)
                         assert placeholders.first.locator(".article-cover-publisher").inner_text()
                         expect(placeholders.first.locator(".article-cover-note")).to_have_text("Vista previa")
                         assert placeholders.first.locator("img").count() == 0
@@ -447,13 +507,28 @@ def main():
                             "(node) => getComputedStyle(node).boxShadow")
                         assert shadow_unread != "none", shadow_unread
                         check_uniform_card_heights(page, f"tarjetas {browser_name} {width}px")
+                        # El tamaño de los titulares se configura sin cambiar los resúmenes.
+                        page.locator("#settingsButton").click()
+                        size_control=page.locator("#settingCardTitleSize")
+                        expect(size_control).to_have_value("16")
+                        size_control.fill("14")
+                        expect(page.locator("#cardTitleSizeValue")).to_have_text("14 px")
+                        page.locator("#settingsDone").click()
+                        computed_title_size=page.locator("#articleGrid .article-title").first.evaluate("(el)=>getComputedStyle(el).fontSize")
+                        assert computed_title_size=="14px",computed_title_size
+                        page.reload(wait_until="load")
+                        page.locator("#settingsButton").click()
+                        expect(page.locator("#settingCardTitleSize")).to_have_value("14")
+                        page.locator("#settingCardTitleSize").fill("16")
+                        page.locator("#settingsDone").click()
+                        page.locator("#articleGrid .article-card").first.wait_for()
                         # Preferencia Compacto mantiene miniaturas y títulos acotados.
                         # Compacto debe ocultar los resúmenes; no basta con reducir imágenes.
                         page.evaluate("document.body.classList.add('compact')")
                         assert page.locator("#articleGrid .article-card .cover").first.evaluate(
                             "(node) => node.getBoundingClientRect().height") <= 101
                         assert placeholders.first.evaluate(
-                            "(node) => node.getBoundingClientRect().height") <= 61
+                            "(node) => node.getBoundingClientRect().height") <= 101
                         excerpt=page.locator("#articleGrid .article-card:not(.no-excerpt) .article-excerpt").first
                         assert excerpt.count() > 0
                         assert excerpt.evaluate("(node) => getComputedStyle(node).display") == "none"

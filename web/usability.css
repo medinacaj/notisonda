@@ -1,12 +1,8 @@
 body.radar-hybrid .card-action-hint{margin:7px 0 0;color:var(--muted);font:12px/1.5 var(--font-ui)}
 body.radar-hybrid .card-action-hint[hidden]{display:none}
 body.radar-hybrid .card-action-hint button{padding:3px 7px;border:1px solid var(--line);border-radius:6px;background:var(--surface);color:var(--text);font:inherit;cursor:pointer}
-body.radar-hybrid .card-action-hint button:focus-visible,
-body.radar-hybrid #radarMapToggle:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
-body.radar-hybrid .radar-map-details{width:100%;min-width:0}
-body.radar-hybrid #radarMapToggle{display:none}
-@media(max-width:720px){
- body.radar-hybrid .newsroom-discovery-aside .covered-list{order:-1}
- body.radar-hybrid #radarMapToggle{display:list-item;min-height:44px;padding:12px;border:1px solid var(--line);border-radius:9px;background:var(--surface);color:var(--text);font:650 13px/1.4 var(--font-ui);cursor:pointer}
- body.radar-hybrid .radar-map-details[open] #radarMapToggle{margin-bottom:12px}
-}
+body.radar-hybrid .card-action-hint button:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+/* El radar circular y su leyenda siempre visibles; sin acordeón en móvil. */
+body.radar-hybrid #coverageTools .radar-figure{display:block;visibility:visible;min-width:0}
+body.radar-hybrid #coverageTools #radarStage{display:block}
+body.radar-hybrid #coverageTools .radar-caption{display:block}

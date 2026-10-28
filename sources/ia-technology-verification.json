@@ -1,0 +1,303 @@
+{
+  "date": "2026-10-27",
+  "description": "Ampliación en español de inteligencia artificial e informática; disponibilidad real pendiente del colector",
+  "sources": [
+    {
+      "category": "01 - Inteligencia Artificial",
+      "name": "INVESTIGACIÓN — Agencia SINC | Tecnología",
+      "feed": "https://www.agenciasinc.es/feed/Tecnologia",
+      "website": "https://www.agenciasinc.es/Tecnologia",
+      "kind": "rss-directo",
+      "status": "pendiente_validacion_operativa",
+      "entries_observed": null,
+      "last_published_at": null,
+      "verified_at": null
+    },
+    {
+      "category": "01 - Inteligencia Artificial",
+      "name": "INVESTIGACIÓN — Agencia SINC | Ciencia",
+      "feed": "https://www.agenciasinc.es/feed/Ciencia",
+      "website": "https://www.agenciasinc.es/Ciencia",
+      "kind": "rss-directo",
+      "status": "pendiente_validacion_operativa",
+      "entries_observed": null,
+      "last_published_at": null,
+      "verified_at": null
+    },
+    {
+      "category": "01 - Inteligencia Artificial",
+      "name": "EVENTOS — Agencia SINC | Agenda",
+      "feed": "https://www.agenciasinc.es/feed/Agenda",
+      "website": "https://www.agenciasinc.es/",
+      "kind": "rss-directo",
+      "status": "pendiente_validacion_operativa",
+      "entries_observed": null,
+      "last_published_at": null,
+      "verified_at": null
+    },
+    {
+      "category": "01 - Inteligencia Artificial",
+      "name": "MEDIO — Planeta Chatbot | IA aplicada",
+      "feed": "https://planetachatbot.com/feed/",
+      "website": "https://planetachatbot.com/",
+      "kind": "rss-directo",
+      "status": "pendiente_validacion_operativa",
+      "entries_observed": null,
+      "last_published_at": null,
+      "verified_at": null
+    },
+    {
+      "category": "01 - Inteligencia Artificial",
+      "name": "ANÁLISIS — Maldita Tecnología | Verificación tecnológica",
+      "feed": "https://maldita.es/malditatecnologia/feed/",
+      "website": "https://maldita.es/malditatecnologia/",
+      "kind": "rss-directo",
+      "status": "pendiente_validacion_operativa",
+      "entries_observed": null,
+      "last_published_at": null,
+      "verified_at": null
+    },
+    {
+      "category": "01 - Inteligencia Artificial",
+      "name": "ANÁLISIS — Enrique Dans | IA y transformación digital",
+      "feed": "https://feeds.feedburner.com/ElBlogDeEnriqueDans",
+      "website": "https://www.enriquedans.com/",
+      "kind": "rss-directo",
+      "status": "pendiente_validacion_operativa",
+      "entries_observed": null,
+      "last_published_at": null,
+      "verified_at": null
+    },
+    {
+      "category": "01 - Inteligencia Artificial",
+      "name": "RADAR — MIT Technology Review en español | IA",
+      "feed": "https://news.google.com/rss/search?q=site%3Atechnologyreview.es%20%28%22inteligencia%20artificial%22%20OR%20%22IA%22%29%20when%3A30d&hl=es-419&gl=CL&ceid=CL%3Aes-419",
+      "website": "https://www.technologyreview.es/",
+      "kind": "google-noticias",
+      "status": "pendiente_validacion_operativa",
+      "entries_observed": null,
+      "last_published_at": null,
+      "verified_at": null
+    },
+    {
+      "category": "01 - Inteligencia Artificial",
+      "name": "RADAR — Papers y estudios científicos de IA | Español",
+      "feed": "https://news.google.com/rss/search?q=%28%22paper%22%20OR%20%22art%C3%ADculo%20cient%C3%ADfico%22%20OR%20%22investigaci%C3%B3n%22%29%20%22inteligencia%20artificial%22%20when%3A30d&hl=es-419&gl=CL&ceid=CL%3Aes-419",
+      "website": "https://news.google.com/",
+      "kind": "google-noticias",
+      "status": "pendiente_validacion_operativa",
+      "entries_observed": null,
+      "last_published_at": null,
+      "verified_at": null
+    },
+    {
+      "category": "01 - Inteligencia Artificial",
+      "name": "RADAR — Conferencias y congresos de IA | Español",
+      "feed": "https://news.google.com/rss/search?q=%28%22conferencia%20de%20inteligencia%20artificial%22%20OR%20%22congreso%20de%20IA%22%20OR%20%22jornada%20de%20inteligencia%20artificial%22%29%20when%3A30d&hl=es-419&gl=CL&ceid=CL%3Aes-419",
+      "website": "https://news.google.com/",
+      "kind": "google-noticias",
+      "status": "pendiente_validacion_operativa",
+      "entries_observed": null,
+      "last_published_at": null,
+      "verified_at": null
+    },
+    {
+      "category": "01 - Inteligencia Artificial",
+      "name": "RADAR — Lanzamientos de modelos y herramientas IA | Español",
+      "feed": "https://news.google.com/rss/search?q=%28%22nuevo%20modelo%20de%20IA%22%20OR%20%22lanzamiento%20de%20IA%22%20OR%20%22nueva%20herramienta%20de%20inteligencia%20artificial%22%29%20when%3A30d&hl=es-419&gl=CL&ceid=CL%3Aes-419",
+      "website": "https://news.google.com/",
+      "kind": "google-noticias",
+      "status": "pendiente_validacion_operativa",
+      "entries_observed": null,
+      "last_published_at": null,
+      "verified_at": null
+    },
+    {
+      "category": "02 - Tecnología",
+      "name": "MEDIO — Microsiervos | Ciencia e informática",
+      "feed": "https://www.microsiervos.com/index.xml",
+      "website": "https://www.microsiervos.com/",
+      "kind": "rss-directo",
+      "status": "pendiente_validacion_operativa",
+      "entries_observed": null,
+      "last_published_at": null,
+      "verified_at": null
+    },
+    {
+      "category": "02 - Tecnología",
+      "name": "INVESTIGACIÓN — Naukas | Divulgación científica",
+      "feed": "https://naukas.com/feed/",
+      "website": "https://naukas.com/",
+      "kind": "rss-directo",
+      "status": "pendiente_validacion_operativa",
+      "entries_observed": null,
+      "last_published_at": null,
+      "verified_at": null
+    },
+    {
+      "category": "02 - Tecnología",
+      "name": "MEDIO — Computer Hoy | Informática y tecnología",
+      "feed": "https://computerhoy.20minutos.es/rss",
+      "website": "https://computerhoy.20minutos.es/",
+      "kind": "rss-directo",
+      "status": "pendiente_validacion_operativa",
+      "entries_observed": null,
+      "last_published_at": null,
+      "verified_at": null
+    },
+    {
+      "category": "02 - Tecnología",
+      "name": "MEDIO — El Chapuzas Informático | Hardware",
+      "feed": "https://elchapuzasinformatico.com/feed/",
+      "website": "https://elchapuzasinformatico.com/",
+      "kind": "rss-directo",
+      "status": "pendiente_validacion_operativa",
+      "entries_observed": null,
+      "last_published_at": null,
+      "verified_at": null
+    },
+    {
+      "category": "02 - Tecnología",
+      "name": "MEDIO — Profesional Review | Hardware y análisis",
+      "feed": "https://www.profesionalreview.com/feed/",
+      "website": "https://www.profesionalreview.com/",
+      "kind": "rss-directo",
+      "status": "pendiente_validacion_operativa",
+      "entries_observed": null,
+      "last_published_at": null,
+      "verified_at": null
+    },
+    {
+      "category": "02 - Tecnología",
+      "name": "MEDIO — SoftZone | Software y Windows",
+      "feed": "https://www.softzone.es/feed/",
+      "website": "https://www.softzone.es/",
+      "kind": "rss-directo",
+      "status": "pendiente_validacion_operativa",
+      "entries_observed": null,
+      "last_published_at": null,
+      "verified_at": null
+    },
+    {
+      "category": "02 - Tecnología",
+      "name": "MEDIO — MuyComputerPRO | Informática profesional",
+      "feed": "https://www.muycomputerpro.com/feed/",
+      "website": "https://www.muycomputerpro.com/",
+      "kind": "rss-directo",
+      "status": "pendiente_validacion_operativa",
+      "entries_observed": null,
+      "last_published_at": null,
+      "verified_at": null
+    },
+    {
+      "category": "02 - Tecnología",
+      "name": "MEDIO — Silicon | Tecnología empresarial",
+      "feed": "https://www.silicon.es/feed?content-type=text%2Fxml",
+      "website": "https://www.silicon.es/",
+      "kind": "rss-directo",
+      "status": "pendiente_validacion_operativa",
+      "entries_observed": null,
+      "last_published_at": null,
+      "verified_at": null
+    },
+    {
+      "category": "02 - Tecnología",
+      "name": "MEDIO — 20minutos | Tecnología",
+      "feed": "https://www.20minutos.es/rss/tecnologia/",
+      "website": "https://www.20minutos.es/tecnologia/",
+      "kind": "rss-directo",
+      "status": "pendiente_validacion_operativa",
+      "entries_observed": null,
+      "last_published_at": null,
+      "verified_at": null
+    },
+    {
+      "category": "02 - Tecnología",
+      "name": "MEDIO — La Vanguardia | Tecnología",
+      "feed": "https://www.lavanguardia.com/rss/tecnologia.xml",
+      "website": "https://www.lavanguardia.com/tecnologia",
+      "kind": "rss-directo",
+      "status": "pendiente_validacion_operativa",
+      "entries_observed": null,
+      "last_published_at": null,
+      "verified_at": null
+    },
+    {
+      "category": "02 - Tecnología",
+      "name": "MEDIO — Omicrono | Tecnología",
+      "feed": "https://www.elespanol.com/rss/omicrono/",
+      "website": "https://www.elespanol.com/omicrono/",
+      "kind": "rss-directo",
+      "status": "pendiente_validacion_operativa",
+      "entries_observed": null,
+      "last_published_at": null,
+      "verified_at": null
+    },
+    {
+      "category": "02 - Tecnología",
+      "name": "MEDIO — MuySeguridad | Ciberseguridad",
+      "feed": "https://www.muyseguridad.net/feed/",
+      "website": "https://www.muyseguridad.net/",
+      "kind": "rss-directo",
+      "status": "pendiente_validacion_operativa",
+      "entries_observed": null,
+      "last_published_at": null,
+      "verified_at": null
+    },
+    {
+      "category": "02 - Tecnología",
+      "name": "MEDIO — tuexperto | Dispositivos y tecnología",
+      "feed": "https://www.tuexperto.com/feed/",
+      "website": "https://www.tuexperto.com/",
+      "kind": "rss-directo",
+      "status": "pendiente_validacion_operativa",
+      "entries_observed": null,
+      "last_published_at": null,
+      "verified_at": null
+    },
+    {
+      "category": "02 - Tecnología",
+      "name": "MEDIO — MovilZona | Móviles",
+      "feed": "https://www.movilzona.es/feed/",
+      "website": "https://www.movilzona.es/",
+      "kind": "rss-directo",
+      "status": "pendiente_validacion_operativa",
+      "entries_observed": null,
+      "last_published_at": null,
+      "verified_at": null
+    },
+    {
+      "category": "02 - Tecnología",
+      "name": "MEDIO — elDiario.es | Tecnología",
+      "feed": "https://www.eldiario.es/rss/tecnologia/",
+      "website": "https://www.eldiario.es/tecnologia/",
+      "kind": "rss-directo",
+      "status": "pendiente_validacion_operativa",
+      "entries_observed": null,
+      "last_published_at": null,
+      "verified_at": null
+    },
+    {
+      "category": "02 - Tecnología",
+      "name": "MEDIO — Xataka Android | Tecnología móvil",
+      "feed": "https://www.xatakandroid.com/feedburner.xml",
+      "website": "https://www.xatakandroid.com/",
+      "kind": "rss-directo",
+      "status": "pendiente_validacion_operativa",
+      "entries_observed": null,
+      "last_published_at": null,
+      "verified_at": null
+    },
+    {
+      "category": "02 - Tecnología",
+      "name": "MEDIO — MuyPymes | Tecnología y empresa",
+      "feed": "https://www.muypymes.com/feed/",
+      "website": "https://www.muypymes.com/",
+      "kind": "rss-directo",
+      "status": "pendiente_validacion_operativa",
+      "entries_observed": null,
+      "last_published_at": null,
+      "verified_at": null
+    }
+  ]
+}

@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <opml version="1.0">
   <head>
-    <title>Fuentes públicas Radar RSS (244 feeds, 8 categorías)</title>
+    <title>Fuentes públicas Radar RSS (271 feeds, 8 categorías)</title>
   </head>
   <body>
     <outline text="01 - Inteligencia Artificial" title="01 - Inteligencia Artificial">
@@ -50,6 +50,16 @@
       <outline text="POLÍTICA — Regulación, privacidad y copyright" title="POLÍTICA — Regulación, privacidad y copyright" type="rss" xmlUrl="https://news.google.com/rss/search?q=%22inteligencia+artificial%22+%28regulaci%C3%B3n+OR+privacidad+OR+%22derechos+de+autor%22+OR+%22AI+Act%22%29&amp;hl=es-419&amp;gl=CL&amp;ceid=CL:es-419" htmlUrl="https://news.google.com/" />
       <outline text="NEGOCIOS — Startups e inversión en IA" title="NEGOCIOS — Startups e inversión en IA" type="rss" xmlUrl="https://news.google.com/rss/search?q=%28%22startup+de+IA%22+OR+%22startup+de+inteligencia+artificial%22%29+%28inversi%C3%B3n+OR+financiaci%C3%B3n+OR+ronda%29&amp;hl=es-419&amp;gl=CL&amp;ceid=CL:es-419" htmlUrl="https://news.google.com/" />
       <outline text="REGIÓN — IA en Chile y Latinoamérica" title="REGIÓN — IA en Chile y Latinoamérica" type="rss" xmlUrl="https://news.google.com/rss/search?q=%22inteligencia+artificial%22+%28Chile+OR+Latinoam%C3%A9rica%29&amp;hl=es-419&amp;gl=CL&amp;ceid=CL:es-419" htmlUrl="https://news.google.com/" />
+      <outline text="INVESTIGACIÓN — Agencia SINC | Tecnología" title="INVESTIGACIÓN — Agencia SINC | Tecnología" type="rss" xmlUrl="https://www.agenciasinc.es/feed/Tecnologia" htmlUrl="https://www.agenciasinc.es/Tecnologia" />
+      <outline text="INVESTIGACIÓN — Agencia SINC | Ciencia" title="INVESTIGACIÓN — Agencia SINC | Ciencia" type="rss" xmlUrl="https://www.agenciasinc.es/feed/Ciencia" htmlUrl="https://www.agenciasinc.es/Ciencia" />
+      <outline text="EVENTOS — Agencia SINC | Agenda" title="EVENTOS — Agencia SINC | Agenda" type="rss" xmlUrl="https://www.agenciasinc.es/feed/Agenda" htmlUrl="https://www.agenciasinc.es/" />
+      <outline text="MEDIO — Planeta Chatbot | IA aplicada" title="MEDIO — Planeta Chatbot | IA aplicada" type="rss" xmlUrl="https://planetachatbot.com/feed/" htmlUrl="https://planetachatbot.com/" />
+      <outline text="ANÁLISIS — Maldita Tecnología | Verificación tecnológica" title="ANÁLISIS — Maldita Tecnología | Verificación tecnológica" type="rss" xmlUrl="https://maldita.es/malditatecnologia/feed/" htmlUrl="https://maldita.es/malditatecnologia/" />
+      <outline text="ANÁLISIS — Enrique Dans | IA y transformación digital" title="ANÁLISIS — Enrique Dans | IA y transformación digital" type="rss" xmlUrl="https://feeds.feedburner.com/ElBlogDeEnriqueDans" htmlUrl="https://www.enriquedans.com/" />
+      <outline text="RADAR — MIT Technology Review en español | IA" title="RADAR — MIT Technology Review en español | IA" type="rss" xmlUrl="https://news.google.com/rss/search?q=site%3Atechnologyreview.es%20%28%22inteligencia%20artificial%22%20OR%20%22IA%22%29%20when%3A30d&amp;hl=es-419&amp;gl=CL&amp;ceid=CL%3Aes-419" htmlUrl="https://www.technologyreview.es/" />
+      <outline text="RADAR — Papers y estudios científicos de IA | Español" title="RADAR — Papers y estudios científicos de IA | Español" type="rss" xmlUrl="https://news.google.com/rss/search?q=%28%22paper%22%20OR%20%22art%C3%ADculo%20cient%C3%ADfico%22%20OR%20%22investigaci%C3%B3n%22%29%20%22inteligencia%20artificial%22%20when%3A30d&amp;hl=es-419&amp;gl=CL&amp;ceid=CL%3Aes-419" htmlUrl="https://news.google.com/" />
+      <outline text="RADAR — Conferencias y congresos de IA | Español" title="RADAR — Conferencias y congresos de IA | Español" type="rss" xmlUrl="https://news.google.com/rss/search?q=%28%22conferencia%20de%20inteligencia%20artificial%22%20OR%20%22congreso%20de%20IA%22%20OR%20%22jornada%20de%20inteligencia%20artificial%22%29%20when%3A30d&amp;hl=es-419&amp;gl=CL&amp;ceid=CL%3Aes-419" htmlUrl="https://news.google.com/" />
+      <outline text="RADAR — Lanzamientos de modelos y herramientas IA | Español" title="RADAR — Lanzamientos de modelos y herramientas IA | Español" type="rss" xmlUrl="https://news.google.com/rss/search?q=%28%22nuevo%20modelo%20de%20IA%22%20OR%20%22lanzamiento%20de%20IA%22%20OR%20%22nueva%20herramienta%20de%20inteligencia%20artificial%22%29%20when%3A30d&amp;hl=es-419&amp;gl=CL&amp;ceid=CL%3Aes-419" htmlUrl="https://news.google.com/" />
     </outline>
     <outline text="02 - Tecnología" title="02 - Tecnología">
       <outline text="RADAR — iProUP | Fintech y tecnología" title="RADAR — iProUP | Fintech y tecnología" type="rss" xmlUrl="https://news.google.com/rss/search?q=site%3Aiproup.com+%28fintech+OR+tecnolog%C3%ADa+OR+%22econom%C3%ADa+digital%22+OR+inteligencia+artificial%29&amp;hl=es-419&amp;gl=CL&amp;ceid=CL:es-419" htmlUrl="https://www.iproup.com/" />
@@ -89,6 +99,23 @@
       <outline text="TENDENCIA — Computación espacial / XR" title="TENDENCIA — Computación espacial / XR" type="rss" xmlUrl="https://news.google.com/rss/search?q=%28%22computaci%C3%B3n+espacial%22+OR+%22realidad+mixta%22+OR+XR%29+tecnolog%C3%ADa&amp;hl=es-419&amp;gl=CL&amp;ceid=CL%3Aes-419" htmlUrl="https://news.google.com/" />
       <outline text="TENDENCIA — Robótica y automatización" title="TENDENCIA — Robótica y automatización" type="rss" xmlUrl="https://news.google.com/rss/search?q=rob%C3%B3tica+automatizaci%C3%B3n+tecnolog%C3%ADa&amp;hl=es-419&amp;gl=CL&amp;ceid=CL:es-419" htmlUrl="https://news.google.com/" />
       <outline text="MEDIO — Con-Café | Tecnología y telecomunicaciones (Venezuela)" title="MEDIO — Con-Café | Tecnología y telecomunicaciones (Venezuela)" type="rss" xmlUrl="https://www.con-cafe.com/feed/" htmlUrl="https://www.con-cafe.com/" />
+      <outline text="MEDIO — Microsiervos | Ciencia e informática" title="MEDIO — Microsiervos | Ciencia e informática" type="rss" xmlUrl="https://www.microsiervos.com/index.xml" htmlUrl="https://www.microsiervos.com/" />
+      <outline text="INVESTIGACIÓN — Naukas | Divulgación científica" title="INVESTIGACIÓN — Naukas | Divulgación científica" type="rss" xmlUrl="https://naukas.com/feed/" htmlUrl="https://naukas.com/" />
+      <outline text="MEDIO — Computer Hoy | Informática y tecnología" title="MEDIO — Computer Hoy | Informática y tecnología" type="rss" xmlUrl="https://computerhoy.20minutos.es/rss" htmlUrl="https://computerhoy.20minutos.es/" />
+      <outline text="MEDIO — El Chapuzas Informático | Hardware" title="MEDIO — El Chapuzas Informático | Hardware" type="rss" xmlUrl="https://elchapuzasinformatico.com/feed/" htmlUrl="https://elchapuzasinformatico.com/" />
+      <outline text="MEDIO — Profesional Review | Hardware y análisis" title="MEDIO — Profesional Review | Hardware y análisis" type="rss" xmlUrl="https://www.profesionalreview.com/feed/" htmlUrl="https://www.profesionalreview.com/" />
+      <outline text="MEDIO — SoftZone | Software y Windows" title="MEDIO — SoftZone | Software y Windows" type="rss" xmlUrl="https://www.softzone.es/feed/" htmlUrl="https://www.softzone.es/" />
+      <outline text="MEDIO — MuyComputerPRO | Informática profesional" title="MEDIO — MuyComputerPRO | Informática profesional" type="rss" xmlUrl="https://www.muycomputerpro.com/feed/" htmlUrl="https://www.muycomputerpro.com/" />
+      <outline text="MEDIO — Silicon | Tecnología empresarial" title="MEDIO — Silicon | Tecnología empresarial" type="rss" xmlUrl="https://www.silicon.es/feed?content-type=text%2Fxml" htmlUrl="https://www.silicon.es/" />
+      <outline text="MEDIO — 20minutos | Tecnología" title="MEDIO — 20minutos | Tecnología" type="rss" xmlUrl="https://www.20minutos.es/rss/tecnologia/" htmlUrl="https://www.20minutos.es/tecnologia/" />
+      <outline text="MEDIO — La Vanguardia | Tecnología" title="MEDIO — La Vanguardia | Tecnología" type="rss" xmlUrl="https://www.lavanguardia.com/rss/tecnologia.xml" htmlUrl="https://www.lavanguardia.com/tecnologia" />
+      <outline text="MEDIO — Omicrono | Tecnología" title="MEDIO — Omicrono | Tecnología" type="rss" xmlUrl="https://www.elespanol.com/rss/omicrono/" htmlUrl="https://www.elespanol.com/omicrono/" />
+      <outline text="MEDIO — MuySeguridad | Ciberseguridad" title="MEDIO — MuySeguridad | Ciberseguridad" type="rss" xmlUrl="https://www.muyseguridad.net/feed/" htmlUrl="https://www.muyseguridad.net/" />
+      <outline text="MEDIO — tuexperto | Dispositivos y tecnología" title="MEDIO — tuexperto | Dispositivos y tecnología" type="rss" xmlUrl="https://www.tuexperto.com/feed/" htmlUrl="https://www.tuexperto.com/" />
+      <outline text="MEDIO — MovilZona | Móviles" title="MEDIO — MovilZona | Móviles" type="rss" xmlUrl="https://www.movilzona.es/feed/" htmlUrl="https://www.movilzona.es/" />
+      <outline text="MEDIO — elDiario.es | Tecnología" title="MEDIO — elDiario.es | Tecnología" type="rss" xmlUrl="https://www.eldiario.es/rss/tecnologia/" htmlUrl="https://www.eldiario.es/tecnologia/" />
+      <outline text="MEDIO — Xataka Android | Tecnología móvil" title="MEDIO — Xataka Android | Tecnología móvil" type="rss" xmlUrl="https://www.xatakandroid.com/feedburner.xml" htmlUrl="https://www.xatakandroid.com/" />
+      <outline text="MEDIO — MuyPymes | Tecnología y empresa" title="MEDIO — MuyPymes | Tecnología y empresa" type="rss" xmlUrl="https://www.muypymes.com/feed/" htmlUrl="https://www.muypymes.com/" />
     </outline>
     <outline text="03 - Internacionales" title="03 - Internacionales">
       <outline text="MEDIO — Actualidad Laboral" title="MEDIO — Actualidad Laboral" type="rss" xmlUrl="https://actualidadlaboral.com/feed/" htmlUrl="https://actualidadlaboral.com/" />
