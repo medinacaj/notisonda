@@ -709,8 +709,16 @@ function mount(){
   const foldersSection=mk('section','source-folders-section');
   foldersSection.setAttribute('aria-labelledby','sourceFoldersHeading');
   const header=mk('div','folder-group-head');
+  const titleWrap=mk('div','sidebar-folder-title');
+  const toggle=mk('button','sidebar-section-toggle');
+  toggle.id='sourceFoldersToggle';toggle.type='button';
+  toggle.setAttribute('aria-controls','libraryFolderNav');
+  toggle.setAttribute('aria-expanded','false');
   const heading=mk('span','','CARPETAS DE FUENTES');
-  heading.id='sourceFoldersHeading';header.append(heading);
+  heading.id='sourceFoldersHeading';
+  const arrow=mk('span','sidebar-section-chevron');
+  arrow.setAttribute('aria-hidden','true');
+  toggle.append(heading,arrow);titleWrap.append(toggle);header.append(titleWrap);
   const add=mk('button');add.type='button';add.title='Crear carpeta de fuentes';add.setAttribute('aria-label','Crear carpeta de fuentes');
   add.append(svgIcon('folder-plus'));header.append(add);
   const restore=mk('button','folder-restore');restore.id='folderRestore';
@@ -724,10 +732,16 @@ function mount(){
   });
   const nav=mk('nav','library-folder-nav library-system-folders');
   nav.id='libraryFolderNav';
+  nav.hidden=true;
   nav.setAttribute('aria-label','Carpetas de fuentes del catálogo y creadas por ti');
   foldersSection.append(header,nav);
-  $('categoryNav').after(foldersSection);
-  add.addEventListener('click',createFolder);
+  $('sidebarCoreSection').after(foldersSection);
+  const setExpanded=expanded=>{
+    nav.hidden=!expanded;
+    toggle.setAttribute('aria-expanded',String(expanded));
+  };
+  toggle.addEventListener('click',()=>setExpanded(nav.hidden));
+  add.addEventListener('click',()=>{setExpanded(true);createFolder();});
   const wrapper=mk('label','library-tag-filter-wrap'),filter=mk('select','library-tag-filter');
   filter.id='libraryTagFilter';filter.setAttribute('aria-label','Filtrar por etiqueta');wrapper.append(filter);
   $('sourceSelect').closest('label').after(wrapper);

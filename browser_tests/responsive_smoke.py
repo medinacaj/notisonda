@@ -192,6 +192,13 @@ def ensure_navigation(page):
         page.locator('#menuToggle').click()
     expect(page.locator('#appSidebar')).to_be_visible()
     assert not page.locator('#appSidebar').evaluate('(node) => node.inert')
+    # Los grupos inician plegados; abrirlos únicamente cuando esta prueba
+    # necesite actuar sobre sus enlaces, sin alterar el estado por defecto.
+    for toggle_id in ('sidebarNavigationToggle', 'sourceFoldersToggle'):
+        toggle = page.locator('#' + toggle_id)
+        if toggle.get_attribute('aria-expanded') == 'false':
+            toggle.click()
+        expect(toggle).to_have_attribute('aria-expanded', 'true')
 
 
 def check_concepcion_category(page):
@@ -315,8 +322,11 @@ def main():
                         page.evaluate("document.body.classList.remove('light')")
                         assert page.evaluate("getComputedStyle(document.body).getPropertyValue('--bg').trim()") != light_background
                         page.evaluate("document.body.classList.add('light')")
+                        # Nueva jerarquía editorial: iconos uniformes, sin fondos por categoría.
                         colors=page.locator('#libraryFolderNav .system-folder-link .nav-glyph').evaluate_all('nodes=>nodes.map(n=>getComputedStyle(n).color)')
-                        assert len(set(colors)) == len(CATEGORIES),colors
+                        assert len(colors) == len(CATEGORIES) and len(set(colors)) == 1,colors
+                        assert page.locator('#sidebarNavigationToggle').get_attribute('aria-expanded') == 'false'
+                        assert page.locator('#sourceFoldersToggle').get_attribute('aria-expanded') == 'false'
                         # Las seis carpetas originales y Concepción siguen accesibles y administrables.
                         assert page.locator("#libraryFolderNav .system-folder-link").count() == len(CATEGORIES)
                         assert page.locator("#libraryFolderNav .v12-hidden-category").count() == 0

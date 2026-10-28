@@ -549,7 +549,7 @@ function setNavOpen(open,restoreFocus=true,persistDesktop=false){
   if(mobile&&visible){sidebar.setAttribute('aria-modal','true');sidebar.setAttribute('role','dialog');}
   else{sidebar.removeAttribute('aria-modal');sidebar.removeAttribute('role');}
   if(mobile&&visible&&!wasOpen){
-    (sidebar.querySelector('.nav-link.active')||sidebar.querySelector('.nav-link')||$('menuClose'))?.focus({preventScroll:true});
+    (sidebar.querySelector('.sidebar-section-toggle')||$('menuClose'))?.focus({preventScroll:true});
   }else if(!visible&&restoreFocus&&(wasOpen||sidebar.contains(document.activeElement))){
     $('menuToggle').focus({preventScroll:true});
   }
@@ -1618,7 +1618,7 @@ function initHandlers() {
   $('markAllVisible').addEventListener('click',()=>{markArticlesRead(applyFilters().slice(0,state.page*state.pageSize));});
   const dialog=$('aboutDialog');
   const open=e=>{if(e)e.preventDefault();dialog.showModal();};
-  $('aboutButton').addEventListener('click',open); $('footerInfo').addEventListener('click',open);
+  $('footerInfo').addEventListener('click',open);
   $('closeAbout').addEventListener('click',()=>dialog.close()); $('dialogAccept').addEventListener('click',()=>dialog.close());
   dialog.addEventListener('click',e=>{if(e.target === dialog) dialog.close();});
   initSettingsHandlers();
