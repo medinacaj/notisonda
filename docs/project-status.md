@@ -1,10 +1,11 @@
-# Estado del proyecto — Radar RSS
+# Estado del proyecto — Notisonda
 
 Actualizado el 28 de octubre de 2026. Este archivo distingue código implementado de verificaciones que necesitan evidencia externa. La versión publicada y los resultados más recientes se consultan en GitHub Actions.
 
 ## Estado del código
 
-- Web pública: https://medinacaj.github.io/radar-rss-publico/; rama estable `main`.
+- Web pública: https://medinacaj.github.io/notisonda/; repositorio https://github.com/medinacaj/notisonda y rama estable `main`.
+- Migración de identidad: `scripts/site_config.py` mantiene nombre y URL canónicos compartidos por monitor, recuperación de noticias/agenda y RSS derivados. Se conservan los GUID RSS y las claves/formatos locales anteriores para no duplicar artículos ni perder preferencias. Las referencias de PR históricos redirigen al repositorio renombrado.
 - Publicación: `.github/workflows/deploy.yml`, cada tres horas UTC (`17 */3 * * *`), con posibles demoras de GitHub. El navegador comprueba nuevas publicaciones cada 15 minutos.
 - Catálogo: **311 suscripciones en ocho carpetas**. Se conservan los 276 registros previos y se añaden 35 canales de cobertura mundial: diez ámbitos regionales, doce temáticos y portales/agencias, incluyendo RSS nativo de MIT en español. Nuevos canales en Internacionales/Latinoamérica y uno en Tecnología; sin carpetas adicionales. Concepción 33 y Monagas 8 intactos. [Informe y evidencia](fuentes-cobertura-mundial-2026-10-28.md); observaciones RSS no equivalen a hechos verificados ni cobertura exhaustiva.
 - Noticias: archivo de hasta 5000 entradas y 45 días, listado paginado de 36 por defecto. Los contadores completan el archivo en segundo plano, respetan filtros/lectura y anuncian carga o total no disponible si no pueden verificarlo. Hasta tres descargas históricas simultáneas, canceladas al fallar o cambiar generación.

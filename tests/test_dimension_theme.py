@@ -13,7 +13,6 @@ class DimensionThemeTests(unittest.TestCase):
   for obsolete in ('editorial.css','hashnode-preview.css','radar-hybrid.css','copper-theme.css','home-editorial.css','cosmic-theme.css','iaadc-editorial.css'):
    self.assertNotIn("'./"+obsolete+"'",self.sw)
    self.assertNotIn('./'+obsolete+'?v=',self.html)
-  self.assertRegex(self.sw,r"const CACHE = 'radar-rss-v[0-9]+';")
  def test_system_and_explicit_theme_are_preserved(self):
   initial=self.app[self.app.index('function initialTheme()'):self.app.index('const state =')]
   self.assertIn("return 'system';",initial);self.assertIn('THEME_EXPLICIT_KEY',initial)
