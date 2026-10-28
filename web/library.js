@@ -714,6 +714,8 @@ function mount(){
   toggle.id='sourceFoldersToggle';toggle.type='button';
   toggle.setAttribute('aria-controls','libraryFolderNav');
   toggle.setAttribute('aria-expanded','false');
+  toggle.setAttribute('aria-label','Mostrar carpetas de fuentes');
+  toggle.title='Mostrar carpetas de fuentes';
   const heading=mk('span','','CARPETAS DE FUENTES');
   heading.id='sourceFoldersHeading';
   const arrow=mk('span','sidebar-section-chevron');
@@ -739,6 +741,8 @@ function mount(){
   const setExpanded=expanded=>{
     nav.hidden=!expanded;
     toggle.setAttribute('aria-expanded',String(expanded));
+    toggle.setAttribute('aria-label',expanded?'Ocultar carpetas de fuentes':'Mostrar carpetas de fuentes');
+    toggle.title=expanded?'Ocultar carpetas de fuentes':'Mostrar carpetas de fuentes';
   };
   toggle.addEventListener('click',()=>setExpanded(nav.hidden));
   add.addEventListener('click',()=>{setExpanded(true);createFolder();});
