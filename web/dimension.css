@@ -826,3 +826,61 @@ body.radar-hybrid.dimension #cardTitleSizeValue{
 body.radar-hybrid.dimension #settingCardTitleSize{
   width:100%;min-height:32px;cursor:pointer;accent-color:var(--accent);
 }
+
+
+/* La visualización circular es su propia ficha, distinta de la clasificación
+   "Lo más cubierto". No se mezclan ambos contenidos en una única superficie. */
+body.radar-hybrid.dimension #coverageTools{
+  margin-top:23px;padding-top:0;border-top:0;min-width:0;
+}
+body.radar-hybrid.dimension #coverageTools .newsroom-discovery-aside{
+  display:grid;grid-template-columns:minmax(0,0.9fr) minmax(0,1.1fr);
+  align-items:start;column-gap:18px;row-gap:18px;min-width:0;
+}
+body.radar-hybrid.dimension #coverageTools .radar-standalone-card,
+body.radar-hybrid.dimension #coverageTools .covered-standalone-card{
+  display:flex;flex-direction:column;min-width:0;
+  margin:0;padding:20px 22px;
+  border:1px solid var(--line);border-radius:18px;
+  background:var(--surface);box-shadow:var(--glass-shadow);
+}
+body.radar-hybrid.dimension #coverageTools .radar-standalone-card .dashboard-panel-head,
+body.radar-hybrid.dimension #coverageTools .covered-standalone-card .dashboard-panel-head{
+  margin-bottom:14px;
+}
+body.radar-hybrid.dimension #coverageTools .radar-standalone-card .radar-layout{
+  display:block;min-width:0;
+}
+body.radar-hybrid.dimension #coverageTools .radar-standalone-card .radar-figure{
+  margin:0 auto;width:100%;min-width:0;max-width:380px;
+}
+body.radar-hybrid.dimension #coverageTools .radar-standalone-card .radar-stage{
+  width:100%;max-width:340px;margin:0 auto;aspect-ratio:1;
+}
+body.radar-hybrid.dimension #coverageTools .radar-standalone-card .radar-caption{
+  max-width:46ch;margin:10px auto 0;text-align:center;
+  font-size:12px;line-height:1.5;color:var(--muted);
+}
+body.radar-hybrid.dimension #coverageTools .covered-standalone-card .covered-list{
+  margin:0;padding:0;min-width:0;
+}
+body.radar-hybrid.dimension #coverageTools .covered-standalone-card .covered-item{
+  padding:10px 4px;
+}
+body.radar-hybrid.dimension #coverageTools .trends-panel{
+  grid-column:1/-1;min-width:0;
+}
+@media(max-width:940px){
+  body.radar-hybrid.dimension #coverageTools .newsroom-discovery-aside{
+    grid-template-columns:minmax(0,1fr);gap:14px;
+  }
+  body.radar-hybrid.dimension #coverageTools .radar-standalone-card,
+  body.radar-hybrid.dimension #coverageTools .covered-standalone-card{
+    padding:17px 16px;
+  }
+}
+@media(max-width:480px){
+  body.radar-hybrid.dimension #coverageTools .radar-standalone-card .radar-stage{
+    max-width:300px;
+  }
+}
