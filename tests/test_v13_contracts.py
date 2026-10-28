@@ -23,25 +23,25 @@ class V13Contracts(unittest.TestCase):
         self.assertNotIn('Explorar todas las noticias',self.html)
         self.assertNotIn('class="dashboard-read-all" href="#noticias"',self.html)
         self.assertIn('id="categoryNav"',self.html)
-        self.assertIn('id="dashboardSavedAll"',self.html)
+        self.assertNotIn('id="dashboardSavedAll"',self.html)
         self.assertIn("target===\'all\'?\'#noticias\'",self.app)
 
     def test_home_starts_with_news_not_promotional_copy(self):
-        self.assertIn('<h1 id="dashboardTitle" class="sr-only">Actualidad</h1>',self.html)
+        self.assertIn('<h1 id="dashboardTitle">Inicio</h1>',self.html)
         self.assertNotIn('Noticias para estar al día.',self.html)
         self.assertNotIn('Una lectura clara de la actualidad',self.html)
         self.assertNotIn('class="dashboard-head"',self.html)
         self.assertNotIn('class="hero"',self.html)
         self.assertNotIn('id="settingHero"',self.html)
         self.assertNotIn('state.showHero',self.app)
-        self.assertLess(self.html.index('id="dashboardFeature"'),self.html.index('id="sinceVisit"'))
+        self.assertLess(self.html.index('id="sinceVisit"'),self.html.index('id="dashboardFeature"'))
         self.assertIn('id="dashboardRecentTitle"',self.html)
-        self.assertIn('id="dashboardFoldersTitle"',self.html)
-        self.assertIn('id="dashboardSavedAll"',self.html)
+        self.assertNotIn('id="dashboardFoldersTitle"',self.html)
+        self.assertNotIn('id="dashboardSavedAll"',self.html)
 
-    def test_home_has_separate_current_views_and_compatibility_slots(self):
-        self.assertIn('class="newsroom-columns" id="newsroomColumns" hidden',self.html)
-        for slot in ('dashboardFeature','dashboardRecent','dashboardSavedAll','dashboardFoldersTitle','agendaView'):
+    def test_home_has_separate_current_views_without_retired_slots(self):
+        self.assertNotIn('id="newsroomColumns"',self.html)
+        for slot in ('dashboardFeature','dashboardRecent','coverageTools','homeHeadlines','homeLatest','agendaView'):
             self.assertIn('id="'+slot+'"',self.html)
         self.assertNotIn('home-editorial.css?v=',self.html)
         self.assertIn('dimension.css?v=',self.html)

@@ -611,22 +611,6 @@ applyFilters=function(mode=state.mode){
   else if(state.sort==='source')filtered.sort((a,b)=>String(a.publisher||a.source||'').localeCompare(String(b.publisher||b.source||''),'es'));
   return filtered;
 };
-const oldDashboard=renderDashboard;
-renderDashboard=function(){
-  oldDashboard();
-  const panel=$('dashboardSavedPanel'),list=$('dashboardSavedList');
-  const items=savedNews().sort((a,b)=>new Date(b.published_at||b.first_seen_at||0)-new Date(a.published_at||a.first_seen_at||0)).slice(0,4);
-  panel.hidden=!items.length;
-  list.replaceChildren(...items.map(item=>{
-    const row=mk('div','dashboard-saved-item'),body=mk('div','dashboard-saved-content');
-    const cover=mk('a','dashboard-saved-cover');cover.href=safeURL(item.url)||'#';cover.target='_blank';cover.rel='noopener noreferrer external';
-    cover.addEventListener('click',e=>openArticleReader(item,e));
-    if(safeURL(item.image)){const image=mk('img');image.loading='lazy';image.src=item.image;image.alt='';image.referrerPolicy='no-referrer';cover.append(image);}
-    else cover.append(svgIcon('bookmark'));
-    const a=link(item.url,item.title||'Sin título','dashboard-saved-title');a.addEventListener('click',e=>openArticleReader(item,e));
-    body.append(a,mk('span','dashboard-saved-meta',sourceLabel(item.publisher||item.source)));row.append(cover,body);return row;
-  }));
-};
 const oldCard=card;
 card=function(item){
   const el=oldCard(item);

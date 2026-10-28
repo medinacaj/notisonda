@@ -61,13 +61,40 @@ class DimensionRegressions(unittest.TestCase):
         expect(self.page.locator('#feedView')).to_be_visible()
         expect(self.page.locator('#agendaSection')).to_be_hidden()
 
+    def test_home_uses_direct_sections_without_retired_panels(self):
+        expect(self.page.locator('#dashboardTitle')).to_be_visible()
+        expect(self.page.locator('#dashboardTitle')).to_have_text('Inicio')
+        expect(self.page.locator('#newsroomColumns,#dashboardFolders,#dashboardSavedPanel')).to_have_count(0)
+        order=self.page.locator('#dashboardView > section').evaluate_all('nodes=>nodes.map(n=>n.id)')
+        self.assertEqual(order,['sinceVisit','homeHeadlines','homeLatest','coverageTools'])
+        for width in (320,768,1440):
+            self.page.set_viewport_size({'width':width,'height':1000})
+            expect(self.page.locator('#radarFigure')).to_be_visible()
+            self.assertTrue(self.page.evaluate('document.documentElement.scrollWidth<=innerWidth+2'))
+        self.page.evaluate("goTo('all')")
+        expect(self.page.locator('#dashboardView')).to_be_hidden()
+        expect(self.page.locator('#feedView')).to_be_visible()
+
+    def test_large_text_respects_the_saved_independent_title_size(self):
+        for size in (14,22):
+            self.page.evaluate('(size)=>{state.cardTitleSize=size;state.fontSize="normal";savePref("card-title-size",size);savePref("font","normal");applyDisplaySettings();goTo("all");}',size)
+            title=self.page.locator('#articleGrid .article-title').first
+            normal=title.evaluate('n=>parseFloat(getComputedStyle(n).fontSize)')
+            self.page.evaluate('()=>{state.fontSize="large";savePref("font","large");applyDisplaySettings();}')
+            self.page.reload()
+            expect(title).to_be_visible()
+            self.assertGreater(title.evaluate('n=>parseFloat(getComputedStyle(n).fontSize)'),normal)
+            self.assertEqual(self.page.evaluate('state.cardTitleSize'),size)
+            self.page.set_viewport_size({'width':320,'height':900})
+            self.assertTrue(self.page.evaluate('document.documentElement.scrollWidth<=innerWidth+2'))
+
     def test_homepage_selection_has_one_lead_and_distinct_headlines(self):
         expect(self.page.locator('#dashboardFeature')).to_be_visible()
         expect(self.page.locator('#dashboardFeature > .article-card')).to_have_count(1)
         ids=self.page.locator('#dashboardFeature > [data-article-id],#dashboardRecent > [data-article-id]').evaluate_all('nodes=>nodes.map(n=>n.dataset.articleId)')
         self.assertGreaterEqual(len(ids),4)
         self.assertEqual(len(ids),len(set(ids)))
-        expect(self.page.locator('#dashboardSavedPanel')).to_be_hidden()
+        expect(self.page.locator('#dashboardSavedPanel')).to_have_count(0)
         expect(self.page.locator('#dashboardView #coverageTools')).to_be_visible()
         self.page.evaluate("goTo('briefing')")
         expect(self.page.locator('#coverageTools')).to_be_hidden()
@@ -284,7 +311,7 @@ class DimensionRegressions(unittest.TestCase):
         self.assertFalse(failures,failures)
 
     def test_category_symbols_are_distinct_and_custom_folders_have_a_symbol(self):
-        expect(self.page.locator('#dashboardTitle')).to_have_text('Actualidad')
+        expect(self.page.locator('#dashboardTitle')).to_have_text('Inicio')
         self.assertTrue(self.page.locator('.brand-mark img').evaluate('n=>n.complete&&n.naturalWidth>0'))
         brand=self.page.locator('.brand-mark img').bounding_box()
         self.assertEqual((brand['width'],brand['height']),(24,24))

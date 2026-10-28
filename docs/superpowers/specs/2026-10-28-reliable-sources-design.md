@@ -1,5 +1,7 @@
 # Ampliación de fuentes reconocidas en español
 
+> Alcance inicial sobre la base de 221, ampliado posteriormente tras integrar PR102–110 y la nueva solicitud del usuario. El [plan de IA y estructura](../plans/2026-10-28-ia-site-structure.md) define el alcance final y el total de 276. Las observaciones de esta selección se conservan como históricas.
+
 El propietario pide buscar más fuentes fidedignas y populares. La autorización previa permite aplicar la recomendación, verificarla y publicarla mediante una rama/PR. Se mantienen las ocho carpetas y se añaden 23 canales comprobados, priorizando medios reconocidos, agencias/radiotelevisión, ciencia, verificación e investigación y cobertura latinoamericana. No se promete infalibilidad editorial ni un ranking de audiencia que no se midió.
 
 ## Selección y alternativas

@@ -1,15 +1,10 @@
 "use strict";
 /* Homepage headlines remain real articles and follow the reader's source preferences. */
 (() => {
-  const recent=$('dashboardRecent'),columns=$('newsroomColumns');
+  const recent=$('dashboardRecent');
   const panel=recent?.closest('.newsroom-lead-latest');
-  if(!recent||!panel||!columns)return;
+  if(!recent||!panel)return;
   panel.classList.add('homepage-latest');
-  const lead=$('dashboardFeature').closest('.dashboard-feature-panel');
-  columns.hidden=true;
-  columns.before(lead,panel);
-  $('dashboardRecentTitle').textContent='En un vistazo';
-  const notice=$('sinceVisit');lead.before(notice);
   recent.setAttribute('role','region');recent.setAttribute('aria-roledescription','carrusel');
   recent.setAttribute('aria-label','Últimas noticias de distintas secciones');recent.tabIndex=0;
   const controls=mk('div','latest-carousel-controls');
@@ -30,49 +25,9 @@
     if(event.target!==recent||!['ArrowLeft','ArrowRight'].includes(event.key))return;
     event.preventDefault();move(event.key==='ArrowRight'?1:-1);
   });
-  // El radar permanece visible dentro de Inicio, después de «En un vistazo».
-  // Se conserva su ubicación original bajo el carrusel; no se oculta en <details>
-  // ni se devuelve al contenedor histórico #newsroomColumns[hidden].
-  const tools=$('coverageTools');
-  if(tools)panel.after(tools);
-  function latestCard(item){
-    const row=headlineRow(item);row.classList.add('dashboard-latest-card');
-    const topic=state.categories.indexOf((item.categories||[])[0]);
-    if(topic>=0)row.dataset.topic=String(topic+1);
-    const category=mk('span','latest-category',categoryLabel((item.categories||[])[0]||''));
-    row.prepend(category);
-    const summary=String(item.summary||'').replace(/\s+/g,' ').trim();
-    if(state.showSummaries&&summary&&summary!==String(item.title||'').trim()){
-      const excerpt=mk('p','latest-summary',summary.length>150?summary.slice(0,147)+'…':summary);
-      row.querySelector('.dashboard-recent-title').after(excerpt);
-    }
-    return row;
-  }
-  const dashboardBase=renderDashboard;
-  renderDashboard=function(...args){
-    const result=dashboardBase(...args);
-    const items=dashboardEligible(), chosen=[],seenCategories=new Set();
-    // Reserve an international slot only among eligible articles.
-    for(const prefix of ['03']){
-      const story=items.find(item=>(item.categories||[]).some(cat=>cat.startsWith(prefix+' -'))&&!chosen.some(row=>row.id===item.id));
-      if(story){chosen.push(story);seenCategories.add((story.categories||[])[0]);}
-    }
-    for(const item of items){
-      const category=(item.categories||[])[0]||'';
-      if(chosen.some(row=>row.id===item.id)||seenCategories.has(category))continue;
-      chosen.push(item);seenCategories.add(category);
-      if(chosen.length>=8)break;
-    }
-    for(const item of items){
-      if(chosen.length>=8)break;
-      if(!chosen.some(row=>row.id===item.id))chosen.push(item);
-    }
-    const feature=$('dashboardFeature');
-    panel.hidden=chosen.length<2;
-    if(chosen.length){feature.replaceChildren(card(chosen[0]));recent.replaceChildren(...chosen.slice(1).map(latestCard));}
-    else{feature.replaceChildren(mk('p','dashboard-empty','No hay noticias con tus preferencias actuales.'));recent.replaceChildren();}
+  // HTML already owns the order; rendering only replaces the carousel's items.
+  if('MutationObserver' in window)new MutationObserver(()=>{
     recent.scrollLeft=0;requestAnimationFrame(sync);
-    return result;
-  };
-  if(state.ready)renderDashboard();
+  }).observe(recent,{childList:true});
+  requestAnimationFrame(sync);
 })();

@@ -1,5 +1,7 @@
 # Fuentes verificadas — 28 de octubre de 2026
 
+> Registro de la selección inicial de 23 canales sobre la base de 221. La integración con PR102 conserva sus 27 altas adicionales; con la posterior ampliación de IA, el [catálogo actual contiene 276 suscripciones](fuentes-ia-espanol-2026-10-28.md). Las observaciones y hashes originales permanecen intactos.
+
 Se añaden **23 suscripciones**: **1 RSS directo y 22 consultas RSS de Google Noticias**. El catálogo pasa de 221 a 244 canales y mantiene sus ocho carpetas. Los 221 anteriores conservan nombres, URL, IDs y categorías. Se revalidan también los diez canales de la ampliación del 24 de octubre.
 
 La selección prioriza medios reconocidos, radiotelevisión, verificación, ciencia e investigación y diversidad territorial. «Popular» se usa como reconocimiento de cabecera, sin un ranking de audiencia ni cifras de tráfico medidas. No se asignan sellos de infalibilidad o de veracidad a cada noticia.

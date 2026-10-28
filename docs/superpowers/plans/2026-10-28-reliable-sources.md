@@ -1,5 +1,7 @@
 # Fuentes reconocidas en español — Implementation Plan
 
+> Alcance inicial sobre la base de 221, ampliado posteriormente tras integrar PR102–110 y la nueva solicitud del usuario. El [plan de IA y estructura](../plans/2026-10-28-ia-site-structure.md) define el alcance final y el total de 276. Las observaciones de esta selección se conservan como históricas.
+
 > Ejecución nativa con superpowers:executing-plans; una rama/PR del checkout actual y revisión independiente final según AGENTS.md. Se conserva la delegación previa de decisiones y ejecución.
 
 **Goal:** Añadir23 canales con disponibilidad observada y ampliar diversidad de medios/territorios.

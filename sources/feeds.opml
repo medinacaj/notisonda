@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <opml version="1.0">
   <head>
-    <title>Fuentes públicas Radar RSS (271 feeds, 8 categorías)</title>
+    <title>Fuentes públicas Radar RSS (276 feeds, 8 categorías)</title>
   </head>
   <body>
     <outline text="01 - Inteligencia Artificial" title="01 - Inteligencia Artificial">
@@ -60,6 +60,11 @@
       <outline text="RADAR — Papers y estudios científicos de IA | Español" title="RADAR — Papers y estudios científicos de IA | Español" type="rss" xmlUrl="https://news.google.com/rss/search?q=%28%22paper%22%20OR%20%22art%C3%ADculo%20cient%C3%ADfico%22%20OR%20%22investigaci%C3%B3n%22%29%20%22inteligencia%20artificial%22%20when%3A30d&amp;hl=es-419&amp;gl=CL&amp;ceid=CL%3Aes-419" htmlUrl="https://news.google.com/" />
       <outline text="RADAR — Conferencias y congresos de IA | Español" title="RADAR — Conferencias y congresos de IA | Español" type="rss" xmlUrl="https://news.google.com/rss/search?q=%28%22conferencia%20de%20inteligencia%20artificial%22%20OR%20%22congreso%20de%20IA%22%20OR%20%22jornada%20de%20inteligencia%20artificial%22%29%20when%3A30d&amp;hl=es-419&amp;gl=CL&amp;ceid=CL%3Aes-419" htmlUrl="https://news.google.com/" />
       <outline text="RADAR — Lanzamientos de modelos y herramientas IA | Español" title="RADAR — Lanzamientos de modelos y herramientas IA | Español" type="rss" xmlUrl="https://news.google.com/rss/search?q=%28%22nuevo%20modelo%20de%20IA%22%20OR%20%22lanzamiento%20de%20IA%22%20OR%20%22nueva%20herramienta%20de%20inteligencia%20artificial%22%29%20when%3A30d&amp;hl=es-419&amp;gl=CL&amp;ceid=CL%3Aes-419" htmlUrl="https://news.google.com/" />
+      <outline text="RADAR — Hipertextual | IA" title="RADAR — Hipertextual | IA" type="rss" xmlUrl="https://news.google.com/rss/search?q=site%3Ahipertextual.com+%28%22inteligencia+artificial%22+OR+%22modelos+de+IA%22+OR+%22aprendizaje+autom%C3%A1tico%22%29+when%3A30d&amp;hl=es&amp;gl=ES&amp;ceid=ES%3Aes" htmlUrl="https://hipertextual.com/" />
+      <outline text="RADAR — WIRED en Español | IA" title="RADAR — WIRED en Español | IA" type="rss" xmlUrl="https://news.google.com/rss/search?q=site%3Aes.wired.com+%28%22inteligencia+artificial%22+OR+%22modelos+de+IA%22+OR+%22aprendizaje+autom%C3%A1tico%22%29+when%3A30d&amp;hl=es&amp;gl=ES&amp;ceid=ES%3Aes" htmlUrl="https://es.wired.com/" />
+      <outline text="RADAR — CSIC | Investigación de IA" title="RADAR — CSIC | Investigación de IA" type="rss" xmlUrl="https://news.google.com/rss/search?q=site%3Acsic.es%2Fes%2Factualidad-del-csic+%28%22inteligencia+artificial%22+OR+%22aprendizaje+autom%C3%A1tico%22%29+when%3A30d&amp;hl=es&amp;gl=ES&amp;ceid=ES%3Aes" htmlUrl="https://www.csic.es/es/actualidad-del-csic" />
+      <outline text="RADAR — Think Big / Telefónica | IA aplicada" title="RADAR — Think Big / Telefónica | IA aplicada" type="rss" xmlUrl="https://news.google.com/rss/search?q=site%3Ablogthinkbig.com+%28intitle%3AIA+OR+intitle%3A%22inteligencia+artificial%22%29+when%3A30d&amp;hl=es&amp;gl=ES&amp;ceid=ES%3Aes" htmlUrl="https://blogthinkbig.com/" />
+      <outline text="RADAR — Retina | Análisis de IA" title="RADAR — Retina | Análisis de IA" type="rss" xmlUrl="https://news.google.com/rss/search?q=site%3Aretinatendencias.com+%28%22inteligencia+artificial%22+OR+%22IA%22%29+when%3A30d&amp;hl=es&amp;gl=ES&amp;ceid=ES%3Aes" htmlUrl="https://retinatendencias.com/" />
     </outline>
     <outline text="02 - Tecnología" title="02 - Tecnología">
       <outline text="RADAR — iProUP | Fintech y tecnología" title="RADAR — iProUP | Fintech y tecnología" type="rss" xmlUrl="https://news.google.com/rss/search?q=site%3Aiproup.com+%28fintech+OR+tecnolog%C3%ADa+OR+%22econom%C3%ADa+digital%22+OR+inteligencia+artificial%29&amp;hl=es-419&amp;gl=CL&amp;ceid=CL:es-419" htmlUrl="https://www.iproup.com/" />
