@@ -30,6 +30,8 @@ class RadarStandaloneTests(unittest.TestCase):
         cls.html=(ROOT/'web/index.html').read_text(encoding='utf-8')
         cls.home=(ROOT/'web/homepage.js').read_text(encoding='utf-8')
         cls.css=(ROOT/'web/dimension.css').read_text(encoding='utf-8')
+        cls.usability=(ROOT/'web/usability.js').read_text(encoding='utf-8')
+        cls.usability_css=(ROOT/'web/usability.css').read_text(encoding='utf-8')
 
     def test_radar_and_coverage_are_separate_semantic_cards(self):
         parser=Panels()
@@ -64,6 +66,15 @@ class RadarStandaloneTests(unittest.TestCase):
         self.assertLess(start,close)
         self.assertEqual(self.html.count('id="coverageTools"'),1)
         self.assertNotIn('id="coverageTools" hidden',self.html)
+
+    def test_radar_never_wrapped_in_collapsed_details(self):
+        self.assertIn('id="radarFigure"',self.html)
+        self.assertIn('id="radarStage"',self.html)
+        self.assertNotIn("document.createElement('details');details.id='radarMapDetails'",self.usability)
+        self.assertNotIn('radarMapToggle',self.usability)
+        self.assertNotIn('radarMapDetails',self.usability_css)
+        self.assertNotIn('radar-map-details',self.usability_css)
+        self.assertIn('#coverageTools .radar-figure{display:block',self.usability_css)
 
     def test_theme_has_isolated_surfaces_and_stacked_mobile_layout(self):
         self.assertIn('#coverageTools .radar-standalone-card',self.css)
