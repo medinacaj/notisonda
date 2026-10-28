@@ -67,8 +67,10 @@ def main():
                 expect(page.locator('#trendsPanel')).to_be_visible()
                 fixtures.check_visible_boxes(page,['#coverageTools','.home-insight-card','#trendChips .trend-chip'],f'cobertura {width}px')
                 expect(page.locator('#coveredList .covered-item').first).to_be_visible()
-                expect(page.locator('#radarMapDetails')).not_to_have_attribute('open', '')
-                expect(page.locator('#radarFigure')).to_be_hidden()
+                expect(page.locator('#radarFigure')).to_be_visible()
+                expect(page.locator('#radarStage svg')).to_be_visible()
+                expect(page.locator('#radarCaption')).to_be_visible()
+                assert page.locator('#radarMapDetails, #radarMapToggle').count() == 0
                 page.evaluate("goTo('briefing')")
                 expect(page.locator('#coverageTools')).to_be_hidden()
                 assert page.locator('#radarFigure').count() == 1
