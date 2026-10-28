@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <opml version="1.0">
   <head>
-    <title>Fuentes públicas Radar RSS (221 feeds, 8 categorías)</title>
+    <title>Fuentes públicas Radar RSS (244 feeds, 8 categorías)</title>
   </head>
   <body>
     <outline text="01 - Inteligencia Artificial" title="01 - Inteligencia Artificial">
@@ -114,6 +114,19 @@
       <outline text="RADAR — EFE | Cultura internacional" title="RADAR — EFE | Cultura internacional" type="rss" xmlUrl="https://news.google.com/rss/search?q=site%3Aefe.com+%28cultura+OR+cine+OR+m%C3%BAsica+OR+artistas%29&amp;hl=es&amp;gl=ES&amp;ceid=ES%3Aes" htmlUrl="https://efe.com/" />
       <outline text="RADAR — El País | Cultura" title="RADAR — El País | Cultura" type="rss" xmlUrl="https://news.google.com/rss/search?q=site%3Aelpais.com%2Fcultura+%28cine+OR+m%C3%BAsica+OR+literatura+OR+artistas%29&amp;hl=es&amp;gl=ES&amp;ceid=ES%3Aes" htmlUrl="https://elpais.com/cultura/" />
       <outline text="RADAR — Euronews | Cultura internacional" title="RADAR — Euronews | Cultura internacional" type="rss" xmlUrl="https://news.google.com/rss/search?q=site%3Aes.euronews.com+%28cultura+OR+cine+OR+m%C3%BAsica+OR+artistas%29&amp;hl=es&amp;gl=ES&amp;ceid=ES%3Aes" htmlUrl="https://es.euronews.com/" />
+      <outline text="RADAR — RTVE | Noticias" title="RADAR — RTVE | Noticias" type="rss" xmlUrl="https://news.google.com/rss/search?q=site%3Artve.es%2Fnoticias+when%3A30d&amp;hl=es&amp;gl=ES&amp;ceid=ES%3Aes" htmlUrl="https://www.rtve.es/noticias/" />
+      <outline text="RADAR — RFI en Español" title="RADAR — RFI en Español" type="rss" xmlUrl="https://news.google.com/rss/search?q=site%3Arfi.fr%2Fes+when%3A30d&amp;hl=es&amp;gl=ES&amp;ceid=ES%3Aes" htmlUrl="https://www.rfi.fr/es/" />
+      <outline text="RADAR — La Vanguardia | Internacional" title="RADAR — La Vanguardia | Internacional" type="rss" xmlUrl="https://news.google.com/rss/search?q=site%3Alavanguardia.com%2Finternacional+when%3A30d&amp;hl=es&amp;gl=ES&amp;ceid=ES%3Aes" htmlUrl="https://www.lavanguardia.com/" />
+      <outline text="RADAR — elDiario.es" title="RADAR — elDiario.es" type="rss" xmlUrl="https://news.google.com/rss/search?q=site%3Awww.eldiario.es+when%3A30d&amp;hl=es&amp;gl=ES&amp;ceid=ES%3Aes" htmlUrl="https://www.eldiario.es/" />
+      <outline text="RADAR — El Confidencial | Mundo" title="RADAR — El Confidencial | Mundo" type="rss" xmlUrl="https://news.google.com/rss/search?q=site%3Aelconfidencial.com%2Fmundo+when%3A30d&amp;hl=es&amp;gl=ES&amp;ceid=ES%3Aes" htmlUrl="https://www.elconfidencial.com/" />
+      <outline text="RADAR — Agencia SINC | Ciencia" title="RADAR — Agencia SINC | Ciencia" type="rss" xmlUrl="https://news.google.com/rss/search?q=site%3Aagenciasinc.es+when%3A30d&amp;hl=es&amp;gl=ES&amp;ceid=ES%3Aes" htmlUrl="https://www.agenciasinc.es/" />
+      <outline text="RADAR — The Conversation | Ciencia y análisis en español" title="RADAR — The Conversation | Ciencia y análisis en español" type="rss" xmlUrl="https://news.google.com/rss/search?q=site%3Atheconversation.com+%28intitle%3Aciencia+OR+intitle%3Ainvestigaci%C3%B3n+OR+intitle%3Atecnolog%C3%ADa+OR+intitle%3Asalud%29+when%3A30d&amp;hl=es&amp;gl=ES&amp;ceid=ES%3Aes" htmlUrl="https://theconversation.com/es" />
+      <outline text="RADAR — National Geographic España | Ciencia y naturaleza" title="RADAR — National Geographic España | Ciencia y naturaleza" type="rss" xmlUrl="https://news.google.com/rss/search?q=site%3Awww.nationalgeographic.com.es+when%3A30d&amp;hl=es&amp;gl=ES&amp;ceid=ES%3Aes" htmlUrl="https://www.nationalgeographic.com.es/" />
+      <outline text="RADAR — AFP Factual | Verificación" title="RADAR — AFP Factual | Verificación" type="rss" xmlUrl="https://news.google.com/rss/search?q=site%3Afactual.afp.com%2Fdoc.afp.com+when%3A30d&amp;hl=es&amp;gl=ES&amp;ceid=ES%3Aes" htmlUrl="https://factual.afp.com/" />
+      <outline text="RADAR — Maldita.es | Verificación" title="RADAR — Maldita.es | Verificación" type="rss" xmlUrl="https://news.google.com/rss/search?q=%28site%3Amaldita.es%2Fmalditobulo+OR+site%3Amaldita.es%2Fmalditaciencia%29+when%3A30d&amp;hl=es&amp;gl=ES&amp;ceid=ES%3Aes" htmlUrl="https://maldita.es/" />
+      <outline text="RADAR — Newtral | Verificación" title="RADAR — Newtral | Verificación" type="rss" xmlUrl="https://news.google.com/rss/search?q=site%3Awww.newtral.es+when%3A30d&amp;hl=es&amp;gl=ES&amp;ceid=ES%3Aes" htmlUrl="https://www.newtral.es/" />
+      <outline text="MEDIO — Billboard Español | Música internacional" title="MEDIO — Billboard Español | Música internacional" type="rss" xmlUrl="https://www.billboard.com/c/espanol/feed/" htmlUrl="https://www.billboard.com/espanol/" />
+      <outline text="RADAR — Rolling Stone en Español | Música y cultura" title="RADAR — Rolling Stone en Español | Música y cultura" type="rss" xmlUrl="https://news.google.com/rss/search?q=site%3Aes.rollingstone.com+when%3A30d&amp;hl=es&amp;gl=ES&amp;ceid=ES%3Aes" htmlUrl="https://es.rollingstone.com/" />
     </outline>
     <outline text="04 - Chile" title="04 - Chile">
       <outline text="RADAR — Startups y capital emprendedor en Chile" title="RADAR — Startups y capital emprendedor en Chile" type="rss" xmlUrl="https://news.google.com/rss/search?q=%28startups+OR+emprendimiento+OR+venture+capital+OR+%22capital+de+riesgo%22%29+Chile&amp;hl=es-419&amp;gl=CL&amp;ceid=CL%3Aes-419" htmlUrl="https://news.google.com/" />
@@ -182,6 +195,9 @@
       <outline text="RADAR — El Estímulo" title="RADAR — El Estímulo" type="rss" xmlUrl="https://news.google.com/rss/search?q=site%3Aelestimulo.com&amp;hl=es-419&amp;gl=CL&amp;ceid=CL%3Aes-419" htmlUrl="https://elestimulo.com/" />
       <outline text="RADAR — Primicia" title="RADAR — Primicia" type="rss" xmlUrl="https://news.google.com/rss/search?q=site%3Aprimicia.com.ve&amp;hl=es-419&amp;gl=CL&amp;ceid=CL%3Aes-419" htmlUrl="https://primicia.com.ve/" />
       <outline text="RADAR — Crónica Uno" title="RADAR — Crónica Uno" type="rss" xmlUrl="https://news.google.com/rss/search?q=site%3Acronica.uno&amp;hl=es-419&amp;gl=CL&amp;ceid=CL%3Aes-419" htmlUrl="https://cronica.uno/" />
+      <outline text="RADAR — Radio Fe y Alegría Noticias" title="RADAR — Radio Fe y Alegría Noticias" type="rss" xmlUrl="https://news.google.com/rss/search?q=site%3Aradiofeyalegrianoticias.com+when%3A30d&amp;hl=es-419&amp;gl=VE&amp;ceid=VE%3Aes-419" htmlUrl="https://www.radiofeyalegrianoticias.com/" />
+      <outline text="RADAR — Armando.info | Investigación" title="RADAR — Armando.info | Investigación" type="rss" xmlUrl="https://news.google.com/rss/search?q=site%3Aarmando.info+-intitle%3Aarmando.info+when%3A30d&amp;hl=es-419&amp;gl=VE&amp;ceid=VE%3Aes-419" htmlUrl="https://armando.info/" />
+      <outline text="RADAR — El Diario | Venezuela" title="RADAR — El Diario | Venezuela" type="rss" xmlUrl="https://news.google.com/rss/search?q=site%3Aeldiario.com+when%3A30d&amp;hl=es-419&amp;gl=VE&amp;ceid=VE%3Aes-419" htmlUrl="https://eldiario.com/" />
     </outline>
     <outline text="06 - Latinoamérica" title="06 - Latinoamérica">
       <outline text="MEDIO — EL PAÍS | América" title="MEDIO — EL PAÍS | América" type="rss" xmlUrl="https://feeds.elpais.com/mrss-s/pages/ep/site/elpais.com/section/america/portada" htmlUrl="https://elpais.com/" />
@@ -200,6 +216,11 @@
       <outline text="RADAR — La República Perú" title="RADAR — La República Perú" type="rss" xmlUrl="https://news.google.com/rss/search?q=site%3Alarepublica.pe&amp;hl=es-419&amp;gl=CL&amp;ceid=CL%3Aes-419" htmlUrl="https://larepublica.pe/" />
       <outline text="RADAR — G1 Brasil" title="RADAR — G1 Brasil" type="rss" xmlUrl="https://news.google.com/rss/search?q=site%3Ag1.globo.com&amp;hl=es-419&amp;gl=CL&amp;ceid=CL%3Aes-419" htmlUrl="https://g1.globo.com/" />
       <outline text="RADAR — La República Colombia" title="RADAR — La República Colombia" type="rss" xmlUrl="https://news.google.com/rss/search?q=site%3Alarepublica.co&amp;hl=es-419&amp;gl=CL&amp;ceid=CL%3Aes-419" htmlUrl="https://www.larepublica.co/" />
+      <outline text="RADAR — Chequeado | Verificación" title="RADAR — Chequeado | Verificación" type="rss" xmlUrl="https://news.google.com/rss/search?q=site%3Achequeado.com%2Fultimas-noticias+when%3A30d&amp;hl=es-419&amp;gl=MX&amp;ceid=MX%3Aes-419" htmlUrl="https://chequeado.com/" />
+      <outline text="RADAR — Primicias | Ecuador" title="RADAR — Primicias | Ecuador" type="rss" xmlUrl="https://news.google.com/rss/search?q=site%3Aprimicias.ec+when%3A30d&amp;hl=es-419&amp;gl=MX&amp;ceid=MX%3Aes-419" htmlUrl="https://www.primicias.ec/" />
+      <outline text="RADAR — El Universo | Ecuador" title="RADAR — El Universo | Ecuador" type="rss" xmlUrl="https://news.google.com/rss/search?q=site%3Aeluniverso.com+when%3A30d&amp;hl=es-419&amp;gl=MX&amp;ceid=MX%3Aes-419" htmlUrl="https://www.eluniverso.com/" />
+      <outline text="RADAR — la diaria | Uruguay" title="RADAR — la diaria | Uruguay" type="rss" xmlUrl="https://news.google.com/rss/search?q=site%3Aladiaria.com.uy%2Fpolitica+when%3A30d&amp;hl=es-419&amp;gl=MX&amp;ceid=MX%3Aes-419" htmlUrl="https://ladiaria.com.uy/" />
+      <outline text="RADAR — OjoPúblico | Investigación" title="RADAR — OjoPúblico | Investigación" type="rss" xmlUrl="https://news.google.com/rss/search?q=site%3Aojo-publico.com+when%3A30d&amp;hl=es-419&amp;gl=MX&amp;ceid=MX%3Aes-419" htmlUrl="https://ojo-publico.com/" />
     </outline>
     <outline text="07 - Concepción" title="07 - Concepción">
       <outline text="MEDIO — ConceAhora" title="MEDIO — ConceAhora" type="rss" xmlUrl="https://www.conceahora.cl/feed/" htmlUrl="https://www.conceahora.cl/" />
@@ -243,6 +264,8 @@
       <outline text="RADAR — Diario El Oriental | Maturín" title="RADAR — Diario El Oriental | Maturín" type="rss" xmlUrl="https://news.google.com/rss/search?q=site%3Adiarioeloriental.com+%28Matur%C3%ADn+OR+Maturin%29&amp;hl=es-419&amp;gl=VE&amp;ceid=VE%3Aes-419" htmlUrl="https://diarioeloriental.com/" />
       <outline text="RADAR — El Nacional | Monagas" title="RADAR — El Nacional | Monagas" type="rss" xmlUrl="https://news.google.com/rss/search?q=site%3Aelnacional.com+%28Matur%C3%ADn+OR+Maturin+OR+Monagas%29&amp;hl=es-419&amp;gl=VE&amp;ceid=VE%3Aes-419" htmlUrl="https://www.elnacional.com/" />
       <outline text="RADAR — Maturín y Monagas | Actualidad" title="RADAR — Maturín y Monagas | Actualidad" type="rss" xmlUrl="https://news.google.com/rss/search?q=%28Matur%C3%ADn+OR+Maturin+OR+Monagas%29+%28noticias+OR+actualidad%29&amp;hl=es-419&amp;gl=VE&amp;ceid=VE%3Aes-419" htmlUrl="https://news.google.com/" />
+      <outline text="RADAR — El Pitazo | Maturín y Monagas" title="RADAR — El Pitazo | Maturín y Monagas" type="rss" xmlUrl="https://news.google.com/rss/search?q=site%3Aelpitazo.net+%28intitle%3AMonagas+OR+intitle%3AMatur%C3%ADn+OR+intitle%3AMaturin%29+when%3A30d&amp;hl=es-419&amp;gl=VE&amp;ceid=VE%3Aes-419" htmlUrl="https://elpitazo.net/" />
+      <outline text="RADAR — Radio Fe y Alegría | Maturín y Monagas" title="RADAR — Radio Fe y Alegría | Maturín y Monagas" type="rss" xmlUrl="https://news.google.com/rss/search?q=site%3Aradiofeyalegrianoticias.com+%28intitle%3AMonagas+OR+intitle%3AMatur%C3%ADn+OR+intitle%3AMaturin%29+when%3A30d&amp;hl=es-419&amp;gl=VE&amp;ceid=VE%3Aes-419" htmlUrl="https://www.radiofeyalegrianoticias.com/" />
     </outline>
   </body>
 </opml>

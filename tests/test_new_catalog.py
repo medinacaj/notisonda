@@ -6,6 +6,7 @@ import subprocess
 import sys
 import unittest
 from urllib.parse import parse_qs, urlsplit
+from datetime import datetime, timedelta
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'scripts'))
@@ -16,19 +17,64 @@ from audit_feeds import audit
 class ExpandedCatalogTests(unittest.TestCase):
     def setUp(self):
         self.sources = parse_opml(ROOT / 'sources/feeds.opml')
+        path = ROOT / 'sources/reliable-expansion-verification.json'
+        self.expansion = json.loads(path.read_text()) if path.exists() else {'sources': []}
+        self.additions = [r for r in self.expansion['sources'] if r.get('included')]
 
     def test_new_folders_have_local_and_international_channels(self):
-        self.assertEqual(len(self.sources), 221)
-        self.assertEqual(sum(s['category'] == '08 - Maturín / Monagas' for s in self.sources), 6)
+        self.assertEqual(len(self.sources), 244)
+        self.assertEqual(sum(s['category'] == '08 - Maturín / Monagas' for s in self.sources), 8)
         self.assertEqual(sum(s['category'].startswith('09 -') for s in self.sources), 0)
         self.assertEqual(audit(ROOT / 'sources/feeds.opml')['problem_count'], 0)
 
     def test_original_211_entries_are_unchanged(self):
         records = json.loads((ROOT / 'sources/discovery-verification.json').read_text())['sources']
-        additions = {record['feed'] for record in records}
+        additions = {record['feed'] for record in records + self.additions}
         originals = [s for s in self.sources if s['url'] not in additions]
         digest = hashlib.sha256(json.dumps(originals, ensure_ascii=False, sort_keys=True).encode()).hexdigest()
         self.assertEqual(digest, '2e34363f0a62c2e6d348850216a19bf1921db26eb7c4b1ec83b513093b6f303c')
+
+    def test_source_expansion_preserves_all_original_221_records(self):
+        additions = {r['feed'] for r in self.additions}
+        originals = [s for s in self.sources if s['url'] not in additions]
+        digest = hashlib.sha256(json.dumps(originals, ensure_ascii=False, sort_keys=True).encode()).hexdigest()
+        self.assertEqual(digest, 'b83e08b187155adc406677267109f4ca4f0618f2060c0c46e06752fdf7054683')
+
+    def test_added_sources_have_dated_observations_and_match_catalog(self):
+        self.assertEqual(len(self.additions), 23)
+        catalog = {s['url']:s for s in self.sources}
+        for record in self.additions:
+            self.assertIn(record['feed'], catalog)
+            source = catalog[record['feed']]
+            self.assertEqual((source['name'],source['category'],source['website']),
+                             (record['name'],record['category'],record['website']))
+            self.assertEqual(record['http_status'],200)
+            self.assertEqual(record['status'],'rss_observed')
+            self.assertGreater(record['recent_dated_entries'],0)
+            verified = datetime.fromisoformat(record['verified_at'].replace('Z','+00:00'))
+            published = datetime.fromisoformat(record['last_published_at'].replace('Z','+00:00'))
+            self.assertTrue(verified-timedelta(days=45)<=published<=verified+timedelta(days=1))
+            self.assertEqual(len(record['response_sha256']),64)
+            if source['is_radar']:
+                self.assertTrue(source['name'].startswith('RADAR — '))
+                query = parse_qs(urlsplit(source['url']).query)
+                self.assertEqual(query['q'],[record['query']])
+                self.assertIn(query['hl'][0],('es','es-419'))
+                if source['category'].startswith('08 -'):
+                    self.assertIn('intitle:Monagas',query['q'][0])
+                    self.assertIn('intitle:Maturín',query['q'][0])
+            else:
+                self.assertEqual(record['feed_language'],'es-ES')
+                self.assertEqual(urlsplit(source['url']).hostname,'www.billboard.com')
+
+    def test_current_revalidation_does_not_overwrite_historical_observations(self):
+        previous = {r['feed'] for r in json.loads((ROOT/'sources/discovery-verification.json').read_text())['sources']}
+        records = self.expansion.get('revalidated_sources',[])
+        self.assertEqual({r['feed'] for r in records},previous)
+        for record in records:
+            self.assertEqual(record['status'],'rss_observed')
+            self.assertEqual(record['http_status'],200)
+            self.assertGreater(record['recent_dated_entries'],0)
 
     def test_discovery_records_are_explicitly_unverified_and_match_catalog(self):
         records = json.loads((ROOT / 'sources/discovery-verification.json').read_text())['sources']

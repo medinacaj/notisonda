@@ -1,5 +1,7 @@
 # Ampliación del catálogo — 24 de octubre de 2026
 
+**Registro histórico.** Los estados pendientes que siguen describen aquella comprobación. La [revalidación del 28 de octubre](fuentes-verificadas-2026-10-28.md) observó RSS y entradas recientes en los diez canales, sin sobrescribir sus datos originales. El catálogo actual tiene244 suscripciones.
+
 El catálogo propone **221 suscripciones en ocho carpetas**. Se conservan las
 211 anteriores con los mismos nombres, URL, IDs y categorías, incluidas las
 33 de Concepción. Se añaden seis canales para Maturín/Monagas y cuatro culturales en español dentro de Internacionales.
