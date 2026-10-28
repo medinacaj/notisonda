@@ -15,22 +15,25 @@ class SidebarSectionsTests(unittest.TestCase):
         cls.style = (ROOT / 'web/dimension.css').read_text(encoding='utf-8')
         cls.app = (ROOT / 'web/app.js').read_text(encoding='utf-8')
 
-    def test_navigation_starts_closed_with_accessible_toggle(self):
-        self.assertRegex(self.html, r'id="sidebarNavigationToggle"[^>]*aria-controls="sidebarCoreContent"[^>]*aria-expanded="false"')
-        self.assertIn('id="sidebarCoreContent" hidden', self.html)
+    def test_navigation_starts_expanded_with_accessible_toggle(self):
+        self.assertRegex(self.html, r'id="sidebarNavigationToggle"[^>]*aria-controls="sidebarCoreContent"[^>]*aria-expanded="true"')
+        self.assertIn('id="sidebarCoreContent"', self.html)
+        self.assertNotIn('id="sidebarCoreContent" hidden', self.html)
         self.assertIn('id="categoryNav"', self.html)
         self.assertIn("navigationContent.hidden=!expanded", self.layout)
         self.assertIn("navigationToggle.setAttribute('aria-expanded',String(expanded))", self.layout)
 
-    def test_source_folders_are_separate_and_start_closed(self):
+    def test_source_folders_are_separate_and_start_expanded(self):
         self.assertIn("toggle.id='sourceFoldersToggle'", self.library)
         self.assertIn("toggle.setAttribute('aria-controls','libraryFolderNav')", self.library)
-        self.assertIn("toggle.setAttribute('aria-expanded','false')", self.library)
-        self.assertIn("nav.hidden=true", self.library)
+        self.assertIn("toggle.setAttribute('aria-expanded','true')", self.library)
+        self.assertIn("nav.hidden=false", self.library)
         self.assertIn("toggle.addEventListener('click',()=>setExpanded(nav.hidden))", self.library)
         self.assertIn("$('sidebarCoreSection').after(foldersSection)", self.library)
         self.assertIn("add.addEventListener('click',()=>{setExpanded(true);createFolder();})", self.library)
         self.assertIn('#libraryFolderNav[hidden]{display:none!important}', self.style)
+        self.assertNotIn('content:"Mostrar"', self.style)
+        self.assertNotIn('content:"Ocultar"', self.style)
 
     def test_footer_has_single_project_link_without_sidebar_button(self):
         footer = self.html[self.html.index('<footer class="footer">'):self.html.index('</footer>')]

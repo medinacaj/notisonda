@@ -713,9 +713,8 @@ function mount(){
   const toggle=mk('button','sidebar-section-toggle');
   toggle.id='sourceFoldersToggle';toggle.type='button';
   toggle.setAttribute('aria-controls','libraryFolderNav');
-  toggle.setAttribute('aria-expanded','false');
-  toggle.setAttribute('aria-label','Mostrar carpetas de fuentes');
-  toggle.title='Mostrar carpetas de fuentes';
+  toggle.setAttribute('aria-expanded','true');
+  toggle.setAttribute('aria-label','Contraer carpetas de fuentes');
   const heading=mk('span','','CARPETAS DE FUENTES');
   heading.id='sourceFoldersHeading';
   const arrow=mk('span','sidebar-section-chevron');
@@ -734,15 +733,14 @@ function mount(){
   });
   const nav=mk('nav','library-folder-nav library-system-folders');
   nav.id='libraryFolderNav';
-  nav.hidden=true;
+  nav.hidden=false;
   nav.setAttribute('aria-label','Carpetas de fuentes del catálogo y creadas por ti');
   foldersSection.append(header,nav);
   $('sidebarCoreSection').after(foldersSection);
   const setExpanded=expanded=>{
     nav.hidden=!expanded;
     toggle.setAttribute('aria-expanded',String(expanded));
-    toggle.setAttribute('aria-label',expanded?'Ocultar carpetas de fuentes':'Mostrar carpetas de fuentes');
-    toggle.title=expanded?'Ocultar carpetas de fuentes':'Mostrar carpetas de fuentes';
+    toggle.setAttribute('aria-label',expanded?'Contraer carpetas de fuentes':'Expandir carpetas de fuentes');
   };
   toggle.addEventListener('click',()=>setExpanded(nav.hidden));
   add.addEventListener('click',()=>{setExpanded(true);createFolder();});

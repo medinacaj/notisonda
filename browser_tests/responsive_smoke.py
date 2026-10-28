@@ -192,8 +192,7 @@ def ensure_navigation(page):
         page.locator('#menuToggle').click()
     expect(page.locator('#appSidebar')).to_be_visible()
     assert not page.locator('#appSidebar').evaluate('(node) => node.inert')
-    # Los grupos inician plegados; abrirlos únicamente cuando esta prueba
-    # necesite actuar sobre sus enlaces, sin alterar el estado por defecto.
+    # Por defecto visibles; se reabren si otra prueba los contrajo.
     for toggle_id in ('sidebarNavigationToggle', 'sourceFoldersToggle'):
         toggle = page.locator('#' + toggle_id)
         if toggle.get_attribute('aria-expanded') == 'false':
@@ -326,19 +325,20 @@ def main():
                         if page.locator('#appSidebar').evaluate('(node) => node.inert'):
                             page.locator('#menuToggle').click()
                         expect(page.locator('#appSidebar')).to_be_visible()
-                        # Los paneles deben iniciar cerrados y poder abrirse/cerrarse en ambos sentidos.
+                        # Ambas listas son visibles al iniciar, se cierran por separado
+                        # y vuelven a abrirse para continuar las pruebas de navegación.
                         for control_id, content_id in (('sidebarNavigationToggle','sidebarCoreContent'),
                                                        ('sourceFoldersToggle','libraryFolderNav')):
                             toggle=page.locator('#'+control_id)
                             content=page.locator('#'+content_id)
-                            expect(toggle).to_have_attribute('aria-expanded','false')
-                            expect(content).to_be_hidden()
-                            toggle.click()
                             expect(toggle).to_have_attribute('aria-expanded','true')
                             expect(content).to_be_visible()
                             toggle.click()
                             expect(toggle).to_have_attribute('aria-expanded','false')
                             expect(content).to_be_hidden()
+                            toggle.click()
+                            expect(toggle).to_have_attribute('aria-expanded','true')
+                            expect(content).to_be_visible()
                         # Fondo de lectura y barra lateral claramente diferenciados.
                         colors=page.evaluate("""() => ({
                            background:getComputedStyle(document.body).getPropertyValue('--bg').trim(),
