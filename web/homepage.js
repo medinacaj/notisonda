@@ -30,21 +30,10 @@
     if(event.target!==recent||!['ArrowLeft','ArrowRight'].includes(event.key))return;
     event.preventDefault();move(event.key==='ArrowRight'?1:-1);
   });
-  const aside=columns.querySelector('.newsroom-discovery-aside');
-  if(aside){
-    const tools=document.createElement('section');tools.id='coverageTools';tools.className='coverage-tools';
-    tools.setAttribute('aria-label','Cobertura y temas');
-    // Gráfico y clasificación conservan módulos independientes y no comparten una ficha.
-    for(const child of aside.children)child.classList.add('home-insight-card');
-    const radarPanel=aside.querySelector('.radar-panel');
-    const coveredPanel=aside.querySelector('.covered-panel');
-    if(radarPanel)radarPanel.classList.add('radar-standalone-card');
-    if(coveredPanel)coveredPanel.classList.add('covered-standalone-card');
-    aside.querySelector('.radar-panel .dashboard-panel-head').append(mk('span','insight-window','24 h'));
-    const secondary=aside.parentElement;
-    panel.after(tools);tools.append(aside);
-    if(secondary&&!secondary.children.length)secondary.hidden=true;
-  }
+  // El radar pertenece al HTML de Inicio, fuera de #newsroomColumns[hidden].
+  // Solo cambiamos su ubicación visual; nunca condicionamos su visibilidad.
+  const tools=$('coverageTools');
+  if(tools)lead.after(tools);
   function latestCard(item){
     const row=headlineRow(item);row.classList.add('dashboard-latest-card');
     const topic=state.categories.indexOf((item.categories||[])[0]);
