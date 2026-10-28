@@ -6,8 +6,9 @@ import os
 import sys
 from datetime import datetime, timezone
 from urllib.request import Request, urlopen
+from site_config import DATA_URL
 
-BASE = "https://medinacaj.github.io/radar-rss-publico/data/"
+BASE = DATA_URL
 STALE_HOURS = 18
 MAX_ERRORS = 5
 

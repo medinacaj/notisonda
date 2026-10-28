@@ -7,8 +7,9 @@ from urllib.error import HTTPError
 from urllib.request import Request, urlopen
 
 from events import merge_events, parse_timestamp, validate_document
+from site_config import DATA_URL
 
-BASE = 'https://medinacaj.github.io/radar-rss-publico/data/'
+BASE = DATA_URL
 LIMIT = 10_000_000
 
 
