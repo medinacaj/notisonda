@@ -322,6 +322,10 @@ def main():
                         page.evaluate("document.body.classList.remove('light')")
                         assert page.evaluate("getComputedStyle(document.body).getPropertyValue('--bg').trim()") != light_background
                         page.evaluate("document.body.classList.add('light')")
+                        # En móvil la barra está fuera de pantalla hasta abrir el cajón.
+                        if page.locator('#appSidebar').evaluate('(node) => node.inert'):
+                            page.locator('#menuToggle').click()
+                        expect(page.locator('#appSidebar')).to_be_visible()
                         # Los paneles deben iniciar cerrados y poder abrirse/cerrarse en ambos sentidos.
                         for control_id, content_id in (('sidebarNavigationToggle','sidebarCoreContent'),
                                                        ('sourceFoldersToggle','libraryFolderNav')):
