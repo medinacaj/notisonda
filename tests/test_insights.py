@@ -45,6 +45,18 @@ class InsightsTests(unittest.TestCase):
         item = {'source_ids': ['cr', 'ar']}
         self.assertEqual(len(insights.independent_publishers(item, catalog)), 2)
 
+    def test_real_cloudflare_catalog_channels_count_as_one_editorial_outlet(self):
+        sources = collect.parse_opml(ROOT / 'sources/feeds.opml')
+        names = {'OFICIAL — Cloudflare Blog', 'OFICIAL — Cloudflare AI',
+                 'TÉCNICO — Cloudflare | Networking'}
+        channels = [source for source in sources if source['name'] in names]
+        self.assertEqual({source['name'] for source in channels}, names)
+        catalog = {source['id']: source for source in channels}
+        item = {'source_ids': list(catalog), 'publisher': channels[0]['name']}
+        self.assertEqual(len(insights.independent_publishers(item, catalog)), 1)
+        # Counting must not remove the official/technical labels from public names.
+        self.assertEqual({insights.public_source_name(s['name']) for s in channels}, names)
+
     def test_native_mit_and_existing_radar_merge_without_double_counting(self):
         native = 'MEDIO — MIT Technology Review en español'
         title = 'Un nuevo estudio explica los avances de los modelos de inteligencia artificial'

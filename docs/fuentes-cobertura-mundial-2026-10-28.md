@@ -79,7 +79,7 @@ El RSS propio de MIT y las siete URLs anteriores quedaron comprobados al habilit
 
 El destacado internacional de Inicio prioriza, entre las noticias elegibles de las últimas 24 horas, las que tienen mayor número de cabeceras identificadas por el recolector. La fecha más reciente resuelve los empates. Si no hay internacionales recientes se conserva la más reciente disponible; si no hay internacionales elegibles se conserva la selección por carpetas habitual. Las fuentes ocultas, palabras silenciadas, antigüedad y selecciones personales siguen aplicándose.
 
-El conteo normaliza descriptores de sección y variantes inequívocas de BBC, DW, France 24 y SINC; las etiquetas visibles no cambian. La Nación Costa Rica y La Nación Argentina siguen siendo distintas. Tener más URLs de consulta no aporta prioridad por sí solo. La deduplicación de artículos mantiene su comportamiento conservador y no se presenta como infalible.
+El conteo normaliza descriptores de sección y variantes inequívocas de BBC, DW, France 24, SINC y Cloudflare; las etiquetas visibles no cambian. La Nación Costa Rica y La Nación Argentina siguen siendo distintas. Tener más URLs de consulta no aporta prioridad por sí solo. La deduplicación de artículos mantiene su comportamiento conservador y no se presenta como infalible.
 
 La importancia no es una puntuación de veracidad, popularidad o gravedad. La cobertura editorial identificada es una señal observable, con los límites de los metadatos y las cabeceras reconocidas. Se conserva un destacado y el carrusel sin duplicados internos; no se añaden banners o navegación repetida.
 

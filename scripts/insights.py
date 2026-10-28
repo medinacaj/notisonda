@@ -38,12 +38,13 @@ TOKEN = re.compile(r'[a-z0-9ñ]+')
 # These are catalog roles/section labels, not independent editorial outlets.
 # Public display names remain unchanged; this normalization only counts coverage.
 EDITORIAL_IDENTITY_PREFIX = re.compile(
-    r'^(?:oficial|investigacion|analisis|eventos|video|tendencia|impacto|satira)\s*[—–-]\s*')
+    r'^(?:oficial|investigacion|analisis|eventos|video|tendencia|impacto|satira|tecnico)\s*[—–-]\s*')
 PUBLISHER_ALIASES = {
     'bbc mundo': 'bbc', 'bbc news': 'bbc', 'bbc news mundo': 'bbc',
     'dw com': 'dw', 'dw espanol': 'dw', 'deutsche welle': 'dw',
     'france24': 'france 24', 'france 24 en espanol': 'france 24',
     'agencia sinc': 'sinc',
+    'cloudflare blog': 'cloudflare', 'cloudflare ai': 'cloudflare',
 }
 
 
