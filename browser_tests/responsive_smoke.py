@@ -302,6 +302,25 @@ def main():
                         page.goto(base + "#inicio", wait_until="load")
                         page.locator("#dashboardView:not([hidden])").wait_for(timeout=15000)
                         page.locator("#dashboardRecent .dashboard-recent-row").first.wait_for(timeout=15000)
+                        # El radar tiene su propia ficha, separada del listado "Lo más cubierto".
+                        radar_card=page.locator("#coverageTools .radar-standalone-card")
+                        covered_card=page.locator("#coverageTools .covered-standalone-card")
+                        expect(radar_card).to_be_visible()
+                        expect(covered_card).to_be_visible()
+                        expect(radar_card.locator("#radarStage svg")).to_have_count(1)
+                        expect(covered_card.locator("#coveredList")).to_be_visible()
+                        assert radar_card.locator("#coveredList").count()==0
+                        separate=page.evaluate("""() => {
+                          const a=document.querySelector('#coverageTools .radar-standalone-card');
+                          const b=document.querySelector('#coverageTools .covered-standalone-card');
+                          const ar=a.getBoundingClientRect(),br=b.getBoundingClientRect();
+                          return {distinct:a!==b,fill:getComputedStyle(a).backgroundColor,
+                            border:getComputedStyle(a).borderTopWidth,
+                            overlap:Math.min(ar.right,br.right)>Math.max(ar.left,br.left)
+                                 &&Math.min(ar.bottom,br.bottom)>Math.max(ar.top,br.top)};
+                        }""")
+                        assert separate["distinct"] and not separate["overlap"],separate
+                        assert separate["border"]!="0px",separate
                         if categories_only:
                             check_concepcion_category(page)
                             assert not javascript_errors, javascript_errors
