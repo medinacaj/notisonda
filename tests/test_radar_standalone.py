@@ -40,10 +40,21 @@ class RadarStandaloneTests(unittest.TestCase):
         self.assertIn('id="radarTitle"',self.html)
         self.assertIn('id="coveredTitle"',self.html)
 
-    def test_homepage_preserves_cards_without_reparenting_contents(self):
-        self.assertIn("radarPanel.classList.add('radar-standalone-card')",self.home)
-        self.assertIn("coveredPanel.classList.add('covered-standalone-card')",self.home)
-        self.assertIn("tools.append(aside)",self.home)
+    def test_radar_visible_without_dynamic_reparenting(self):
+        self.assertIn('id="coverageTools"',self.html)
+        self.assertIn('class="dashboard-panel radar-panel radar-standalone-card"',self.html)
+        self.assertIn('class="dashboard-panel covered-panel covered-standalone-card"',self.html)
+        self.assertIn("const tools=$('coverageTools')",self.home)
+        self.assertIn("if(tools)lead.after(tools)",self.home)
+        self.assertNotIn("tools.append(aside)",self.home)
+        # Antes estaba bajo #newsroomColumns[hidden]: ahora es su hermano dentro de Inicio.
+        start=self.html.index('<section class="coverage-tools" id="coverageTools"')
+        news=self.html.index('id="newsroomColumns" hidden')
+        close=self.html.index('<section id="agendaView"')
+        self.assertGreater(start,news)
+        self.assertLess(start,close)
+        self.assertEqual(self.html.count('id="coverageTools"'),1)
+        self.assertNotIn('id="coverageTools" hidden',self.html)
 
     def test_theme_has_isolated_surfaces_and_stacked_mobile_layout(self):
         self.assertIn('#coverageTools .radar-standalone-card',self.css)
