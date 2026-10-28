@@ -75,6 +75,34 @@ class DimensionRegressions(unittest.TestCase):
         expect(self.page.locator('#dashboardView')).to_be_hidden()
         expect(self.page.locator('#feedView')).to_be_visible()
 
+    def test_header_content_and_footer_share_edges_across_routes_and_sidebar_widths(self):
+        cases=[(1842,310),(1842,240),(1842,480),(1842,0),(2560,310),(2560,0),
+               (320,None),(768,None),(950,None),(951,310),(1024,480),(1199,310),(1200,310),(1440,310)]
+        for theme in ('dark','light'):
+            self.page.evaluate('(theme)=>setTheme(theme,true)',theme)
+            for width,sidebar in cases:
+                self.page.set_viewport_size({'width':width,'height':920})
+                self.page.evaluate("""sidebar=>{
+                    if(sidebar){localStorage.setItem('radar-sidebar-width',String(sidebar));window.dispatchEvent(new Event('radar-sidebar-pref-sync'));}
+                    setNavOpen(sidebar!==0&&sidebar!==null,false,true);
+                }""",sidebar)
+                for target,selector in (('home','#dashboardView'),('all','#feedView'),('agenda','#agendaView'),('briefing','#briefingView')):
+                    self.page.evaluate('(target)=>goTo(target)',target)
+                    expect(self.page.locator(selector)).to_be_visible()
+                    bounds=self.page.evaluate("""selector=>{
+                        const rect=s=>{const r=document.querySelector(s).getBoundingClientRect();return {left:r.left,right:r.right,width:r.width};};
+                        const footer=document.querySelector('.footer'),r=footer.getBoundingClientRect(),s=getComputedStyle(footer);
+                        return {header:rect('.topbar'),route:rect(selector),page:rect('.page'),main:rect('.main'),footer:{left:r.left+parseFloat(s.paddingLeft),right:r.right-parseFloat(s.paddingRight)}};
+                    }""",selector)
+                    context=(theme,width,sidebar,target,bounds)
+                    for edge in ('left','right'):
+                        self.assertAlmostEqual(bounds['header'][edge],bounds['route'][edge],delta=1,msg=context)
+                        self.assertAlmostEqual(bounds['footer'][edge],bounds['route'][edge],delta=1,msg=context)
+                    self.assertLessEqual(bounds['main']['width'],1201,context)
+                    self.assertGreaterEqual(bounds['header']['left'],bounds['page']['left'],context)
+                    self.assertLessEqual(bounds['header']['right'],bounds['page']['right']+1,context)
+                    self.assertTrue(self.page.evaluate('document.documentElement.scrollWidth<=innerWidth+2'),context)
+
     def test_large_text_respects_the_saved_independent_title_size(self):
         for size in (14,22):
             self.page.evaluate('(size)=>{state.cardTitleSize=size;state.fontSize="normal";savePref("card-title-size",size);savePref("font","normal");applyDisplaySettings();goTo("all");}',size)
