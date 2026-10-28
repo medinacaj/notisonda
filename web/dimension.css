@@ -2,6 +2,7 @@
    Reference: owner-provided Dimension style sheet, 2026-10-26. No external font requests. */
 body.radar-hybrid.dimension {
   color-scheme: dark;
+  --radar-content-width:1200px; --radar-page-gutter:24px;
   --bg:#171c25; --surface:#212833; --surface2:#1c222d; --card:var(--surface);
   --text:#dfe5ee; --muted:#b0bbc9; --dim:#a2afbf; --line:#3c4655;
   --accent:#c1b0f0; --blue:#9fbded; --hover:#303a4a; --shadow:#02060945;
@@ -38,7 +39,7 @@ body.dimension input::placeholder,body.dimension textarea::placeholder {color:va
 body.dimension .ui-icon {width:18px;height:18px;stroke-width:1.6;}
 body.radar-hybrid.dimension .app-shell {grid-template-columns:minmax(0,var(--radar-sidebar-width)) minmax(0,1fr);gap:0;}
 body.radar-hybrid.dimension .page {background:var(--bg);min-width:0;}
-body.radar-hybrid.dimension .main {max-width:1200px;width:100%;padding:30px 28px 56px;margin-inline:auto;}
+body.radar-hybrid.dimension .main {max-width:var(--radar-content-width);width:100%;padding:30px var(--radar-page-gutter) 56px;margin-inline:auto;}
 body.radar-hybrid.dimension .sidebar {
   margin:16px 0 16px 16px;width:calc(100% - 16px);top:16px;height:calc(100dvh - 32px);min-height:0;
   border:1px solid var(--line);border-radius:24px;background:var(--surface2);padding:22px 14px 16px;
@@ -73,9 +74,9 @@ body.radar-hybrid.dimension .sidebar-resize-handle::before {background:transpare
 body.radar-hybrid.dimension .sidebar-resize-grip {box-shadow:none;opacity:.3;height:36px;}
 body.radar-hybrid.dimension .topbar {
   position:sticky;top:16px;z-index:45;display:flex;align-items:center;gap:12px;min-height:64px;
-  margin:16px 28px 0;padding:9px 14px;border:1px solid var(--line);border-radius:24px;
+  margin:16px auto 0;padding:9px 14px;border:1px solid var(--line);border-radius:24px;
   background:color-mix(in srgb,var(--surface) 96%,transparent);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
-  box-shadow:var(--glass-shadow);max-width:1144px;
+  box-shadow:var(--glass-shadow);width:calc(100% - 2 * var(--radar-page-gutter));max-width:calc(var(--radar-content-width) - 2 * var(--radar-page-gutter));
 }
 body.radar-hybrid.dimension .topbar-caption {display:flex;align-items:center;gap:10px;color:var(--muted);letter-spacing:0;font-size:12px;font-weight:400;flex-shrink:0;}
 body.radar-hybrid.dimension .topbar-caption strong {font-size:14px;font-weight:500;color:var(--text);}
@@ -225,7 +226,7 @@ body.radar-hybrid.dimension .briefing-summary {font-size:15px;line-height:1.7;}
 body.radar-hybrid.dimension .briefing-meta {font-size:13px;line-height:1.6;}
 body.radar-hybrid.dimension .since-visit {margin:0 0 28px;border:1px solid var(--line);border-radius:18px;background:var(--surface);color:var(--text);box-shadow:none;}
 body.radar-hybrid.dimension .since-visit h2 {font-weight:500;font-size:17px;}
-body.radar-hybrid.dimension .footer {width:100%;max-width:1200px;padding:22px 28px 28px;margin:0 auto;display:flex;flex-wrap:wrap;gap:12px 24px;align-items:center;justify-content:space-between;border-top:1px solid var(--line);background:transparent;color:var(--muted);font-size:11px;}
+body.radar-hybrid.dimension .footer {width:100%;max-width:var(--radar-content-width);padding:22px var(--radar-page-gutter) 28px;margin:0 auto;display:flex;flex-wrap:wrap;gap:12px 24px;align-items:center;justify-content:space-between;border-top:1px solid var(--line);background:transparent;color:var(--muted);font-size:11px;}
 body.radar-hybrid.dimension .footer > span:first-child {display:none;}
 body.radar-hybrid.dimension .footer-profile {background:var(--text);color:var(--bg);border:1px solid var(--line);border-radius:9999px;box-shadow:none;padding:9px 14px;min-height:40px;}
 body.radar-hybrid.dimension .footer-profile-label {color:inherit;opacity:.7;}
@@ -236,7 +237,6 @@ body.radar-hybrid.dimension .action-toast {background:var(--text);color:var(--bg
 body.radar-hybrid.dimension .action-toast .toast-undo {color:inherit;border-color:currentColor;}
 body.radar-hybrid.dimension.sidebar-collapsed .app-shell {grid-template-columns:minmax(0,1fr);}
 body.radar-hybrid.dimension.sidebar-collapsed .sidebar {visibility:hidden;}
-@media(min-width:1200px) {body.radar-hybrid.dimension .topbar {margin-inline:auto;width:calc(100% - 56px);}}
 
 @media(max-width:950px) {
   body.radar-hybrid.dimension .app-shell {grid-template-columns:minmax(0,1fr);}
@@ -244,13 +244,13 @@ body.radar-hybrid.dimension.sidebar-collapsed .sidebar {visibility:hidden;}
   body.radar-hybrid.dimension.nav-open .sidebar {transform:translateX(0);visibility:visible;}
   body.radar-hybrid.dimension .sidebar-backdrop {position:fixed;inset:0;z-index:90;background:#0009;backdrop-filter:blur(4px);}
   body.radar-hybrid.dimension .sidebar-resize-handle {display:none;}
-  body.radar-hybrid.dimension .topbar {margin:16px 20px 0;}
-  body.radar-hybrid.dimension .main {padding:28px 20px 44px;}
+  body.radar-hybrid.dimension .topbar {margin:16px auto 0;}
+  body.radar-hybrid.dimension .main {padding:28px var(--radar-page-gutter) 44px;}
   body.radar-hybrid.dimension #dashboardRecent > .dashboard-latest-card {flex-basis:calc((100% - 16px)/2);}
   body.radar-hybrid.dimension #dashboardFeature .article-title {font-size:25px;}
 }
 @media(max-width:710px) {
-  body.radar-hybrid.dimension .topbar {top:12px;margin:12px 12px 0;padding:7px 9px;gap:6px;flex-wrap:wrap;min-height:60px;border-radius:22px;}
+  body.radar-hybrid.dimension .topbar {top:12px;margin:12px auto 0;padding:7px 9px;gap:6px;flex-wrap:wrap;min-height:60px;border-radius:22px;}
   body.radar-hybrid.dimension .topbar-caption {flex:1;}
   body.radar-hybrid.dimension .topbar-caption strong {font-size:13px;}
   body.radar-hybrid.dimension .topbar-actions {gap:4px;margin-left:0;}
@@ -258,7 +258,7 @@ body.radar-hybrid.dimension.sidebar-collapsed .sidebar {visibility:hidden;}
   body.radar-hybrid.dimension .topbar-search {display:none;order:5;flex:1 1 100%;margin:4px 0 2px;}
   body.radar-hybrid.dimension.search-open .topbar-search {display:block;}
   body.radar-hybrid.dimension .search-shortcut {display:none;}
-  body.radar-hybrid.dimension .main {padding:24px 16px 40px;}
+  body.radar-hybrid.dimension .main {padding:24px var(--radar-page-gutter) 40px;}
 
   body.radar-hybrid.dimension #dashboardFeature > .article-card {display:flex;flex-direction:column;}
   body.radar-hybrid.dimension #dashboardFeature > .article-card > .cover {order:0;height:170px;min-height:0;}
@@ -696,11 +696,11 @@ body.radar-hybrid.dimension .sidebar-bottom .refresh-now{
 }
 /* Fondo, cabeceras y tarjetas diferenciados para reducir fatiga visual. */
 body.radar-hybrid.dimension .page{background:var(--bg)}
-body.radar-hybrid.dimension .main{padding:22px 24px 42px}
+body.radar-hybrid.dimension .main{padding:22px var(--radar-page-gutter) 42px}
 body.radar-hybrid.dimension .topbar{
   background:var(--surface);border-color:var(--line);
   border-radius:15px;min-height:60px;box-shadow:var(--glass-shadow);
-  margin:10px 24px 0;top:10px;
+  margin:10px auto 0;top:10px;
 }
 body.radar-hybrid.dimension .page-heading{margin-bottom:19px}
 body.radar-hybrid.dimension .page-heading h1,
@@ -746,6 +746,7 @@ body.radar-hybrid.dimension .footer{
 }
 /* Mantener gestos cómodos en móviles incluso con densidad compacta. */
 @media(max-width:950px){
+  body.radar-hybrid.dimension{--radar-page-gutter:15px}
   body.radar-hybrid.dimension .sidebar,
   body.radar-hybrid.dimension.light .sidebar{
     margin:0;top:0;height:100dvh;width:min(86vw,330px);
@@ -755,8 +756,8 @@ body.radar-hybrid.dimension .footer{
   body.radar-hybrid.dimension .sidebar :is(.nav-link,.briefing-nav-link){min-height:44px;padding:10px 11px}
   body.radar-hybrid.dimension .sidebar-section-toggle{min-height:44px}
   body.radar-hybrid.dimension .source-folders-section .folder-group-head .sidebar-section-toggle{min-height:44px}
-  body.radar-hybrid.dimension .topbar{margin:8px 10px 0;top:8px}
-  body.radar-hybrid.dimension .main{padding:18px 15px 36px}
+  body.radar-hybrid.dimension .topbar{margin:8px auto 0;top:8px}
+  body.radar-hybrid.dimension .main{padding:18px var(--radar-page-gutter) 36px}
 }
 @media(prefers-reduced-motion:reduce){
   body.radar-hybrid.dimension .sidebar-section-toggle,
