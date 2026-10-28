@@ -7,6 +7,7 @@ const ARCHIVE_KEY='radar-saved-archive-v1';
 const FOLDER_KEY='radar-source-folders-v1';
 const TAG_KEY='radar-article-tags-v1';
 const LIMIT=350;
+const SOURCE_LIMIT=4000;
 VECTOR_PATHS.folder='<path d="M3 7a2 2 0 0 1 2-2h5l2 2h7a2 2 0 0 1 2 2v10H3z"/>';
 VECTOR_PATHS['folder-plus']='<path d="M3 7a2 2 0 0 1 2-2h5l2 2h7a2 2 0 0 1 2 2v10H3zM12 11v6M9 14h6"/>';
 const read=(key,fallback)=>{try{return JSON.parse(localStorage.getItem(key)||'null')??fallback;}catch{return fallback;}};
@@ -39,7 +40,7 @@ function readFolders(data){
   if(!data||typeof data!=='object'||Array.isArray(data))return result;
   for(const [name,ids] of Object.entries(data).slice(0,25)){
     if(!name.trim()||name.length>45||!Array.isArray(ids)||name==='__proto__')continue;
-    result[name]=[...new Set(ids.filter(x=>typeof x==='string'&&x.length<150))].slice(0,160);
+    result[name]=[...new Set(ids.filter(x=>typeof x==='string'&&x.length<150))].slice(0,SOURCE_LIMIT);
   }
   return result;
 }
@@ -56,9 +57,10 @@ function readTags(data){
   return output;
 }
 tags=readTags(rawTags);
-let activeFolder=null,activeTag='';
+let activeFolder=null,activeTag='',pendingSourceNavigation=null;
 // Read-only snapshot for the feed's visible filter summary; no library data is removed.
 window.RadarLibrary=Object.freeze({
+ getSourceGroups(){return sourceGroups();},
  getFeedFilters(){return {
   folder:activeFolder?{id:activeFolder,label:activeFolder,kind:'manual'}:
    state.category!=='all'?{id:state.category,label:folderName('default',state.category),kind:'default'}:null,
@@ -102,13 +104,18 @@ let defaults=(()=>{try{const obj=JSON.parse(localStorage.getItem(FOLDER_OVERLAY_
   for(const [id,v] of Object.entries(obj).slice(0,40)){
    if(id.length>150||!v||typeof v!=='object')continue;
    result[id]={name:typeof v.name==='string'?v.name.slice(0,45):'',
-    hidden:v.hidden===true,sources:Array.isArray(v.sources)?v.sources.filter(x=>typeof x==='string').slice(0,160):null};
+    hidden:v.hidden===true,sources:Array.isArray(v.sources)?[...new Set(v.sources.filter(x=>typeof x==='string'))].slice(0,SOURCE_LIMIT):null};
   }
  return result;
 }catch{return Object.create(null);}})();
 const saveDefaults=()=>write(FOLDER_OVERLAY_KEY,defaults);
 const folderName=(kind,id)=>kind==='default'?(defaults[id]?.name||categoryLabel(id)):id;
 const folderSources=(kind,id)=>kind==='default'?(Array.isArray(defaults[id]?.sources)?defaults[id].sources:state.sources.filter(x=>x.category===id).map(x=>x.id)):(folders[id]||[]);
+function sourceGroups(){
+ return [...state.categories.map(id=>({key:'default:'+id,name:folderName('default',id),ids:folderSources('default',id)})),
+   ...Object.entries(folders).map(([name,ids])=>({key:'manual:'+name,name,ids}))];
+}
+const sourceFolderNames=source=>sourceGroups().filter(group=>group.ids.includes(source.id)).map(group=>group.name);
 function folderNameTaken(name,kind,id){
  const key=name.toLocaleLowerCase('es');
  return state.categories.some(x=>!(kind==='default'&&x===id)&&folderName('default',x).toLocaleLowerCase('es')===key)
@@ -468,15 +475,16 @@ function showSourceDetails(source){
   document.body.append(dialog);
  }
  dialog.replaceChildren();
- const heading=mk('h2','',sourceLabel(source.name));
+ const heading=mk('h2','',sourceLabel(source.name));heading.id='sourceDetailsTitle';dialog.setAttribute('aria-labelledby',heading.id);
  const description=mk('p','', 'Información del catálogo público de Radar RSS.');
  const close=mk('button','settings-secondary','Cerrar');close.type='button';close.addEventListener('click',()=>dialog.close());
- const entries=[['Nombre en catálogo',source.name],['Categoría original',categoryLabel(source.category)],['Carpeta asignada',Object.entries(folders).find(([,ids])=>ids.includes(source.id))?.[0]||state.categories.filter(id=>folderSources('default',id).includes(source.id)).map(categoryLabel).join(', ')||'Sin carpeta'],['Identificador',source.id],['Dirección RSS',source.url],['Sitio del medio',source.website]];
+ const health=state.health.find(row=>row.id===source.id),kind=RadarSourceTools.sourceKind(source);
+ const entries=[['Nombre en catálogo',source.name],['Categoría original',categoryLabel(source.category)],['Carpetas asignadas',sourceFolderNames(source).join(', ')||'Sin carpeta'],['Identificador',source.id],['Tipo de canal',kind==='radar'?'RADAR · Google Noticias (intermediario)':'RSS directo'],['Estado',RadarSourceTools.statusLabels[RadarSourceTools.healthState(health)]],['Último chequeo',state.healthCheckedAt?shortDate(state.healthCheckedAt):'Sin fecha disponible'],['Última lectura correcta',health?.last_success_at?shortDate(health.last_success_at):'Sin fecha disponible'],['Dirección RSS',source.url],['Sitio del medio',source.website]];
  const dl=mk('dl','library-source-details-list');
  for(const [label,value] of entries){
   const dt=mk('dt','',label),dd=mk('dd');
-  if((label==='Dirección RSS'||label==='Sitio del medio')&&safeURL(value)){
-   const link=mk('a','',value);link.href=safeURL(value);link.target='_blank';link.rel='noopener noreferrer';link.referrerPolicy='no-referrer';dd.append(link);
+  if((label==='Dirección RSS'||label==='Sitio del medio')&&RadarSourceTools.feedKey(value)){
+   const link=mk('a','',value);link.href=RadarSourceTools.feedKey(value);link.target='_blank';link.rel='noopener noreferrer';link.referrerPolicy='no-referrer';dd.append(link);
    const copy=mk('button','library-source-copy','Copiar');copy.type='button';copy.addEventListener('click',async()=>{
     try{await navigator.clipboard.writeText(value);actionToast('Dirección copiada.');}
     catch{actionToast('No se pudo copiar la dirección.');}
@@ -484,25 +492,29 @@ function showSourceDetails(source){
   }else dd.textContent=value||'No disponible en el catálogo';
   dl.append(dt,dd);
  }
+ if(health&&health.state!=='ok')description.textContent=friendlyFeedProblem(health);
  dialog.append(heading,description,dl,close);
  dialog.showModal();close.focus();
 }
 function decorateSources(){
  const list=$('settingsSources');
+ const byId=new Map(state.sources.map(source=>[source.id,source]));
+ const healthById=new Map(state.health.map(row=>[row.id,row]));
  for(const label of [...list.querySelectorAll('.settings-source-row')]){
   if(label.closest('.library-source-row'))continue;
-  const name=label.querySelector('.settings-source-name')?.textContent?.trim()||'';
-  const cat=label.querySelector('small')?.textContent?.trim()||'';
-  const source=state.sources.find(s=>sourceLabel(s.name)===name&&categoryLabel(s.category)===cat);
+  const source=byId.get(label.dataset.sourceId);
   if(!source)continue;
+  const name=sourceLabel(source.name);
   const wrapper=mk('div','library-source-row'),select=mk('select','library-source-folder');
+  wrapper.dataset.sourceId=source.id;
   select.setAttribute('aria-label','Mover '+name+' a otra carpeta');
   select.title='Mover a una carpeta de este navegador';
-  for(const id of state.categories)select.append(new Option(categoryLabel(id),'default:'+id));
+  select.append(new Option('Sin carpeta asignada',''));
+  for(const id of state.categories)select.append(new Option(folderName('default',id),'default:'+id));
   for(const folder of Object.keys(folders))select.append(new Option(folder,'manual:'+folder));
   const currentManual=Object.entries(folders).find(([,ids])=>ids.includes(source.id))?.[0];
   const currentDefault=state.categories.find(id=>folderSources('default',id).includes(source.id));
-  select.value=currentManual?'manual:'+currentManual:'default:'+(currentDefault||source.category);
+  select.value=currentManual?'manual:'+currentManual:currentDefault?'default:'+currentDefault:'';
   select.addEventListener('change',()=>{
    const target=select.value;
    if(!target.startsWith('default:')&&!target.startsWith('manual:'))return;
@@ -533,18 +545,121 @@ function decorateSources(){
    actionToast('Fuente movida a la carpeta seleccionada.');
   });
   const checkbox=label.querySelector('input[type="checkbox"]');
-  const details=label.querySelector('.settings-source-details');
-  const open=mk('button','library-source-details-trigger');open.type='button';
+  const body=mk('div','source-body'),heading=mk('div','source-row-heading');
+  const kind=RadarSourceTools.sourceKind(source),health=healthById.get(source.id),status=RadarSourceTools.healthState(health);
+  const type=mk('span','source-kind',kind==='radar'?'RADAR · Google Noticias':'RSS directo');
+  const badge=mk('span','source-health',RadarSourceTools.statusLabels[status]);badge.dataset.state=status;
+  badge.title=health&&status!=='ok'?friendlyFeedProblem(health):'Estado de la última recopilación publicada';
+  heading.append(mk('strong','settings-source-name',name),type,badge);
+  const assignedNames=sourceFolderNames(source);
+  const caption=mk('small','source-folder-caption','Carpetas: '+(assignedNames.join(', ')||'Sin carpeta'));
+  const original=mk('small','source-original-category','Categoría original: '+categoryLabel(source.category));
+  body.append(heading,caption);
+  if(!assignedNames.includes(categoryLabel(source.category)))body.append(original);
+  for(const [title,value,className] of [['RSS',source.url,'source-rss-url'],['Web',source.website,'source-website-url']]){
+   const address=mk('div','source-address');address.append(mk('span','',title));
+   const url=RadarSourceTools.feedKey(value);
+   if(url){const a=mk('a',className,value);a.href=url;a.title=value;a.target='_blank';a.rel='noopener noreferrer';a.referrerPolicy='no-referrer';address.append(a);}
+   else address.append(mk('span','','No disponible en el catálogo'));
+   body.append(address);
+  }
+  const actions=mk('div','source-row-actions');
+  const open=mk('button','library-source-details-trigger','Detalles');open.type='button';
   open.setAttribute('aria-label','Ver detalles de '+name);open.title='Ver nombre, RSS, web y carpeta';
-  if(details)open.append(details);
   open.addEventListener('click',()=>showSourceDetails(source));
+  const copy=mk('button','source-copy-rss','Copiar RSS');copy.type='button';copy.setAttribute('aria-label','Copiar RSS de '+name);
+  copy.addEventListener('click',async()=>{
+   try{await navigator.clipboard.writeText(source.url);actionToast('Dirección RSS copiada.');}catch{actionToast('No se pudo copiar. Puedes seleccionar la dirección RSS del listado.');}
+  });
+  const news=mk('button','source-view-news','Ver noticias');news.type='button';
+  news.addEventListener('click',()=>{
+   if(state.hiddenSources.has(source.id))return actionToast('Activa esta fuente para ver sus noticias.');
+   $('settingsDialog').close();pendingSourceNavigation=source.id;state.page=1;state.mode='all';goTo('all');
+  });
+  actions.append(open,copy,news);body.append(actions);
+  const move=mk('label','source-move');move.append(mk('span','','Mover a carpeta'),select);body.append(move);
   label.replaceWith(wrapper);
-  if(checkbox){label.replaceChildren(checkbox);label.classList.add('library-source-check');wrapper.append(label);}
-  wrapper.append(open,select);
+  if(checkbox){label.replaceChildren(checkbox);label.removeAttribute('data-source-id');label.classList.add('library-source-check');wrapper.append(label);}
+  wrapper.append(body);
  }
 }
 const oldSources=renderSettingsSources;
 renderSettingsSources=function(){oldSources();decorateSources();};
+function mountSourceImport(){
+ let pending=null,sequence=0;
+ const preview=$('sourceImportPreview'),notice=$('sourceImportNotice');
+ function clear(){sequence++;pending=null;preview.hidden=true;$('importOPML').value='';}
+ $('cancelSourceImport').addEventListener('click',()=>{clear();notice.textContent='Importación cancelada. No se han cambiado tus fuentes.';$('importOPML').previousElementSibling.focus();});
+ const upload=document.querySelector('label[for="importOPML"]');
+ upload.addEventListener('keydown',event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();$('importOPML').click();}});
+ $('importOPML').addEventListener('change',async event=>{
+  const file=event.target.files?.[0];clear();const token=sequence;
+  if(!file)return;
+  notice.textContent='';
+  try{
+   if(file.size>1_000_000)throw Error('El archivo supera 1 MB.');
+   const records=RadarSourceTools.readOPML(await file.text());
+   if(token!==sequence)return;
+   const result=RadarSourceTools.matchOPML(records,state.sources);
+   pending={result,records,generation:state.generated};
+   $('sourceImportSummary').textContent=`${result.knownCount} fuentes reconocidas · ${result.unknown.length} sin incorporar · ${result.duplicates} apariciones repetidas de la misma URL. Las pertenencias a varias carpetas se conservan.`;
+   const groups=new Map();
+   for(const row of result.matched){if(!groups.has(row.folder))groups.set(row.folder,new Set());groups.get(row.folder).add(row.id);}
+   $('sourceImportFolders').replaceChildren(...[...groups].map(([name,ids])=>mk('li','',name+' · '+ids.size+' fuentes')));
+   const missing=$('sourceImportUnknown');missing.replaceChildren();
+   for(const row of result.unknown.slice(0,100))missing.append(mk('li','',`${row.name||row.url} · ${row.url} · ${row.reason}`));
+   if(result.unknown.length>100)missing.append(mk('li','',`Se muestran 100 de ${result.unknown.length}. Descarga el informe para ver todas.`));
+   if(!result.unknown.length)missing.append(mk('li','','Todas las fuentes están reconocidas.'));
+   $('applySourceImport').disabled=!result.knownCount;
+   preview.hidden=false;
+   notice.textContent=result.knownCount?'Revisa las carpetas antes de aplicar.':'Ninguna URL coincide con el catálogo. Descarga el informe para revisar las fuentes pendientes de incorporar al OPML público.';
+  }catch(error){if(token===sequence){pending=null;preview.hidden=true;notice.textContent='No se pudo importar. '+error.message;}}
+ });
+ $('exportSourceImportReport').addEventListener('click',()=>{
+  if(!pending)return;
+  const result=pending.result;
+  const rows=[...result.matched.map(row=>{
+   const source=state.sources.find(s=>s.id===row.id);
+   return {id:row.id,name:source?.name,rss:source?.url,website:source?.website,folders:row.folder,type:source&&RadarSourceTools.sourceKind(source)==='radar'?'RADAR · Google Noticias':'RSS directo',visible:!state.hiddenSources.has(row.id),status:'unknown',reason:'Reconocida en el catálogo'};
+  }),...result.unknown.map(row=>({name:row.name,rss:row.url,folders:row.folder,type:'Sin incorporar',visible:false,status:'unknown',reason:row.reason}))];
+  downloadText('radar-rss-importacion-opml.csv',RadarSourceTools.buildCSV(rows),'text/csv;charset=utf-8');
+ });
+ $('applySourceImport').addEventListener('click',()=>{
+  if(!pending||!pending.result.knownCount)return;
+  if(pending.generation!==state.generated||pending.result.matched.some(row=>!state.sources.some(s=>s.id===row.id))){notice.textContent='El catálogo se actualizó. Vuelve a importar el archivo para revisar las coincidencias.';return;}
+  const nextFolders=readFolders(folders),nextDefaults=JSON.parse(JSON.stringify(defaults));
+  const nextHidden=new Set(state.hiddenSources),groups=sourceGroups();
+  try{
+   for(const row of pending.result.matched){
+    const existing=groups.find(group=>group.name.toLocaleLowerCase('es')===row.folder.toLocaleLowerCase('es'));
+    if(existing?.key.startsWith('default:')){
+     const id=existing.key.slice(8),old=nextDefaults[id]||{};
+     nextDefaults[id]={...old,sources:[...new Set([...(old.sources||folderSources('default',id)),row.id])]};
+    }else{
+     const name=existing?.name||row.folder;
+     if(!Object.hasOwn(nextFolders,name)&&Object.keys(nextFolders).length>=25)throw Error('Máximo de 25 carpetas personales. Libera una carpeta o ajusta el OPML.');
+     nextFolders[name]=[...new Set([...(nextFolders[name]||[]),row.id])];
+    }
+    nextHidden.delete(row.id);
+   }
+   // Persist all keys before changing live state; roll back only successful writes.
+   const writes=[[FOLDER_KEY,nextFolders],[FOLDER_OVERLAY_KEY,nextDefaults],['radar-hidden-sources',[...nextHidden]]];
+   const committed=[];
+   try{
+    for(const [key,value] of writes){const previous=localStorage.getItem(key);localStorage.setItem(key,JSON.stringify(value));committed.push([key,previous]);}
+   }catch(error){
+    let recovered=true;
+    for(const [key,previous] of committed.reverse())try{if(previous===null)localStorage.removeItem(key);else localStorage.setItem(key,previous);}catch{recovered=false;}
+    throw Error(recovered?'No se pudo guardar. No se aplicó la importación.':'No se pudo guardar ni restaurar todo el almacenamiento. Revisa tus carpetas antes de recargar.');
+   }
+   folders=nextFolders;defaults=nextDefaults;state.hiddenSources=nextHidden;
+   const count=pending.result.knownCount,unknown=pending.result.unknown.length;
+   clear();state.page=1;refreshFeedUI();renderSettingsSources();
+   notice.textContent=`Importación aplicada: ${count} fuentes reconocidas activadas. ${unknown} entradas sin incorporar al catálogo.`;
+   upload.focus({preventScroll:true});
+  }catch(error){notice.textContent=error.message;}
+ });
+}
 const oldNavigate=navigateFromHash;
 navigateFromHash=function(){
   const hash=decodeRouteHash();
@@ -562,6 +677,12 @@ navigateFromHash=function(){
     $('feedHeading').textContent=activeFolder;
     $('feedDescription').textContent='Noticias de los medios que agrupaste en esta carpeta.';
     $('sectionEyebrow').textContent='CARPETA DE FUENTES';
+  }
+  if(pendingSourceNavigation){
+    const id=pendingSourceNavigation;pendingSourceNavigation=null;
+    if(state.pageView==='feed'&&state.category==='all'&&state.sources.some(source=>source.id===id&&!state.hiddenSources.has(id))){
+      state.feed=id;fillSelect();render();$('feedHeading').focus({preventScroll:true});
+    }
   }
   buildNav();
 };
@@ -746,9 +867,7 @@ function mount(){
   group.append(mk('span','','Organiza tus fuentes en carpetas personales.'));
   const folderButton=mk('button','settings-secondary','Crear carpeta');folderButton.type='button';group.append(folderButton);
   sourcePane.querySelector('.setting-hint').after(group);folderButton.addEventListener('click',createFolder);
-  // El buscador original conserva una referencia directa a renderSettingsSources.
-  // Decorar después del render sin perder la escucha de búsqueda existente.
-  $('settingsSourceSearch').addEventListener('input',()=>queueMicrotask(decorateSources));
+  mountSourceImport();
   $('readerSave').addEventListener('click',e=>{
     if(!activeReaderItem)return;
     e.preventDefault();e.stopImmediatePropagation();

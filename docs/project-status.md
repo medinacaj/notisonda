@@ -16,6 +16,8 @@ Actualizado el 28 de octubre de 2026. Este archivo distingue código implementad
 
 ## Evidencia publicada y regresiones
 
+- Configuración/fuentes: [gestor y portabilidad](gestion-fuentes-2026-10-28.md) documenta enlaces RSS/web visibles, búsqueda por URL/carpeta, filtros de estado/tipo/visibilidad, identidad por ID, OPML con organización personal, CSV completo e importación OPML con previa. Se corrigen conteos por carpeta, recorte de más de160 miembros al recargar y reinicio del modo ligero; catálogo311/8 intacto. Las fuentes desconocidas de un OPML quedan en un informe para su posterior incorporación pública; no hay altas remotas desde el navegador.
+
 - PR89: auditoría, respaldo Concepción, navegación y personalización; PR90: eliminación de carpeta cultural independiente y selección en español.
 - PR91: separación de noticias/agenda de 90 días y preservación de actividades independiente del límite de noticias.
 - PR93: contadores reales, estados de error/reintento y cambio de generación; publicación verificada sobre `ebd1b157169e9189553bdb4ddd9a1a0c17d8dd23`.

@@ -24,16 +24,16 @@
 ### Task 1: Utilidades de catálogo y portabilidad
 **Files:** web/source-tools.js, tests/test_source_tools.cjs, tests/test_source_management.py.
 **Interfaces:** `RadarSourceTools` expone normalización segura de URL, clasificación/filtros de catálogo, CSV, OPML con carpetas y lectura/emparejamiento conservador de OPML. UI consume los mismos IDs que sources.json.
-- [ ] Escribir y observar RED en Node para URLs, filtros, estado desconocido, duplicados, CSV y OPML personalizado; wrapper Python ejecuta Node en CI actual.
-- [ ] Implementar mínimo y observar GREEN; parser XML se verifica en navegador real en Task 2.
+- [x] Escribir y observar RED en Node para URLs, filtros, estado desconocido, duplicados, CSV y OPML personalizado; wrapper Python ejecuta Node en CI actual.
+- [x] Implementar mínimo y observar GREEN; parser XML se verifica en navegador real en Task 2.
 
 ### Task 2: Configuración coherente y gestor de fuentes
 **Files:** web/app.js, web/library.js, web/library.css, web/index.html, web/features.js, web/sw.js, browser_tests/dimension_regressions.py.
 **Interfaces:** filas con `data-source-id`, identidad por ID, UI usa `RadarSourceTools`; biblioteca aporta carpetas actuales/acciones/exportación e importación previsualizada.
-- [ ] Pruebas navegador RED de URL/búsqueda/filtros; toggle/categoría; movimiento/OPML exportado; importación/cancelación/seguridad/almacenamiento; >160/reinicio ligero.
-- [ ] Implementar listado legible con enlaces/estado/filtros, corregir conteos y organización, exportación CSV/OPML e importación con informe y previa; integrar assets sin duplicar renderizadores.
-- [ ] Comprobar ambos temas/320 px, foco/enlaces/copiar, preferencias persistidas, límites e importación sin cambios parciales. GREEN en pruebas pertinentes y batería completa.
-- [ ] Documentar resultados/alcance Feedly/limitaciones y versionar shell/caché; revisar diff y commit.
+- [x] Pruebas navegador RED de URL/búsqueda/filtros; toggle/categoría; movimiento/OPML exportado; importación/cancelación/seguridad/almacenamiento; >160/reinicio ligero.
+- [x] Implementar listado legible con enlaces/estado/filtros, corregir conteos y organización, exportación CSV/OPML e importación con informe y previa; integrar assets sin duplicar renderizadores.
+- [x] Comprobar ambos temas/320 px, foco/enlaces/copiar, preferencias persistidas, límites e importación sin cambios parciales. GREEN en pruebas pertinentes y batería completa.
+- [x] Documentar resultados/alcance Feedly/limitaciones y versionar shell/caché; revisar diff y commit.
 
 ### Task 3: Revisión e integración
 - [ ] Una revisión independiente final del diff contra base; resolver hallazgos importantes con RED→GREEN y suite completa, sin segunda revisión.

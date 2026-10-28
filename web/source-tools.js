@@ -92,8 +92,8 @@
       if(/^[\s]*[=+\-@]|^[\t\r\n]/.test(text))text="'"+text;
       return '"'+text.replace(/"/g,'""')+'"';
     };
-    const lines=[['ID','Nombre','URL RSS','Sitio web','Carpetas personales','Tipo','Visibilidad','Estado del último chequeo']];
-    for(const row of rows)lines.push([row.id,row.name,row.rss,row.website,row.folders,row.type,row.visible?'Visible':'Oculta',statusLabels[row.status]||statusLabels.unknown]);
+    const lines=[['ID','Nombre','URL RSS','Sitio web','Carpetas personales','Tipo','Visibilidad','Estado del último chequeo','Motivo de importación']];
+    for(const row of rows)lines.push([row.id,row.name,row.rss,row.website,row.folders,row.type,row.visible?'Visible':'Oculta',statusLabels[row.status]||statusLabels.unknown,row.reason]);
     return '\uFEFF'+lines.map(line=>line.map(cell).join(',')).join('\r\n');
   }
   const api=Object.freeze({feedKey,sourceKind,healthState,statusLabels,filterSources,buildOPML,readOPML,matchOPML,buildCSV});

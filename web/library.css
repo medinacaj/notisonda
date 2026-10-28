@@ -61,6 +61,51 @@ body:not(.light) .columns-menu-popup{box-shadow:0 15px 35px rgba(0,0,0,.35)}
 @media(max-width:530px){.columns-menu-popup{right:0;max-width:min(194px,calc(100vw - 24px))}.category-nav-list .nav-link{padding-top:8px;padding-bottom:8px}}
 @media(prefers-reduced-motion:reduce){.category-nav-chevron{transition:none}}
 
+/* Source management uses the same calm reading surfaces in both themes. */
+body #settingsSources{display:flex;flex-direction:column;gap:12px;height:auto;max-height:none;overflow:visible;padding:0;margin-block:16px;border:0;background:transparent}
+body #settingsSources .library-source-row{display:grid;grid-template-columns:28px minmax(0,1fr);align-items:start;gap:10px;padding:16px 12px;border:1px solid var(--line);border-radius:16px;background:var(--surface);min-width:0}
+body #settingsSources .library-source-row:focus-within{border-color:var(--accent);box-shadow:0 0 0 1px var(--line)}
+body #settingsSources .library-source-check{margin:0;min-height:44px;min-width:28px;width:28px;display:grid;place-items:center}
+body #settingsSources .library-source-check input{width:19px;height:19px;margin:0}
+.source-body{min-width:0;display:flex;flex-direction:column;gap:8px}
+.source-row-heading{display:flex;align-items:center;flex-wrap:wrap;gap:6px 9px;line-height:1.5}
+.source-row-heading strong{flex-basis:100%;font-size:15px;font-weight:650;overflow-wrap:anywhere}
+.source-kind,.source-health{font-size:12px;line-height:1.5;border:1px solid var(--line);border-radius:20px;padding:3px 9px;background:var(--surface2);color:var(--muted)}
+.source-health[data-state="ok"]{color:var(--text)}
+.source-health[data-state="error"]{border-style:dashed;color:var(--text)}
+.source-folder-caption,.source-original-category{font-size:12px;line-height:1.5;color:var(--muted);overflow-wrap:anywhere}
+.source-address{display:grid;grid-template-columns:28px minmax(0,1fr);gap:7px;min-width:0;font-size:12px;line-height:1.65}
+.source-address>span{color:var(--muted)}
+.source-address a{color:var(--text);text-decoration:underline;text-decoration-color:var(--line);text-underline-offset:3px;overflow-wrap:anywhere}
+body #settingsSources .source-rss-url{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;overflow:hidden;max-height:4.95em}
+.source-address a:hover{color:var(--accent)}
+#healthFeedList .source-rss-url{display:block;max-width:100%;overflow-wrap:anywhere;font-size:12px;line-height:1.6;color:var(--text);text-decoration:underline;text-underline-offset:3px}
+.source-row-actions{display:flex;flex-wrap:wrap;gap:4px 9px}
+body #settingsSources .source-row-actions button{min-height:44px;min-width:44px;padding:8px 10px;margin:0;border:1px solid var(--line);border-radius:12px;background:var(--surface2);color:var(--text);font:inherit;font-size:12px;cursor:pointer}
+body #settingsSources .source-move{display:flex;align-items:center;flex-wrap:wrap;gap:7px;font-size:12px;color:var(--muted)}
+body #settingsSources .library-source-folder{width:auto;max-width:100%;min-width:0;min-height:44px;margin:0;font:inherit;font-size:13px;flex:1;flex-basis:190px}
+.source-filters{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:12px}
+.source-filters label{min-width:0;display:flex;flex-direction:column;gap:6px;font-size:12px;color:var(--muted)}
+.source-filters select{min-width:0;width:100%;min-height:44px;padding:9px;border:1px solid var(--line);border-radius:12px;background:var(--surface);color:var(--text);font-size:13px}
+.source-portability{display:flex;flex-wrap:wrap;align-items:center;gap:9px;margin-block:10px}
+.source-portability .upload-label{cursor:pointer;text-align:center}
+.source-import-preview{padding:16px;border:1px solid var(--line);border-radius:16px;background:var(--surface2);margin-top:15px;min-width:0}
+.source-import-preview[hidden]{display:none}
+.source-import-preview h4{margin:0 0 10px;font-size:16px;font-weight:650}
+.source-import-preview p,.source-import-preview li{font-size:13px;line-height:1.65;overflow-wrap:anywhere}
+.source-import-preview ul{padding-left:20px}
+.source-import-preview details{margin-block:14px}
+.source-import-preview summary{cursor:pointer;min-height:44px;display:list-item;padding-block:10px;font-size:13px}
+body #settingsDialog :is(.source-portability,.source-row-actions) button:disabled{opacity:.55;cursor:default}
+body #settingsDialog :is(.source-address a,.source-row-actions button,.source-portability label):focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+@media(max-width:600px){
+ .source-filters{grid-template-columns:1fr}
+ .source-filters select{font-size:16px}
+ body #settingsSources .library-source-folder{font-size:16px}
+ body #settingsSources .library-source-row{padding:12px 9px;gap:7px}
+ .source-portability>*{max-width:100%;white-space:normal;overflow-wrap:anywhere}
+}
+
 /* V7.3 — categorías siempre visibles y separadas por jerarquía. */
 body .sidebar{overflow-y:auto;overflow-x:hidden;scrollbar-width:thin;scrollbar-color:var(--ash) transparent}
 body .category-nav-group{margin-top:13px;padding-top:12px;border-top:1px solid var(--line)}

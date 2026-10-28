@@ -12,7 +12,7 @@ Se consideró mostrar solo enlaces en el diálogo existente (no resuelve búsque
 - Carpetas guardadas se truncan a 160 fuentes al recargar aunque la UI permita más; restablecer preferencias omite el modo ligero.
 
 ## Resultado esperado
-- Lista accesible con nombre, carpeta actual/original, tipo RSS directo o RADAR Google, estado del último chequeo, URL RSS y web legibles/enlazadas y copiar RSS. IDs estables; enlaces nunca cambian la casilla.
+- Lista accesible con nombre, carpeta actual/original, tipo RSS directo o RADAR Google, estado del último chequeo, URL RSS y web legibles/enlazadas y copiar RSS. Los RSS largos muestran hasta tres líneas, con dirección completa en destino, tooltip, Detalles y copia; la categoría original se muestra en lista cuando difiere de su carpeta, evitando repetición. IDs estables; enlaces nunca cambian la casilla.
 - Búsqueda por nombre, categoría, carpeta, dominio y URL; filtros combinables de visibilidad, estado y tipo. Vacío explícito. Totales distinguen visibles, catálogo y resultados, no confunden ocultación personal con fallo del servidor.
 - Botones por carpeta actual con conteos actualizados. Selector de movimiento funciona incluso con nombres iguales. Detalles y acceso a noticias de una fuente.
 - Exportación OPML de fuentes visibles con nombres y pertenencias personales, incluyendo sin carpeta; CSV del catálogo completo con URL/ID/tipo/carpeta/visibilidad/estado. Valores CSV se neutralizan contra fórmulas.

@@ -4,6 +4,8 @@
 
 Proyecto público sin backend ni cuentas. El catálogo contiene 311 suscripciones RSS y ocho carpetas OPML. La cantidad de carpetas se obtiene del catálogo, sin un máximo fijo. Las carpetas personales se configuran localmente sin modificar el catálogo público. El listado ofrece una vista conjunta de Latinoamérica sin ocultar ni modificar las carpetas de fuentes.
 
+**Gestor de fuentes:** Configuración muestra RSS/web, permite buscar por dominio o URL, filtrar visibilidad/estado/tipo, mover fuentes y exportar el catálogo completo como CSV. El OPML conserva carpetas personales y se puede importar con vista previa desde Feedly u otro lector: activa/reorganiza las fuentes reconocidas y detalla las que todavía no están en el catálogo. [Uso, correcciones y límites](docs/gestion-fuentes-2026-10-28.md).
+
 ## Arquitectura
 
 ```mermaid
@@ -16,7 +18,7 @@ flowchart LR
   F --> G[LocalStorage: favoritos y leídos]
 ```
 
-- **Fuentes:** `sources/feeds.opml`. Suscripciones agrupadas en inteligencia artificial, tecnología, internacionales, Chile, Venezuela y Latinoamérica.
+- **Fuentes:** `sources/feeds.opml`. Suscripciones agrupadas en inteligencia artificial, tecnología, internacionales, Chile, Venezuela, Latinoamérica, Concepción/Biobío y Maturín/Monagas.
 - **Colector:** `scripts/collect.py`, Python + feedparser + requests. Obtiene los feeds con concurrencia limitada, normaliza titulares, extractos, imágenes y fechas, deduplica por URL y retiene artículos hasta 45 días (sujeto al límite de 5.000 artículos y a la disponibilidad del historial). Si un feed falla, mantiene datos antiguos dentro del período de retención gracias a la caché de GitHub Actions.
 
 - **Integridad de fuentes:** `scripts/audit_feeds.py` valida el OPML sin consultar internet y se ejecuta antes de recopilar noticias. Los errores temporales admiten un reintento con espera aleatoria; un feed permanentemente bloqueado no se reintenta.

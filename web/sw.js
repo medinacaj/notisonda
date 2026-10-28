@@ -2,12 +2,12 @@
    Estrategia: primero la red (siempre lo más reciente); si no hay conexión, la última
    copia guardada. Solo se guardan archivos del propio sitio, nunca imágenes ni enlaces externos.
    Las URL se guardan sin parámetros (?v=, ?check=) para que la caché no crezca sin límite. */
-const CACHE = 'radar-rss-v53';
+const CACHE = 'radar-rss-v54';
 const SHELL = [
   './', './index.html', './manifest.webmanifest', './favicon.svg', './radar-logo.png', './icon-maskable.svg',
   './styles.css', './dimension.css', './library.css',
   './sidebar-layout.css', './modal-layout.css', './news-effects.css', './sidebar-health.css', './ux.css', './features.css',
-  './v12.css', './v13.css', './app.js', './v12.js', './v13.js', './library.js', './sidebar-layout.js', './news-effects.js', './features.js',
+  './v12.css', './v13.css', './source-tools.js', './app.js', './v12.js', './v13.js', './library.js', './sidebar-layout.js', './news-effects.js', './features.js',
   './usability.css', './usability.js', './homepage.css', './homepage.js', './agenda.css', './agenda.js', './reader-layout.css', './reading-ux.css', './feed-ux.js', './reader-ux.js',
   './data/latest.json', './data/sources.json', './data/status.json', './data/meta.json', './data/trends.json', './data/events.json',
 ];
