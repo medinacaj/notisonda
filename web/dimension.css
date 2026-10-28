@@ -537,3 +537,37 @@ body.radar-hybrid.dimension .footer #footerInfo:focus-visible{
   body.radar-hybrid.dimension .sidebar-section-toggle,
   body.radar-hybrid.dimension .sidebar-section-chevron{transition:none}
 }
+
+
+/* Acciones de noticia: iconos compactos sin círculos ni rellenos permanentes. */
+body.radar-hybrid.dimension .article-card .article-footer .article-actions{
+  gap:4px;align-items:center;
+}
+body.radar-hybrid.dimension .article-card .article-footer :is(.article-read-toggle,.article-save,.article-more){
+  display:inline-grid;place-items:center;
+  flex:0 0 44px;width:44px;height:44px;min-width:44px;min-height:44px;
+  padding:0;border:1px solid transparent;border-radius:9px;
+  background:transparent;color:var(--muted);box-shadow:none;
+  transition:color .14s ease,background-color .14s ease,border-color .14s ease;
+}
+body.radar-hybrid.dimension .article-card .article-footer :is(.article-read-toggle,.article-save,.article-more):hover{
+  background:var(--hover);border-color:var(--line);color:var(--text);
+}
+body.radar-hybrid.dimension .article-card .article-footer :is(.article-read-toggle,.article-save,.article-more):focus-visible{
+  outline:2px solid var(--accent);outline-offset:1px;
+  background:var(--hover);border-color:var(--line);
+}
+body.radar-hybrid.dimension .article-card .article-footer .article-read-toggle[aria-pressed="true"],
+body.radar-hybrid.dimension .article-card .article-footer .article-save[aria-pressed="true"],
+body.radar-hybrid.dimension .article-card .article-footer .article-save.saved{
+  background:transparent;border-color:transparent;color:var(--accent);
+}
+body.radar-hybrid.dimension .article-card .article-footer .article-more[aria-expanded="true"]{
+  background:var(--hover);border-color:var(--line);color:var(--text);
+}
+body.radar-hybrid.dimension .article-card .article-footer .article-actions .ui-icon{
+  width:18px;height:18px;stroke-width:1.8;
+}
+@media(prefers-reduced-motion:reduce){
+  body.radar-hybrid.dimension .article-card .article-footer :is(.article-read-toggle,.article-save,.article-more){transition:none}
+}
