@@ -12,6 +12,8 @@
       const expanded=navigationContent.hidden;
       navigationContent.hidden=!expanded;
       navigationToggle.setAttribute('aria-expanded',String(expanded));
+      navigationToggle.setAttribute('aria-label',expanded?'Ocultar navegación':'Mostrar navegación');
+      navigationToggle.title=expanded?'Ocultar navegación':'Mostrar navegación';
     });
   }
   const KEY='radar-sidebar-width';

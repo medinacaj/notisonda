@@ -322,11 +322,33 @@ def main():
                         page.evaluate("document.body.classList.remove('light')")
                         assert page.evaluate("getComputedStyle(document.body).getPropertyValue('--bg').trim()") != light_background
                         page.evaluate("document.body.classList.add('light')")
-                        # Nueva jerarquía editorial: iconos uniformes, sin fondos por categoría.
-                        colors=page.locator('#libraryFolderNav .system-folder-link .nav-glyph').evaluate_all('nodes=>nodes.map(n=>getComputedStyle(n).color)')
-                        assert len(colors) == len(CATEGORIES) and len(set(colors)) == 1,colors
-                        assert page.locator('#sidebarNavigationToggle').get_attribute('aria-expanded') == 'false'
-                        assert page.locator('#sourceFoldersToggle').get_attribute('aria-expanded') == 'false'
+                        # En móvil la barra está fuera de pantalla hasta abrir el cajón.
+                        if page.locator('#appSidebar').evaluate('(node) => node.inert'):
+                            page.locator('#menuToggle').click()
+                        expect(page.locator('#appSidebar')).to_be_visible()
+                        # Los paneles deben iniciar cerrados y poder abrirse/cerrarse en ambos sentidos.
+                        for control_id, content_id in (('sidebarNavigationToggle','sidebarCoreContent'),
+                                                       ('sourceFoldersToggle','libraryFolderNav')):
+                            toggle=page.locator('#'+control_id)
+                            content=page.locator('#'+content_id)
+                            expect(toggle).to_have_attribute('aria-expanded','false')
+                            expect(content).to_be_hidden()
+                            toggle.click()
+                            expect(toggle).to_have_attribute('aria-expanded','true')
+                            expect(content).to_be_visible()
+                            toggle.click()
+                            expect(toggle).to_have_attribute('aria-expanded','false')
+                            expect(content).to_be_hidden()
+                        # Fondo de lectura y barra lateral claramente diferenciados.
+                        colors=page.evaluate("""() => ({
+                           background:getComputedStyle(document.body).getPropertyValue('--bg').trim(),
+                           sidebar:getComputedStyle(document.querySelector('#appSidebar')).backgroundColor,
+                           page:getComputedStyle(document.querySelector('.page')).backgroundColor
+                        })""")
+                        assert colors['sidebar'] != colors['page'], colors
+                        # Identidad cromática solo en los iconos, sin pastillas decorativas.
+                        icon_colors=page.locator('#libraryFolderNav .system-folder-link .nav-glyph').evaluate_all('nodes=>nodes.map(n=>getComputedStyle(n).color)')
+                        assert len(icon_colors) == len(CATEGORIES) and len(set(icon_colors)) == len(CATEGORIES),icon_colors
                         # Las seis carpetas originales y Concepción siguen accesibles y administrables.
                         assert page.locator("#libraryFolderNav .system-folder-link").count() == len(CATEGORIES)
                         assert page.locator("#libraryFolderNav .v12-hidden-category").count() == 0
