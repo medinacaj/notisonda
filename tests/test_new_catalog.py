@@ -18,10 +18,24 @@ class ExpandedCatalogTests(unittest.TestCase):
         self.sources = parse_opml(ROOT / 'sources/feeds.opml')
 
     def test_new_folders_have_local_and_international_channels(self):
-        self.assertEqual(len(self.sources), 221)
+        self.assertEqual(len(self.sources), 248)
         self.assertEqual(sum(s['category'] == '08 - Maturín / Monagas' for s in self.sources), 6)
         self.assertEqual(sum(s['category'].startswith('09 -') for s in self.sources), 0)
         self.assertEqual(audit(ROOT / 'sources/feeds.opml')['problem_count'], 0)
+
+    def test_spanish_ai_and_technology_expansion_preserves_categories(self):
+        urls = {item['url']: item for item in self.sources}
+        spanish_feeds = [
+            'https://www.agenciasinc.es/feed/Tecnologia',
+            'https://planetachatbot.com/feed/',
+            'https://www.microsiervos.com/index.xml',
+            'https://computerhoy.20minutos.es/rss',
+            'https://www.profesionalreview.com/feed/',
+        ]
+        for url in spanish_feeds:
+            self.assertIn(url, urls)
+            self.assertIn(urls[url]['category'], ('01 - Inteligencia Artificial', '02 - Tecnología'))
+        self.assertEqual(len(set(item['id'] for item in self.sources)), 248)
 
     def test_original_211_entries_are_unchanged(self):
         records = json.loads((ROOT / 'sources/discovery-verification.json').read_text())['sources']
