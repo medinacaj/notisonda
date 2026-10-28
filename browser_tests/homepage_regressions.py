@@ -64,6 +64,15 @@ def main():
                 page.locator('#latestCarouselPrevious').click()
                 page.wait_for_function("() => document.getElementById('dashboardRecent').scrollLeft < 2")
                 expect(page.locator('#dashboardView #coverageTools')).to_be_visible()
+                # La ficha se mantiene después del carrusel «En un vistazo».
+                order=page.evaluate("""() => {
+                    const feature=document.querySelector('.dashboard-feature-panel');
+                    const latest=document.querySelector('.homepage-latest');
+                    const radar=document.querySelector('#coverageTools');
+                    return [feature,latest,radar].map(node=>[...node.parentNode.children].indexOf(node));
+                }""")
+                assert order[0]<order[1]<order[2],order
+                assert page.locator('#radarFigure').is_visible()
                 expect(page.locator('#trendsPanel')).to_be_visible()
                 fixtures.check_visible_boxes(page,['#coverageTools','.home-insight-card','#trendChips .trend-chip'],f'cobertura {width}px')
                 expect(page.locator('#coveredList .covered-item').first).to_be_visible()

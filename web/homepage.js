@@ -30,10 +30,11 @@
     if(event.target!==recent||!['ArrowLeft','ArrowRight'].includes(event.key))return;
     event.preventDefault();move(event.key==='ArrowRight'?1:-1);
   });
-  // El radar pertenece al HTML de Inicio, fuera de #newsroomColumns[hidden].
-  // Solo cambiamos su ubicación visual; nunca condicionamos su visibilidad.
+  // El radar permanece visible dentro de Inicio, después de «En un vistazo».
+  // Se conserva su ubicación original bajo el carrusel; no se oculta en <details>
+  // ni se devuelve al contenedor histórico #newsroomColumns[hidden].
   const tools=$('coverageTools');
-  if(tools)lead.after(tools);
+  if(tools)panel.after(tools);
   function latestCard(item){
     const row=headlineRow(item);row.classList.add('dashboard-latest-card');
     const topic=state.categories.indexOf((item.categories||[])[0]);
