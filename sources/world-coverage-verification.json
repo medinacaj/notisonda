@@ -1,0 +1,1581 @@
+{
+  "version": 1,
+  "checked_at": "2026-10-28T13:05:03.799577+00:00",
+  "baseline_commit": "9ad49d369d6e43bd1672db6470473bc386ed6983",
+  "previous_total": 276,
+  "added_total": 35,
+  "total_sources": 311,
+  "category_count": 8,
+  "baseline_sha256": "d9bf71a2ce407a7757574c815ffc4e783d48041d91dfe9dcaeb6316a4baa1c59",
+  "sources": [
+    {
+      "key": "onu",
+      "name": "RADAR — Noticias ONU | Actualidad mundial",
+      "website": "https://news.un.org/es/",
+      "query": "site:news.un.org/es/story when:7d",
+      "scope": "Fuente institucional internacional",
+      "category": "03 - Internacionales",
+      "locale": "ES",
+      "feed": "https://news.google.com/rss/search?q=site%3Anews.un.org%2Fes%2Fstory+when%3A7d&hl=es&gl=ES&ceid=ES%3Aes",
+      "kind": "google-noticias",
+      "http_status": 200,
+      "feed_version": "rss20",
+      "bozo": false,
+      "response_sha256": "e9df659897f3ddb5b71258830b84029d6701bd1478cb1f34729b9bce034944a4",
+      "feed_language": "es",
+      "entries_observed": 17,
+      "status": "rss_observed",
+      "included": true,
+      "verified_at": "2026-10-28T12:41:41.898881+00:00",
+      "last_published_at": "2026-10-27T19:55:02Z",
+      "recent_dated_entries": 17,
+      "samples": [
+        {
+          "title": "Los niveles récord de dióxido de carbono nos afectarán durante siglos | Noticias ONU - UN News",
+          "published": "Tue, 27 Oct 2026 13:57:13 GMT",
+          "publisher": "UN News",
+          "publisher_url": "https://news.un.org"
+        },
+        {
+          "title": "Cisjordania: una comisión de investigación de la ONU acusa a Israel de “exterminio” - UN News",
+          "published": "Mon, 26 Oct 2026 19:54:09 GMT",
+          "publisher": "UN News",
+          "publisher_url": "https://news.un.org"
+        }
+      ],
+      "commercial_publisher_entries_observed": 0,
+      "observation_scope": "Metadatos RSS observados; no se verificaron hechos ni fecha original de cada artículo, licencias o audiencia. Google puede incluir contexto antiguo y coincidencias fuera del filtro.",
+      "native_feed_candidate": "https://news.un.org/feed/subscribe/es/news/all/rss.xml",
+      "native_status": "not_checked_network_policy"
+    },
+    {
+      "key": "ops",
+      "name": "RADAR — OPS | Salud en las Américas",
+      "website": "https://www.paho.org/es",
+      "query": "site:paho.org/es/noticias when:7d",
+      "scope": "Fuente institucional sanitaria",
+      "category": "03 - Internacionales",
+      "locale": "ES",
+      "feed": "https://news.google.com/rss/search?q=site%3Apaho.org%2Fes%2Fnoticias+when%3A7d&hl=es&gl=ES&ceid=ES%3Aes",
+      "kind": "google-noticias",
+      "http_status": 200,
+      "feed_version": "rss20",
+      "bozo": false,
+      "response_sha256": "3a72734e1776983cb1339f7f4f28b98776ea521549ad375b60ba09b98dbfcc9b",
+      "feed_language": "es",
+      "entries_observed": 47,
+      "status": "rss_observed",
+      "included": true,
+      "verified_at": "2026-10-28T12:41:41.899467+00:00",
+      "last_published_at": "2026-10-27T21:29:17Z",
+      "recent_dated_entries": 46,
+      "samples": [
+        {
+          "title": "OPS insta a reforzar la vigilancia y preparación ante aumentos de dengue y chikungunya en las Américas - Pan American Health Organization (PAHO)",
+          "published": "Wed, 21 Oct 2026 19:48:03 GMT",
+          "publisher": "Pan American Health Organization (PAHO)",
+          "publisher_url": "https://www.paho.org"
+        },
+        {
+          "title": "\"Comunidades Conectadas\": ecógrafos, electrocardiógrafos y telemedicina llegan a trece postas rurales de Ñuble y La Araucanía - Pan American Health Organization (PAHO)",
+          "published": "Thu, 22 Oct 2026 16:08:57 GMT",
+          "publisher": "Pan American Health Organization (PAHO)",
+          "publisher_url": "https://www.paho.org"
+        }
+      ],
+      "commercial_publisher_entries_observed": 0,
+      "observation_scope": "Metadatos RSS observados; no se verificaron hechos ni fecha original de cada artículo, licencias o audiencia. Google puede incluir contexto antiguo y coincidencias fuera del filtro.",
+      "native_feed_candidate": "https://www.paho.org/es/rss.xml",
+      "native_status": "not_checked_network_policy"
+    },
+    {
+      "key": "nasa",
+      "name": "RADAR — NASA Ciencia | Espacio en español",
+      "website": "https://ciencia.nasa.gov/",
+      "query": "site:ciencia.nasa.gov when:7d",
+      "scope": "Fuente institucional científica",
+      "category": "03 - Internacionales",
+      "locale": "ES",
+      "feed": "https://news.google.com/rss/search?q=site%3Aciencia.nasa.gov+when%3A7d&hl=es&gl=ES&ceid=ES%3Aes",
+      "kind": "google-noticias",
+      "http_status": 200,
+      "feed_version": "rss20",
+      "bozo": false,
+      "response_sha256": "079618532e36ec2818fd834899d596f07c6dc5a839c1835f5d3c3e9f4098ef4c",
+      "feed_language": "es",
+      "entries_observed": 2,
+      "status": "rss_observed",
+      "included": true,
+      "verified_at": "2026-10-28T12:41:41.900980+00:00",
+      "last_published_at": "2026-10-26T18:05:09Z",
+      "recent_dated_entries": 1,
+      "samples": [
+        {
+          "title": "Finaliza misión Swift de la NASA y deja un valioso legado científico - NASA (.gov)",
+          "published": "Mon, 26 Oct 2026 18:05:09 GMT",
+          "publisher": "NASA (.gov)",
+          "publisher_url": "https://ciencia.nasa.gov"
+        },
+        {
+          "title": "Ciencia de la NASA | Sitio en Español - NASA (.gov)",
+          "published": "Fri, 19 Apr 2013 18:35:10 GMT",
+          "publisher": "NASA (.gov)",
+          "publisher_url": "https://ciencia.nasa.gov"
+        }
+      ],
+      "commercial_publisher_entries_observed": 0,
+      "observation_scope": "Metadatos RSS observados; no se verificaron hechos ni fecha original de cada artículo, licencias o audiencia. Google puede incluir contexto antiguo y coincidencias fuera del filtro.",
+      "native_feed_candidate": "https://ciencia.nasa.gov/feed/",
+      "native_status": "not_checked_network_policy"
+    },
+    {
+      "key": "ips",
+      "name": "RADAR — IPS Noticias | Mundo y desarrollo",
+      "website": "https://ipsnoticias.net/",
+      "query": "site:ipsnoticias.net when:7d",
+      "scope": "Agencia, desarrollo y Sur Global",
+      "category": "03 - Internacionales",
+      "locale": "ES",
+      "feed": "https://news.google.com/rss/search?q=site%3Aipsnoticias.net+when%3A7d&hl=es&gl=ES&ceid=ES%3Aes",
+      "kind": "google-noticias",
+      "http_status": 200,
+      "feed_version": "rss20",
+      "bozo": false,
+      "response_sha256": "dc6fdd0e102671e959bb131b225c60e6610d409e5eb1047475917097c580fbd3",
+      "feed_language": "es",
+      "entries_observed": 26,
+      "status": "rss_observed",
+      "included": true,
+      "verified_at": "2026-10-28T12:41:41.902612+00:00",
+      "last_published_at": "2026-10-27T19:46:15Z",
+      "recent_dated_entries": 26,
+      "samples": [
+        {
+          "title": "Elecciones dictan destino de Brasil y rumbos de la humanidad - IPS Agencia de Noticias",
+          "published": "Thu, 22 Oct 2026 15:54:50 GMT",
+          "publisher": "IPS Agencia de Noticias",
+          "publisher_url": "https://ipsnoticias.net"
+        },
+        {
+          "title": "Guterres pide “atar cabos” entre desigualdad y protesta callejera - IPS Agencia de Noticias",
+          "published": "Thu, 22 Oct 2026 19:43:13 GMT",
+          "publisher": "IPS Agencia de Noticias",
+          "publisher_url": "https://ipsnoticias.net"
+        }
+      ],
+      "commercial_publisher_entries_observed": 0,
+      "observation_scope": "Metadatos RSS observados; no se verificaron hechos ni fecha original de cada artículo, licencias o audiencia. Google puede incluir contexto antiguo y coincidencias fuera del filtro.",
+      "native_feed_candidate": "https://ipsnoticias.net/feed/",
+      "native_status": "not_checked_network_policy"
+    },
+    {
+      "key": "swissinfo",
+      "name": "RADAR — SWI swissinfo.ch | Español",
+      "website": "https://www.swissinfo.ch/spa",
+      "query": "site:swissinfo.ch/spa when:7d",
+      "scope": "Medio público suizo y actualidad internacional",
+      "category": "03 - Internacionales",
+      "locale": "ES",
+      "feed": "https://news.google.com/rss/search?q=site%3Aswissinfo.ch%2Fspa+when%3A7d&hl=es&gl=ES&ceid=ES%3Aes",
+      "kind": "google-noticias",
+      "http_status": 200,
+      "feed_version": "rss20",
+      "bozo": false,
+      "response_sha256": "dc3e83902c939cf254d42997b915e9c90ce0b8aff2bc28583403312962c6ed43",
+      "feed_language": "es",
+      "entries_observed": 100,
+      "status": "rss_observed",
+      "included": true,
+      "verified_at": "2026-10-28T12:41:42.316867+00:00",
+      "last_published_at": "2026-10-28T12:19:42Z",
+      "recent_dated_entries": 100,
+      "samples": [
+        {
+          "title": "Ampliación de cobertura EFE Audiovisual Internacional 28 oct (11.00 GMT) - SWI swissinfo.ch",
+          "published": "Wed, 28 Oct 2026 11:21:24 GMT",
+          "publisher": "SWI swissinfo.ch",
+          "publisher_url": "https://www.swissinfo.ch"
+        },
+        {
+          "title": "Polonia albergará un centro de mantenimiento de misiles Patriot - SWI swissinfo.ch",
+          "published": "Wed, 28 Oct 2026 10:25:08 GMT",
+          "publisher": "SWI swissinfo.ch",
+          "publisher_url": "https://www.swissinfo.ch"
+        }
+      ],
+      "commercial_publisher_entries_observed": 0,
+      "observation_scope": "Metadatos RSS observados; no se verificaron hechos ni fecha original de cada artículo, licencias o audiencia. Google puede incluir contexto antiguo y coincidencias fuera del filtro.",
+      "native_feed_candidate": "https://www.swissinfo.ch/spa/rss/portada",
+      "native_status": "not_checked_network_policy"
+    },
+    {
+      "key": "globalvoices",
+      "name": "RADAR — Global Voices en Español | Voces del mundo",
+      "website": "https://es.globalvoices.org/",
+      "query": "site:es.globalvoices.org when:7d",
+      "scope": "Periodismo ciudadano y traducciones atribuidas",
+      "category": "03 - Internacionales",
+      "locale": "ES",
+      "feed": "https://news.google.com/rss/search?q=site%3Aes.globalvoices.org+when%3A7d&hl=es&gl=ES&ceid=ES%3Aes",
+      "kind": "google-noticias",
+      "http_status": 200,
+      "feed_version": "rss20",
+      "bozo": false,
+      "response_sha256": "4ef73066c77298d51991ecf2ff5f229b6aecf58e0a7e3db486f2a118b3e87fed",
+      "feed_language": "es",
+      "entries_observed": 15,
+      "status": "rss_observed",
+      "included": true,
+      "verified_at": "2026-10-28T12:41:42.331903+00:00",
+      "last_published_at": "2026-10-28T07:19:01Z",
+      "recent_dated_entries": 15,
+      "samples": [
+        {
+          "title": "Policía de Hong Kong presenta plataforma de seguridad nacional impulsada por IA para escolares - Global Voices en Español",
+          "published": "Mon, 26 Oct 2026 07:03:16 GMT",
+          "publisher": "Global Voices en Español",
+          "publisher_url": "https://es.globalvoices.org"
+        },
+        {
+          "title": "Tras las inundaciones, Nepal necesita cifras claras sobre la ayuda recibida y un plan de reconstrucción - Global Voices en Español",
+          "published": "Fri, 23 Oct 2026 07:04:49 GMT",
+          "publisher": "Global Voices en Español",
+          "publisher_url": "https://es.globalvoices.org"
+        }
+      ],
+      "commercial_publisher_entries_observed": 0,
+      "observation_scope": "Metadatos RSS observados; no se verificaron hechos ni fecha original de cada artículo, licencias o audiencia. Google puede incluir contexto antiguo y coincidencias fuera del filtro.",
+      "native_feed_candidate": "https://es.globalvoices.org/feed/",
+      "native_status": "not_checked_network_policy"
+    },
+    {
+      "key": "eom",
+      "name": "RADAR — El Orden Mundial | Análisis internacional",
+      "website": "https://elordenmundial.com/",
+      "query": "site:elordenmundial.com when:7d",
+      "scope": "Análisis de geopolítica",
+      "category": "03 - Internacionales",
+      "locale": "ES",
+      "feed": "https://news.google.com/rss/search?q=site%3Aelordenmundial.com+when%3A7d&hl=es&gl=ES&ceid=ES%3Aes",
+      "kind": "google-noticias",
+      "http_status": 200,
+      "feed_version": "rss20",
+      "bozo": false,
+      "response_sha256": "e657a5cb87780e186ac44177eca13e9ba18e952d4763fae7e8d18c4cdcf3e600",
+      "feed_language": "es",
+      "entries_observed": 12,
+      "status": "rss_observed",
+      "included": true,
+      "verified_at": "2026-10-28T12:41:42.356543+00:00",
+      "last_published_at": "2026-10-28T07:12:25Z",
+      "recent_dated_entries": 12,
+      "samples": [
+        {
+          "title": "Israel: un mapa electoral diseñado para ocultar la ocupación y someter a la minoría palestina - El Orden Mundial",
+          "published": "Tue, 27 Oct 2026 13:02:13 GMT",
+          "publisher": "El Orden Mundial",
+          "publisher_url": "https://elordenmundial.com"
+        },
+        {
+          "title": "Neopentecostalismo: bienvenidos a la iglesia del capitalismo tardío - El Orden Mundial",
+          "published": "Sun, 25 Oct 2026 07:00:00 GMT",
+          "publisher": "El Orden Mundial",
+          "publisher_url": "https://elordenmundial.com"
+        }
+      ],
+      "commercial_publisher_entries_observed": 0,
+      "observation_scope": "Metadatos RSS observados; no se verificaron hechos ni fecha original de cada artículo, licencias o audiencia. Google puede incluir contexto antiguo y coincidencias fuera del filtro.",
+      "native_feed_candidate": "https://elordenmundial.com/feed/",
+      "native_status": "not_checked_network_policy"
+    },
+    {
+      "key": "descifrando",
+      "name": "RADAR — Descifrando la Guerra | Conflictos y geopolítica",
+      "website": "https://www.descifrandolaguerra.es/",
+      "query": "site:descifrandolaguerra.es when:7d",
+      "scope": "Análisis de conflictos internacionales",
+      "category": "03 - Internacionales",
+      "locale": "ES",
+      "feed": "https://news.google.com/rss/search?q=site%3Adescifrandolaguerra.es+when%3A7d&hl=es&gl=ES&ceid=ES%3Aes",
+      "kind": "google-noticias",
+      "http_status": 200,
+      "feed_version": "rss20",
+      "bozo": false,
+      "response_sha256": "730234d5cd088da6894b51c1b7e6088355633ac8dca492e887274205886824cc",
+      "feed_language": "es",
+      "entries_observed": 17,
+      "status": "rss_observed",
+      "included": true,
+      "verified_at": "2026-10-28T12:41:42.390669+00:00",
+      "last_published_at": "2026-10-27T12:06:17Z",
+      "recent_dated_entries": 13,
+      "samples": [
+        {
+          "title": "Lula da Silva gana unas elecciones cruciales para toda América Latina - Descifrando la Guerra",
+          "published": "Mon, 26 Oct 2026 12:49:09 GMT",
+          "publisher": "Descifrando la Guerra",
+          "publisher_url": "https://www.descifrandolaguerra.es"
+        },
+        {
+          "title": "El peor escenario para Trump en las midterms (y cómo podría sobrevivir) - Descifrando la Guerra",
+          "published": "Fri, 23 Oct 2026 06:47:34 GMT",
+          "publisher": "Descifrando la Guerra",
+          "publisher_url": "https://www.descifrandolaguerra.es"
+        }
+      ],
+      "commercial_publisher_entries_observed": 0,
+      "observation_scope": "Metadatos RSS observados; no se verificaron hechos ni fecha original de cada artículo, licencias o audiencia. Google puede incluir contexto antiguo y coincidencias fuera del filtro.",
+      "native_feed_candidate": "https://www.descifrandolaguerra.es/feed/",
+      "native_status": "not_checked_network_policy"
+    },
+    {
+      "key": "world",
+      "name": "RADAR — Mundo | Principales titulares",
+      "website": "https://news.google.com/",
+      "topic": "WORLD",
+      "query": null,
+      "scope": "Selección temática de Google Noticias en español",
+      "category": "03 - Internacionales",
+      "locale": "ES",
+      "feed": "https://news.google.com/rss/headlines/section/topic/WORLD?hl=es&gl=ES&ceid=ES%3Aes",
+      "kind": "google-noticias",
+      "http_status": 200,
+      "feed_version": "rss20",
+      "bozo": false,
+      "response_sha256": "6fa600e06d329b03cca21405620e18989277c72a3dd069d68dca5849fdc2aa02",
+      "feed_language": "es",
+      "entries_observed": 70,
+      "status": "rss_observed",
+      "included": true,
+      "verified_at": "2026-10-28T12:41:42.724434+00:00",
+      "last_published_at": "2026-10-28T12:28:08Z",
+      "recent_dated_entries": 70,
+      "samples": [
+        {
+          "title": "El Likud de Netanyahu gana las elecciones en Israel pero su coalición no logra mayoría suficiente en la Kneset - RTVE.es",
+          "published": "Wed, 28 Oct 2026 11:51:00 GMT",
+          "publisher": "RTVE.es",
+          "publisher_url": "https://www.rtve.es"
+        },
+        {
+          "title": "Flávio Bolsonaro viajó a Ecuador desde Argentina tras huir de Brasil - DW.com",
+          "published": "Wed, 28 Oct 2026 09:38:49 GMT",
+          "publisher": "DW.com",
+          "publisher_url": "https://www.dw.com"
+        }
+      ],
+      "commercial_publisher_entries_observed": 0,
+      "observation_scope": "Metadatos RSS observados; no se verificaron hechos ni fecha original de cada artículo, licencias o audiencia. Google puede incluir contexto antiguo y coincidencias fuera del filtro."
+    },
+    {
+      "key": "economy",
+      "name": "RADAR — Economía y negocios mundiales",
+      "website": "https://news.google.com/",
+      "topic": "BUSINESS",
+      "query": null,
+      "scope": "Selección temática de Google Noticias en español",
+      "category": "03 - Internacionales",
+      "locale": "MX",
+      "feed": "https://news.google.com/rss/headlines/section/topic/BUSINESS?hl=es-419&gl=MX&ceid=MX%3Aes-419",
+      "kind": "google-noticias",
+      "http_status": 200,
+      "feed_version": "rss20",
+      "bozo": false,
+      "response_sha256": "dadc055e1c03c729a90fb8afbce015d4a5e198c523376dc9a5137bd424b7a5ab",
+      "feed_language": "es-419",
+      "entries_observed": 37,
+      "status": "rss_observed",
+      "included": true,
+      "verified_at": "2026-10-28T12:41:42.729336+00:00",
+      "last_published_at": "2026-10-28T01:14:00Z",
+      "recent_dated_entries": 37,
+      "samples": [
+        {
+          "title": "‘Pesadilla en la calle’ del tipo de cambio: Peso fue la moneda más depreciada del mundo ante el dólar - El Financiero",
+          "published": "Tue, 27 Oct 2026 20:45:48 GMT",
+          "publisher": "El Financiero",
+          "publisher_url": "https://www.elfinanciero.com.mx"
+        },
+        {
+          "title": "La IA ya no se paga sola: ni siquiera negocios gigantes como los de Meta o Google sirven para financiarla - Xataka",
+          "published": "Tue, 27 Oct 2026 15:30:00 GMT",
+          "publisher": "Xataka",
+          "publisher_url": "https://www.xataka.com"
+        }
+      ],
+      "commercial_publisher_entries_observed": 0,
+      "observation_scope": "Metadatos RSS observados; no se verificaron hechos ni fecha original de cada artículo, licencias o audiencia. Google puede incluir contexto antiguo y coincidencias fuera del filtro."
+    },
+    {
+      "key": "health",
+      "name": "RADAR — Salud y medicina",
+      "website": "https://news.google.com/",
+      "query": null,
+      "scope": "Selección temática de Google Noticias en español",
+      "category": "03 - Internacionales",
+      "locale": "ES",
+      "topic": "HEALTH",
+      "feed": "https://news.google.com/rss/headlines/section/topic/HEALTH?hl=es&gl=ES&ceid=ES%3Aes",
+      "kind": "google-noticias",
+      "http_status": 200,
+      "feed_version": "rss20",
+      "bozo": false,
+      "response_sha256": "76fced1cc1bdc3363f317c4f0a95afb724235c525b4b0d4697b5cd896f690863",
+      "feed_language": "es",
+      "entries_observed": 63,
+      "status": "rss_observed",
+      "included": true,
+      "verified_at": "2026-10-28T12:45:35.278596+00:00",
+      "last_published_at": "2026-10-28T12:19:13Z",
+      "recent_dated_entries": 63,
+      "samples": [
+        {
+          "title": "Cruz Roja y Aeno se unen en Huesca contra el ictus - Onda Cero",
+          "published": "Wed, 28 Oct 2026 11:38:41 GMT",
+          "publisher": "Onda Cero",
+          "publisher_url": "https://www.ondacero.es"
+        },
+        {
+          "title": "Vacunar del VRS a los recién nacidos puede reducir significativamente las hospitalizaciones infantiles en Europa - Infosalus",
+          "published": "Wed, 28 Oct 2026 11:40:51 GMT",
+          "publisher": "Infosalus",
+          "publisher_url": "https://www.infosalus.com"
+        }
+      ],
+      "commercial_publisher_entries_observed": 0,
+      "observation_scope": "Metadatos RSS observados; no se verificaron hechos ni fecha original de cada artículo, licencias o audiencia. Google puede incluir contexto antiguo y coincidencias fuera del filtro."
+    },
+    {
+      "key": "science",
+      "name": "RADAR — Ciencia e investigación",
+      "website": "https://news.google.com/",
+      "topic": "SCIENCE",
+      "query": null,
+      "scope": "Selección temática de Google Noticias en español",
+      "category": "03 - Internacionales",
+      "locale": "ES",
+      "feed": "https://news.google.com/rss/headlines/section/topic/SCIENCE?hl=es&gl=ES&ceid=ES%3Aes",
+      "kind": "google-noticias",
+      "http_status": 200,
+      "feed_version": "rss20",
+      "bozo": false,
+      "response_sha256": "11e92a684908f6fee544312dc7d7a105f29a959e35af746dc50b6b207735ecbc",
+      "feed_language": "es",
+      "entries_observed": 70,
+      "status": "rss_observed",
+      "included": true,
+      "verified_at": "2026-10-28T12:41:42.856547+00:00",
+      "last_published_at": "2026-10-28T11:22:52Z",
+      "recent_dated_entries": 70,
+      "samples": [
+        {
+          "title": "Un satélite europeo capta una enorme mancha roja en Marruecos: la ESA explica qué hay detrás - 20Minutos",
+          "published": "Tue, 27 Oct 2026 11:31:23 GMT",
+          "publisher": "20Minutos",
+          "publisher_url": "https://www.20minutos.es"
+        },
+        {
+          "title": "OpenAI asegura haber resuelto parte de un Problema del Milenio gracias a la inteligencia artificial - El Mundo",
+          "published": "Tue, 27 Oct 2026 18:39:44 GMT",
+          "publisher": "El Mundo",
+          "publisher_url": "https://www.elmundo.es"
+        }
+      ],
+      "commercial_publisher_entries_observed": 0,
+      "observation_scope": "Metadatos RSS observados; no se verificaron hechos ni fecha original de cada artículo, licencias o audiencia. Google puede incluir contexto antiguo y coincidencias fuera del filtro."
+    },
+    {
+      "key": "sports",
+      "name": "RADAR — Deportes internacionales",
+      "website": "https://news.google.com/",
+      "topic": "SPORTS",
+      "query": null,
+      "scope": "Selección temática de Google Noticias en español",
+      "category": "03 - Internacionales",
+      "locale": "MX",
+      "feed": "https://news.google.com/rss/headlines/section/topic/SPORTS?hl=es-419&gl=MX&ceid=MX%3Aes-419",
+      "kind": "google-noticias",
+      "http_status": 200,
+      "feed_version": "rss20",
+      "bozo": false,
+      "response_sha256": "9faa701de34e96fb6b39d362a12967b9ea1e4c8fb22e78a6b28dc01a391cfa83",
+      "feed_language": "es-419",
+      "entries_observed": 70,
+      "status": "rss_observed",
+      "included": true,
+      "verified_at": "2026-10-28T12:41:43.251311+00:00",
+      "last_published_at": "2026-10-28T11:04:00Z",
+      "recent_dated_entries": 70,
+      "samples": [
+        {
+          "title": "Así vivimos la remontada de Rays en J4 de la Serie Mundial - ESPN México",
+          "published": "Wed, 28 Oct 2026 05:36:00 GMT",
+          "publisher": "ESPN México",
+          "publisher_url": "https://www.espn.com.mx"
+        },
+        {
+          "title": "HUMILLADOS: Arsenal sufre una eliminación histórica ante un equipo que vale 500 veces menos: la sorpresa de la - TV Azteca",
+          "published": "Tue, 27 Oct 2026 23:53:54 GMT",
+          "publisher": "TV Azteca",
+          "publisher_url": "https://www.tvazteca.com"
+        }
+      ],
+      "commercial_publisher_entries_observed": 0,
+      "observation_scope": "Metadatos RSS observados; no se verificaron hechos ni fecha original de cada artículo, licencias o audiencia. Google puede incluir contexto antiguo y coincidencias fuera del filtro."
+    },
+    {
+      "key": "culture",
+      "name": "RADAR — Cultura, artes y entretenimiento",
+      "website": "https://news.google.com/",
+      "topic": "ENTERTAINMENT",
+      "query": null,
+      "scope": "Selección temática de Google Noticias en español",
+      "category": "03 - Internacionales",
+      "locale": "ES",
+      "feed": "https://news.google.com/rss/headlines/section/topic/ENTERTAINMENT?hl=es&gl=ES&ceid=ES%3Aes",
+      "kind": "google-noticias",
+      "http_status": 200,
+      "feed_version": "rss20",
+      "bozo": false,
+      "response_sha256": "84ced6fd9ba44fdf881a841a76e71260887a2edcdcaab23d3ef3233bb5eb7ecd",
+      "feed_language": "es",
+      "entries_observed": 70,
+      "status": "rss_observed",
+      "included": true,
+      "verified_at": "2026-10-28T12:41:43.273032+00:00",
+      "last_published_at": "2026-10-28T11:38:22Z",
+      "recent_dated_entries": 70,
+      "samples": [
+        {
+          "title": "El homenaje de Radio Nacional a Televisión Española en su aniversario - RTVE.es",
+          "published": "Wed, 28 Oct 2026 07:00:35 GMT",
+          "publisher": "RTVE.es",
+          "publisher_url": "https://www.rtve.es"
+        },
+        {
+          "title": "'MasterChef Celebrity Legends': este es el concursante famoso expulsado anoche en el programa de TVE - El Confidencial",
+          "published": "Wed, 28 Oct 2026 07:33:00 GMT",
+          "publisher": "El Confidencial",
+          "publisher_url": "https://www.elconfidencial.com"
+        }
+      ],
+      "commercial_publisher_entries_observed": 0,
+      "observation_scope": "Metadatos RSS observados; no se verificaron hechos ni fecha original de cada artículo, licencias o audiencia. Google puede incluir contexto antiguo y coincidencias fuera del filtro."
+    },
+    {
+      "key": "climate",
+      "name": "RADAR — Medio ambiente, clima y biodiversidad",
+      "website": "https://news.google.com/",
+      "query": "(\"cambio climático\" OR biodiversidad OR \"crisis climática\" OR \"energías renovables\") (site:bbc.com/mundo OR site:dw.com/es OR site:france24.com/es OR site:rfi.fr/es OR site:efe.com OR site:news.un.org/es/story OR site:rtve.es/noticias) -site:efecomunica.efe.com when:7d",
+      "scope": "Medio ambiente",
+      "category": "03 - Internacionales",
+      "locale": "ES",
+      "feed": "https://news.google.com/rss/search?q=%28%22cambio+clim%C3%A1tico%22+OR+biodiversidad+OR+%22crisis+clim%C3%A1tica%22+OR+%22energ%C3%ADas+renovables%22%29+%28site%3Abbc.com%2Fmundo+OR+site%3Adw.com%2Fes+OR+site%3Afrance24.com%2Fes+OR+site%3Arfi.fr%2Fes+OR+site%3Aefe.com+OR+site%3Anews.un.org%2Fes%2Fstory+OR+site%3Artve.es%2Fnoticias%29+-site%3Aefecomunica.efe.com+when%3A7d&hl=es&gl=ES&ceid=ES%3Aes",
+      "kind": "google-noticias",
+      "http_status": 200,
+      "feed_version": "rss20",
+      "bozo": false,
+      "response_sha256": "bb5c423a690ba90493e4194ae929907ae82665812ba1f1d1b199c4950df25579",
+      "feed_language": "es",
+      "entries_observed": 100,
+      "status": "rss_observed",
+      "included": true,
+      "verified_at": "2026-10-28T12:51:02.172769+00:00",
+      "last_published_at": "2026-10-28T10:50:38Z",
+      "recent_dated_entries": 73,
+      "samples": [
+        {
+          "title": "Los expertos piden que el cambio climático se aborde como una emergencia de salud mundial - EFE - Agencia de noticias",
+          "published": "Wed, 28 Oct 2026 00:29:04 GMT",
+          "publisher": "EFE - Agencia de noticias",
+          "publisher_url": "https://efe.com"
+        },
+        {
+          "title": "El cambio climático es responsable del 65 % de las muertes por calor en 2026 en Europa - EFE - Agencia de noticias",
+          "published": "Fri, 23 Oct 2026 00:46:24 GMT",
+          "publisher": "EFE - Agencia de noticias",
+          "publisher_url": "https://efe.com"
+        }
+      ],
+      "commercial_publisher_entries_observed": 2,
+      "observation_scope": "Metadatos RSS observados; no se verificaron hechos ni fecha original de cada artículo, licencias o audiencia. Google puede incluir contexto antiguo y coincidencias fuera del filtro."
+    },
+    {
+      "key": "society",
+      "name": "RADAR — Sociedad, migración y derechos humanos",
+      "website": "https://news.google.com/",
+      "query": "(\"derechos humanos\" OR migración OR refugiados OR \"crisis humanitaria\") (site:bbc.com/mundo OR site:dw.com/es OR site:france24.com/es OR site:rfi.fr/es OR site:efe.com OR site:news.un.org/es/story OR site:rtve.es/noticias) -site:efecomunica.efe.com when:7d",
+      "scope": "Sociedad y derechos",
+      "category": "03 - Internacionales",
+      "locale": "ES",
+      "feed": "https://news.google.com/rss/search?q=%28%22derechos+humanos%22+OR+migraci%C3%B3n+OR+refugiados+OR+%22crisis+humanitaria%22%29+%28site%3Abbc.com%2Fmundo+OR+site%3Adw.com%2Fes+OR+site%3Afrance24.com%2Fes+OR+site%3Arfi.fr%2Fes+OR+site%3Aefe.com+OR+site%3Anews.un.org%2Fes%2Fstory+OR+site%3Artve.es%2Fnoticias%29+-site%3Aefecomunica.efe.com+when%3A7d&hl=es&gl=ES&ceid=ES%3Aes",
+      "kind": "google-noticias",
+      "http_status": 200,
+      "feed_version": "rss20",
+      "bozo": false,
+      "response_sha256": "b234fefff93c97837cc32f21de746a2ee292874dbca46d2ad478bb98d638f64a",
+      "feed_language": "es",
+      "entries_observed": 100,
+      "status": "rss_observed",
+      "included": true,
+      "verified_at": "2026-10-28T12:51:02.173152+00:00",
+      "last_published_at": "2026-10-28T11:56:23Z",
+      "recent_dated_entries": 100,
+      "samples": [
+        {
+          "title": "Cisjordania: una comisión de investigación de la ONU acusa a Israel de “exterminio” - UN News",
+          "published": "Mon, 26 Oct 2026 19:54:09 GMT",
+          "publisher": "UN News",
+          "publisher_url": "https://news.un.org"
+        },
+        {
+          "title": "Los niveles récord de dióxido de carbono nos afectarán durante siglos | Noticias ONU - UN News",
+          "published": "Tue, 27 Oct 2026 13:57:13 GMT",
+          "publisher": "UN News",
+          "publisher_url": "https://news.un.org"
+        }
+      ],
+      "commercial_publisher_entries_observed": 1,
+      "observation_scope": "Metadatos RSS observados; no se verificaron hechos ni fecha original de cada artículo, licencias o audiencia. Google puede incluir contexto antiguo y coincidencias fuera del filtro."
+    },
+    {
+      "key": "education",
+      "name": "RADAR — Educación, universidades y empleo",
+      "website": "https://news.google.com/",
+      "query": "(educación OR universidades OR \"mercado laboral\") (internacional OR mundial OR países) (site:bbc.com/mundo OR site:dw.com/es OR site:france24.com/es OR site:rfi.fr/es OR site:efe.com OR site:news.un.org/es/story OR site:rtve.es/noticias) -site:efecomunica.efe.com when:7d",
+      "scope": "Educación y trabajo",
+      "category": "03 - Internacionales",
+      "locale": "ES",
+      "feed": "https://news.google.com/rss/search?q=%28educaci%C3%B3n+OR+universidades+OR+%22mercado+laboral%22%29+%28internacional+OR+mundial+OR+pa%C3%ADses%29+%28site%3Abbc.com%2Fmundo+OR+site%3Adw.com%2Fes+OR+site%3Afrance24.com%2Fes+OR+site%3Arfi.fr%2Fes+OR+site%3Aefe.com+OR+site%3Anews.un.org%2Fes%2Fstory+OR+site%3Artve.es%2Fnoticias%29+-site%3Aefecomunica.efe.com+when%3A7d&hl=es&gl=ES&ceid=ES%3Aes",
+      "kind": "google-noticias",
+      "http_status": 200,
+      "feed_version": "rss20",
+      "bozo": false,
+      "response_sha256": "81879e41f5dd866805145e68a8e7c5e3f6849e8f7c5236fcd7f450c311a97342",
+      "feed_language": "es",
+      "entries_observed": 100,
+      "status": "rss_observed",
+      "included": true,
+      "verified_at": "2026-10-28T12:51:02.173540+00:00",
+      "last_published_at": "2026-10-28T11:10:57Z",
+      "recent_dated_entries": 100,
+      "samples": [
+        {
+          "title": "Las seis universidades públicas de Madrid irán a la huelga contra su «asfixia económica» - EFE - Agencia de noticias",
+          "published": "Thu, 22 Oct 2026 12:13:44 GMT",
+          "publisher": "EFE - Agencia de noticias",
+          "publisher_url": "https://efe.com"
+        },
+        {
+          "title": "BingX inicia en la UCAB el BingX Campus Tour, un ciclo de educación financiera para universitarios en Latinoamerica - EFE Comunica",
+          "published": "Tue, 27 Oct 2026 04:30:03 GMT",
+          "publisher": "EFE Comunica",
+          "publisher_url": "https://efecomunica.efe.com"
+        }
+      ],
+      "commercial_publisher_entries_observed": 2,
+      "observation_scope": "Metadatos RSS observados; no se verificaron hechos ni fecha original de cada artículo, licencias o audiencia. Google puede incluir contexto antiguo y coincidencias fuera del filtro."
+    },
+    {
+      "key": "travel",
+      "name": "RADAR — Turismo, viajes y gastronomía",
+      "website": "https://news.google.com/",
+      "query": "(turismo OR viajes OR gastronomía) (internacional OR mundial OR países) (site:bbc.com/mundo OR site:dw.com/es OR site:france24.com/es OR site:rfi.fr/es OR site:efe.com OR site:news.un.org/es/story OR site:rtve.es/noticias) -site:efecomunica.efe.com when:7d",
+      "scope": "Turismo y cultura gastronómica",
+      "category": "03 - Internacionales",
+      "locale": "ES",
+      "feed": "https://news.google.com/rss/search?q=%28turismo+OR+viajes+OR+gastronom%C3%ADa%29+%28internacional+OR+mundial+OR+pa%C3%ADses%29+%28site%3Abbc.com%2Fmundo+OR+site%3Adw.com%2Fes+OR+site%3Afrance24.com%2Fes+OR+site%3Arfi.fr%2Fes+OR+site%3Aefe.com+OR+site%3Anews.un.org%2Fes%2Fstory+OR+site%3Artve.es%2Fnoticias%29+-site%3Aefecomunica.efe.com+when%3A7d&hl=es&gl=ES&ceid=ES%3Aes",
+      "kind": "google-noticias",
+      "http_status": 200,
+      "feed_version": "rss20",
+      "bozo": false,
+      "response_sha256": "5ec76505b8bd6728f5dc20113f7f77e27b994da08f970b1993ac5c3e392f38ef",
+      "feed_language": "es",
+      "entries_observed": 100,
+      "status": "rss_observed",
+      "included": true,
+      "verified_at": "2026-10-28T12:51:02.175372+00:00",
+      "last_published_at": "2026-10-28T10:15:35Z",
+      "recent_dated_entries": 99,
+      "samples": [
+        {
+          "title": "JETOUR presenta la tecnología “Travel+” - EFE Comunica",
+          "published": "Wed, 21 Oct 2026 14:11:12 GMT",
+          "publisher": "EFE Comunica",
+          "publisher_url": "https://efecomunica.efe.com"
+        },
+        {
+          "title": "Andalucía buscará en Londres «mimar» al turismo británico y pasar «de volumen a valor» - EFE - Agencia de noticias",
+          "published": "Tue, 27 Oct 2026 11:50:09 GMT",
+          "publisher": "EFE - Agencia de noticias",
+          "publisher_url": "https://efe.com"
+        }
+      ],
+      "commercial_publisher_entries_observed": 8,
+      "observation_scope": "Metadatos RSS observados; no se verificaron hechos ni fecha original de cada artículo, licencias o audiencia. Google puede incluir contexto antiguo y coincidencias fuera del filtro."
+    },
+    {
+      "key": "emergencies",
+      "name": "RADAR — Desastres y emergencias internacionales",
+      "website": "https://news.google.com/",
+      "query": "(terremoto OR tsunami OR inundaciones OR huracán OR \"incendios forestales\" OR erupción) (site:bbc.com/mundo OR site:dw.com/es OR site:france24.com/es OR site:rfi.fr/es OR site:efe.com OR site:news.un.org/es/story OR site:rtve.es/noticias) -site:efecomunica.efe.com when:7d",
+      "scope": "Información sobre emergencias, sin alertas de seguridad personal",
+      "category": "03 - Internacionales",
+      "locale": "ES",
+      "feed": "https://news.google.com/rss/search?q=%28terremoto+OR+tsunami+OR+inundaciones+OR+hurac%C3%A1n+OR+%22incendios+forestales%22+OR+erupci%C3%B3n%29+%28site%3Abbc.com%2Fmundo+OR+site%3Adw.com%2Fes+OR+site%3Afrance24.com%2Fes+OR+site%3Arfi.fr%2Fes+OR+site%3Aefe.com+OR+site%3Anews.un.org%2Fes%2Fstory+OR+site%3Artve.es%2Fnoticias%29+-site%3Aefecomunica.efe.com+when%3A7d&hl=es&gl=ES&ceid=ES%3Aes",
+      "kind": "google-noticias",
+      "http_status": 200,
+      "feed_version": "rss20",
+      "bozo": false,
+      "response_sha256": "86c28283e9a1b63fe1f3ebd6327bd7b9c8d26fab09b53fc027675abe0029b77c",
+      "feed_language": "es",
+      "entries_observed": 100,
+      "status": "rss_observed",
+      "included": true,
+      "verified_at": "2026-10-28T12:51:02.833885+00:00",
+      "last_published_at": "2026-10-28T12:22:51Z",
+      "recent_dated_entries": 78,
+      "samples": [
+        {
+          "title": "La OEA urge a preparase contra las severas inundaciones y sequías que provocará El Niño - EFE - Agencia de noticias",
+          "published": "Mon, 26 Oct 2026 19:03:45 GMT",
+          "publisher": "EFE - Agencia de noticias",
+          "publisher_url": "https://efe.com"
+        },
+        {
+          "title": "El Gobierno aprobará este martes la declaración de zona catastrófica por la dana Adam - EFE - Agencia de noticias",
+          "published": "Mon, 26 Oct 2026 17:19:42 GMT",
+          "publisher": "EFE - Agencia de noticias",
+          "publisher_url": "https://efe.com"
+        }
+      ],
+      "commercial_publisher_entries_observed": 0,
+      "observation_scope": "Metadatos RSS observados; no se verificaron hechos ni fecha original de cada artículo, licencias o audiencia. Google puede incluir contexto antiguo y coincidencias fuera del filtro."
+    },
+    {
+      "key": "politics",
+      "name": "RADAR — Política, elecciones y diplomacia mundial",
+      "website": "https://news.google.com/",
+      "query": "(elecciones OR diplomacia OR gobierno OR guerra) (internacional OR mundial OR Europa OR Asia OR África) (site:bbc.com/mundo OR site:dw.com/es OR site:france24.com/es OR site:rfi.fr/es OR site:efe.com OR site:news.un.org/es/story OR site:rtve.es/noticias) -site:efecomunica.efe.com when:7d",
+      "scope": "Política internacional",
+      "category": "03 - Internacionales",
+      "locale": "ES",
+      "feed": "https://news.google.com/rss/search?q=%28elecciones+OR+diplomacia+OR+gobierno+OR+guerra%29+%28internacional+OR+mundial+OR+Europa+OR+Asia+OR+%C3%81frica%29+%28site%3Abbc.com%2Fmundo+OR+site%3Adw.com%2Fes+OR+site%3Afrance24.com%2Fes+OR+site%3Arfi.fr%2Fes+OR+site%3Aefe.com+OR+site%3Anews.un.org%2Fes%2Fstory+OR+site%3Artve.es%2Fnoticias%29+-site%3Aefecomunica.efe.com+when%3A7d&hl=es&gl=ES&ceid=ES%3Aes",
+      "kind": "google-noticias",
+      "http_status": 200,
+      "feed_version": "rss20",
+      "bozo": false,
+      "response_sha256": "5a48da5a80c9f2620505f446b9eb3e4bb9b593790d356ad7ce2c18a7b5170635",
+      "feed_language": "es",
+      "entries_observed": 100,
+      "status": "rss_observed",
+      "included": true,
+      "verified_at": "2026-10-28T12:51:02.849616+00:00",
+      "last_published_at": "2026-10-28T12:18:02Z",
+      "recent_dated_entries": 100,
+      "samples": [
+        {
+          "title": "Cómo las elecciones en Israel y EE.UU. tendrán consecuencias globales - BBC",
+          "published": "Wed, 28 Oct 2026 03:14:02 GMT",
+          "publisher": "BBC",
+          "publisher_url": "https://www.bbc.com"
+        },
+        {
+          "title": "Lula gana las elecciones de Brasil con una remontada histórica y tendrá un cuarto mandato - BBC",
+          "published": "Mon, 26 Oct 2026 05:04:11 GMT",
+          "publisher": "BBC",
+          "publisher_url": "https://www.bbc.com"
+        }
+      ],
+      "commercial_publisher_entries_observed": 2,
+      "observation_scope": "Metadatos RSS observados; no se verificaron hechos ni fecha original de cada artículo, licencias o audiencia. Google puede incluir contexto antiguo y coincidencias fuera del filtro."
+    },
+    {
+      "key": "northamerica",
+      "name": "RADAR — Norteamérica | Estados Unidos y Canadá",
+      "website": "https://news.google.com/",
+      "query": "(intitle:\"Estados Unidos\" OR intitle:Canadá OR intitle:EEUU OR intitle:\"EE.UU.\") (site:bbc.com/mundo OR site:dw.com/es OR site:france24.com/es OR site:rfi.fr/es OR site:efe.com OR site:news.un.org/es/story OR site:rtve.es/noticias) -site:efecomunica.efe.com when:7d",
+      "scope": "Norteamérica",
+      "category": "03 - Internacionales",
+      "locale": "ES",
+      "feed": "https://news.google.com/rss/search?q=%28intitle%3A%22Estados+Unidos%22+OR+intitle%3ACanad%C3%A1+OR+intitle%3AEEUU+OR+intitle%3A%22EE.UU.%22%29+%28site%3Abbc.com%2Fmundo+OR+site%3Adw.com%2Fes+OR+site%3Afrance24.com%2Fes+OR+site%3Arfi.fr%2Fes+OR+site%3Aefe.com+OR+site%3Anews.un.org%2Fes%2Fstory+OR+site%3Artve.es%2Fnoticias%29+-site%3Aefecomunica.efe.com+when%3A7d&hl=es&gl=ES&ceid=ES%3Aes",
+      "kind": "google-noticias",
+      "http_status": 200,
+      "feed_version": "rss20",
+      "bozo": false,
+      "response_sha256": "037d8a8625f43109ed29ca89a07300e50fe3a7ec5af0aeec1730dd1cafe0168b",
+      "feed_language": "es",
+      "entries_observed": 100,
+      "status": "rss_observed",
+      "included": true,
+      "verified_at": "2026-10-28T12:51:02.931664+00:00",
+      "last_published_at": "2026-10-28T03:14:02Z",
+      "recent_dated_entries": 53,
+      "samples": [
+        {
+          "title": "La victoria de Lula en Brasil, \"una derrota para Estados Unidos\" en América Latina - DW.com",
+          "published": "Mon, 26 Oct 2026 16:17:22 GMT",
+          "publisher": "DW.com",
+          "publisher_url": "https://www.dw.com"
+        },
+        {
+          "title": "El canciller de Cuba y el embajador de EE.UU. ante la ONU discuten en medio de la sesión de la Asamblea General - EFE - Agencia de noticias",
+          "published": "Tue, 27 Oct 2026 20:31:46 GMT",
+          "publisher": "EFE - Agencia de noticias",
+          "publisher_url": "https://efe.com"
+        }
+      ],
+      "commercial_publisher_entries_observed": 1,
+      "observation_scope": "Metadatos RSS observados; no se verificaron hechos ni fecha original de cada artículo, licencias o audiencia. Google puede incluir contexto antiguo y coincidencias fuera del filtro."
+    },
+    {
+      "key": "europe",
+      "name": "RADAR — Europa | Actualidad regional",
+      "website": "https://news.google.com/",
+      "query": "(intitle:Europa OR intitle:\"Unión Europea\" OR intitle:Ucrania OR intitle:Rusia OR intitle:Alemania OR intitle:Francia OR intitle:\"Reino Unido\") (site:bbc.com/mundo OR site:dw.com/es OR site:france24.com/es OR site:rfi.fr/es OR site:efe.com OR site:news.un.org/es/story OR site:rtve.es/noticias) -site:efecomunica.efe.com when:7d",
+      "scope": "Europa",
+      "category": "03 - Internacionales",
+      "locale": "ES",
+      "feed": "https://news.google.com/rss/search?q=%28intitle%3AEuropa+OR+intitle%3A%22Uni%C3%B3n+Europea%22+OR+intitle%3AUcrania+OR+intitle%3ARusia+OR+intitle%3AAlemania+OR+intitle%3AFrancia+OR+intitle%3A%22Reino+Unido%22%29+%28site%3Abbc.com%2Fmundo+OR+site%3Adw.com%2Fes+OR+site%3Afrance24.com%2Fes+OR+site%3Arfi.fr%2Fes+OR+site%3Aefe.com+OR+site%3Anews.un.org%2Fes%2Fstory+OR+site%3Artve.es%2Fnoticias%29+-site%3Aefecomunica.efe.com+when%3A7d&hl=es&gl=ES&ceid=ES%3Aes",
+      "kind": "google-noticias",
+      "http_status": 200,
+      "feed_version": "rss20",
+      "bozo": false,
+      "response_sha256": "1bdb1d344bef44e8908483f1123d9b94b76139dffc942570fec089bbacb30e37",
+      "feed_language": "es",
+      "entries_observed": 100,
+      "status": "rss_observed",
+      "included": true,
+      "verified_at": "2026-10-28T12:51:02.942850+00:00",
+      "last_published_at": "2026-10-28T07:25:35Z",
+      "recent_dated_entries": 28,
+      "samples": [
+        {
+          "title": "Casi 1.000 detenidos en Francia después de que miles de personas salieran a las calles a protestar - BBC",
+          "published": "Sat, 24 Oct 2026 17:40:53 GMT",
+          "publisher": "BBC",
+          "publisher_url": "https://www.bbc.com"
+        },
+        {
+          "title": "Merz: Alemania se enfrenta a la gran amenaza de Rusia - DW.com",
+          "published": "Sat, 24 Oct 2026 12:17:58 GMT",
+          "publisher": "DW.com",
+          "publisher_url": "https://www.dw.com"
+        }
+      ],
+      "commercial_publisher_entries_observed": 0,
+      "observation_scope": "Metadatos RSS observados; no se verificaron hechos ni fecha original de cada artículo, licencias o audiencia. Google puede incluir contexto antiguo y coincidencias fuera del filtro."
+    },
+    {
+      "key": "middleeast",
+      "name": "RADAR — Oriente Medio | Actualidad regional",
+      "website": "https://news.google.com/",
+      "query": "(intitle:\"Oriente Medio\" OR intitle:Israel OR intitle:Palestina OR intitle:Gaza OR intitle:Irán OR intitle:Líbano OR intitle:Siria) (site:bbc.com/mundo OR site:dw.com/es OR site:france24.com/es OR site:rfi.fr/es OR site:efe.com OR site:news.un.org/es/story OR site:rtve.es/noticias) -site:efecomunica.efe.com when:7d",
+      "scope": "Oriente Medio",
+      "category": "03 - Internacionales",
+      "locale": "ES",
+      "feed": "https://news.google.com/rss/search?q=%28intitle%3A%22Oriente+Medio%22+OR+intitle%3AIsrael+OR+intitle%3APalestina+OR+intitle%3AGaza+OR+intitle%3AIr%C3%A1n+OR+intitle%3AL%C3%ADbano+OR+intitle%3ASiria%29+%28site%3Abbc.com%2Fmundo+OR+site%3Adw.com%2Fes+OR+site%3Afrance24.com%2Fes+OR+site%3Arfi.fr%2Fes+OR+site%3Aefe.com+OR+site%3Anews.un.org%2Fes%2Fstory+OR+site%3Artve.es%2Fnoticias%29+-site%3Aefecomunica.efe.com+when%3A7d&hl=es&gl=ES&ceid=ES%3Aes",
+      "kind": "google-noticias",
+      "http_status": 200,
+      "feed_version": "rss20",
+      "bozo": false,
+      "response_sha256": "0ea9d32cfa7ec3658d2da9975b3590f0433edfeeefc8f5ec9e5e36f0325f3f1c",
+      "feed_language": "es",
+      "entries_observed": 100,
+      "status": "rss_observed",
+      "included": true,
+      "verified_at": "2026-10-28T12:51:03.546627+00:00",
+      "last_published_at": "2026-10-28T11:14:23Z",
+      "recent_dated_entries": 35,
+      "samples": [
+        {
+          "title": "La apuesta de Gadi Eisenkot para desafiar a Netanyahu en las elecciones de Israel - DW.com",
+          "published": "Mon, 26 Oct 2026 20:30:54 GMT",
+          "publisher": "DW.com",
+          "publisher_url": "https://www.dw.com"
+        },
+        {
+          "title": "Elecciones en Israel: Eisenkot promete unir al país, mientras Netanyahu lo tacha de \"blando\" con Irán - France 24",
+          "published": "Mon, 26 Oct 2026 23:33:00 GMT",
+          "publisher": "France 24",
+          "publisher_url": "https://www.france24.com"
+        }
+      ],
+      "commercial_publisher_entries_observed": 0,
+      "observation_scope": "Metadatos RSS observados; no se verificaron hechos ni fecha original de cada artículo, licencias o audiencia. Google puede incluir contexto antiguo y coincidencias fuera del filtro."
+    },
+    {
+      "key": "africa",
+      "name": "RADAR — África | Actualidad regional",
+      "website": "https://news.google.com/",
+      "query": "(intitle:África OR intitle:Sudán OR intitle:Congo OR intitle:Nigeria OR intitle:Sudáfrica OR intitle:Kenia OR intitle:Etiopía OR intitle:Egipto OR intitle:Marruecos) (site:bbc.com/mundo OR site:dw.com/es OR site:france24.com/es OR site:rfi.fr/es OR site:efe.com OR site:news.un.org/es/story OR site:rtve.es/noticias) -site:efecomunica.efe.com when:7d",
+      "scope": "África",
+      "category": "03 - Internacionales",
+      "locale": "ES",
+      "feed": "https://news.google.com/rss/search?q=%28intitle%3A%C3%81frica+OR+intitle%3ASud%C3%A1n+OR+intitle%3ACongo+OR+intitle%3ANigeria+OR+intitle%3ASud%C3%A1frica+OR+intitle%3AKenia+OR+intitle%3AEtiop%C3%ADa+OR+intitle%3AEgipto+OR+intitle%3AMarruecos%29+%28site%3Abbc.com%2Fmundo+OR+site%3Adw.com%2Fes+OR+site%3Afrance24.com%2Fes+OR+site%3Arfi.fr%2Fes+OR+site%3Aefe.com+OR+site%3Anews.un.org%2Fes%2Fstory+OR+site%3Artve.es%2Fnoticias%29+-site%3Aefecomunica.efe.com+when%3A7d&hl=es&gl=ES&ceid=ES%3Aes",
+      "kind": "google-noticias",
+      "http_status": 200,
+      "feed_version": "rss20",
+      "bozo": false,
+      "response_sha256": "95577a92052edcb5792782b6d4576098800c51c22f53ec2cc12d52bde1a92d25",
+      "feed_language": "es",
+      "entries_observed": 57,
+      "status": "rss_observed",
+      "included": true,
+      "verified_at": "2026-10-28T12:51:03.586233+00:00",
+      "last_published_at": "2026-10-19T07:00:00Z",
+      "recent_dated_entries": 3,
+      "samples": [
+        {
+          "title": "El líder de una secta condenado por ordenar a sus seguidores dejar morir de hambre a casi 200 niños - BBC",
+          "published": "Mon, 19 Oct 2026 07:00:00 GMT",
+          "publisher": "BBC",
+          "publisher_url": "https://www.bbc.com"
+        },
+        {
+          "title": "Declaran a Marruecos ganador de la Copa de África de fútbol pese a que perdió la final contra Senegal - BBC",
+          "published": "Wed, 18 Mar 2026 07:00:00 GMT",
+          "publisher": "BBC",
+          "publisher_url": "https://www.bbc.com"
+        }
+      ],
+      "commercial_publisher_entries_observed": 0,
+      "observation_scope": "Metadatos RSS observados; no se verificaron hechos ni fecha original de cada artículo, licencias o audiencia. Google puede incluir contexto antiguo y coincidencias fuera del filtro."
+    },
+    {
+      "key": "southasia",
+      "name": "RADAR — Asia meridional | Actualidad regional",
+      "website": "https://news.google.com/",
+      "query": "(intitle:India OR intitle:Pakistán OR intitle:Bangladés OR intitle:Bangladesh OR intitle:Nepal OR intitle:Afganistán OR intitle:\"Sri Lanka\") (site:bbc.com/mundo OR site:dw.com/es OR site:france24.com/es OR site:rfi.fr/es OR site:efe.com OR site:news.un.org/es/story OR site:rtve.es/noticias) -site:efecomunica.efe.com when:7d",
+      "scope": "Asia meridional",
+      "category": "03 - Internacionales",
+      "locale": "ES",
+      "feed": "https://news.google.com/rss/search?q=%28intitle%3AIndia+OR+intitle%3APakist%C3%A1n+OR+intitle%3ABanglad%C3%A9s+OR+intitle%3ABangladesh+OR+intitle%3ANepal+OR+intitle%3AAfganist%C3%A1n+OR+intitle%3A%22Sri+Lanka%22%29+%28site%3Abbc.com%2Fmundo+OR+site%3Adw.com%2Fes+OR+site%3Afrance24.com%2Fes+OR+site%3Arfi.fr%2Fes+OR+site%3Aefe.com+OR+site%3Anews.un.org%2Fes%2Fstory+OR+site%3Artve.es%2Fnoticias%29+-site%3Aefecomunica.efe.com+when%3A7d&hl=es&gl=ES&ceid=ES%3Aes",
+      "kind": "google-noticias",
+      "http_status": 200,
+      "feed_version": "rss20",
+      "bozo": false,
+      "response_sha256": "dc3c6ce29c61a3a1caaa374da15f4405876f9bb082be26d177fcfc593824fa8f",
+      "feed_language": "es",
+      "entries_observed": 100,
+      "status": "rss_observed",
+      "included": true,
+      "verified_at": "2026-10-28T12:51:03.633798+00:00",
+      "last_published_at": "2026-10-16T07:00:00Z",
+      "recent_dated_entries": 7,
+      "samples": [
+        {
+          "title": "Pakistán: matan a trabajadoras de campaña contra la polio - BBC",
+          "published": "Tue, 18 Dec 2012 08:00:00 GMT",
+          "publisher": "BBC",
+          "publisher_url": "https://www.bbc.com"
+        },
+        {
+          "title": "Cómo se hizo la traumática división de India y Pakistán, origen de una de las mayores tragedias del siglo XX, hace 70 años - BBC",
+          "published": "Mon, 14 Aug 2017 07:00:00 GMT",
+          "publisher": "BBC",
+          "publisher_url": "https://www.bbc.com"
+        }
+      ],
+      "commercial_publisher_entries_observed": 0,
+      "observation_scope": "Metadatos RSS observados; no se verificaron hechos ni fecha original de cada artículo, licencias o audiencia. Google puede incluir contexto antiguo y coincidencias fuera del filtro."
+    },
+    {
+      "key": "eastasia",
+      "name": "RADAR — Asia oriental | Actualidad regional",
+      "website": "https://news.google.com/",
+      "query": "(intitle:China OR intitle:Japón OR intitle:Corea OR intitle:Taiwán OR intitle:Mongolia) (site:bbc.com/mundo OR site:dw.com/es OR site:france24.com/es OR site:rfi.fr/es OR site:efe.com OR site:news.un.org/es/story OR site:rtve.es/noticias) -site:efecomunica.efe.com when:7d",
+      "scope": "Asia oriental",
+      "category": "03 - Internacionales",
+      "locale": "ES",
+      "feed": "https://news.google.com/rss/search?q=%28intitle%3AChina+OR+intitle%3AJap%C3%B3n+OR+intitle%3ACorea+OR+intitle%3ATaiw%C3%A1n+OR+intitle%3AMongolia%29+%28site%3Abbc.com%2Fmundo+OR+site%3Adw.com%2Fes+OR+site%3Afrance24.com%2Fes+OR+site%3Arfi.fr%2Fes+OR+site%3Aefe.com+OR+site%3Anews.un.org%2Fes%2Fstory+OR+site%3Artve.es%2Fnoticias%29+-site%3Aefecomunica.efe.com+when%3A7d&hl=es&gl=ES&ceid=ES%3Aes",
+      "kind": "google-noticias",
+      "http_status": 200,
+      "feed_version": "rss20",
+      "bozo": false,
+      "response_sha256": "182cd1d554203f643e3400b788b50690e945a206e0f678af8a566de9cbb67ca3",
+      "feed_language": "es",
+      "entries_observed": 100,
+      "status": "rss_observed",
+      "included": true,
+      "verified_at": "2026-10-28T12:51:03.689604+00:00",
+      "last_published_at": "2026-10-28T10:56:38Z",
+      "recent_dated_entries": 22,
+      "samples": [
+        {
+          "title": "Una delegación de eurodiputados llega a China para abordar las fricciones comerciales con la UE - EFE - Agencia de noticias",
+          "published": "Tue, 27 Oct 2026 01:24:33 GMT",
+          "publisher": "EFE - Agencia de noticias",
+          "publisher_url": "https://efe.com"
+        },
+        {
+          "title": "¿Por qué China se enojó con Mbappé? - BBC",
+          "published": "Tue, 27 Oct 2026 23:59:19 GMT",
+          "publisher": "BBC",
+          "publisher_url": "https://www.bbc.com"
+        }
+      ],
+      "commercial_publisher_entries_observed": 1,
+      "observation_scope": "Metadatos RSS observados; no se verificaron hechos ni fecha original de cada artículo, licencias o audiencia. Google puede incluir contexto antiguo y coincidencias fuera del filtro."
+    },
+    {
+      "key": "southeastasia",
+      "name": "RADAR — Sudeste Asiático | Actualidad regional",
+      "website": "https://news.google.com/",
+      "query": "(intitle:Indonesia OR intitle:Filipinas OR intitle:Tailandia OR intitle:Vietnam OR intitle:Birmania OR intitle:Myanmar OR intitle:Malasia OR intitle:Singapur) (site:bbc.com/mundo OR site:dw.com/es OR site:france24.com/es OR site:rfi.fr/es OR site:efe.com OR site:news.un.org/es/story OR site:rtve.es/noticias) -site:efecomunica.efe.com when:7d",
+      "scope": "Sudeste Asiático",
+      "category": "03 - Internacionales",
+      "locale": "ES",
+      "feed": "https://news.google.com/rss/search?q=%28intitle%3AIndonesia+OR+intitle%3AFilipinas+OR+intitle%3ATailandia+OR+intitle%3AVietnam+OR+intitle%3ABirmania+OR+intitle%3AMyanmar+OR+intitle%3AMalasia+OR+intitle%3ASingapur%29+%28site%3Abbc.com%2Fmundo+OR+site%3Adw.com%2Fes+OR+site%3Afrance24.com%2Fes+OR+site%3Arfi.fr%2Fes+OR+site%3Aefe.com+OR+site%3Anews.un.org%2Fes%2Fstory+OR+site%3Artve.es%2Fnoticias%29+-site%3Aefecomunica.efe.com+when%3A7d&hl=es&gl=ES&ceid=ES%3Aes",
+      "kind": "google-noticias",
+      "http_status": 200,
+      "feed_version": "rss20",
+      "bozo": false,
+      "response_sha256": "8b38d7c98d982a4fb6d9fecd336b241d30b11e80a1c585580300e7871d6ba7eb",
+      "feed_language": "es",
+      "entries_observed": 100,
+      "status": "rss_observed",
+      "included": true,
+      "verified_at": "2026-10-28T12:51:04.208354+00:00",
+      "last_published_at": "2026-10-25T05:57:35Z",
+      "recent_dated_entries": 2,
+      "samples": [
+        {
+          "title": "Padre de Meghan Markle investigado en Filipinas por abuso infantil - DW.com",
+          "published": "Sun, 25 Oct 2026 05:57:35 GMT",
+          "publisher": "DW.com",
+          "publisher_url": "https://www.dw.com"
+        },
+        {
+          "title": "Cómo es el \"Método Singapur\" con el que Jeff Bezos les ha enseñado matemáticas a sus hijos (y por qué lo usan los mejores estudiantes del mundo) - BBC",
+          "published": "Wed, 07 Feb 2018 08:00:00 GMT",
+          "publisher": "BBC",
+          "publisher_url": "https://www.bbc.com"
+        }
+      ],
+      "commercial_publisher_entries_observed": 0,
+      "observation_scope": "Metadatos RSS observados; no se verificaron hechos ni fecha original de cada artículo, licencias o audiencia. Google puede incluir contexto antiguo y coincidencias fuera del filtro."
+    },
+    {
+      "key": "oceania",
+      "name": "RADAR — Oceanía | Australia, Nueva Zelanda y Pacífico",
+      "website": "https://news.google.com/",
+      "query": "(intitle:Australia OR intitle:\"Nueva Zelanda\" OR intitle:Oceanía OR intitle:Fiyi OR intitle:Papúa OR intitle:Vanuatu OR intitle:Samoa) (site:bbc.com/mundo OR site:dw.com/es OR site:france24.com/es OR site:rfi.fr/es OR site:efe.com OR site:news.un.org/es/story OR site:rtve.es/noticias) -site:efecomunica.efe.com when:7d",
+      "scope": "Oceanía y Pacífico",
+      "category": "03 - Internacionales",
+      "locale": "ES",
+      "feed": "https://news.google.com/rss/search?q=%28intitle%3AAustralia+OR+intitle%3A%22Nueva+Zelanda%22+OR+intitle%3AOcean%C3%ADa+OR+intitle%3AFiyi+OR+intitle%3APap%C3%BAa+OR+intitle%3AVanuatu+OR+intitle%3ASamoa%29+%28site%3Abbc.com%2Fmundo+OR+site%3Adw.com%2Fes+OR+site%3Afrance24.com%2Fes+OR+site%3Arfi.fr%2Fes+OR+site%3Aefe.com+OR+site%3Anews.un.org%2Fes%2Fstory+OR+site%3Artve.es%2Fnoticias%29+-site%3Aefecomunica.efe.com+when%3A7d&hl=es&gl=ES&ceid=ES%3Aes",
+      "kind": "google-noticias",
+      "http_status": 200,
+      "feed_version": "rss20",
+      "bozo": false,
+      "response_sha256": "797fc6fb01316c9acf6062a20809ff3b962df2b88faf24f83fb5a82f2f348ef9",
+      "feed_language": "es",
+      "entries_observed": 65,
+      "status": "rss_observed",
+      "included": true,
+      "verified_at": "2026-10-28T12:51:04.236492+00:00",
+      "last_published_at": "2026-10-28T04:10:43Z",
+      "recent_dated_entries": 11,
+      "samples": [
+        {
+          "title": "Coronavirus: la disputa entre Australia y China por el origen del covid-19 que amenaza con provocar un \"divorcio económico\" entre los dos países - BBC",
+          "published": "Mon, 15 Jun 2020 07:00:00 GMT",
+          "publisher": "BBC",
+          "publisher_url": "https://www.bbc.com"
+        },
+        {
+          "title": "Australia: en qué consiste la prohibición del acceso a las redes sociales a los menores de 16 años y cómo la van a implementar - BBC",
+          "published": "Sun, 23 Nov 2025 08:00:00 GMT",
+          "publisher": "BBC",
+          "publisher_url": "https://www.bbc.com"
+        }
+      ],
+      "commercial_publisher_entries_observed": 0,
+      "observation_scope": "Metadatos RSS observados; no se verificaron hechos ni fecha original de cada artículo, licencias o audiencia. Google puede incluir contexto antiguo y coincidencias fuera del filtro."
+    },
+    {
+      "key": "centralcaribbean",
+      "name": "RADAR — Centroamérica y Caribe | Actualidad regional",
+      "website": "https://news.google.com/",
+      "query": "(intitle:Guatemala OR intitle:Honduras OR intitle:\"El Salvador\" OR intitle:Nicaragua OR intitle:\"Costa Rica\" OR intitle:Panamá OR intitle:Cuba OR intitle:Haití OR intitle:\"República Dominicana\" OR intitle:\"Puerto Rico\" OR intitle:Jamaica) (site:bbc.com/mundo OR site:dw.com/es OR site:france24.com/es OR site:rfi.fr/es OR site:efe.com OR site:news.un.org/es/story OR site:rtve.es/noticias) -site:efecomunica.efe.com when:7d",
+      "scope": "Centroamérica y Caribe",
+      "category": "06 - Latinoamérica",
+      "locale": "MX",
+      "feed": "https://news.google.com/rss/search?q=%28intitle%3AGuatemala+OR+intitle%3AHonduras+OR+intitle%3A%22El+Salvador%22+OR+intitle%3ANicaragua+OR+intitle%3A%22Costa+Rica%22+OR+intitle%3APanam%C3%A1+OR+intitle%3ACuba+OR+intitle%3AHait%C3%AD+OR+intitle%3A%22Rep%C3%BAblica+Dominicana%22+OR+intitle%3A%22Puerto+Rico%22+OR+intitle%3AJamaica%29+%28site%3Abbc.com%2Fmundo+OR+site%3Adw.com%2Fes+OR+site%3Afrance24.com%2Fes+OR+site%3Arfi.fr%2Fes+OR+site%3Aefe.com+OR+site%3Anews.un.org%2Fes%2Fstory+OR+site%3Artve.es%2Fnoticias%29+-site%3Aefecomunica.efe.com+when%3A7d&hl=es-419&gl=MX&ceid=MX%3Aes-419",
+      "kind": "google-noticias",
+      "http_status": 200,
+      "feed_version": "rss20",
+      "bozo": false,
+      "response_sha256": "0a4e685a54f064642585b1dac26be2320d82e96ad286e3945d3c4b8dbe3b6eb4",
+      "feed_language": "es-419",
+      "entries_observed": 80,
+      "status": "rss_observed",
+      "included": true,
+      "verified_at": "2026-10-28T12:51:04.420652+00:00",
+      "last_published_at": "2026-10-27T19:32:00Z",
+      "recent_dated_entries": 7,
+      "samples": [
+        {
+          "title": "Viajes de Miami a Cuba: gobierno de EEUU anuncia medidas tras el nuevo apagón masivo - El Nuevo Herald",
+          "published": "Tue, 07 Jul 2026 07:00:00 GMT",
+          "publisher": "El Nuevo Herald",
+          "publisher_url": "https://www.elnuevoherald.com"
+        },
+        {
+          "title": "Puerto Rico vence a Cuba y vuelve a los cuartos de final ante su público - MLB.com",
+          "published": "Mon, 09 Mar 2026 07:00:00 GMT",
+          "publisher": "MLB.com",
+          "publisher_url": "https://www.mlb.com"
+        }
+      ],
+      "commercial_publisher_entries_observed": 0,
+      "observation_scope": "Metadatos RSS observados; no se verificaron hechos ni fecha original de cada artículo, licencias o audiencia. Google puede incluir contexto antiguo y coincidencias fuera del filtro."
+    },
+    {
+      "key": "paraguay",
+      "name": "RADAR — ABC Color | Paraguay",
+      "website": "https://www.abc.com.py/",
+      "query": "(site:abc.com.py/nacionales OR site:abc.com.py/internacionales OR site:abc.com.py/economia) when:7d",
+      "scope": "Paraguay",
+      "category": "06 - Latinoamérica",
+      "locale": "MX",
+      "feed": "https://news.google.com/rss/search?q=%28site%3Aabc.com.py%2Fnacionales+OR+site%3Aabc.com.py%2Finternacionales+OR+site%3Aabc.com.py%2Feconomia%29+when%3A7d&hl=es-419&gl=MX&ceid=MX%3Aes-419",
+      "kind": "google-noticias",
+      "http_status": 200,
+      "feed_version": "rss20",
+      "bozo": false,
+      "response_sha256": "d4757ade7bc64a1bc78bbbb88e33826ae7ee067074765eec69839c0c646246d7",
+      "feed_language": "es-419",
+      "entries_observed": 100,
+      "status": "rss_observed",
+      "included": true,
+      "verified_at": "2026-10-28T12:45:38.031704+00:00",
+      "last_published_at": "2026-10-28T05:33:15Z",
+      "recent_dated_entries": 100,
+      "samples": [
+        {
+          "title": "Rolón conforma equipo fiscal para indagar caso de los más de 1.000 títulos falsos - ABC Color",
+          "published": "Fri, 23 Oct 2026 14:33:00 GMT",
+          "publisher": "ABC Color",
+          "publisher_url": "https://www.abc.com.py"
+        },
+        {
+          "title": "Piden construir aulas en una comunidad indígena de Maracaná - ABC Color",
+          "published": "Thu, 22 Oct 2026 20:49:00 GMT",
+          "publisher": "ABC Color",
+          "publisher_url": "https://www.abc.com.py"
+        }
+      ],
+      "commercial_publisher_entries_observed": 0,
+      "observation_scope": "Metadatos RSS observados; no se verificaron hechos ni fecha original de cada artículo, licencias o audiencia. Google puede incluir contexto antiguo y coincidencias fuera del filtro."
+    },
+    {
+      "key": "bolivia",
+      "name": "RADAR — El Deber | Bolivia",
+      "website": "https://eldeber.com.bo/",
+      "query": "(site:eldeber.com.bo/pais OR site:eldeber.com.bo/mundo OR site:eldeber.com.bo/economia) when:7d",
+      "scope": "Bolivia",
+      "category": "06 - Latinoamérica",
+      "locale": "MX",
+      "feed": "https://news.google.com/rss/search?q=%28site%3Aeldeber.com.bo%2Fpais+OR+site%3Aeldeber.com.bo%2Fmundo+OR+site%3Aeldeber.com.bo%2Feconomia%29+when%3A7d&hl=es-419&gl=MX&ceid=MX%3Aes-419",
+      "kind": "google-noticias",
+      "http_status": 200,
+      "feed_version": "rss20",
+      "bozo": false,
+      "response_sha256": "f59116eb42bc228f6797d78c8aa3e61c2091da5318c854ee1173b487003b0840",
+      "feed_language": "es-419",
+      "entries_observed": 100,
+      "status": "rss_observed",
+      "included": true,
+      "verified_at": "2026-10-28T12:45:38.146174+00:00",
+      "last_published_at": "2026-10-28T11:43:18Z",
+      "recent_dated_entries": 100,
+      "samples": [
+        {
+          "title": "El 29 de octubre habrá una nueva audiencia por el caso maderas - El Deber",
+          "published": "Sun, 25 Oct 2026 11:49:50 GMT",
+          "publisher": "El Deber",
+          "publisher_url": "https://eldeber.com.bo"
+        },
+        {
+          "title": "Confusión en la segunda vuelta de Brasil: se prorroga la votación y se pausa el recuento - El Deber",
+          "published": "Sun, 25 Oct 2026 21:15:53 GMT",
+          "publisher": "El Deber",
+          "publisher_url": "https://eldeber.com.bo"
+        }
+      ],
+      "commercial_publisher_entries_observed": 0,
+      "observation_scope": "Metadatos RSS observados; no se verificaron hechos ni fecha original de cada artículo, licencias o audiencia. Google puede incluir contexto antiguo y coincidencias fuera del filtro."
+    },
+    {
+      "key": "dominicana",
+      "name": "RADAR — Diario Libre | República Dominicana",
+      "website": "https://www.diariolibre.com/",
+      "query": "(site:diariolibre.com/actualidad OR site:diariolibre.com/economia OR site:diariolibre.com/mundo) when:7d",
+      "scope": "República Dominicana",
+      "category": "06 - Latinoamérica",
+      "locale": "MX",
+      "feed": "https://news.google.com/rss/search?q=%28site%3Adiariolibre.com%2Factualidad+OR+site%3Adiariolibre.com%2Feconomia+OR+site%3Adiariolibre.com%2Fmundo%29+when%3A7d&hl=es-419&gl=MX&ceid=MX%3Aes-419",
+      "kind": "google-noticias",
+      "http_status": 200,
+      "feed_version": "rss20",
+      "bozo": false,
+      "response_sha256": "97f29dadbd1387e28217422b605ec2cb508e7ea9af258add6a9f3e5f9a4b8449",
+      "feed_language": "es-419",
+      "entries_observed": 100,
+      "status": "rss_observed",
+      "included": true,
+      "verified_at": "2026-10-28T12:45:38.211237+00:00",
+      "last_published_at": "2026-10-28T12:00:00Z",
+      "recent_dated_entries": 100,
+      "samples": [
+        {
+          "title": "Suspensión de clases por lluvias genera confusión entre padres del Gran Santo Domingo - Diario Libre",
+          "published": "Tue, 27 Oct 2026 13:23:00 GMT",
+          "publisher": "Diario Libre",
+          "publisher_url": "https://www.diariolibre.com"
+        },
+        {
+          "title": "Ministerio de Defensa garantiza seguridad en la frontera y descarta su cierre por violencia en Haití - Diario Libre",
+          "published": "Thu, 22 Oct 2026 23:12:00 GMT",
+          "publisher": "Diario Libre",
+          "publisher_url": "https://www.diariolibre.com"
+        }
+      ],
+      "commercial_publisher_entries_observed": 0,
+      "observation_scope": "Metadatos RSS observados; no se verificaron hechos ni fecha original de cada artículo, licencias o audiencia. Google puede incluir contexto antiguo y coincidencias fuera del filtro."
+    },
+    {
+      "key": "costarica",
+      "name": "RADAR — La Nación | Costa Rica",
+      "website": "https://www.nacion.com/",
+      "query": "(site:nacion.com/el-pais OR site:nacion.com/economia OR site:nacion.com/el-mundo) when:7d",
+      "scope": "Costa Rica",
+      "category": "06 - Latinoamérica",
+      "locale": "MX",
+      "feed": "https://news.google.com/rss/search?q=%28site%3Anacion.com%2Fel-pais+OR+site%3Anacion.com%2Feconomia+OR+site%3Anacion.com%2Fel-mundo%29+when%3A7d&hl=es-419&gl=MX&ceid=MX%3Aes-419",
+      "kind": "google-noticias",
+      "http_status": 200,
+      "feed_version": "rss20",
+      "bozo": false,
+      "response_sha256": "7f1f4b5fd54944b8430e0c601444bee70bdd17ecfd2bc9f42c3dcfa06cf06c94",
+      "feed_language": "es-419",
+      "entries_observed": 100,
+      "status": "rss_observed",
+      "included": true,
+      "verified_at": "2026-10-28T12:45:38.244557+00:00",
+      "last_published_at": "2026-10-28T10:03:03Z",
+      "recent_dated_entries": 99,
+      "samples": [
+        {
+          "title": "Procuraduría apeló fallo que excluyó a universidades públicas de las reglas salariales de la reforma fiscal - La Nación Costa Rica",
+          "published": "Mon, 26 Oct 2026 15:33:22 GMT",
+          "publisher": "La Nación Costa Rica",
+          "publisher_url": "https://www.nacion.com"
+        },
+        {
+          "title": "Arranca proceso de licitación para ampliación de San José-San Ramón: Conozca los plazos y detalles del proyecto - La Nación Costa Rica",
+          "published": "Wed, 21 Oct 2026 18:51:32 GMT",
+          "publisher": "La Nación Costa Rica",
+          "publisher_url": "https://www.nacion.com"
+        }
+      ],
+      "commercial_publisher_entries_observed": 0,
+      "observation_scope": "Metadatos RSS observados; no se verificaron hechos ni fecha original de cada artículo, licencias o audiencia. Google puede incluir contexto antiguo y coincidencias fuera del filtro."
+    },
+    {
+      "key": "centralasia",
+      "name": "RADAR — Asia Central y Cáucaso | Actualidad y contexto",
+      "website": "https://news.google.com/",
+      "query": "(intitle:Kazajistán OR intitle:Kazajstán OR intitle:Uzbekistán OR intitle:Kirguistán OR intitle:Tayikistán OR intitle:Turkmenistán OR intitle:Armenia OR intitle:Azerbaiyán OR intitle:Cáucaso) (site:bbc.com/mundo OR site:dw.com/es OR site:france24.com/es OR site:rfi.fr/es OR site:efe.com OR site:news.un.org/es/story OR site:rtve.es/noticias) -site:efecomunica.efe.com when:7d",
+      "scope": "Asia Central y Cáucaso",
+      "category": "03 - Internacionales",
+      "locale": "ES",
+      "feed": "https://news.google.com/rss/search?q=%28intitle%3AKazajist%C3%A1n+OR+intitle%3AKazajst%C3%A1n+OR+intitle%3AUzbekist%C3%A1n+OR+intitle%3AKirguist%C3%A1n+OR+intitle%3ATayikist%C3%A1n+OR+intitle%3ATurkmenist%C3%A1n+OR+intitle%3AArmenia+OR+intitle%3AAzerbaiy%C3%A1n+OR+intitle%3AC%C3%A1ucaso%29+%28site%3Abbc.com%2Fmundo+OR+site%3Adw.com%2Fes+OR+site%3Afrance24.com%2Fes+OR+site%3Arfi.fr%2Fes+OR+site%3Aefe.com+OR+site%3Anews.un.org%2Fes%2Fstory+OR+site%3Artve.es%2Fnoticias%29+-site%3Aefecomunica.efe.com+when%3A7d&hl=es&gl=ES&ceid=ES%3Aes",
+      "kind": "google-noticias",
+      "http_status": 200,
+      "feed_version": "rss20",
+      "bozo": false,
+      "response_sha256": "64994718ebea11add86c4b27321817ecb4d0d750704b39f4f04f5c051eaae7e1",
+      "feed_language": "es",
+      "entries_observed": 100,
+      "status": "rss_observed",
+      "included": true,
+      "verified_at": "2026-10-28T12:58:51.270184+00:00",
+      "last_published_at": "2026-10-28T12:52:00Z",
+      "recent_dated_entries": 100,
+      "samples": [
+        {
+          "title": "La reina Sofía viaja por sorpresa a Armenia a sus 87 años: una visita fuera de agenda que refuerza su papel como embajadora de la Corona - HOLA",
+          "published": "Tue, 27 Oct 2026 16:51:00 GMT",
+          "publisher": "HOLA",
+          "publisher_url": "https://www.hola.com"
+        },
+        {
+          "title": "La reina Sofía viaja por sorpresa a Armenia en una visita fuera de la agenda real - Libertad Digital",
+          "published": "Wed, 28 Oct 2026 05:30:41 GMT",
+          "publisher": "Libertad Digital",
+          "publisher_url": "https://www.libertaddigital.com"
+        }
+      ],
+      "commercial_publisher_entries_observed": 0,
+      "observation_scope": "Metadatos RSS observados; no se verificaron hechos ni fecha original de cada artículo, licencias o audiencia. Google puede incluir contexto antiguo y coincidencias fuera del filtro."
+    },
+    {
+      "key": "mit-es-native",
+      "name": "MEDIO — MIT Technology Review en español",
+      "website": "https://www.technologyreview.es/",
+      "feed": "https://www.technologyreview.es/rss/all",
+      "category": "02 - Tecnología",
+      "kind": "rss-directo",
+      "scope": "Revista tecnológica en español",
+      "query": null,
+      "http_status": 200,
+      "feed_version": "rss20",
+      "bozo": false,
+      "response_sha256": "6250d1bacfb32a5fa781efea88c2c05398927518d824bc09563b9de9bc812a6f",
+      "feed_language": "es",
+      "entries_observed": 10,
+      "status": "rss_observed",
+      "included": true,
+      "verified_at": "2026-10-28T12:49:43.893844+00:00",
+      "last_published_at": "2026-10-27T05:00:00Z",
+      "recent_dated_entries": 10,
+      "samples": [
+        {
+          "title": "Cómo los transformadores de estado sólido podrían ayudar a alimentar el auge de la IA",
+          "published": "Tue, 27 Oct 2026 05:00:00 GMT",
+          "publisher": "MIT Technology Review en español | Todos los artículos"
+        },
+        {
+          "title": "¿Revelará la salida a bolsa la verdadera cara de Anthropic?",
+          "published": "Mon, 26 Oct 2026 13:45:43 GMT",
+          "publisher": "MIT Technology Review en español | Todos los artículos"
+        }
+      ],
+      "commercial_publisher_entries_observed": 0,
+      "observation_scope": "Metadatos RSS observados; no se verificaron hechos ni fecha original de cada artículo, licencias o audiencia. Google puede incluir contexto antiguo y coincidencias fuera del filtro."
+    }
+  ],
+  "revalidated_native_sources": [
+    {
+      "id": "25d0da270cdc714f",
+      "name": "MEDIO — Xataka | Inteligencia Artificial",
+      "url": "https://www.xataka.com/categoria/inteligencia-artificial/rss2.xml",
+      "category": "01 - Inteligencia Artificial",
+      "checked_at": "2026-10-28T12:42:42.951955+00:00",
+      "status_code": 200,
+      "feed_version": "rss20",
+      "bozo": false,
+      "entries_observed": 10,
+      "feed_language": null,
+      "response_sha256": "12d7583d61d1cfbe20821d47200f0e31637f6cc6b555c981bad1f92c9ac30c4b",
+      "samples": [
+        {
+          "title": "El Gobierno español da marcha atrás: suaviza las normas de los centros de datos para no espantar a las empresas de IA",
+          "published": "Tue, 27 Oct 2026 10:51:00 +0000"
+        },
+        {
+          "title": "OpenAI ha descubierto que sus agentes de IA han encontrado la forma de hablar entre ellos a escondidas",
+          "published": "Mon, 26 Oct 2026 17:45:30 +0000"
+        }
+      ],
+      "last_published_at": "2026-10-27T10:51:00Z",
+      "observation_scope": "RSS directo revalidado, metadatos y muestras; no verificación de hechos."
+    },
+    {
+      "id": "b3a536dff19b8d36",
+      "name": "MEDIO — Genbeta | Inteligencia Artificial",
+      "url": "https://www.genbeta.com/categoria/inteligencia-artificial/rss2.xml",
+      "category": "01 - Inteligencia Artificial",
+      "checked_at": "2026-10-28T12:42:42.952524+00:00",
+      "status_code": 200,
+      "feed_version": "rss20",
+      "bozo": false,
+      "entries_observed": 10,
+      "feed_language": null,
+      "response_sha256": "3765305fcbe33d81bda54090c9c87aa3b198dc980da548bd298eaf83ebc99a9e",
+      "samples": [
+        {
+          "title": "¿Quién es Elías, el farero? La ficción con IA cuenta la misma vieja historia",
+          "published": "Mon, 26 Oct 2026 17:01:28 +0000"
+        },
+        {
+          "title": "Desarrollador de centro de datos de Pennsylvania ofrece 10.000 dólares a 4.500 hogares; los residentes se niegan, diciendo que el dinero no es suficiente",
+          "published": "Sun, 25 Oct 2026 09:00:08 +0000"
+        }
+      ],
+      "last_published_at": "2026-10-26T17:01:28Z",
+      "observation_scope": "RSS directo revalidado, metadatos y muestras; no verificación de hechos."
+    },
+    {
+      "id": "eb93e53f7add4954",
+      "name": "MEDIO — WWWhat's New | Inteligencia Artificial",
+      "url": "https://wwwhatsnew.com/category/inteligencia-artificial/feed/",
+      "category": "01 - Inteligencia Artificial",
+      "checked_at": "2026-10-28T12:42:42.954608+00:00",
+      "status_code": 200,
+      "feed_version": "rss20",
+      "bozo": false,
+      "entries_observed": 10,
+      "feed_language": "es",
+      "response_sha256": "20d44c4dbb43af866753ad0ce94ae1661cce024262bef19685cbbc5ce105fd7a",
+      "samples": [
+        {
+          "title": "Traducir con IA sin perder matices: cuándo usar DeepL, Google Traductor o un chatbot",
+          "published": "Wed, 28 Oct 2026 07:00:00 +0000"
+        },
+        {
+          "title": "La IA como herramienta de accesibilidad: apps que describen el mundo, subtitulan y leen por ti",
+          "published": "Tue, 27 Oct 2026 23:00:00 +0000"
+        }
+      ],
+      "last_published_at": "2026-10-28T07:00:00Z",
+      "observation_scope": "RSS directo revalidado, metadatos y muestras; no verificación de hechos."
+    },
+    {
+      "id": "a9d5c775bf89dbb6",
+      "name": "INVESTIGACIÓN — Agencia SINC | Tecnología",
+      "url": "https://www.agenciasinc.es/feed/Tecnologia",
+      "category": "01 - Inteligencia Artificial",
+      "checked_at": "2026-10-28T12:42:42.956815+00:00",
+      "status_code": 200,
+      "feed_version": "rss20",
+      "bozo": false,
+      "entries_observed": 150,
+      "feed_language": "esl-MX",
+      "response_sha256": "5c6258fa37852d9ba4205cbb578cf7f5cc2ef3a2fee3ffbd1224b4c5737e3aac",
+      "samples": [
+        {
+          "title": "Así es como este diminuto brazo robótico funciona con algas y con luz",
+          "published": "Fri, 23 Oct 2026 12:30:03 +0200"
+        },
+        {
+          "title": "Una nariz electrónica con IA permite recrear olores o sabores y transmitirlos a distancia",
+          "published": "Wed, 21 Oct 2026 20:00:03 +0200"
+        }
+      ],
+      "last_published_at": "2026-10-23T10:30:03Z",
+      "observation_scope": "RSS directo revalidado, metadatos y muestras; no verificación de hechos."
+    },
+    {
+      "id": "64e1e8a0f1e3e71d",
+      "name": "INVESTIGACIÓN — Agencia SINC | Ciencia",
+      "url": "https://www.agenciasinc.es/feed/Ciencia",
+      "category": "01 - Inteligencia Artificial",
+      "checked_at": "2026-10-28T12:42:43.384168+00:00",
+      "status_code": 200,
+      "feed_version": "rss20",
+      "bozo": false,
+      "entries_observed": 150,
+      "feed_language": "esl-MX",
+      "response_sha256": "b38bed86b1d84dc3a094164d4e2011e836c7cb9a45decdb6b86b211ae4cc4cd8",
+      "samples": [
+        {
+          "title": "Detectan un disco único de escombros que predice el futuro del Sistema Solar",
+          "published": "Wed, 28 Oct 2026 10:18:01 +0100"
+        },
+        {
+          "title": "Crean la simulación más detallada del universo primitivo hasta la fecha",
+          "published": "Tue, 27 Oct 2026 13:00:03 +0100"
+        }
+      ],
+      "last_published_at": "2026-10-28T09:18:01Z",
+      "observation_scope": "RSS directo revalidado, metadatos y muestras; no verificación de hechos."
+    },
+    {
+      "id": "a9a2a80e212005be",
+      "name": "EVENTOS — Agencia SINC | Agenda",
+      "url": "https://www.agenciasinc.es/feed/Agenda",
+      "category": "01 - Inteligencia Artificial",
+      "checked_at": "2026-10-28T12:42:43.596918+00:00",
+      "status_code": 200,
+      "feed_version": "rss20",
+      "bozo": false,
+      "entries_observed": 150,
+      "feed_language": "esl-MX",
+      "response_sha256": "e6ee99096d94ef8bf52b24bcb75f845a1c5c850feaa2f0b0e712216e76e2096c",
+      "samples": [
+        {
+          "title": "Un modelo físico cuestiona que los cometas fuesen clave en el origen de la vida en la Tierra",
+          "published": "Wed, 28 Oct 2026 11:00:04 +0100"
+        },
+        {
+          "title": "Expertos advierten que el cambio climático es una emergencia sanitaria cada vez mayor",
+          "published": "Wed, 28 Oct 2026 10:39:32 +0100"
+        }
+      ],
+      "last_published_at": "2026-10-28T10:00:04Z",
+      "observation_scope": "RSS directo revalidado, metadatos y muestras; no verificación de hechos."
+    },
+    {
+      "id": "293ef97528a48cbf",
+      "name": "MEDIO — Hipertextual",
+      "url": "https://hipertextual.com/feed/",
+      "category": "02 - Tecnología",
+      "checked_at": "2026-10-28T12:42:43.779726+00:00",
+      "status_code": 200,
+      "feed_version": "rss20",
+      "bozo": false,
+      "entries_observed": 15,
+      "feed_language": "es",
+      "response_sha256": "8cf704b4e9370848242f471aa32b8a8d1942500a4859334084b214d58c6349af",
+      "samples": [
+        {
+          "title": "Amazon presenta nuevos Echo con Alexa+, incluyendo un despertador inteligente que querrás poner en la mesilla de noche",
+          "published": "Wed, 28 Oct 2026 12:15:37 +0000"
+        },
+        {
+          "title": "Las mejores ofertas en periféricos para este Halloween: impresoras, monitores o auriculares con descuentos del 50%",
+          "published": "Wed, 28 Oct 2026 10:14:43 +0000"
+        }
+      ],
+      "last_published_at": "2026-10-28T12:15:37Z",
+      "observation_scope": "RSS directo revalidado, metadatos y muestras; no verificación de hechos."
+    }
+  ],
+  "not_selected": [
+    {
+      "kind": "google-geo-rss",
+      "status": "empty_rss_observed",
+      "http_status": 200,
+      "feed": "https://news.google.com/rss/headlines/section/geo/Africa?hl=es&gl=ES&ceid=ES%3Aes",
+      "entries_observed": 0,
+      "reason": "RSS geográfico probado sin entradas; no determina que falten noticias en esa región."
+    },
+    {
+      "kind": "google-geo-rss",
+      "status": "empty_rss_observed",
+      "http_status": 200,
+      "feed": "https://news.google.com/rss/headlines/section/geo/Australia?hl=es&gl=ES&ceid=ES%3Aes",
+      "entries_observed": 0,
+      "reason": "RSS geográfico probado sin entradas; no determina que falten noticias en esa región."
+    },
+    {
+      "kind": "google-geo-rss",
+      "status": "empty_rss_observed",
+      "http_status": 200,
+      "feed": "https://news.google.com/rss/headlines/section/geo/India?hl=es&gl=ES&ceid=ES%3Aes",
+      "entries_observed": 0,
+      "reason": "RSS geográfico probado sin entradas; no determina que falten noticias en esa región."
+    },
+    {
+      "kind": "google-geo-rss",
+      "status": "empty_rss_observed",
+      "http_status": 200,
+      "feed": "https://news.google.com/rss/headlines/section/geo/Kazakhstan?hl=es&gl=ES&ceid=ES%3Aes",
+      "entries_observed": 0,
+      "reason": "RSS geográfico probado sin entradas; no determina que falten noticias en esa región."
+    },
+    {
+      "kind": "google-geo-rss",
+      "status": "empty_rss_observed",
+      "http_status": 200,
+      "feed": "https://news.google.com/rss/headlines/section/geo/Middle%20East?hl=es&gl=ES&ceid=ES%3Aes",
+      "entries_observed": 0,
+      "reason": "RSS geográfico probado sin entradas; no determina que falten noticias en esa región."
+    }
+  ],
+  "limits": "35suscripciones, no35medios independientes.1RSSnativoMITes+34RADAR. La cobertura es parcial, periódica y limitada por RSS/selección/retención. Campo coverage cuenta cabeceras, no URLs de consulta ni popularidad."
+}

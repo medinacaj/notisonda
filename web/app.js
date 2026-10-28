@@ -846,12 +846,21 @@ function homepageHeadline(item){
   }
   return row;
 }
+function selectInternationalLead(items,now=Date.now()){
+  const international=items.filter(item=>(item.categories||[]).some(cat=>cat.startsWith('03 -')));
+  const recent=international.filter(item=>{const age=now-storyTime(item);return age>=0&&age<=86400000;});
+  if(!recent.length)return international.reduce((best,item)=>!best||storyTime(item)>storyTime(best)?item:best,null);
+  // Only the collector's outlet count is a coverage signal; RSS query ids are not.
+  const coverage=item=>Number.isInteger(item.coverage)&&item.coverage>0?item.coverage:1;
+  return recent.reduce((best,item)=>!best||coverage(item)>coverage(best)||
+    coverage(item)===coverage(best)&&storyTime(item)>storyTime(best)?item:best,null);
+}
 function renderDashboard(){
   const feature=$('dashboardFeature'),recent=$('dashboardRecent');
   if(!feature||!recent)return;
   const items=dashboardEligible(),chosen=[],seenCategories=new Set();
   // Keep an international lead only among sources/categories the reader allows.
-  const international=items.find(item=>(item.categories||[]).some(cat=>cat.startsWith('03 -')));
+  const international=selectInternationalLead(items);
   if(international){chosen.push(international);seenCategories.add((international.categories||[])[0]||'');}
   for(const item of items){
     const category=(item.categories||[])[0]||'';

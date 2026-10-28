@@ -1,5 +1,7 @@
 # IA en español: fuentes y estructura revisadas
 
+> Registro de PR111 sobre 276 suscripciones. Posteriormente se comprobó el RSS nativo de MIT en español y los siete RSS antes pendientes; la [ampliación mundial](fuentes-cobertura-mundial-2026-10-28.md) lleva el catálogo a 311 sin bajas. Los estados antiguos permanecen como evidencia histórica, no como diagnóstico actual.
+
 ## Resultado del catálogo
 
 Se conservaron las **248 suscripciones publicadas en main**, incluidas las 27 altas de IA/tecnología de PR102. Se integraron las **23 altas generales pendientes** y se añadieron **cinco canales temáticos de IA en español**: **276 suscripciones en ocho carpetas**, sin bajas ni cambios de URL, identificador, nombre o categoría anteriores. Este total cuenta suscripciones, no medios independientes ni artículos.

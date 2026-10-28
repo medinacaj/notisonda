@@ -99,6 +99,25 @@ class DimensionRegressions(unittest.TestCase):
         self.page.evaluate("goTo('briefing')")
         expect(self.page.locator('#coverageTools')).to_be_hidden()
 
+    def test_home_prioritizes_recent_world_coverage_and_respects_hidden_sources(self):
+        self.page.wait_for_load_state('networkidle')
+        source_id=self.page.evaluate("""() => {
+            const world=state.items.find(x=>x.categories.some(c=>c.startsWith('03 -')));
+            const local=state.items.find(x=>!x.categories.some(c=>c.startsWith('03 -')));
+            const now=Date.now();
+            state.items=[
+                {...world,id:'fresh-minor',title:'Un titular reciente de un solo medio',coverage:1,published_at:new Date(now-60000).toISOString()},
+                {...world,id:'covered-world',title:'Una noticia mundial cubierta por varios medios',coverage:6,published_at:new Date(now-8*3600000).toISOString()},
+                {...local,id:'fallback-local',coverage:1}
+            ];render();return world.source_ids[0];
+        }""")
+        expect(self.page.locator('#dashboardFeature > .article-card')).to_have_attribute('data-article-id','covered-world')
+        ids=self.page.locator('#dashboardFeature > [data-article-id],#dashboardRecent > [data-article-id]').evaluate_all('nodes=>nodes.map(n=>n.dataset.articleId)')
+        self.assertEqual(len(ids),len(set(ids)))
+        self.page.evaluate('(id)=>{state.hiddenSources.add(id);render();}',source_id)
+        expect(self.page.locator('#dashboardFeature > .article-card')).to_have_attribute('data-article-id','fallback-local')
+        expect(self.page.locator('#homeLatest')).to_be_hidden()
+
     def test_one_theme_and_legible_reference_palette(self):
         self.page.evaluate("setTheme('dark',true)")
         self.page.emulate_media(reduced_motion='reduce')

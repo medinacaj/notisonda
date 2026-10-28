@@ -35,6 +35,16 @@ chile venezuela latinoamerica america internacional tecnologia inteligencia arti
 the a an and are as at be by for from has have how in into is it its new of on or that the this to was what when why will with you your
 '''.split())
 TOKEN = re.compile(r'[a-z0-9ñ]+')
+# These are catalog roles/section labels, not independent editorial outlets.
+# Public display names remain unchanged; this normalization only counts coverage.
+EDITORIAL_IDENTITY_PREFIX = re.compile(
+    r'^(?:oficial|investigacion|analisis|eventos|video|tendencia|impacto|satira)\s*[—–-]\s*')
+PUBLISHER_ALIASES = {
+    'bbc mundo': 'bbc', 'bbc news': 'bbc', 'bbc news mundo': 'bbc',
+    'dw com': 'dw', 'dw espanol': 'dw', 'deutsche welle': 'dw',
+    'france24': 'france 24', 'france 24 en espanol': 'france 24',
+    'agencia sinc': 'sinc',
+}
 
 
 def fold(text: str) -> str:
@@ -86,7 +96,10 @@ def independent_publishers(item: dict, catalog: dict[str, dict] | None = None) -
             if not source:
                 result.add('feed:' + str(source_id))
             continue
-        normalized = re.sub(r'[^a-z0-9]+', ' ', fold(public_source_name(name))).strip()
+        editorial = public_source_name(name).split(' | ', 1)[0]
+        editorial = EDITORIAL_IDENTITY_PREFIX.sub('', fold(editorial))
+        normalized = re.sub(r'[^a-z0-9]+', ' ', editorial).strip()
+        normalized = PUBLISHER_ALIASES.get(normalized, normalized)
         if normalized and not normalized.startswith(('radar ', 'google noticias')):
             result.add('medio:' + normalized)
     return result
