@@ -1,0 +1,391 @@
+{
+  "version": 1,
+  "checked_at": "2026-10-28T04:07:50.348095+00:00",
+  "baseline_commit": "b71f512f56fe521b9289b08206613230e8aa2519",
+  "baseline_sources": 248,
+  "previous_pending_additions": 23,
+  "added_sources": 5,
+  "total_sources": 276,
+  "category_count": 8,
+  "preservation_271_sha256": "184892ac4967a9293b9514139bc61d2b2026a683d20de9c576920c72496b304b",
+  "preservation_248_sha256": "f5e294ff5a53550353923023d1d233130cf1709dee4c5dc98da4c18781e5ac06",
+  "sources": [
+    {
+      "key": "hipertextual",
+      "name": "RADAR — Hipertextual | IA",
+      "website": "https://hipertextual.com/",
+      "feed": "https://news.google.com/rss/search?q=site%3Ahipertextual.com+%28%22inteligencia+artificial%22+OR+%22modelos+de+IA%22+OR+%22aprendizaje+autom%C3%A1tico%22%29+when%3A30d&hl=es&gl=ES&ceid=ES%3Aes",
+      "query": "site:hipertextual.com (\"inteligencia artificial\" OR \"modelos de IA\" OR \"aprendizaje automático\") when:30d",
+      "kind": "google-noticias",
+      "http_status": 200,
+      "response_sha256": "e8cd7fffcc612199d1e4e989fda6b978213bec85acc0f73b7bd968ed31944af2",
+      "verified_at": "2026-10-28T04:04:49.269382+00:00",
+      "bozo": false,
+      "entries_observed": 53,
+      "last_published_at": "2026-10-27T18:43:00Z",
+      "recent_dated_entries": 53,
+      "samples": [
+        {
+          "title": "El truco con IA para quitar todos los anuncios y hacer tu Smart TV más rápida - Hipertextual",
+          "published": "Sun, 25 Oct 2026 08:00:00 GMT",
+          "publisher": "Hipertextual",
+          "publisher_url": "https://hipertextual.com"
+        },
+        {
+          "title": "OpenAI descubre que un agente de ChatGPT desactivó su propio sistema de seguridad y mintió - Hipertextual",
+          "published": "Wed, 21 Oct 2026 17:48:16 GMT",
+          "publisher": "Hipertextual",
+          "publisher_url": "https://hipertextual.com"
+        }
+      ],
+      "category": "01 - Inteligencia Artificial",
+      "status": "rss_observed",
+      "included": true,
+      "language_scope": "Portal en español; búsqueda hl=es. El RSS del índice no garantiza el idioma ni pertinencia de cada resultado.",
+      "observation_scope": "Metadatos del RSS de Google Noticias; no se visitaron ni verificaron artículos, derechos o políticas editoriales del medio.",
+      "feed_version": "rss20"
+    },
+    {
+      "key": "wired",
+      "name": "RADAR — WIRED en Español | IA",
+      "website": "https://es.wired.com/",
+      "feed": "https://news.google.com/rss/search?q=site%3Aes.wired.com+%28%22inteligencia+artificial%22+OR+%22modelos+de+IA%22+OR+%22aprendizaje+autom%C3%A1tico%22%29+when%3A30d&hl=es&gl=ES&ceid=ES%3Aes",
+      "query": "site:es.wired.com (\"inteligencia artificial\" OR \"modelos de IA\" OR \"aprendizaje automático\") when:30d",
+      "kind": "google-noticias",
+      "http_status": 200,
+      "response_sha256": "00cd36bc59d5325647838260415d3f57a40cd537a7531bd4e56c479eceb37d53",
+      "verified_at": "2026-10-28T04:04:49.087600+00:00",
+      "bozo": false,
+      "entries_observed": 92,
+      "last_published_at": "2026-10-27T23:35:41Z",
+      "recent_dated_entries": 92,
+      "samples": [
+        {
+          "title": "El caso de la editorial Almadía pone bajo la lupa a los detectores de IA: ¿Qué tan confiables son? - WIRED",
+          "published": "Tue, 27 Oct 2026 00:55:52 GMT",
+          "publisher": "WIRED",
+          "publisher_url": "https://es.wired.com"
+        },
+        {
+          "title": "Microsoft desarrolla una IA que diagnostica enfermedades con una precisión hasta 4 veces mayor que los médicos - WIRED",
+          "published": "Thu, 22 Oct 2026 23:19:09 GMT",
+          "publisher": "WIRED",
+          "publisher_url": "https://es.wired.com"
+        }
+      ],
+      "category": "01 - Inteligencia Artificial",
+      "status": "rss_observed",
+      "included": true,
+      "language_scope": "Portal en español; búsqueda hl=es. El RSS del índice no garantiza el idioma ni pertinencia de cada resultado.",
+      "observation_scope": "Metadatos del RSS de Google Noticias; no se visitaron ni verificaron artículos, derechos o políticas editoriales del medio.",
+      "feed_version": "rss20"
+    },
+    {
+      "key": "csic",
+      "name": "RADAR — CSIC | Investigación de IA",
+      "website": "https://www.csic.es/es/actualidad-del-csic",
+      "feed": "https://news.google.com/rss/search?q=site%3Acsic.es%2Fes%2Factualidad-del-csic+%28%22inteligencia+artificial%22+OR+%22aprendizaje+autom%C3%A1tico%22%29+when%3A30d&hl=es&gl=ES&ceid=ES%3Aes",
+      "query": "site:csic.es/es/actualidad-del-csic (\"inteligencia artificial\" OR \"aprendizaje automático\") when:30d",
+      "kind": "google-noticias",
+      "http_status": 200,
+      "response_sha256": "f89647881a7fdcd20f194bef92b8eb3b08b9a49f73d865389b482bbed1793f8a",
+      "verified_at": "2026-10-28T04:04:49.162296+00:00",
+      "bozo": false,
+      "entries_observed": 4,
+      "last_published_at": "2026-10-23T12:00:00Z",
+      "recent_dated_entries": 4,
+      "samples": [
+        {
+          "title": "El CSIC acoge en el Instituto de Neurociencias de Alicante tres conferencias en el marco de la XXX Cumbre Iberoamericana - Consejo Superior de Investigaciones Científicas",
+          "published": "Wed, 21 Oct 2026 12:00:00 GMT",
+          "publisher": "Consejo Superior de Investigaciones Científicas",
+          "publisher_url": "http://www.csic.es"
+        },
+        {
+          "title": "El CSIC se compromete a proteger la integridad y la transparencia de la IA aplicada a la ciencia y en beneficio de la humanidad junto a los principales organismos públicos de investigación mundiales - Consejo Superior de Investigaciones Científicas",
+          "published": "Thu, 15 Oct 2026 07:00:00 GMT",
+          "publisher": "Consejo Superior de Investigaciones Científicas",
+          "publisher_url": "http://www.csic.es"
+        }
+      ],
+      "category": "01 - Inteligencia Artificial",
+      "status": "rss_observed",
+      "included": true,
+      "language_scope": "Portal en español; búsqueda hl=es. El RSS del índice no garantiza el idioma ni pertinencia de cada resultado.",
+      "observation_scope": "Metadatos del RSS de Google Noticias; no se visitaron ni verificaron artículos, derechos o políticas editoriales del medio.",
+      "feed_version": "rss20"
+    },
+    {
+      "key": "telefonica",
+      "name": "RADAR — Think Big / Telefónica | IA aplicada",
+      "website": "https://blogthinkbig.com/",
+      "feed": "https://news.google.com/rss/search?q=site%3Ablogthinkbig.com+%28intitle%3AIA+OR+intitle%3A%22inteligencia+artificial%22%29+when%3A30d&hl=es&gl=ES&ceid=ES%3Aes",
+      "query": "site:blogthinkbig.com (intitle:IA OR intitle:\"inteligencia artificial\") when:30d",
+      "kind": "google-noticias",
+      "http_status": 200,
+      "response_sha256": "419d24a27d1221fe4a74465705bba112477a1492d70e04f8bfb7f6a55f506ae9",
+      "verified_at": "2026-10-28T04:04:49.645333+00:00",
+      "bozo": false,
+      "entries_observed": 31,
+      "last_published_at": "2026-10-27T17:32:17Z",
+      "recent_dated_entries": 31,
+      "samples": [
+        {
+          "title": "¿Qué están haciendo Spotify, YouTube Music y Apple Music con la música hecha con IA? - Blogthinkbig.com",
+          "published": "Tue, 27 Oct 2026 16:32:19 GMT",
+          "publisher": "Blogthinkbig.com",
+          "publisher_url": "https://blogthinkbig.com"
+        },
+        {
+          "title": "¿Está realmente la IA cambiando la economía? Qué dicen los datos macro y qué lecciones podemos aprender de ello - Blogthinkbig.com",
+          "published": "Tue, 27 Oct 2026 17:32:17 GMT",
+          "publisher": "Blogthinkbig.com",
+          "publisher_url": "https://blogthinkbig.com"
+        }
+      ],
+      "category": "01 - Inteligencia Artificial",
+      "status": "rss_observed",
+      "included": true,
+      "language_scope": "Portal en español; búsqueda hl=es. El RSS del índice no garantiza el idioma ni pertinencia de cada resultado.",
+      "observation_scope": "Metadatos del RSS de Google Noticias; no se visitaron ni verificaron artículos, derechos o políticas editoriales del medio.",
+      "feed_version": "rss20"
+    },
+    {
+      "key": "retina",
+      "name": "RADAR — Retina | Análisis de IA",
+      "website": "https://retinatendencias.com/",
+      "feed": "https://news.google.com/rss/search?q=site%3Aretinatendencias.com+%28%22inteligencia+artificial%22+OR+%22IA%22%29+when%3A30d&hl=es&gl=ES&ceid=ES%3Aes",
+      "query": "site:retinatendencias.com (\"inteligencia artificial\" OR \"IA\") when:30d",
+      "kind": "google-noticias",
+      "http_status": 200,
+      "response_sha256": "8298b036169202214eb72da89552c62d0a30f35be07f34b4d9a1983fbf0a411a",
+      "verified_at": "2026-10-28T04:04:49.666402+00:00",
+      "bozo": false,
+      "entries_observed": 5,
+      "last_published_at": "2026-10-26T11:48:12Z",
+      "recent_dated_entries": 5,
+      "samples": [
+        {
+          "title": "¡La escuela ha muerto! - Retina",
+          "published": "Sun, 25 Oct 2026 16:14:16 GMT",
+          "publisher": "Retina",
+          "publisher_url": "https://retinatendencias.com"
+        },
+        {
+          "title": "¿Casero de GPUs o líder de la IA? Las dos caras de Grok - Retina",
+          "published": "Mon, 26 Oct 2026 11:48:12 GMT",
+          "publisher": "Retina",
+          "publisher_url": "https://retinatendencias.com"
+        }
+      ],
+      "category": "01 - Inteligencia Artificial",
+      "status": "rss_observed",
+      "included": true,
+      "language_scope": "Portal en español; búsqueda hl=es. El RSS del índice no garantiza el idioma ni pertinencia de cada resultado.",
+      "observation_scope": "Metadatos del RSS de Google Noticias; no se visitaron ni verificaron artículos, derechos o políticas editoriales del medio.",
+      "feed_version": "rss20"
+    }
+  ],
+  "revalidated_sources": [
+    {
+      "name": "RADAR — MIT Technology Review en español | IA",
+      "feed": "https://news.google.com/rss/search?q=site%3Atechnologyreview.es%20%28%22inteligencia%20artificial%22%20OR%20%22IA%22%29%20when%3A30d&hl=es-419&gl=CL&ceid=CL%3Aes-419",
+      "category": "01 - Inteligencia Artificial",
+      "verified_at": "2026-10-28T04:04:16.217840+00:00",
+      "status": "rss_observed",
+      "http_status": 200,
+      "entries_observed": 12,
+      "bozo": false,
+      "response_sha256": "186c34d2da531f17f02b2b7db4c0cbc72dfccb291cc3df71b109b0e7449d5d01",
+      "last_published_at": "2026-10-27T17:14:34Z",
+      "recent_dated_entries": 12,
+      "samples": [
+        {
+          "title": "¿Revelará la salida a bolsa la verdadera cara de Anthropic? - MIT Technology Review en español",
+          "published": "Mon, 26 Oct 2026 23:28:23 GMT",
+          "publisher": "MIT Technology Review en español"
+        },
+        {
+          "title": "The Download: la salida a bolsa de Anthropic, redes eléctricas más inteligentes y píldoras de ejercicio - MIT Technology Review en español",
+          "published": "Tue, 27 Oct 2026 17:09:33 GMT",
+          "publisher": "MIT Technology Review en español"
+        }
+      ]
+    },
+    {
+      "name": "RADAR — Papers y estudios científicos de IA | Español",
+      "feed": "https://news.google.com/rss/search?q=%28%22paper%22%20OR%20%22art%C3%ADculo%20cient%C3%ADfico%22%20OR%20%22investigaci%C3%B3n%22%29%20%22inteligencia%20artificial%22%20when%3A30d&hl=es-419&gl=CL&ceid=CL%3Aes-419",
+      "category": "01 - Inteligencia Artificial",
+      "verified_at": "2026-10-28T04:04:16.739981+00:00",
+      "status": "rss_observed",
+      "http_status": 200,
+      "entries_observed": 100,
+      "bozo": false,
+      "response_sha256": "1d34f123e1bbc5cc72e3885940e13554cf5d82b1a74360e4f007953db7367fb4",
+      "last_published_at": "2026-10-27T22:52:30Z",
+      "recent_dated_entries": 100,
+      "samples": [
+        {
+          "title": "Investigación UFRO explora el uso de inteligencia artificial generativa en el desarrollo de software cuántico - Universidad de La Frontera",
+          "published": "Fri, 23 Oct 2026 07:00:00 GMT",
+          "publisher": "Universidad de La Frontera"
+        },
+        {
+          "title": "Aisén Etcheverry, vicerrectora de Investigación e Innovación: “la II Semana de la IA tamién es porque nos preguntamos cómo ofrecemos una educación resiliente a la inteligencia artificial” - Universidad Alberto Hurtado",
+          "published": "Thu, 15 Oct 2026 19:28:32 GMT",
+          "publisher": "Universidad Alberto Hurtado"
+        }
+      ]
+    },
+    {
+      "name": "RADAR — Conferencias y congresos de IA | Español",
+      "feed": "https://news.google.com/rss/search?q=%28%22conferencia%20de%20inteligencia%20artificial%22%20OR%20%22congreso%20de%20IA%22%20OR%20%22jornada%20de%20inteligencia%20artificial%22%29%20when%3A30d&hl=es-419&gl=CL&ceid=CL%3Aes-419",
+      "category": "01 - Inteligencia Artificial",
+      "verified_at": "2026-10-28T04:04:17.555436+00:00",
+      "status": "rss_observed",
+      "http_status": 200,
+      "entries_observed": 8,
+      "bozo": false,
+      "response_sha256": "7f894c6cff9ae9372c0ddf40086dfd8f22d1f26af48846199e0d563363f743c5",
+      "last_published_at": "2026-10-27T16:10:26Z",
+      "recent_dated_entries": 8,
+      "samples": [
+        {
+          "title": "Telefónica muestra en el Congreso de IA de Andalucía sus avances en inteligencia artificial - PressDigital",
+          "published": "Mon, 26 Oct 2026 13:48:00 GMT",
+          "publisher": "PressDigital"
+        },
+        {
+          "title": "Telefónica presenta avances en inteligencia artificial en Congreso de IA de Andalucía - Córdoba Buenas Noticias",
+          "published": "Mon, 26 Oct 2026 16:36:21 GMT",
+          "publisher": "Córdoba Buenas Noticias"
+        }
+      ]
+    },
+    {
+      "name": "RADAR — Lanzamientos de modelos y herramientas IA | Español",
+      "feed": "https://news.google.com/rss/search?q=%28%22nuevo%20modelo%20de%20IA%22%20OR%20%22lanzamiento%20de%20IA%22%20OR%20%22nueva%20herramienta%20de%20inteligencia%20artificial%22%29%20when%3A30d&hl=es-419&gl=CL&ceid=CL%3Aes-419",
+      "category": "01 - Inteligencia Artificial",
+      "verified_at": "2026-10-28T04:04:18.286531+00:00",
+      "status": "rss_observed",
+      "http_status": 200,
+      "entries_observed": 64,
+      "bozo": false,
+      "response_sha256": "528fad8d3e2a23daa94db4c80066550d3c984ec490b3a619b0112d991eb7037e",
+      "last_published_at": "2026-10-26T22:20:46Z",
+      "recent_dated_entries": 64,
+      "samples": [
+        {
+          "title": "OpenAI cancela el lanzamiento de su nuevo modelo de IA por motivos de seguridad - Democracy Now!",
+          "published": "Tue, 29 Sep 2026 07:00:00 GMT",
+          "publisher": "Democracy Now!"
+        },
+        {
+          "title": "Chatear con el ADN ahora es posible gracias al nuevo modelo de IA de Hugging Face - WIRED",
+          "published": "Fri, 23 Oct 2026 14:00:00 GMT",
+          "publisher": "WIRED"
+        }
+      ]
+    },
+    {
+      "name": "RADAR — Agencia SINC | Ciencia",
+      "feed": "https://news.google.com/rss/search?q=site%3Aagenciasinc.es+when%3A30d&hl=es&gl=ES&ceid=ES%3Aes",
+      "category": "03 - Internacionales",
+      "verified_at": "2026-10-28T04:04:18.966044+00:00",
+      "status": "rss_observed",
+      "http_status": 200,
+      "entries_observed": 73,
+      "bozo": false,
+      "response_sha256": "c1841c5f015c63f9e47bb5791bfb2cb3c26f0494c1e90d090b8930d09449cbc7",
+      "last_published_at": "2026-10-28T01:00:00Z",
+      "recent_dated_entries": 73,
+      "samples": [
+        {
+          "title": "Solo una quinta parte de la vegetación de la Antártida está en áreas protegidas - Sinc",
+          "published": "Tue, 27 Oct 2026 09:48:00 GMT",
+          "publisher": "Sinc"
+        },
+        {
+          "title": "La ciencia del terror: por qué pasamos miedo, y por qué nos gusta cuando no es real - Sinc",
+          "published": "Mon, 26 Oct 2026 07:00:00 GMT",
+          "publisher": "Sinc"
+        }
+      ]
+    }
+  ],
+  "pending_direct_feeds": [
+    {
+      "name": "MEDIO — Xataka | Inteligencia Artificial",
+      "feed": "https://www.xataka.com/categoria/inteligencia-artificial/rss2.xml",
+      "category": "01 - Inteligencia Artificial",
+      "verified_at": "2026-10-28T04:04:16.217776+00:00",
+      "status": "not_checked_network_policy",
+      "http_status": null,
+      "entries_observed": null
+    },
+    {
+      "name": "MEDIO — Genbeta | Inteligencia Artificial",
+      "feed": "https://www.genbeta.com/categoria/inteligencia-artificial/rss2.xml",
+      "category": "01 - Inteligencia Artificial",
+      "verified_at": "2026-10-28T04:04:16.217797+00:00",
+      "status": "not_checked_network_policy",
+      "http_status": null,
+      "entries_observed": null
+    },
+    {
+      "name": "MEDIO — WWWhat's New | Inteligencia Artificial",
+      "feed": "https://wwwhatsnew.com/category/inteligencia-artificial/feed/",
+      "category": "01 - Inteligencia Artificial",
+      "verified_at": "2026-10-28T04:04:16.217820+00:00",
+      "status": "not_checked_network_policy",
+      "http_status": null,
+      "entries_observed": null
+    },
+    {
+      "name": "INVESTIGACIÓN — Agencia SINC | Tecnología",
+      "feed": "https://www.agenciasinc.es/feed/Tecnologia",
+      "category": "01 - Inteligencia Artificial",
+      "verified_at": "2026-10-28T04:04:16.217826+00:00",
+      "status": "not_checked_network_policy",
+      "http_status": null,
+      "entries_observed": null
+    },
+    {
+      "name": "INVESTIGACIÓN — Agencia SINC | Ciencia",
+      "feed": "https://www.agenciasinc.es/feed/Ciencia",
+      "category": "01 - Inteligencia Artificial",
+      "verified_at": "2026-10-28T04:04:16.217831+00:00",
+      "status": "not_checked_network_policy",
+      "http_status": null,
+      "entries_observed": null
+    },
+    {
+      "name": "EVENTOS — Agencia SINC | Agenda",
+      "feed": "https://www.agenciasinc.es/feed/Agenda",
+      "category": "01 - Inteligencia Artificial",
+      "verified_at": "2026-10-28T04:04:16.217836+00:00",
+      "status": "not_checked_network_policy",
+      "http_status": null,
+      "entries_observed": null
+    },
+    {
+      "name": "MEDIO — Hipertextual",
+      "feed": "https://hipertextual.com/feed/",
+      "category": "02 - Tecnología",
+      "verified_at": "2026-10-28T04:04:18.966017+00:00",
+      "status": "not_checked_network_policy",
+      "http_status": null,
+      "entries_observed": null
+    }
+  ],
+  "not_added": [
+    {
+      "name": "BBVA OpenMind",
+      "status": "empty_google_query",
+      "http_status": 200,
+      "entries_observed": 0,
+      "reason": "La consulta de Google Noticias probada para IA en los últimos30d no devolvió entradas; no determina si existe un RSS editorial válido."
+    }
+  ],
+  "limits": "RSS disponible y metadatos fechados no equivalen a artículos verificados, papers originales ni actividades con fecha validada. No se retiran feeds anteriores ni se afirma inexistencia por restricción de red."
+}

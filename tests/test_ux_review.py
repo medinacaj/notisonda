@@ -36,7 +36,7 @@ class UxReviewTests(unittest.TestCase):
         self.assertIn('id="sidebarBackdrop"', self.html)
         self.assertIn('id="menuClose"', self.html)
         self.assertIn("matchMedia('(max-width: 950px)')", self.app)
-        self.assertIn('id="newsroomLead"', self.html)
+        self.assertIn('id="homeHeadlines"', self.html)
         self.assertLess(self.html.index('id="topicRail"'), self.html.index('<main class="main"'))
         self.assertIn('sidebar.inert=!visible', self.app)
         self.assertIn('page.inert=mobile&&visible', self.app)
@@ -104,7 +104,7 @@ class UxReviewTests(unittest.TestCase):
         app = (ROOT / 'web/app.js').read_text(encoding='utf-8')
         self.assertIn('button.dataset.topic=String(topic+1)',app)
         self.assertIn('el.dataset.topic=String(topic+1)',app)
-        self.assertIn('block.dataset.topic=String(i+1)',app)
+        self.assertIn('row.dataset.topic=String(topic+1)',app)
 
     def test_section_titles_have_clear_hierarchy(self):
         features = (ROOT / 'web/features.css').read_text(encoding='utf-8')
@@ -118,7 +118,7 @@ class UxReviewTests(unittest.TestCase):
         self.assertIn('@media(max-width:720px)', features)
         self.assertIn('body.radar-hybrid .dashboard-panel-head h2{font-size:22px}', features)
         self.assertIn('./features.css?v=1.2.2', self.html)
-        for title in ('Lo más cubierto', 'Temas en alza', 'En portada', 'En un vistazo', 'Por carpeta'):
+        for title in ('Lo más cubierto', 'Temas en alza', 'En portada', 'En un vistazo'):
             self.assertRegex(self.html, fr'<h2[^>]*>{re.escape(title)}</h2>')
 
     def test_history_manifest_is_not_silently_truncated(self):

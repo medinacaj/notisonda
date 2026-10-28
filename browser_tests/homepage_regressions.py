@@ -56,8 +56,8 @@ def main():
                 visible = round(dims['width']/dims['card'])
                 assert visible == (3 if width == 1440 else 1), dims
                 assert page.evaluate("document.documentElement.scrollWidth <= innerWidth + 2")
-                expect(page.locator('#newsroomColumns')).to_be_hidden()
-                expect(page.locator('.newsroom-secondary-column')).to_be_hidden()
+                expect(page.locator('#newsroomColumns')).to_have_count(0)
+                expect(page.locator('.newsroom-secondary-column')).to_have_count(0)
                 expect(page.locator('#latestCarouselNext')).to_be_enabled()
                 page.locator('#latestCarouselNext').click()
                 page.wait_for_function("() => document.getElementById('dashboardRecent').scrollLeft > 0")

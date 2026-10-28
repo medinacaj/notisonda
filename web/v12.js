@@ -289,29 +289,7 @@
   renderDashboard=function(...args){
     dashboardBase(...args);
     updateMine();
-    const container=$('dashboardFolders');
-    const region=regionalCats();
-    if(!region.length)return;
-    const regular=[...container.querySelectorAll('.dashboard-folder')];
-    for(const section of regular){
-      const label=section.querySelector('h3')?.textContent||'';
-      if(region.some(cat=>categoryLabel(cat)===label))section.remove();
-    }
-    if(prefs.mine && !region.some(cat=>myCats().includes(cat)))return;
-    const visibleIds=new Set([...$('dashboardFeature').querySelectorAll('[data-article-id]'),...$('dashboardRecent').querySelectorAll('[data-article-id]'),...container.querySelectorAll('[data-article-id]')].map(node=>node.dataset.articleId));
-    const stories=dashboardEligible().filter(item=>inGeo(item,'latam')&&!visibleIds.has(item.id)).slice(0,4);
-    if(!stories.length)return;
-    const panel=mk('section','dashboard-folder v12-region-dashboard');
-    const header=mk('button','dashboard-folder-head');header.type='button';
-    header.setAttribute('aria-label','Ver noticias de Latinoamérica');
-    header.append(display('Latinoamérica','v12-region-dashboard-title','h3'),
-      display(String(state.sources.filter(src=>geoCats('latam').includes(src.category)).length)+' fuentes regionales','v12-region-dashboard-count'),
-      display('Ver todo →','dashboard-folder-more'));
-    header.addEventListener('click',()=>goTo('region'));
-    const list=mk('div','dashboard-folder-list');
-    list.append(...stories.map(item=>headlineRow(item,'dashboard-folder-row')));
-    panel.append(header,list);container.append(panel);
-    container.closest('.dashboard-panel').hidden=false;
+
   };
   function createBriefingOptions(){
     const wrap=mk('div','v12-briefing-scopes');wrap.id='v12BriefingScopes';

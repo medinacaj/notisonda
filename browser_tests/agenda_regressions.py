@@ -264,7 +264,7 @@ def main():
                 assert page.locator('#agendaList a').first.get_attribute('rel') == 'noopener noreferrer external'
                 expect(page.get_by_role('heading', name='En portada', exact=True)).to_be_hidden()
                 expect(page.locator('#dashboardFeature')).to_be_hidden()
-                expect(page.locator('#newsroomDiscovery')).to_be_hidden()
+                expect(page.locator('#newsroomColumns,#dashboardFolders')).to_have_count(0)
                 assert page.locator('#libraryFolderNav .system-folder-link').count() == 8
                 page.locator('[data-agenda-days="0"]').click()
                 expect(page.locator('#agendaList [data-event-id="viejo-futuro"]')).to_have_count(0)

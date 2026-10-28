@@ -1,0 +1,1322 @@
+{
+  "version": 1,
+  "checked_at": "2026-10-28T00:07:00.064481Z",
+  "baseline_commit": "9cc60bdaba9388e788cb3edaa046e6f94f472a48",
+  "original_count": 221,
+  "added_count": 23,
+  "resulting_count": 244,
+  "category_count": 8,
+  "verification_scope": "Respuestas RSS públicas observadas por conectividad autorizada, con TLS. Se comprobaron HTTP, lectura RSS, identidad editorial en metadatos, fechas y muestras en español. No se comprobaron hechos individuales, páginas del editor de los canales intermediados, audiencias ni licencias. Una entrada fechada puede ser un índice/autor; los conteos no equivalen a artículos verificados.",
+  "historical_record": "sources/discovery-verification.json se conserva como evidencia del estado pendiente observado el24-10-2026; revalidated_sources contiene la observación posterior.",
+  "sources": [
+    {
+      "key": "rtve",
+      "name": "RADAR — RTVE | Noticias",
+      "website": "https://www.rtve.es/noticias/",
+      "feed": "https://news.google.com/rss/search?q=site%3Artve.es%2Fnoticias+when%3A30d&hl=es&gl=ES&ceid=ES%3Aes",
+      "query": "site:rtve.es/noticias when:30d",
+      "kind": "google-noticias",
+      "verified_at": "2026-10-28T00:04:30.221815Z",
+      "http_status": 200,
+      "response_sha256": "b1dbf42bbaaf2a2af43f8f9c59c88c2a41f3d1b30f223a7287e1a019d59a372f",
+      "content_type": "application/xml; charset=utf-8",
+      "status": "rss_observed",
+      "entries_observed": 100,
+      "last_published_at": "2026-10-27T23:35:00Z",
+      "feed_language": "es",
+      "publishers": {
+        "www.rtve.es": 98,
+        "amp.rtve.es": 2
+      },
+      "samples": [
+        {
+          "title": "Flávio Bolsonaro huye a Estados Unidos sin entregar su pasaporte tras su derrota electoral en Brasil - RTVE.es",
+          "published_at": "2026-10-27T16:35:48Z",
+          "publisher": "RTVE.es",
+          "publisher_url": "https://www.rtve.es"
+        },
+        {
+          "title": "Resumen de la jornada política del 27 de octubre: la jueza pide al Gobierno desclasificar los documentos sobre Ceuta - RTVE.es",
+          "published_at": "2026-10-27T22:46:00Z",
+          "publisher": "RTVE.es",
+          "publisher_url": "https://www.rtve.es"
+        }
+      ],
+      "category": "03 - Internacionales",
+      "recent_dated_entries": 100,
+      "obvious_index_title_matches": 0,
+      "included": true,
+      "observation_scope": "RSS intermediado de Google Noticias con consulta acotada al editor; no es su RSS directo.",
+      "selection_reason": "Medio reconocido con noticias recientes en español; ampliar diversidad editorial y territorial."
+    },
+    {
+      "key": "rfi",
+      "name": "RADAR — RFI en Español",
+      "website": "https://www.rfi.fr/es/",
+      "feed": "https://news.google.com/rss/search?q=site%3Arfi.fr%2Fes+when%3A30d&hl=es&gl=ES&ceid=ES%3Aes",
+      "query": "site:rfi.fr/es when:30d",
+      "kind": "google-noticias",
+      "verified_at": "2026-10-28T00:04:30.222253Z",
+      "http_status": 200,
+      "response_sha256": "1425a9d14f9bae8e18741e36cf21be80c9b5b6bacd87337b80d3fdd706e08fe7",
+      "content_type": "application/xml; charset=utf-8",
+      "status": "rss_observed",
+      "entries_observed": 100,
+      "last_published_at": "2026-10-27T21:16:01Z",
+      "feed_language": "es",
+      "publishers": {
+        "www.rfi.fr": 100
+      },
+      "samples": [
+        {
+          "title": "Noticias de América - La reelección de Lula fortalece los BRICS, pero bolsonaristas pesarán en política exterior - RFI",
+          "published_at": "2026-10-27T09:39:10Z",
+          "publisher": "RFI",
+          "publisher_url": "https://www.rfi.fr"
+        },
+        {
+          "title": "Lula: el reto de gobernar un país dividido con mayorías de derecha en Senado y Cámara - RFI",
+          "published_at": "2026-10-26T11:16:41Z",
+          "publisher": "RFI",
+          "publisher_url": "https://www.rfi.fr"
+        }
+      ],
+      "category": "03 - Internacionales",
+      "recent_dated_entries": 100,
+      "obvious_index_title_matches": 4,
+      "included": true,
+      "observation_scope": "RSS intermediado de Google Noticias con consulta acotada al editor; no es su RSS directo.",
+      "selection_reason": "Medio reconocido con noticias recientes en español; ampliar diversidad editorial y territorial."
+    },
+    {
+      "key": "lavanguardia",
+      "name": "RADAR — La Vanguardia | Internacional",
+      "website": "https://www.lavanguardia.com/",
+      "feed": "https://news.google.com/rss/search?q=site%3Alavanguardia.com%2Finternacional+when%3A30d&hl=es&gl=ES&ceid=ES%3Aes",
+      "query": "site:lavanguardia.com/internacional when:30d",
+      "kind": "google-noticias",
+      "verified_at": "2026-10-28T00:04:30.223752Z",
+      "http_status": 200,
+      "response_sha256": "1c2c245af4d3550cddfdc4c76fe053432f1d272f15a17a64d873a56662ae3847",
+      "content_type": "application/xml; charset=utf-8",
+      "status": "rss_observed",
+      "entries_observed": 100,
+      "last_published_at": "2026-10-27T21:10:30Z",
+      "feed_language": "es",
+      "publishers": {
+        "www.lavanguardia.com": 100
+      },
+      "samples": [
+        {
+          "title": "Derrotado e investigado por corrupción, Flávio Bolsonaro huye en jet privado a Estados Unidos - La Vanguardia",
+          "published_at": "2026-10-27T21:10:30Z",
+          "publisher": "La Vanguardia",
+          "publisher_url": "https://www.lavanguardia.com"
+        },
+        {
+          "title": "La motosierra pierde dientes - La Vanguardia",
+          "published_at": "2026-10-27T05:00:00Z",
+          "publisher": "La Vanguardia",
+          "publisher_url": "https://www.lavanguardia.com"
+        }
+      ],
+      "category": "03 - Internacionales",
+      "recent_dated_entries": 100,
+      "obvious_index_title_matches": 0,
+      "included": true,
+      "observation_scope": "RSS intermediado de Google Noticias con consulta acotada al editor; no es su RSS directo.",
+      "selection_reason": "Medio reconocido con noticias recientes en español; ampliar diversidad editorial y territorial."
+    },
+    {
+      "key": "eldiario-es",
+      "name": "RADAR — elDiario.es",
+      "website": "https://www.eldiario.es/",
+      "feed": "https://news.google.com/rss/search?q=site%3Awww.eldiario.es+when%3A30d&hl=es&gl=ES&ceid=ES%3Aes",
+      "query": "site:www.eldiario.es when:30d",
+      "kind": "google-noticias",
+      "verified_at": "2026-10-28T00:04:30.225345Z",
+      "http_status": 200,
+      "response_sha256": "14ad75a48e6a92762a9cecf53d198712c121bb258d578da5d2b94bfdc2be0b12",
+      "content_type": "application/xml; charset=utf-8",
+      "status": "rss_observed",
+      "entries_observed": 100,
+      "last_published_at": "2026-10-27T22:25:16Z",
+      "feed_language": "es",
+      "publishers": {
+        "www.eldiario.es": 100
+      },
+      "samples": [
+        {
+          "title": "La Administración Trump afirma que expedirá visados a Flávio Bolsonaro y a su familia y les permitirá entrar en EEUU tras huir de Brasil - elDiario.es",
+          "published_at": "2026-10-27T21:18:35Z",
+          "publisher": "elDiario.es",
+          "publisher_url": "https://www.eldiario.es"
+        },
+        {
+          "title": "Irene Montero y Gabriel Rufián, en 'La Revuelta': \"El PSOE jamás se va a atrever a expropiar o nacionalizar, nosotras sí\" - elDiario.es",
+          "published_at": "2026-10-27T22:25:16Z",
+          "publisher": "elDiario.es",
+          "publisher_url": "https://www.eldiario.es"
+        }
+      ],
+      "category": "03 - Internacionales",
+      "recent_dated_entries": 100,
+      "obvious_index_title_matches": 0,
+      "included": true,
+      "observation_scope": "RSS intermediado de Google Noticias con consulta acotada al editor; no es su RSS directo.",
+      "selection_reason": "Medio reconocido con noticias recientes en español; ampliar diversidad editorial y territorial."
+    },
+    {
+      "key": "elconfidencial",
+      "name": "RADAR — El Confidencial | Mundo",
+      "website": "https://www.elconfidencial.com/",
+      "feed": "https://news.google.com/rss/search?q=site%3Aelconfidencial.com%2Fmundo+when%3A30d&hl=es&gl=ES&ceid=ES%3Aes",
+      "query": "site:elconfidencial.com/mundo when:30d",
+      "kind": "google-noticias",
+      "verified_at": "2026-10-28T00:04:30.610908Z",
+      "http_status": 200,
+      "response_sha256": "24a3089e7cd63db252d5272eaf42c099be6b093b186e2ec06bc3ee06f8681547",
+      "content_type": "application/xml; charset=utf-8",
+      "status": "rss_observed",
+      "entries_observed": 100,
+      "last_published_at": "2026-10-27T21:51:00Z",
+      "feed_language": "es",
+      "publishers": {
+        "www.elconfidencial.com": 100
+      },
+      "samples": [
+        {
+          "title": "Estados Unidos acogerá a Flávio Bolsonaro y a su familia tras su huida de Brasil - El Confidencial",
+          "published_at": "2026-10-27T21:51:00Z",
+          "publisher": "El Confidencial",
+          "publisher_url": "https://www.elconfidencial.com"
+        },
+        {
+          "title": "María Corina Machado regresa a Venezuela, desafiando al Gobierno de Delcy Rodríguez, tutelado por Trump - El Confidencial",
+          "published_at": "2026-10-25T20:31:00Z",
+          "publisher": "El Confidencial",
+          "publisher_url": "https://www.elconfidencial.com"
+        }
+      ],
+      "category": "03 - Internacionales",
+      "recent_dated_entries": 100,
+      "obvious_index_title_matches": 0,
+      "included": true,
+      "observation_scope": "RSS intermediado de Google Noticias con consulta acotada al editor; no es su RSS directo.",
+      "selection_reason": "Medio reconocido con noticias recientes en español; ampliar diversidad editorial y territorial."
+    },
+    {
+      "key": "sinc",
+      "name": "RADAR — Agencia SINC | Ciencia",
+      "website": "https://www.agenciasinc.es/",
+      "feed": "https://news.google.com/rss/search?q=site%3Aagenciasinc.es+when%3A30d&hl=es&gl=ES&ceid=ES%3Aes",
+      "query": "site:agenciasinc.es when:30d",
+      "kind": "google-noticias",
+      "verified_at": "2026-10-28T00:04:30.957187Z",
+      "http_status": 200,
+      "response_sha256": "4ad3cdc8789e096dc6410f6331035de60867cdcfebd8f802b3c2584bd3aa764d",
+      "content_type": "application/xml; charset=utf-8",
+      "status": "rss_observed",
+      "entries_observed": 100,
+      "last_published_at": "2026-10-27T12:00:00Z",
+      "feed_language": "es",
+      "publishers": {
+        "www.agenciasinc.es": 100
+      },
+      "samples": [
+        {
+          "title": "Solo una quinta parte de la vegetación de la Antártida está en áreas protegidas - Sinc",
+          "published_at": "2026-10-27T09:48:00Z",
+          "publisher": "Sinc",
+          "publisher_url": "https://www.agenciasinc.es"
+        },
+        {
+          "title": "La ciencia del terror: por qué pasamos miedo, y por qué nos gusta cuando no es real - Sinc",
+          "published_at": "2026-10-26T07:00:00Z",
+          "publisher": "Sinc",
+          "publisher_url": "https://www.agenciasinc.es"
+        }
+      ],
+      "category": "03 - Internacionales",
+      "recent_dated_entries": 99,
+      "obvious_index_title_matches": 0,
+      "included": true,
+      "observation_scope": "RSS intermediado de Google Noticias con consulta acotada al editor; no es su RSS directo.",
+      "selection_reason": "Ampliar ciencia, naturaleza y análisis en español."
+    },
+    {
+      "key": "conversation",
+      "name": "RADAR — The Conversation | Ciencia y análisis en español",
+      "website": "https://theconversation.com/es",
+      "feed": "https://news.google.com/rss/search?q=site%3Atheconversation.com+%28intitle%3Aciencia+OR+intitle%3Ainvestigaci%C3%B3n+OR+intitle%3Atecnolog%C3%ADa+OR+intitle%3Asalud%29+when%3A30d&hl=es&gl=ES&ceid=ES%3Aes",
+      "query": "site:theconversation.com (intitle:ciencia OR intitle:investigación OR intitle:tecnología OR intitle:salud) when:30d",
+      "kind": "google-noticias",
+      "verified_at": "2026-10-28T00:04:31.004229Z",
+      "http_status": 200,
+      "response_sha256": "7b67348593e2d8b2398616a9013394afaee7151750ae37c908556dfca2d5254f",
+      "content_type": "application/xml; charset=utf-8",
+      "status": "rss_observed",
+      "entries_observed": 10,
+      "last_published_at": "2026-10-27T18:22:51Z",
+      "feed_language": "es",
+      "publishers": {
+        "theconversation.com": 10
+      },
+      "samples": [
+        {
+          "title": "Cómo combatir la desinformación en salud: cuando verificar y corregir no basta - The Conversation",
+          "published_at": "2026-10-27T18:17:16Z",
+          "publisher": "The Conversation",
+          "publisher_url": "https://theconversation.com"
+        },
+        {
+          "title": "Qué es la ‘crisis de replicación’ de la ciencia y cómo solucionarla - The Conversation",
+          "published_at": "2026-10-27T18:22:51Z",
+          "publisher": "The Conversation",
+          "publisher_url": "https://theconversation.com"
+        }
+      ],
+      "category": "03 - Internacionales",
+      "recent_dated_entries": 10,
+      "obvious_index_title_matches": 0,
+      "included": true,
+      "observation_scope": "RSS intermediado de Google Noticias con consulta acotada al editor; no es su RSS directo.",
+      "selection_reason": "Ampliar ciencia, naturaleza y análisis en español."
+    },
+    {
+      "key": "nationalgeographic",
+      "name": "RADAR — National Geographic España | Ciencia y naturaleza",
+      "website": "https://www.nationalgeographic.com.es/",
+      "feed": "https://news.google.com/rss/search?q=site%3Awww.nationalgeographic.com.es+when%3A30d&hl=es&gl=ES&ceid=ES%3Aes",
+      "query": "site:www.nationalgeographic.com.es when:30d",
+      "kind": "google-noticias",
+      "verified_at": "2026-10-28T00:06:56.997003Z",
+      "http_status": 200,
+      "response_sha256": "86319eb513a079ded50f6e9a5944198c7e903cbad84b820627a4e94491e0054e",
+      "content_type": "application/xml; charset=utf-8",
+      "status": "rss_observed",
+      "entries_observed": 100,
+      "last_published_at": "2026-10-27T20:00:00Z",
+      "feed_language": "es",
+      "publishers": {
+        "www.nationalgeographic.com.es": 100
+      },
+      "samples": [
+        {
+          "title": "Mariano Barriendos, historiador del clima: “El Súper El Niño fue un desencadenante de la Revolución Francesa” - National Geographic España",
+          "published_at": "2026-10-26T17:00:00Z",
+          "publisher": "National Geographic España",
+          "publisher_url": "https://www.nationalgeographic.com.es"
+        },
+        {
+          "title": "Más allá de la pseudociencia: los beneficios de la luz roja, \"la terapia del 1%\" avalada por nuevos estudios - National Geographic España",
+          "published_at": "2026-10-27T07:30:06Z",
+          "publisher": "National Geographic España",
+          "publisher_url": "https://www.nationalgeographic.com.es"
+        }
+      ],
+      "category": "03 - Internacionales",
+      "recent_dated_entries": 100,
+      "obvious_index_title_matches": 0,
+      "included": true,
+      "observation_scope": "RSS intermediado de Google Noticias con consulta acotada al editor; no es su RSS directo.",
+      "selection_reason": "Ampliar ciencia, naturaleza y análisis en español."
+    },
+    {
+      "key": "afp-factual",
+      "name": "RADAR — AFP Factual | Verificación",
+      "website": "https://factual.afp.com/",
+      "feed": "https://news.google.com/rss/search?q=site%3Afactual.afp.com%2Fdoc.afp.com+when%3A30d&hl=es&gl=ES&ceid=ES%3Aes",
+      "query": "site:factual.afp.com/doc.afp.com when:30d",
+      "kind": "google-noticias",
+      "verified_at": "2026-10-28T00:06:58.918207Z",
+      "http_status": 200,
+      "response_sha256": "c2b5985e303438341211927561d69137fafd9779fab64f23e8b7bf193f3cbf83",
+      "content_type": "application/xml; charset=utf-8",
+      "status": "rss_observed",
+      "entries_observed": 65,
+      "last_published_at": "2026-10-27T21:28:47Z",
+      "feed_language": "es",
+      "publishers": {
+        "factual.afp.com": 65
+      },
+      "samples": [
+        {
+          "title": "Empresa de apuestas ilegal en Brasil es usada para simular una ventaja electoral de Flávio Bolsonaro - AFP Factual",
+          "published_at": "2026-10-12T07:00:00Z",
+          "publisher": "AFP Factual",
+          "publisher_url": "https://factual.afp.com"
+        },
+        {
+          "title": "Imágenes de mujeres sexualizadas creadas con IA irrumpen en la campaña en Brasil para promover pornografía - AFP Factual",
+          "published_at": "2026-10-23T21:58:15Z",
+          "publisher": "AFP Factual",
+          "publisher_url": "https://factual.afp.com"
+        }
+      ],
+      "category": "03 - Internacionales",
+      "recent_dated_entries": 64,
+      "obvious_index_title_matches": 0,
+      "included": true,
+      "observation_scope": "RSS intermediado de Google Noticias con consulta acotada al editor; no es su RSS directo.",
+      "selection_reason": "Verificación y explicación de afirmaciones públicas en español."
+    },
+    {
+      "key": "maldita",
+      "name": "RADAR — Maldita.es | Verificación",
+      "website": "https://maldita.es/",
+      "feed": "https://news.google.com/rss/search?q=%28site%3Amaldita.es%2Fmalditobulo+OR+site%3Amaldita.es%2Fmalditaciencia%29+when%3A30d&hl=es&gl=ES&ceid=ES%3Aes",
+      "query": "(site:maldita.es/malditobulo OR site:maldita.es/malditaciencia) when:30d",
+      "kind": "google-noticias",
+      "verified_at": "2026-10-28T00:06:58.444923Z",
+      "http_status": 200,
+      "response_sha256": "b81158427bdc847a8d315676f47ddb7a92b85e76c4819eb9b5e423efec94476e",
+      "content_type": "application/xml; charset=utf-8",
+      "status": "rss_observed",
+      "entries_observed": 4,
+      "last_published_at": "2026-10-21T11:41:00Z",
+      "feed_language": "es",
+      "publishers": {
+        "maldita.es": 4
+      },
+      "samples": [
+        {
+          "title": "Qué sabemos sobre el caso de Thiago y el síndrome de Ondine - Maldita.es",
+          "published_at": "2026-10-05T07:00:00Z",
+          "publisher": "Maldita.es",
+          "publisher_url": "https://maldita.es"
+        },
+        {
+          "title": "Es falso que la IA de Meta pueda acceder a \"todos\" tus mensajes de WhatsApp si no activas la privacidad avanzada: solo puede leer aquellos en los que se la menciona o los que se comparten con ella - Maldita.es",
+          "published_at": "2026-10-06T07:00:00Z",
+          "publisher": "Maldita.es",
+          "publisher_url": "https://maldita.es"
+        }
+      ],
+      "category": "03 - Internacionales",
+      "recent_dated_entries": 4,
+      "obvious_index_title_matches": 0,
+      "included": true,
+      "observation_scope": "RSS intermediado de Google Noticias con consulta acotada al editor; no es su RSS directo.",
+      "selection_reason": "Verificación y explicación de afirmaciones públicas en español."
+    },
+    {
+      "key": "newtral",
+      "name": "RADAR — Newtral | Verificación",
+      "website": "https://www.newtral.es/",
+      "feed": "https://news.google.com/rss/search?q=site%3Awww.newtral.es+when%3A30d&hl=es&gl=ES&ceid=ES%3Aes",
+      "query": "site:www.newtral.es when:30d",
+      "kind": "google-noticias",
+      "verified_at": "2026-10-28T00:06:57.680548Z",
+      "http_status": 200,
+      "response_sha256": "2f1ab3fc0964bdca95fba08fc978851f90d3d688fdf6187b4448fe3d3282491b",
+      "content_type": "application/xml; charset=utf-8",
+      "status": "rss_observed",
+      "entries_observed": 100,
+      "last_published_at": "2026-10-27T16:47:55Z",
+      "feed_language": "es",
+      "publishers": {
+        "www.newtral.es": 100
+      },
+      "samples": [
+        {
+          "title": "Nos preguntáis por la familia desahuciada en Vitoria que recibe “2.454 euros mensuales” de ayudas públicas - Newtral",
+          "published_at": "2026-10-27T16:47:55Z",
+          "publisher": "Newtral",
+          "publisher_url": "https://www.newtral.es"
+        },
+        {
+          "title": "España no es el país del mundo que más inmigrantes recibe al año - Newtral",
+          "published_at": "2026-10-27T14:30:31Z",
+          "publisher": "Newtral",
+          "publisher_url": "https://www.newtral.es"
+        }
+      ],
+      "category": "03 - Internacionales",
+      "recent_dated_entries": 100,
+      "obvious_index_title_matches": 0,
+      "included": true,
+      "observation_scope": "RSS intermediado de Google Noticias con consulta acotada al editor; no es su RSS directo.",
+      "selection_reason": "Verificación y explicación de afirmaciones públicas en español."
+    },
+    {
+      "key": "chequeado",
+      "name": "RADAR — Chequeado | Verificación",
+      "website": "https://chequeado.com/",
+      "feed": "https://news.google.com/rss/search?q=site%3Achequeado.com%2Fultimas-noticias+when%3A30d&hl=es-419&gl=MX&ceid=MX%3Aes-419",
+      "query": "site:chequeado.com/ultimas-noticias when:30d",
+      "kind": "google-noticias",
+      "verified_at": "2026-10-28T00:04:31.864555Z",
+      "http_status": 200,
+      "response_sha256": "fb8ee9b729ff55c432f13838cbfc4b571fd58145f6504df29565550ad69150b0",
+      "content_type": "application/xml; charset=utf-8",
+      "status": "rss_observed",
+      "entries_observed": 55,
+      "last_published_at": "2026-10-27T20:51:59Z",
+      "feed_language": "es-419",
+      "publishers": {
+        "chequeado.com": 55
+      },
+      "samples": [
+        {
+          "title": "Cómo circuló la narrativa que vincula las protestas estudiantiles en Francia con el islam y el conflicto palestino-israelí - Chequeado",
+          "published_at": "2026-10-26T07:49:00Z",
+          "publisher": "Chequeado",
+          "publisher_url": "https://chequeado.com"
+        },
+        {
+          "title": "Debate presidencial en Brasil: los chequeos a Lula da Silva y Flávio Bolsonaro antes del balotaje 2026 - Chequeado",
+          "published_at": "2026-10-19T07:00:00Z",
+          "publisher": "Chequeado",
+          "publisher_url": "https://chequeado.com"
+        }
+      ],
+      "category": "06 - Latinoamérica",
+      "recent_dated_entries": 48,
+      "obvious_index_title_matches": 0,
+      "included": true,
+      "observation_scope": "RSS intermediado de Google Noticias con consulta acotada al editor; no es su RSS directo.",
+      "selection_reason": "Verificación y explicación de afirmaciones públicas en español."
+    },
+    {
+      "key": "primicias",
+      "name": "RADAR — Primicias | Ecuador",
+      "website": "https://www.primicias.ec/",
+      "feed": "https://news.google.com/rss/search?q=site%3Aprimicias.ec+when%3A30d&hl=es-419&gl=MX&ceid=MX%3Aes-419",
+      "query": "site:primicias.ec when:30d",
+      "kind": "google-noticias",
+      "verified_at": "2026-10-28T00:04:31.962034Z",
+      "http_status": 200,
+      "response_sha256": "623d088721a62099527a938aeac270c6ac8d0ed6911e3de996bc016e7ee5f971",
+      "content_type": "application/xml; charset=utf-8",
+      "status": "rss_observed",
+      "entries_observed": 100,
+      "last_published_at": "2026-10-27T22:51:45Z",
+      "feed_language": "es-419",
+      "publishers": {
+        "www.primicias.ec": 100
+      },
+      "samples": [
+        {
+          "title": "El Salvador | Familiares de presos con supuestos vínculos a pandillas exigen libertad incondicional al régimen de Nayib Bukele - Primicias",
+          "published_at": "2026-10-22T00:47:49Z",
+          "publisher": "Primicias",
+          "publisher_url": "https://www.primicias.ec"
+        },
+        {
+          "title": "Tres cierres viales en Quito por fallas en semáforos entre la avenida América y La Gasca, tras fuertes lluvias - Primicias",
+          "published_at": "2026-10-23T02:55:15Z",
+          "publisher": "Primicias",
+          "publisher_url": "https://www.primicias.ec"
+        }
+      ],
+      "category": "06 - Latinoamérica",
+      "recent_dated_entries": 100,
+      "obvious_index_title_matches": 0,
+      "included": true,
+      "observation_scope": "RSS intermediado de Google Noticias con consulta acotada al editor; no es su RSS directo.",
+      "selection_reason": "Medio reconocido con noticias recientes en español; ampliar diversidad editorial y territorial."
+    },
+    {
+      "key": "eluniverso",
+      "name": "RADAR — El Universo | Ecuador",
+      "website": "https://www.eluniverso.com/",
+      "feed": "https://news.google.com/rss/search?q=site%3Aeluniverso.com+when%3A30d&hl=es-419&gl=MX&ceid=MX%3Aes-419",
+      "query": "site:eluniverso.com when:30d",
+      "kind": "google-noticias",
+      "verified_at": "2026-10-28T00:04:32.091516Z",
+      "http_status": 200,
+      "response_sha256": "879fc3784d2fee6f71d72e3b7694da3dc1bdea2e0b5aadfe8e84a5ef701d6e44",
+      "content_type": "application/xml; charset=utf-8",
+      "status": "rss_observed",
+      "entries_observed": 100,
+      "last_published_at": "2026-10-27T12:16:42Z",
+      "feed_language": "es-419",
+      "publishers": {
+        "www.eluniverso.com": 100
+      },
+      "samples": [
+        {
+          "title": "Don Jepeté - El Universo",
+          "published_at": "2026-10-27T05:00:00Z",
+          "publisher": "El Universo",
+          "publisher_url": "https://www.eluniverso.com"
+        },
+        {
+          "title": "La aviación rusa pierde terreno en el aire: Lockheed Martin prepara un poderoso lote de cazas F-16 Block 70 a la medida para Ucrania - El Universo",
+          "published_at": "2026-10-22T14:08:00Z",
+          "publisher": "El Universo",
+          "publisher_url": "https://www.eluniverso.com"
+        }
+      ],
+      "category": "06 - Latinoamérica",
+      "recent_dated_entries": 100,
+      "obvious_index_title_matches": 0,
+      "included": true,
+      "observation_scope": "RSS intermediado de Google Noticias con consulta acotada al editor; no es su RSS directo.",
+      "selection_reason": "Medio reconocido con noticias recientes en español; ampliar diversidad editorial y territorial."
+    },
+    {
+      "key": "ladiaria",
+      "name": "RADAR — la diaria | Uruguay",
+      "website": "https://ladiaria.com.uy/",
+      "feed": "https://news.google.com/rss/search?q=site%3Aladiaria.com.uy%2Fpolitica+when%3A30d&hl=es-419&gl=MX&ceid=MX%3Aes-419",
+      "query": "site:ladiaria.com.uy/politica when:30d",
+      "kind": "google-noticias",
+      "verified_at": "2026-10-28T00:04:32.443755Z",
+      "http_status": 200,
+      "response_sha256": "e98870c1b4dc6610561d5b0d45361a6dd16e269958d33c4ddba591898ce89cda",
+      "content_type": "application/xml; charset=utf-8",
+      "status": "rss_observed",
+      "entries_observed": 100,
+      "last_published_at": "2026-10-27T20:04:14Z",
+      "feed_language": "es-419",
+      "publishers": {
+        "ladiaria.com.uy": 100
+      },
+      "samples": [
+        {
+          "title": "Polémica por evento en el Palacio Legislativo: la mujer palestina que la coalición rechaza participará por video - la diaria",
+          "published_at": "2026-10-20T23:27:55Z",
+          "publisher": "la diaria",
+          "publisher_url": "https://ladiaria.com.uy"
+        },
+        {
+          "title": "Sánchez afirmó que Uruguay “quiere estar en el mundo” y por eso “se acerca a la OCDE” - la diaria",
+          "published_at": "2026-09-29T07:00:00Z",
+          "publisher": "la diaria",
+          "publisher_url": "https://ladiaria.com.uy"
+        }
+      ],
+      "category": "06 - Latinoamérica",
+      "recent_dated_entries": 100,
+      "obvious_index_title_matches": 0,
+      "included": true,
+      "observation_scope": "RSS intermediado de Google Noticias con consulta acotada al editor; no es su RSS directo.",
+      "selection_reason": "Medio reconocido con noticias recientes en español; ampliar diversidad editorial y territorial."
+    },
+    {
+      "key": "ojopublico",
+      "name": "RADAR — OjoPúblico | Investigación",
+      "website": "https://ojo-publico.com/",
+      "feed": "https://news.google.com/rss/search?q=site%3Aojo-publico.com+when%3A30d&hl=es-419&gl=MX&ceid=MX%3Aes-419",
+      "query": "site:ojo-publico.com when:30d",
+      "kind": "google-noticias",
+      "verified_at": "2026-10-28T00:04:32.671919Z",
+      "http_status": 200,
+      "response_sha256": "1942cda4033e8059cd4f754b8ad35db3147272a55cc106a7197e7ddd7f4823ed",
+      "content_type": "application/xml; charset=utf-8",
+      "status": "rss_observed",
+      "entries_observed": 22,
+      "last_published_at": "2026-10-27T21:36:16Z",
+      "feed_language": "es-419",
+      "publishers": {
+        "ojo-publico.com": 22
+      },
+      "samples": [
+        {
+          "title": "Viceministra de la Mujer elimina el lenguaje inclusivo en el sector que antes lo promovía - Ojo-Público",
+          "published_at": "2026-10-25T05:00:00Z",
+          "publisher": "Ojo-Público",
+          "publisher_url": "https://ojo-publico.com"
+        },
+        {
+          "title": "Enades 2026: rechazo a la desigualdad económica en Perú cae 13 puntos en dos años - Ojo-Público",
+          "published_at": "2026-10-21T00:17:58Z",
+          "publisher": "Ojo-Público",
+          "publisher_url": "https://ojo-publico.com"
+        }
+      ],
+      "category": "06 - Latinoamérica",
+      "recent_dated_entries": 20,
+      "obvious_index_title_matches": 0,
+      "included": true,
+      "observation_scope": "RSS intermediado de Google Noticias con consulta acotada al editor; no es su RSS directo.",
+      "selection_reason": "Periodismo de investigación; disponibilidad puntual, sin prometer frecuencia diaria."
+    },
+    {
+      "key": "feyalegria",
+      "name": "RADAR — Radio Fe y Alegría Noticias",
+      "website": "https://www.radiofeyalegrianoticias.com/",
+      "feed": "https://news.google.com/rss/search?q=site%3Aradiofeyalegrianoticias.com+when%3A30d&hl=es-419&gl=VE&ceid=VE%3Aes-419",
+      "query": "site:radiofeyalegrianoticias.com when:30d",
+      "kind": "google-noticias",
+      "verified_at": "2026-10-28T00:04:32.764343Z",
+      "http_status": 200,
+      "response_sha256": "92ceea2ec1fa42a16f97df910e823e3a70fddea55a3507c70f2ac5401137d10b",
+      "content_type": "application/xml; charset=utf-8",
+      "status": "rss_observed",
+      "entries_observed": 100,
+      "last_published_at": "2026-10-27T20:00:51Z",
+      "feed_language": "es-419",
+      "publishers": {
+        "www.radiofeyalegrianoticias.com": 100
+      },
+      "samples": [
+        {
+          "title": "Gricelda Sánchez: “Hacen falta más de 200 mil maestros” - Radio Fe y Alegría Noticias",
+          "published_at": "2026-10-26T09:00:00Z",
+          "publisher": "Radio Fe y Alegría Noticias",
+          "publisher_url": "https://www.radiofeyalegrianoticias.com"
+        },
+        {
+          "title": "Mineros de El Callao denuncian red de corrupción y extorsión - Radio Fe y Alegría Noticias",
+          "published_at": "2026-10-17T15:50:16Z",
+          "publisher": "Radio Fe y Alegría Noticias",
+          "publisher_url": "https://www.radiofeyalegrianoticias.com"
+        }
+      ],
+      "category": "05 - Venezuela",
+      "recent_dated_entries": 100,
+      "obvious_index_title_matches": 0,
+      "included": true,
+      "observation_scope": "RSS intermediado de Google Noticias con consulta acotada al editor; no es su RSS directo.",
+      "selection_reason": "Medio reconocido con noticias recientes en español; ampliar diversidad editorial y territorial."
+    },
+    {
+      "key": "armando",
+      "name": "RADAR — Armando.info | Investigación",
+      "website": "https://armando.info/",
+      "feed": "https://news.google.com/rss/search?q=site%3Aarmando.info+-intitle%3Aarmando.info+when%3A30d&hl=es-419&gl=VE&ceid=VE%3Aes-419",
+      "query": "site:armando.info -intitle:armando.info when:30d",
+      "kind": "google-noticias",
+      "verified_at": "2026-10-28T00:04:32.909346Z",
+      "http_status": 200,
+      "response_sha256": "72fd67740a64ced107e9616ed72c405215117a9e7bf0769098ae2ab350c1ed03",
+      "content_type": "application/xml; charset=utf-8",
+      "status": "rss_observed",
+      "entries_observed": 1,
+      "last_published_at": "2026-10-25T10:59:54Z",
+      "feed_language": "es-419",
+      "publishers": {
+        "armando.info": 1
+      },
+      "samples": [
+        {
+          "title": "Un templo para Maduro en la niebla - Armando.info",
+          "published_at": "2026-10-25T10:59:54Z",
+          "publisher": "Armando.info",
+          "publisher_url": "https://armando.info"
+        }
+      ],
+      "category": "05 - Venezuela",
+      "recent_dated_entries": 1,
+      "obvious_index_title_matches": 0,
+      "included": true,
+      "observation_scope": "RSS intermediado de Google Noticias con consulta acotada al editor; no es su RSS directo.",
+      "selection_reason": "Periodismo de investigación; disponibilidad puntual, sin prometer frecuencia diaria."
+    },
+    {
+      "key": "eldiario-ve",
+      "name": "RADAR — El Diario | Venezuela",
+      "website": "https://eldiario.com/",
+      "feed": "https://news.google.com/rss/search?q=site%3Aeldiario.com+when%3A30d&hl=es-419&gl=VE&ceid=VE%3Aes-419",
+      "query": "site:eldiario.com when:30d",
+      "kind": "google-noticias",
+      "verified_at": "2026-10-28T00:04:33.165291Z",
+      "http_status": 200,
+      "response_sha256": "b6efe32358e70021d22ad9ef5c643395a1568e4463a19845f8f5102b1d97b70c",
+      "content_type": "application/xml; charset=utf-8",
+      "status": "rss_observed",
+      "entries_observed": 100,
+      "last_published_at": "2026-10-27T17:39:54Z",
+      "feed_language": "es-419",
+      "publishers": {
+        "eldiario.com": 100
+      },
+      "samples": [
+        {
+          "title": "El IVSS anunció el pago de la pensión de noviembre - El Diario Venezuela",
+          "published_at": "2026-10-20T23:31:47Z",
+          "publisher": "El Diario Venezuela",
+          "publisher_url": "https://eldiario.com"
+        },
+        {
+          "title": "Marco Rubio atribuyó el regreso a Venezuela de María Corina Machado al diálogo político respaldado por EE UU - El Diario Venezuela",
+          "published_at": "2026-10-25T18:51:58Z",
+          "publisher": "El Diario Venezuela",
+          "publisher_url": "https://eldiario.com"
+        }
+      ],
+      "category": "05 - Venezuela",
+      "recent_dated_entries": 92,
+      "obvious_index_title_matches": 0,
+      "included": true,
+      "observation_scope": "RSS intermediado de Google Noticias con consulta acotada al editor; no es su RSS directo.",
+      "selection_reason": "Medio reconocido con noticias recientes en español; ampliar diversidad editorial y territorial."
+    },
+    {
+      "key": "elpitazo-monagas",
+      "name": "RADAR — El Pitazo | Maturín y Monagas",
+      "website": "https://elpitazo.net/",
+      "feed": "https://news.google.com/rss/search?q=site%3Aelpitazo.net+%28intitle%3AMonagas+OR+intitle%3AMatur%C3%ADn+OR+intitle%3AMaturin%29+when%3A30d&hl=es-419&gl=VE&ceid=VE%3Aes-419",
+      "query": "site:elpitazo.net (intitle:Monagas OR intitle:Maturín OR intitle:Maturin) when:30d",
+      "kind": "google-noticias",
+      "verified_at": "2026-10-28T00:06:59.479778Z",
+      "http_status": 200,
+      "response_sha256": "143beecaff16ebb2c391f947d09b82db2da3831c3a1cecd11488f5bdb4e51a16",
+      "content_type": "application/xml; charset=utf-8",
+      "status": "rss_observed",
+      "entries_observed": 4,
+      "last_published_at": "2026-10-19T18:14:25Z",
+      "feed_language": "es-419",
+      "publishers": {
+        "elpitazo.net": 4
+      },
+      "samples": [
+        {
+          "title": "Monagas | Séptima edición de «Por ellas corremos» contó con más de mil participantes - El Pitazo",
+          "published_at": "2026-10-19T18:14:25Z",
+          "publisher": "El Pitazo",
+          "publisher_url": "https://elpitazo.net"
+        },
+        {
+          "title": "Usuarios desmienten que haya menos horas de racionamiento en Monagas anunciado por la Gobernación - El Pitazo",
+          "published_at": "2026-10-14T07:00:00Z",
+          "publisher": "El Pitazo",
+          "publisher_url": "https://elpitazo.net"
+        }
+      ],
+      "category": "08 - Maturín / Monagas",
+      "recent_dated_entries": 4,
+      "obvious_index_title_matches": 0,
+      "included": true,
+      "observation_scope": "RSS intermediado de Google Noticias con consulta acotada al editor; no es su RSS directo.",
+      "selection_reason": "Cobertura local de un medio identificado; Monagas/Maturín acotados en el titular."
+    },
+    {
+      "key": "feyalegria-monagas",
+      "name": "RADAR — Radio Fe y Alegría | Maturín y Monagas",
+      "website": "https://www.radiofeyalegrianoticias.com/",
+      "feed": "https://news.google.com/rss/search?q=site%3Aradiofeyalegrianoticias.com+%28intitle%3AMonagas+OR+intitle%3AMatur%C3%ADn+OR+intitle%3AMaturin%29+when%3A30d&hl=es-419&gl=VE&ceid=VE%3Aes-419",
+      "query": "site:radiofeyalegrianoticias.com (intitle:Monagas OR intitle:Maturín OR intitle:Maturin) when:30d",
+      "kind": "google-noticias",
+      "verified_at": "2026-10-28T00:07:00.064481Z",
+      "http_status": 200,
+      "response_sha256": "3aae1e7b278e1a31405aebe97ab0b129d6e753aedc0b9e5b1e84d807fdb29130",
+      "content_type": "application/xml; charset=utf-8",
+      "status": "rss_observed",
+      "entries_observed": 4,
+      "last_published_at": "2026-10-26T18:54:41Z",
+      "feed_language": "es-419",
+      "publishers": {
+        "www.radiofeyalegrianoticias.com": 4
+      },
+      "samples": [
+        {
+          "title": "Comerciantes de Maturín registran pérdidas de mercancía por constantes apagones - Radio Fe y Alegría Noticias",
+          "published_at": "2026-10-26T18:54:41Z",
+          "publisher": "Radio Fe y Alegría Noticias",
+          "publisher_url": "https://www.radiofeyalegrianoticias.com"
+        },
+        {
+          "title": "Habitantes del sector La Pica de Maturín protestan tras más de nueve horas sin servicio eléctrico - Radio Fe y Alegría Noticias",
+          "published_at": "2026-10-26T18:48:25Z",
+          "publisher": "Radio Fe y Alegría Noticias",
+          "publisher_url": "https://www.radiofeyalegrianoticias.com"
+        }
+      ],
+      "category": "08 - Maturín / Monagas",
+      "recent_dated_entries": 4,
+      "obvious_index_title_matches": 0,
+      "included": true,
+      "observation_scope": "RSS intermediado de Google Noticias con consulta acotada al editor; no es su RSS directo.",
+      "selection_reason": "Cobertura local de un medio identificado; Monagas/Maturín acotados en el titular."
+    },
+    {
+      "key": "billboard-es",
+      "name": "MEDIO — Billboard Español | Música internacional",
+      "website": "https://www.billboard.com/espanol/",
+      "feed": "https://www.billboard.com/c/espanol/feed/",
+      "query": null,
+      "kind": "direct-rss",
+      "verified_at": "2026-10-28T00:04:33.471386Z",
+      "http_status": 200,
+      "response_sha256": "d3683a81ad37f41e9ee22f8887de4c834ff14b252a91c29d0e23b74bbd5442f8",
+      "content_type": "application/rss+xml; charset=UTF-8",
+      "status": "rss_observed",
+      "entries_observed": 10,
+      "last_published_at": "2026-10-27T21:01:18Z",
+      "feed_language": "es-ES",
+      "publishers": {
+        "": 10
+      },
+      "samples": [
+        {
+          "title": "Tokischa revela el papel ‘realmente fuerte’ que le gustaría interpretar en Billboard Latin Music Week",
+          "published_at": "2026-10-27T21:01:18Z",
+          "publisher": "Billboard Español: Musica, Noticias, Artistas, Fotos, Videos y Premios",
+          "publisher_url": "https://www.billboard.com/espanol/"
+        },
+        {
+          "title": "Feid, Milo J, Cristian Castro y más actuarán en los Latin Grammys 2026",
+          "published_at": "2026-10-27T17:09:00Z",
+          "publisher": "Billboard Español: Musica, Noticias, Artistas, Fotos, Videos y Premios",
+          "publisher_url": "https://www.billboard.com/espanol/"
+        }
+      ],
+      "category": "03 - Internacionales",
+      "recent_dated_entries": 10,
+      "obvious_index_title_matches": 0,
+      "included": true,
+      "observation_scope": "RSS directo en español del editor.",
+      "selection_reason": "Música, artistas y cultura internacional en español; dentro de Internacionales."
+    },
+    {
+      "key": "rollingstone-es",
+      "name": "RADAR — Rolling Stone en Español | Música y cultura",
+      "website": "https://es.rollingstone.com/",
+      "feed": "https://news.google.com/rss/search?q=site%3Aes.rollingstone.com+when%3A30d&hl=es&gl=ES&ceid=ES%3Aes",
+      "query": "site:es.rollingstone.com when:30d",
+      "kind": "google-noticias",
+      "verified_at": "2026-10-28T00:04:33.717966Z",
+      "http_status": 200,
+      "response_sha256": "7f8c23395da1764bd441f35a20c7a75373d1751dd2f7cdd6f31219ef51bae6f3",
+      "content_type": "application/xml; charset=utf-8",
+      "status": "rss_observed",
+      "entries_observed": 100,
+      "last_published_at": "2026-10-27T15:31:28Z",
+      "feed_language": "es",
+      "publishers": {
+        "es.rollingstone.com": 100
+      },
+      "samples": [
+        {
+          "title": "Murió Roxana Amed, la cantante de jazz que abordó el folclore y el rock argentino - Rolling Stone en Español",
+          "published_at": "2026-10-26T17:58:19Z",
+          "publisher": "Rolling Stone en Español",
+          "publisher_url": "https://es.rollingstone.com"
+        },
+        {
+          "title": "La previa de BTS: Esto no es una misa, es el picnic k-pop más grande del mundo - Rolling Stone en Español",
+          "published_at": "2026-10-22T18:43:13Z",
+          "publisher": "Rolling Stone en Español",
+          "publisher_url": "https://es.rollingstone.com"
+        }
+      ],
+      "category": "03 - Internacionales",
+      "recent_dated_entries": 100,
+      "obvious_index_title_matches": 0,
+      "included": true,
+      "observation_scope": "RSS intermediado de Google Noticias con consulta acotada al editor; no es su RSS directo.",
+      "selection_reason": "Música, artistas y cultura internacional en español; dentro de Internacionales."
+    }
+  ],
+  "revalidated_sources": [
+    {
+      "key": "previous-0",
+      "category": "08 - Maturín / Monagas",
+      "name": "RADAR — La Verdad de Monagas | Maturín y Monagas",
+      "website": "https://laverdaddemonagas.com/",
+      "feed": "https://news.google.com/rss/search?q=site%3Alaverdaddemonagas.com+%28Matur%C3%ADn+OR+Maturin+OR+Monagas%29&hl=es-419&gl=VE&ceid=VE%3Aes-419",
+      "query": "site:laverdaddemonagas.com (Maturín OR Maturin OR Monagas)",
+      "kind": "google-noticias",
+      "verified_at": "2026-10-28T00:04:33.788589Z",
+      "http_status": 200,
+      "response_sha256": "7bd904aa62bf04653c8065416d143fc0812a8988f916caa83e1d276c1cbd738a",
+      "content_type": "application/xml; charset=utf-8",
+      "status": "rss_observed",
+      "entries_observed": 100,
+      "last_published_at": "2026-10-27T21:18:33Z",
+      "feed_language": "es-419",
+      "publishers": {
+        "laverdaddemonagas.com": 100
+      },
+      "samples": [
+        {
+          "title": "GNB rescata a 4 víctimas y detiene a dos sujetos por trata de personas en Monagas - La Verdad de Monagas",
+          "published_at": "2026-10-26T20:38:43Z",
+          "publisher": "La Verdad de Monagas",
+          "publisher_url": "https://laverdaddemonagas.com"
+        },
+        {
+          "title": "El 25 de noviembre será la Expo Agroindustrial 2026 en el Polideportivo de Maturín - La Verdad de Monagas",
+          "published_at": "2026-10-26T21:12:03Z",
+          "publisher": "La Verdad de Monagas",
+          "publisher_url": "https://laverdaddemonagas.com"
+        }
+      ],
+      "recent_dated_entries": 52,
+      "obvious_index_title_matches": 0,
+      "observation_scope": "RSS de Google Noticias; no se verificó la página del editor ni cada hecho publicado."
+    },
+    {
+      "key": "previous-1",
+      "category": "08 - Maturín / Monagas",
+      "name": "RADAR — La Prensa de Monagas | Maturín",
+      "website": "https://laprensademonagas.com/",
+      "feed": "https://news.google.com/rss/search?q=site%3Alaprensademonagas.com+%28Matur%C3%ADn+OR+Maturin+OR+Monagas%29&hl=es-419&gl=VE&ceid=VE%3Aes-419",
+      "query": "site:laprensademonagas.com (Maturín OR Maturin OR Monagas)",
+      "kind": "google-noticias",
+      "verified_at": "2026-10-28T00:04:33.821606Z",
+      "http_status": 200,
+      "response_sha256": "e29249d80c78966f8c358a66ead31510c5d4617828bbb3a3e8de699bf6d7367d",
+      "content_type": "application/xml; charset=utf-8",
+      "status": "rss_observed",
+      "entries_observed": 100,
+      "last_published_at": "2026-10-27T23:46:11Z",
+      "feed_language": "es-419",
+      "publishers": {
+        "laprensademonagas.com": 100
+      },
+      "samples": [
+        {
+          "title": "OFAC emite la Licencia General 60A para la reconstrucción de Venezuela - La Prensa de Monagas",
+          "published_at": "2026-10-16T07:00:00Z",
+          "publisher": "La Prensa de Monagas",
+          "publisher_url": "https://laprensademonagas.com"
+        },
+        {
+          "title": "Accidentes viales dejan más de 4.800 víctimas en Venezuela en lo que va de año - La Prensa de Monagas",
+          "published_at": "2026-10-26T22:13:38Z",
+          "publisher": "La Prensa de Monagas",
+          "publisher_url": "https://laprensademonagas.com"
+        }
+      ],
+      "recent_dated_entries": 92,
+      "obvious_index_title_matches": 0,
+      "observation_scope": "RSS de Google Noticias; no se verificó la página del editor ni cada hecho publicado."
+    },
+    {
+      "key": "previous-2",
+      "category": "08 - Maturín / Monagas",
+      "name": "RADAR — El Periódico de Monagas | Actualidad local",
+      "website": "https://elperiodicodemonagas.com.ve/",
+      "feed": "https://news.google.com/rss/search?q=site%3Aelperiodicodemonagas.com.ve+%28Matur%C3%ADn+OR+Maturin+OR+Monagas%29&hl=es-419&gl=VE&ceid=VE%3Aes-419",
+      "query": "site:elperiodicodemonagas.com.ve (Maturín OR Maturin OR Monagas)",
+      "kind": "google-noticias",
+      "verified_at": "2026-10-28T00:04:33.912902Z",
+      "http_status": 200,
+      "response_sha256": "3d4b0fb304b0c9b60490c3f76a77da4d07bac8824c4751ce9093ffcd49df36eb",
+      "content_type": "application/xml; charset=utf-8",
+      "status": "rss_observed",
+      "entries_observed": 100,
+      "last_published_at": "2026-10-27T21:03:11Z",
+      "feed_language": "es-419",
+      "publishers": {
+        "elperiodicodemonagas.com.ve": 100
+      },
+      "samples": [
+        {
+          "title": "Glorias Deportivas de Monagas conquistan el Torneo Clausura de fútbol - El Periódico de Monagas",
+          "published_at": "2026-10-26T16:21:52Z",
+          "publisher": "El Periódico de Monagas",
+          "publisher_url": "https://elperiodicodemonagas.com.ve"
+        },
+        {
+          "title": "Monagas se prepara para la III Edición de la Expo Agroindustrial 2026 - El Periódico de Monagas",
+          "published_at": "2026-10-27T17:56:58Z",
+          "publisher": "El Periódico de Monagas",
+          "publisher_url": "https://elperiodicodemonagas.com.ve"
+        }
+      ],
+      "recent_dated_entries": 100,
+      "obvious_index_title_matches": 0,
+      "observation_scope": "RSS de Google Noticias; no se verificó la página del editor ni cada hecho publicado."
+    },
+    {
+      "key": "previous-3",
+      "category": "08 - Maturín / Monagas",
+      "name": "RADAR — Diario El Oriental | Maturín",
+      "website": "https://diarioeloriental.com/",
+      "feed": "https://news.google.com/rss/search?q=site%3Adiarioeloriental.com+%28Matur%C3%ADn+OR+Maturin%29&hl=es-419&gl=VE&ceid=VE%3Aes-419",
+      "query": "site:diarioeloriental.com (Maturín OR Maturin)",
+      "kind": "google-noticias",
+      "verified_at": "2026-10-28T00:04:34.371106Z",
+      "http_status": 200,
+      "response_sha256": "d2d2502ecc60b0602e8a965008ad7b2f09594c827614fb4dfbd6473a603d311f",
+      "content_type": "application/xml; charset=utf-8",
+      "status": "rss_observed",
+      "entries_observed": 73,
+      "last_published_at": "2026-10-27T16:40:41Z",
+      "feed_language": "es-419",
+      "publishers": {
+        "diarioeloriental.com": 73
+      },
+      "samples": [
+        {
+          "title": "Sismo de magnitud 5.0 sacude la costa del estado Sucre - diarioeloriental.com",
+          "published_at": "2026-10-02T07:00:00Z",
+          "publisher": "diarioeloriental.com",
+          "publisher_url": "https://diarioeloriental.com"
+        },
+        {
+          "title": "Plan Cacao Comunal ejecutarán en los municipios Bolívar, Punceres y Maturín - diarioeloriental.com",
+          "published_at": "2026-10-21T17:12:54Z",
+          "publisher": "diarioeloriental.com",
+          "publisher_url": "https://diarioeloriental.com"
+        }
+      ],
+      "recent_dated_entries": 37,
+      "obvious_index_title_matches": 0,
+      "observation_scope": "RSS de Google Noticias; no se verificó la página del editor ni cada hecho publicado."
+    },
+    {
+      "key": "previous-4",
+      "category": "08 - Maturín / Monagas",
+      "name": "RADAR — El Nacional | Monagas",
+      "website": "https://www.elnacional.com/",
+      "feed": "https://news.google.com/rss/search?q=site%3Aelnacional.com+%28Matur%C3%ADn+OR+Maturin+OR+Monagas%29&hl=es-419&gl=VE&ceid=VE%3Aes-419",
+      "query": "site:elnacional.com (Maturín OR Maturin OR Monagas)",
+      "kind": "google-noticias",
+      "verified_at": "2026-10-28T00:04:34.572669Z",
+      "http_status": 200,
+      "response_sha256": "01fd2b03a0c0e0286755af9f8bd8c18b9649bd17feacaafdcf4c770d0652e258",
+      "content_type": "application/xml; charset=utf-8",
+      "status": "rss_observed",
+      "entries_observed": 68,
+      "last_published_at": "2026-10-27T23:34:47Z",
+      "feed_language": "es-419",
+      "publishers": {
+        "www.elnacional.com": 68
+      },
+      "samples": [
+        {
+          "title": "Protestas nocturnas en Cojedes y Monagas por prolongados cortes eléctricos - El Nacional",
+          "published_at": "2026-09-29T07:00:00Z",
+          "publisher": "El Nacional",
+          "publisher_url": "https://www.elnacional.com"
+        },
+        {
+          "title": "Médicos de Monagas reportaron alza de 30% en consultas de pacientes cardíacos por ola de calor - El Nacional",
+          "published_at": "2026-10-04T07:00:00Z",
+          "publisher": "El Nacional",
+          "publisher_url": "https://www.elnacional.com"
+        }
+      ],
+      "recent_dated_entries": 11,
+      "obvious_index_title_matches": 3,
+      "observation_scope": "RSS de Google Noticias; no se verificó la página del editor ni cada hecho publicado."
+    },
+    {
+      "key": "previous-5",
+      "category": "08 - Maturín / Monagas",
+      "name": "RADAR — Maturín y Monagas | Actualidad",
+      "website": "https://news.google.com/",
+      "feed": "https://news.google.com/rss/search?q=%28Matur%C3%ADn+OR+Maturin+OR+Monagas%29+%28noticias+OR+actualidad%29&hl=es-419&gl=VE&ceid=VE%3Aes-419",
+      "query": "(Maturín OR Maturin OR Monagas) (noticias OR actualidad)",
+      "kind": "google-noticias",
+      "verified_at": "2026-10-28T00:04:34.675974Z",
+      "http_status": 200,
+      "response_sha256": "450a790edc991a7f50a75715f84ee1e111f1696b37a40a7f2fb8d243bff423b6",
+      "content_type": "application/xml; charset=utf-8",
+      "status": "rss_observed",
+      "entries_observed": 91,
+      "last_published_at": "2026-10-27T21:45:53Z",
+      "feed_language": "es-419",
+      "publishers": {
+        "www.365scores.com": 1,
+        "talcualdigital.com": 1,
+        "finanzasdigital.com": 2,
+        "www.tycsports.com": 2,
+        "laverdaddemonagas.com": 4,
+        "mundour.com": 1,
+        "ultimasnoticias.com.ve": 23,
+        "www.tsj.gob.ve": 6,
+        "www.ntn24.com": 1,
+        "www.bbc.com": 1,
+        "mpps.gob.ve": 3,
+        "www.radiofeyalegrianoticias.com": 1,
+        "www.noticiasbarquisimeto.com": 1,
+        "elperiodicodemonagas.com.ve": 20,
+        "laprensademonagas.com": 22,
+        "tenemosnoticias.com": 1,
+        "www.balonazos.com": 1
+      },
+      "samples": [
+        {
+          "title": "Dónde ver Deportivo Táchira vs Monagas SC: canal y streaming - 365Scores",
+          "published_at": "2026-10-27T21:30:00Z",
+          "publisher": "365Scores",
+          "publisher_url": "https://www.365scores.com"
+        },
+        {
+          "title": "Comerciantes de Maturín registran pérdidas de mercancía por constantes apagones - TalCual Digital",
+          "published_at": "2026-10-27T15:00:44Z",
+          "publisher": "TalCual Digital",
+          "publisher_url": "https://talcualdigital.com"
+        }
+      ],
+      "recent_dated_entries": 48,
+      "obvious_index_title_matches": 0,
+      "observation_scope": "RSS de Google Noticias; no se verificó la página del editor ni cada hecho publicado."
+    },
+    {
+      "key": "previous-6",
+      "category": "03 - Internacionales",
+      "name": "RADAR — BBC Mundo | Cultura y artistas",
+      "website": "https://www.bbc.com/mundo",
+      "feed": "https://news.google.com/rss/search?q=site%3Abbc.com%2Fmundo+%28cultura+OR+cine+OR+m%C3%BAsica+OR+artistas%29&hl=es&gl=ES&ceid=ES%3Aes",
+      "query": "site:bbc.com/mundo (cultura OR cine OR música OR artistas)",
+      "kind": "google-noticias",
+      "verified_at": "2026-10-28T00:04:34.711410Z",
+      "http_status": 200,
+      "response_sha256": "b023f0984399a2030e2033247e30cd58452f183abff27e5e59bc10af1f172800",
+      "content_type": "application/xml; charset=utf-8",
+      "status": "rss_observed",
+      "entries_observed": 100,
+      "last_published_at": "2026-10-27T23:59:19Z",
+      "feed_language": "es",
+      "publishers": {
+        "www.bbc.com": 100
+      },
+      "samples": [
+        {
+          "title": "Momias congeladas y rutas vikingas: los secretos que está revelando el derretimiento de los hielos - BBC",
+          "published_at": "2026-10-25T10:05:22Z",
+          "publisher": "BBC",
+          "publisher_url": "https://www.bbc.com"
+        },
+        {
+          "title": "\"Ya no puedo hacer teatro, ni cine, ni leer\": la enfermedad que ha frenado la carrera de la legendaria actriz británica Judi Dench - BBC",
+          "published_at": "2026-10-22T11:45:06Z",
+          "publisher": "BBC",
+          "publisher_url": "https://www.bbc.com"
+        }
+      ],
+      "recent_dated_entries": 98,
+      "obvious_index_title_matches": 0,
+      "observation_scope": "RSS de Google Noticias; no se verificó la página del editor ni cada hecho publicado."
+    },
+    {
+      "key": "previous-7",
+      "category": "03 - Internacionales",
+      "name": "RADAR — EFE | Cultura internacional",
+      "website": "https://efe.com/",
+      "feed": "https://news.google.com/rss/search?q=site%3Aefe.com+%28cultura+OR+cine+OR+m%C3%BAsica+OR+artistas%29&hl=es&gl=ES&ceid=ES%3Aes",
+      "query": "site:efe.com (cultura OR cine OR música OR artistas)",
+      "kind": "google-noticias",
+      "verified_at": "2026-10-28T00:04:35.023187Z",
+      "http_status": 200,
+      "response_sha256": "3fcd9d5ba90024e87594bda7a5f41c39d7f9c58bdc6b16363c69711aea228c3a",
+      "content_type": "application/xml; charset=utf-8",
+      "status": "rss_observed",
+      "entries_observed": 100,
+      "last_published_at": "2026-10-27T23:07:09Z",
+      "feed_language": "es",
+      "publishers": {
+        "efe.com": 98,
+        "verifica.efe.com": 1,
+        "efecomunica.efe.com": 1
+      },
+      "samples": [
+        {
+          "title": "Rapisardi: «El cine que amo resiste el impulso de reducir el mundo a izquierda o derecha» - EFE - Agencia de noticias",
+          "published_at": "2026-10-27T07:06:09Z",
+          "publisher": "EFE - Agencia de noticias",
+          "publisher_url": "https://efe.com"
+        },
+        {
+          "title": "Almodóvar llama a votar en las próximas elecciones \"porque nunca nos hemos jugado tanto\" - EFE - Agencia de noticias",
+          "published_at": "2026-10-26T07:32:03Z",
+          "publisher": "EFE - Agencia de noticias",
+          "publisher_url": "https://efe.com"
+        }
+      ],
+      "recent_dated_entries": 100,
+      "obvious_index_title_matches": 0,
+      "observation_scope": "RSS de Google Noticias; no se verificó la página del editor ni cada hecho publicado."
+    },
+    {
+      "key": "previous-8",
+      "category": "03 - Internacionales",
+      "name": "RADAR — El País | Cultura",
+      "website": "https://elpais.com/cultura/",
+      "feed": "https://news.google.com/rss/search?q=site%3Aelpais.com%2Fcultura+%28cine+OR+m%C3%BAsica+OR+literatura+OR+artistas%29&hl=es&gl=ES&ceid=ES%3Aes",
+      "query": "site:elpais.com/cultura (cine OR música OR literatura OR artistas)",
+      "kind": "google-noticias",
+      "verified_at": "2026-10-28T00:04:35.184923Z",
+      "http_status": 200,
+      "response_sha256": "f288c7af9f362ba754d4bd4c9e2e3810693754299e0b9148b39ab3108e14667a",
+      "content_type": "application/xml; charset=utf-8",
+      "status": "rss_observed",
+      "entries_observed": 100,
+      "last_published_at": "2026-10-27T20:01:45Z",
+      "feed_language": "es",
+      "publishers": {
+        "elpais.com": 100
+      },
+      "samples": [
+        {
+          "title": "Irán condena a cinco años de prisión al cineasta Jafar Panahi y confisca sus bienes - EL PAÍS",
+          "published_at": "2026-10-27T19:18:35Z",
+          "publisher": "EL PAÍS",
+          "publisher_url": "https://elpais.com"
+        },
+        {
+          "title": "Enrique Vila-Matas, Premio Nacional de las Letras Españolas 2026: “La literatura está siempre allí para divertirse” - EL PAÍS",
+          "published_at": "2026-10-27T13:14:50Z",
+          "publisher": "EL PAÍS",
+          "publisher_url": "https://elpais.com"
+        }
+      ],
+      "recent_dated_entries": 91,
+      "obvious_index_title_matches": 0,
+      "observation_scope": "RSS de Google Noticias; no se verificó la página del editor ni cada hecho publicado."
+    },
+    {
+      "key": "previous-9",
+      "category": "03 - Internacionales",
+      "name": "RADAR — Euronews | Cultura internacional",
+      "website": "https://es.euronews.com/",
+      "feed": "https://news.google.com/rss/search?q=site%3Aes.euronews.com+%28cultura+OR+cine+OR+m%C3%BAsica+OR+artistas%29&hl=es&gl=ES&ceid=ES%3Aes",
+      "query": "site:es.euronews.com (cultura OR cine OR música OR artistas)",
+      "kind": "google-noticias",
+      "verified_at": "2026-10-28T00:04:35.335723Z",
+      "http_status": 200,
+      "response_sha256": "60a5f901af704b6ddfdaf698866b30b8be6d6a26cb6fb4676ea5f7de9d0fb0cc",
+      "content_type": "application/xml; charset=utf-8",
+      "status": "rss_observed",
+      "entries_observed": 100,
+      "last_published_at": "2026-10-27T20:30:10Z",
+      "feed_language": "es",
+      "publishers": {
+        "es.euronews.com": 100
+      },
+      "samples": [
+        {
+          "title": "Los herederos de Elvis Presley demandan a Anthropic por el uso de su música en la IA - Euronews.com",
+          "published_at": "2026-10-26T09:39:19Z",
+          "publisher": "Euronews.com",
+          "publisher_url": "https://es.euronews.com"
+        },
+        {
+          "title": "Música - Euronews.com",
+          "published_at": "2026-10-27T20:30:10Z",
+          "publisher": "Euronews.com",
+          "publisher_url": "https://es.euronews.com"
+        }
+      ],
+      "recent_dated_entries": 100,
+      "obvious_index_title_matches": 0,
+      "observation_scope": "RSS de Google Noticias; no se verificó la página del editor ni cada hecho publicado."
+    }
+  ],
+  "not_added": [
+    {
+      "key": "elfaro",
+      "name": "RADAR — El Faro | Centroamérica",
+      "website": "https://elfaro.net/",
+      "feed": "https://news.google.com/rss/search?q=site%3Aelfaro.net%2Fes+when%3A30d&hl=es-419&gl=MX&ceid=MX%3Aes-419",
+      "query": "site:elfaro.net/es when:30d",
+      "kind": "google-noticias",
+      "verified_at": "2026-10-28T00:04:32.234216Z",
+      "http_status": 200,
+      "response_sha256": "f72c093b17389b3d6ce1b233fcb6e6c3868601fd9c88f18cef935061b9bf675a",
+      "content_type": "application/xml; charset=utf-8",
+      "status": "rss_observed",
+      "entries_observed": 1,
+      "last_published_at": null,
+      "feed_language": "es-419",
+      "publishers": {
+        "elfaro.net": 1
+      },
+      "samples": [],
+      "category": "06 - Latinoamérica",
+      "recent_dated_entries": 0,
+      "obvious_index_title_matches": 0,
+      "included": false,
+      "reason": "La consulta ensayada no devolvió una entrada reciente utilizable; no se concluye inactividad del medio."
+    }
+  ]
+}

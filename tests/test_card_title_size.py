@@ -42,7 +42,7 @@ class NewsCardDisplayTests(unittest.TestCase):
     def test_card_title_size_does_not_resize_article_body(self):
         for size in range(14,23):
             self.assertIn(f'[data-card-title-size="{size}"]',self.css)
-        self.assertIn("font-size:var(--radar-card-title-size)!important",self.css)
+        self.assertIn("font-size:var(--radar-reading-title-size)!important",self.css)
         self.assertNotRegex(self.css,r"\.article-excerpt\s*\{[^}]*radar-card-title-size")
 
 

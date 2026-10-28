@@ -340,7 +340,7 @@ def main():
                         })""")
                         assert visual['radius']=='24px' and visual['shadow']!='none',visual
                         light_background=visual['bg']
-                        assert page.locator('#dashboardTitle').inner_text() == 'Actualidad'
+                        assert page.locator('#dashboardTitle').inner_text() == 'Inicio'
                         expect(page.locator('#dashboardFeature')).to_be_visible()
                         expect(page.locator('#dashboardFeature > .article-card')).to_have_count(1)
                         page.evaluate("document.body.classList.remove('light')")
@@ -437,7 +437,7 @@ def main():
                             "#dashboardRecent .dashboard-recent-row"], f"portada {width}px")
                         # Inicio and Agenda have one purpose each, with no repeated news IDs.
                         expect(page.locator('#dashboardFeature')).to_be_visible()
-                        expect(page.locator('#newsroomDiscovery')).to_be_hidden()
+                        expect(page.locator('#newsroomColumns,#dashboardFolders')).to_have_count(0)
                         expect(page.locator('#agendaSection')).to_be_hidden()
                         visible_ids=page.locator('#dashboardFeature > [data-article-id], #dashboardRecent > [data-article-id]').evaluate_all('nodes=>nodes.map(n=>n.dataset.articleId)')
                         assert len(visible_ids)>=4 and len(visible_ids)==len(set(visible_ids)),visible_ids
@@ -453,9 +453,9 @@ def main():
                             page.screenshot(path=str(output / f"portada-{width}.png"), full_page=False)
 
                         # Evitar el CTA duplicado de Inicio, sin retirar acciones
-                        # distintas como Ver mis guardadas o la navegación responsive.
+                        # distintas como las guardadas de Noticias o la navegación responsive.
                         assert page.locator("#dashboardView .dashboard-feature-panel .dashboard-read-all").count() == 0
-                        assert page.locator("#dashboardSavedAll").count() == 1
+                        assert page.locator("#dashboardSavedAll").count() == 0
                         ensure_navigation(page)
                         all_news=page.locator("#categoryNav > .nav-link").nth(1)
                         expect(all_news).to_be_visible()
