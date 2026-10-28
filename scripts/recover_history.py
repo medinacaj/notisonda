@@ -5,8 +5,9 @@ from datetime import datetime, timezone
 import json
 import sys
 from urllib.request import Request, urlopen
+from site_config import DATA_URL
 
-BASE="https://medinacaj.github.io/radar-rss-publico/data/"
+BASE=DATA_URL
 LIMIT=20000000
 
 def valid(doc,name):

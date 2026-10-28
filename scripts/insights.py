@@ -15,7 +15,7 @@ import re
 import unicodedata
 from xml.sax.saxutils import escape
 
-SITE_URL = 'https://medinacaj.github.io/radar-rss-publico/'
+from site_config import SITE_NAME, SITE_URL
 
 # Palabras demasiado frecuentes o genéricas para describir un tema.
 TREND_STOPWORDS = set('''
@@ -219,13 +219,13 @@ def write_feeds(folder: Path, articles: list[dict], sources: list[dict], now: da
     recent = [a for a in articles if (_instant(a) or now) >= now - timedelta(hours=48)]
     top = sorted(recent, key=lambda a: ((a.get('coverage') or 1), str(a.get('published_at') or '')), reverse=True)
     top = [a for a in top if (a.get('coverage') or 1) >= 2][:30]
-    files = {'mas-cubierto.xml': _rss('Radar RSS · Lo más cubierto',
+    files = {'mas-cubierto.xml': _rss(f'{SITE_NAME} · Lo más cubierto',
                                       'Historias publicadas por más medios en las últimas 48 horas.',
                                       SITE_URL, top, now)}
     for category in dict.fromkeys(s['category'] for s in sources):
         items = [a for a in articles if category in (a.get('categories') or [])][:50]
         name = re.sub(r'^\d+\s*-\s*', '', category)
-        files[f'{feed_slug(category)}.xml'] = _rss(f'Radar RSS · {name}', f'Noticias recientes de {name}.',
+        files[f'{feed_slug(category)}.xml'] = _rss(f'{SITE_NAME} · {name}', f'Noticias recientes de {name}.',
                                                    SITE_URL + '#categoria/' + category.replace(' ', '%20'), items, now)
     for name, body in files.items():
         tmp = folder / (name + '.tmp')
