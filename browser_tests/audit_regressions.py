@@ -61,7 +61,11 @@ class AuditRegressions(unittest.TestCase):
         self.assertFalse(self.page.locator('#libraryTagFilter').is_visible())
         for item_id in ['noticia-1', 'noticia-0']:
             placeholder = self.page.locator(f'#articleGrid [data-article-id="{item_id}"] .article-cover-placeholder')
-            expect(placeholder).to_be_hidden()
+            # PR106 restored aligned typographic covers when an image is absent.
+            # Keep that cover distinguishable from an invented photograph.
+            expect(placeholder).to_be_visible()
+            expect(placeholder.locator('img')).to_have_count(0)
+            expect(placeholder.locator('.article-cover-publisher')).not_to_be_empty()
             self.page.locator(f'#articleGrid [data-article-id="{item_id}"] .article-title a').click()
             self.assertTrue(self.page.locator('#articleReaderDialog').is_visible())
             self.page.locator('#readerClose').click()
