@@ -308,6 +308,10 @@ def main():
                         expect(radar_card).to_be_visible()
                         expect(covered_card).to_be_visible()
                         expect(radar_card.locator("#radarStage svg")).to_have_count(1)
+                        expect(radar_card.locator("#radarStage svg")).to_be_visible()
+                        expect(radar_card.locator("#radarFigure")).to_be_visible()
+                        expect(radar_card.locator("#radarCaption")).to_be_visible()
+                        assert page.locator("#radarMapToggle, #radarMapDetails").count() == 0
                         assert radar_card.evaluate("(node)=>node.closest('#newsroomColumns') === null")
                         assert radar_card.evaluate("(node)=>node.closest('#dashboardView') !== null")
                         expect(covered_card.locator("#coveredList")).to_be_visible()
