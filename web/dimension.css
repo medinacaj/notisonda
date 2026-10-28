@@ -439,3 +439,101 @@ body.radar-hybrid.dimension .topbar-brand strong {font-size:14px;font-weight:600
   body.radar-hybrid.dimension :is(a,button,input,select,summary):focus-visible {outline:2px solid Highlight;}
 
 }
+
+/* Radar RSS — navegación lateral editorial compacta, cierre de tema Dimension. */
+body.radar-hybrid.dimension .sidebar-core-section{min-width:0}
+body.radar-hybrid.dimension .sidebar-section-heading{margin:0;padding:0;font-size:inherit;font-weight:inherit}
+body.radar-hybrid.dimension .sidebar-section-toggle{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  width:100%;min-height:37px;min-width:0;padding:8px 10px;
+  color:var(--muted);background:transparent;border:0;border-radius:6px;
+  font:inherit;font-size:11px;font-weight:650;letter-spacing:.045em;
+  text-align:left;cursor:pointer;transition:background-color .15s ease,color .15s ease;
+}
+body.radar-hybrid.dimension .sidebar-section-toggle:hover{color:var(--text);background:var(--hover)}
+body.radar-hybrid.dimension .sidebar-section-toggle:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+body.radar-hybrid.dimension .sidebar-section-chevron{
+  width:8px;height:8px;flex:0 0 8px;margin-right:5px;
+  border-top:1.6px solid currentColor;border-right:1.6px solid currentColor;
+  transform:rotate(45deg);transition:transform .16s ease;
+}
+body.radar-hybrid.dimension .sidebar-section-toggle[aria-expanded="true"] .sidebar-section-chevron{
+  transform:rotate(135deg);
+}
+body.radar-hybrid.dimension #sidebarCoreContent[hidden],
+body.radar-hybrid.dimension #libraryFolderNav[hidden]{display:none!important}
+body.radar-hybrid.dimension .source-folders-section{
+  margin-top:10px;padding-top:10px;border-top:1px solid var(--line);
+}
+body.radar-hybrid.dimension .source-folders-section .folder-group-head{
+  display:flex;align-items:center;gap:8px;margin:0;padding:0 5px 5px;
+  min-height:42px;
+}
+body.radar-hybrid.dimension .sidebar-folder-title{flex:1 1 auto;min-width:0}
+body.radar-hybrid.dimension .source-folders-section .folder-group-head .sidebar-section-toggle{
+  padding:8px 5px;min-height:36px;letter-spacing:.045em;
+  color:var(--muted);font-size:11px;font-weight:650;
+}
+body.radar-hybrid.dimension .source-folders-section .folder-group-head .sidebar-section-toggle:hover{
+  color:var(--text);background:var(--hover);
+}
+body.radar-hybrid.dimension .source-folders-section .folder-group-head>button{
+  flex:0 0 26px;width:26px;height:26px;border:0;border-radius:6px;
+  background:transparent;color:var(--muted);
+}
+body.radar-hybrid.dimension .source-folders-section .folder-group-head>button:hover{
+  color:var(--text);background:var(--hover);
+}
+/* En lugar de cápsulas: filas sobrias, un indicador de selección y pictogramas sin fondo. */
+body.radar-hybrid.dimension .sidebar :is(.nav-link,.briefing-nav-link){
+  position:relative;min-height:40px;padding:8px 11px;margin:2px 0;
+  border:0;border-radius:6px;background:transparent;color:var(--muted);
+  box-shadow:none;font-size:13px;font-weight:460;letter-spacing:0;
+}
+body.radar-hybrid.dimension .sidebar :is(.nav-link,.briefing-nav-link):hover{
+  background:var(--hover);color:var(--text);border-color:transparent;box-shadow:none;
+}
+body.radar-hybrid.dimension .sidebar .nav-link.active,
+body.radar-hybrid.dimension #libraryFolderNav .nav-link.active,
+body.radar-hybrid.dimension #categoryNav .nav-link.active{
+  background:color-mix(in srgb,var(--text) 7%,transparent);
+  color:var(--text);border:0;box-shadow:none;font-weight:650;
+}
+body.radar-hybrid.dimension .sidebar .nav-link.active::before,
+body.radar-hybrid.dimension #libraryFolderNav .nav-link.active::before,
+body.radar-hybrid.dimension #categoryNav .nav-link.active::before{
+  content:"";display:block;position:absolute;left:0;top:8px;bottom:8px;
+  width:2px;border-radius:2px;background:var(--accent);
+}
+body.radar-hybrid.dimension .sidebar #categoryNav .nav-glyph,
+body.radar-hybrid.dimension .sidebar #libraryFolderNav .nav-glyph,
+body.radar-hybrid.dimension .sidebar .briefing-nav-link .nav-glyph,
+body.radar-hybrid.dimension .sidebar #libraryFolderNav .nav-link[data-topic] .nav-glyph{
+  display:grid;place-items:center;flex:0 0 21px;width:21px;height:21px;
+  background:transparent;border:0;border-radius:0;color:var(--muted);
+  box-shadow:none;transform:none;
+}
+body.radar-hybrid.dimension .sidebar :is(#categoryNav,#libraryFolderNav) .nav-link.active .nav-glyph{
+  color:var(--text);background:transparent;
+}
+body.radar-hybrid.dimension .sidebar :is(#categoryNav,#libraryFolderNav) .nav-glyph .ui-icon,
+body.radar-hybrid.dimension .sidebar .briefing-nav-link .nav-glyph .ui-icon{
+  width:17px;height:17px;stroke-width:1.7;
+}
+body.radar-hybrid.dimension .sidebar :is(#categoryNav,#libraryFolderNav) .nav-count{
+  flex:0 0 auto;color:var(--muted);font-size:11px;font-weight:450;background:transparent;
+}
+body.radar-hybrid.dimension .sidebar :is(#categoryNav,#libraryFolderNav) .nav-link.active .nav-count{color:var(--muted)}
+body.radar-hybrid.dimension .source-folders-section .library-folder-nav{padding-bottom:7px}
+body.radar-hybrid.dimension .footer #footerInfo{
+  color:var(--muted);font-size:inherit;font-weight:450;
+  text-decoration:underline;text-underline-offset:3px;text-decoration-color:var(--line);
+}
+body.radar-hybrid.dimension .footer #footerInfo:hover,
+body.radar-hybrid.dimension .footer #footerInfo:focus-visible{
+  color:var(--text);text-decoration-color:currentColor;
+}
+@media(prefers-reduced-motion:reduce){
+  body.radar-hybrid.dimension .sidebar-section-toggle,
+  body.radar-hybrid.dimension .sidebar-section-chevron{transition:none}
+}
