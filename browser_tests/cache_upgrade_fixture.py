@@ -14,7 +14,7 @@ def check_failed_upgrade(browser):
     legacy = re.sub(r"const CACHE = '[^']+';", "const CACHE = 'notisonda-v4';", source, count=1)
 
     for failed_path, failure in (('/app.js', 'http'), ('/data/latest.json', 'network')):
-        state = {'upgrade': False, 'failure': failure}
+        state = {'upgrade': False, 'failure': failure, 'offline': False, 'offline_attempts': 0}
 
         class Handler(fixtures.QuietHandler):
             def do_GET(self):
@@ -26,6 +26,11 @@ def check_failed_upgrade(browser):
 
             def respond(self):
                 path = urlsplit(self.path).path
+                if state['offline']:
+                    state['offline_attempts'] += 1
+                    self.connection.shutdown(socket.SHUT_RDWR)
+                    self.connection.close()
+                    return
                 if state['upgrade'] and state['failure'] and path == failed_path:
                     if state['failure'] == 'network':
                         self.connection.shutdown(socket.SHUT_RDWR)
@@ -52,7 +57,7 @@ def check_failed_upgrade(browser):
         base = f'http://127.0.0.1:{server.server_port}/'
         threading.Thread(target=server.serve_forever, daemon=True).start()
         context = browser.new_context(service_workers='allow')
-        context.route('**/*', lambda route: route.continue_() if route.request.url.startswith(base) else route.abort())
+        context.route(re.compile(r'^https?://(?!127\.0\.0\.1:)'), lambda route: route.abort())
         page = context.new_page()
 
         def update():
@@ -67,17 +72,25 @@ def check_failed_upgrade(browser):
                     }, {once:true});
                 });
                 await registration.update();
-                return finished;
+                return Promise.race([finished, new Promise((_, reject) => {
+                    setTimeout(() => reject(new Error('Worker update did not settle')), 15000);
+                })]);
             }""")
 
         def offline_reload():
-            context.set_offline(True)
-            page.reload(wait_until='domcontentloaded')
-            page.wait_for_function('() => typeof state !== "undefined" && state.ready')
-            assert page.evaluate('state.items.length') == len(fixtures.ITEMS), (failed_path, 'offline news lost')
-            expect(page.locator('#dashboardTitle')).to_have_text('Inicio')
-            assert page.locator('.topbar').evaluate('node => getComputedStyle(node).display') == 'flex'
-            context.set_offline(False)
+            # Drop every connection at the server: all engines exercise actual
+            # fetch failures, without browser automation disabling SW navigation.
+            attempts = state['offline_attempts']
+            state['offline'] = True
+            try:
+                page.reload(wait_until='domcontentloaded')
+                page.wait_for_function('() => typeof state !== "undefined" && state.ready')
+                assert page.evaluate('state.items.length') == len(fixtures.ITEMS), (failed_path, 'offline news lost')
+                expect(page.locator('#dashboardTitle')).to_have_text('Inicio')
+                assert page.locator('.topbar').evaluate('node => getComputedStyle(node).display') == 'flex'
+                assert state['offline_attempts'] > attempts, (failed_path, 'network failure not exercised')
+            finally:
+                state['offline'] = False
 
         try:
             page.goto(base)
