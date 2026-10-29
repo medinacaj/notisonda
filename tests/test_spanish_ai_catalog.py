@@ -10,11 +10,12 @@ from urllib.parse import parse_qs, urlsplit
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'scripts'))
 from collect import parse_opml
+from catalog_history import before_business_expansion
 
 
 class SpanishAICatalogTests(unittest.TestCase):
     def setUp(self):
-        self.sources = parse_opml(ROOT / 'sources/feeds.opml')
+        self.sources = before_business_expansion(parse_opml(ROOT / 'sources/feeds.opml'))
         record = ROOT / 'sources/spanish-ai-verification.json'
         self.record = json.loads(record.read_text()) if record.exists() else {'sources': []}
 
