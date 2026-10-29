@@ -6,6 +6,7 @@ import json
 import os
 import ssl
 import subprocess
+import sys
 import tempfile
 import threading
 import unittest
@@ -757,4 +758,13 @@ class DimensionRegressions(unittest.TestCase):
             self.page.set_viewport_size({'width':1440,'height':1000})
 
 
-if __name__=='__main__':unittest.main(verbosity=2)
+if __name__=='__main__':
+    result=unittest.main(verbosity=2,exit=False).result
+    if not result.wasSuccessful():
+        # CI keeps the tail of stderr. Preserve full diagnostics above, then
+        # repeat each failure's cause so a long ARIA snapshot cannot hide it.
+        print('\nCompact failure summary:',file=sys.stderr)
+        for case,detail in result.failures+result.errors:
+            cause=detail.split('Call log:',1)[0].split('Aria snapshot:',1)[0]
+            print(f'{case.id()}\n{cause[:2400]}',file=sys.stderr)
+    sys.exit(not result.wasSuccessful())
