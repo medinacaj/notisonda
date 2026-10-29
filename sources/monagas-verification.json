@@ -5,7 +5,7 @@
   "baseline_sources_sha256": "4e66c2aff0543cd680543ee5109c3c438f0657b814fb71713f927b21d1bfbe5b",
   "category": "08 - Maturín / Monagas",
   "previous_local_source_count": 8,
-  "local_source_count": 11,
+  "local_source_count": 10,
   "native_access": {
     "observed_spec_revision": "8",
     "custom_hosts_active": 155,
@@ -75,31 +75,6 @@
         "Monagas registra un déficit de casi 600 docentes especialistas en planteles públicos - Maturín News"
       ],
       "query": "site:maturinnews.com intitle:Monagas -intitle:archivos when:45d"
-    },
-    {
-      "http_status": 200,
-      "feed_version": "rss20",
-      "feed_language": "es-419",
-      "bozo": false,
-      "entries_observed": 1,
-      "recent_dated_entries": 1,
-      "last_published_at": "2026-10-21T17:42:52+00:00",
-      "response_sha256": "50909daccaf216a6de24d635c32bab12007c40decbfcf36fd1f1ba8e9d0e3bf9",
-      "key": "cronica",
-      "id": "40a516992c34f068",
-      "name": "RADAR — Crónica Uno | Monagas y Maturín",
-      "category": "08 - Maturín / Monagas",
-      "feed": "https://news.google.com/rss/search?q=site%3Acronica.uno+%28Monagas+OR+Matur%C3%ADn+OR+Maturin%29+when%3A45d&hl=es-419&gl=VE&ceid=VE%3Aes-419",
-      "website": "https://cronica.uno/",
-      "provider": "google_news",
-      "status": "rss_observed",
-      "verified_at": "2026-10-29T12:21:00.683229+00:00",
-      "recency_days": 45,
-      "content_language": "es",
-      "sample_titles": [
-        "“Violaron mi fuero, me despidieron en 2019 y se niegan a reengancharme”, sindicalista Starling Bracho - Crónica Uno"
-      ],
-      "query": "site:cronica.uno (Monagas OR Maturín OR Maturin) when:45d"
     }
   ],
   "requests": [
@@ -344,10 +319,8 @@
       "key": "cronica",
       "requested_name": "Crónica Uno",
       "website": "https://cronica.uno/",
-      "status": "added_radar",
-      "catalog_source_ids": [
-        "40a516992c34f068"
-      ],
+      "status": "pending_local_verification",
+      "catalog_source_ids": [],
       "existing_other_folder_ids": [
         "ec0a03cccfad36cf"
       ],
@@ -370,7 +343,33 @@
           "status": "not_checked_network_policy"
         }
       ],
-      "reason": "Se añade un RADAR de Google Noticias con publicaciones locales recientes; no se presenta como RSS del editor. El RSS nativo sigue sin comprobar por la política de red. La búsqueda exige referencias a Monagas/Maturín; no se añade una sección genérica de Oriente que abarque otros estados."
+      "reason": "El RSS de búsqueda devuelve una entrada reciente pero no demuestra que trate sobre Monagas/Maturín; no se incorpora a la carpeta local. Su canal nacional de Venezuela se conserva. El RSS local nativo sigue pendiente de acceso por la política de red.",
+      "candidate_observation": {
+        "http_status": 200,
+        "feed_version": "rss20",
+        "feed_language": "es-419",
+        "bozo": false,
+        "entries_observed": 1,
+        "recent_dated_entries": 1,
+        "last_published_at": "2026-10-21T17:42:52+00:00",
+        "response_sha256": "50909daccaf216a6de24d635c32bab12007c40decbfcf36fd1f1ba8e9d0e3bf9",
+        "key": "cronica",
+        "id": "40a516992c34f068",
+        "name": "RADAR — Crónica Uno | Monagas y Maturín",
+        "category": "08 - Maturín / Monagas",
+        "feed": "https://news.google.com/rss/search?q=site%3Acronica.uno+%28Monagas+OR+Matur%C3%ADn+OR+Maturin%29+when%3A45d&hl=es-419&gl=VE&ceid=VE%3Aes-419",
+        "website": "https://cronica.uno/",
+        "provider": "google_news",
+        "status": "rss_observed",
+        "verified_at": "2026-10-29T12:21:00.683229+00:00",
+        "recency_days": 45,
+        "content_language": "es",
+        "sample_titles": [
+          "“Violaron mi fuero, me despidieron en 2019 y se niegan a reengancharme”, sindicalista Starling Bracho - Crónica Uno"
+        ],
+        "query": "site:cronica.uno (Monagas OR Maturín OR Maturin) when:45d"
+      },
+      "local_relevance": "not_confirmed"
     }
   ]
 }

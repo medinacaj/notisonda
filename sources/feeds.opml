@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <opml version="1.0">
   <head>
-    <title>Fuentes públicas Notisonda (314 feeds, 8 categorías)</title>
+    <title>Fuentes públicas Notisonda (313 feeds, 8 categorías)</title>
   </head>
   <body>
     <outline text="01 - Inteligencia Artificial" title="01 - Inteligencia Artificial">
@@ -335,7 +335,6 @@
       <outline text="RADAR — Radio Fe y Alegría | Maturín y Monagas" title="RADAR — Radio Fe y Alegría | Maturín y Monagas" type="rss" xmlUrl="https://news.google.com/rss/search?q=site%3Aradiofeyalegrianoticias.com+%28intitle%3AMonagas+OR+intitle%3AMatur%C3%ADn+OR+intitle%3AMaturin%29+when%3A30d&amp;hl=es-419&amp;gl=VE&amp;ceid=VE%3Aes-419" htmlUrl="https://www.radiofeyalegrianoticias.com/" />
       <outline text="MEDIO — La Verdad de Monagas | Maturín" title="MEDIO — La Verdad de Monagas | Maturín" type="rss" xmlUrl="https://laverdaddemonagas.com/maturin/feed/" htmlUrl="https://laverdaddemonagas.com/" />
       <outline text="RADAR — Maturín News | Monagas" title="RADAR — Maturín News | Monagas" type="rss" xmlUrl="https://news.google.com/rss/search?q=site%3Amaturinnews.com+intitle%3AMonagas+-intitle%3Aarchivos+when%3A45d&amp;hl=es-419&amp;gl=VE&amp;ceid=VE%3Aes-419" htmlUrl="https://maturinnews.com/" />
-      <outline text="RADAR — Crónica Uno | Monagas y Maturín" title="RADAR — Crónica Uno | Monagas y Maturín" type="rss" xmlUrl="https://news.google.com/rss/search?q=site%3Acronica.uno+%28Monagas+OR+Matur%C3%ADn+OR+Maturin%29+when%3A45d&amp;hl=es-419&amp;gl=VE&amp;ceid=VE%3Aes-419" htmlUrl="https://cronica.uno/" />
     </outline>
   </body>
 </opml>

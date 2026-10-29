@@ -32,7 +32,8 @@ class MonagasCatalogTests(unittest.TestCase):
         ids = {s['id'] for s in self.sources}
         for request in self.record['requests']:
             self.assertTrue(request['reason'])
-            self.assertTrue(request['catalog_source_ids'])
+            if request['status'] != 'pending_local_verification':
+                self.assertTrue(request['catalog_source_ids'])
             self.assertTrue(set(request['catalog_source_ids']) <= ids)
         for row in self.record['sources']:
             source = catalog[row['feed']]
@@ -56,6 +57,15 @@ class MonagasCatalogTests(unittest.TestCase):
             else:
                 self.assertFalse(source['is_radar'])
                 self.assertEqual(urlsplit(source['url']).path, '/maturin/feed/')
+
+    def test_unconfirmed_cronica_result_does_not_become_a_local_subscription(self):
+        request = next(r for r in self.record['requests'] if r['key'] == 'cronica')
+        self.assertEqual(request['status'], 'pending_local_verification')
+        self.assertEqual(request['catalog_source_ids'], [])
+        self.assertFalse(any(r['key'] == 'cronica' for r in self.record['sources']))
+        # The national subscription remains available in its original folder.
+        source = next(s for s in self.sources if s['id'] == 'ec0a03cccfad36cf')
+        self.assertEqual(source['category'], '05 - Venezuela')
 
 
 if __name__ == '__main__':
