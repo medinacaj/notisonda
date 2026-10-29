@@ -745,8 +745,17 @@ class DimensionRegressions(unittest.TestCase):
             outline=self.page.locator('#themeToggle').evaluate('n=>({style:getComputedStyle(n).outlineStyle,width:parseFloat(getComputedStyle(n).outlineWidth)})')
             self.assertEqual(outline['style'],'solid');self.assertGreaterEqual(outline['width'],2)
             for width in (320,390,951,1440):
+                was_mobile=self.page.evaluate('MOBILE_NAV.matches')
                 self.page.set_viewport_size({'width':width,'height':950})
-                self.page.evaluate('setNavOpen(true,false,true)')
+                # Let the breakpoint change finish before a user opens the
+                # drawer. WebKit dispatches matchMedia changes asynchronously.
+                if (width<=950)!=was_mobile:
+                    if width<=950:
+                        expect(self.page.locator('#menuToggle')).to_have_attribute('aria-expanded','false')
+                    else:
+                        expect(self.page.locator('#appSidebar')).not_to_have_attribute('role','dialog')
+                if self.page.locator('#menuToggle').get_attribute('aria-expanded')!='true':
+                    self.page.locator('#menuToggle').click()
                 button=self.page.locator('#refreshNow')
                 expect(button).to_be_visible()
                 box=button.bounding_box()
