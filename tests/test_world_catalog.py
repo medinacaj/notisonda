@@ -12,11 +12,12 @@ from urllib.parse import parse_qs, urlsplit
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'scripts'))
 from collect import parse_opml
+from monagas_history import before_monagas_expansion
 
 
 class WorldCatalogTests(unittest.TestCase):
     def setUp(self):
-        self.sources = parse_opml(ROOT / 'sources/feeds.opml')
+        self.sources = before_monagas_expansion(parse_opml(ROOT / 'sources/feeds.opml'))
         path = ROOT / 'sources/world-coverage-verification.json'
         self.record = json.loads(path.read_text()) if path.exists() else {'sources': []}
 

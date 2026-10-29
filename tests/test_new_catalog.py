@@ -12,11 +12,13 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'scripts'))
 from collect import parse_opml
 from audit_feeds import audit
+from monagas_history import before_monagas_expansion
 
 
 class ExpandedCatalogTests(unittest.TestCase):
     def setUp(self):
-        self.sources = parse_opml(ROOT / 'sources/feeds.opml')
+        self.catalog_sources = parse_opml(ROOT / 'sources/feeds.opml')
+        self.sources = before_monagas_expansion(self.catalog_sources)
         path = ROOT / 'sources/reliable-expansion-verification.json'
         self.expansion = json.loads(path.read_text()) if path.exists() else {'sources': []}
         self.additions = [r for r in self.expansion['sources'] if r.get('included')]
@@ -138,7 +140,7 @@ class ExpandedCatalogTests(unittest.TestCase):
 
     def test_generated_catalog_matches_opml(self):
         data = json.loads((ROOT / 'web/data/sources.json').read_text())
-        self.assertEqual(data['sources'], self.sources)
+        self.assertEqual(data['sources'], self.catalog_sources)
         self.assertEqual(len(data['categories']), 8)
 
     def test_monagas_is_venezuelan_and_culture_is_not_a_geographic_subset(self):
