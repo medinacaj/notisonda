@@ -5,7 +5,7 @@ import json
 from pathlib import Path
 import struct
 import unittest
-from urllib.parse import urlsplit
+from urllib.parse import parse_qs, urlsplit
 
 ROOT=Path(__file__).resolve().parents[1]
 WEB=ROOT/'web'
@@ -25,6 +25,15 @@ def png_size(path):
 class NotisondaAssetsTests(unittest.TestCase):
     def setUp(self):
         self.tags=HeadTags((WEB/'index.html').read_text()).tags
+
+    def test_public_html_has_no_previous_product_name(self):
+        self.assertNotRegex((WEB/'index.html').read_text(), r'(?i)notisonda')
+
+    def test_calendar_script_version_advances_past_previous_identity(self):
+        scripts = [urlsplit(a['src']) for tag, a in self.tags if tag == 'script' and 'src' in a]
+        script = next(url for url in scripts if url.path.endswith('/agenda.js'))
+        version = parse_qs(script.query)['v'][0]
+        self.assertGreater(tuple(map(int, version.split('.'))), (1, 1, 1))
 
     def test_apple_touch_icon_is_a_real_png_with_its_advertised_size(self):
         attrs=next(attrs for tag,attrs in self.tags if tag=='link' and attrs.get('rel')=='apple-touch-icon')
