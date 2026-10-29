@@ -39,8 +39,8 @@ class NotisondaAssetsTests(unittest.TestCase):
         attrs=next(attrs for tag,attrs in self.tags if tag=='link' and attrs.get('rel')=='apple-touch-icon')
         path=urlsplit(attrs['href']).path
         self.assertEqual(Path(path).suffix,'.png')
-        self.assertEqual(attrs['sizes'], '192x192')
-        self.assertEqual(png_size(WEB/path.removeprefix('./')),(192,192))
+        self.assertEqual(attrs['sizes'], '180x180')
+        self.assertEqual(png_size(WEB/path.removeprefix('./')),(180,180))
 
     def test_open_graph_and_twitter_share_the_same_real_1200x630_png(self):
         meta={a.get('property') or a.get('name'):a.get('content') for t,a in self.tags if t=='meta'}

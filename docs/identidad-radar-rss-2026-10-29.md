@@ -1,26 +1,37 @@
-# Identidad Radar-RSS
+# Radar-RSS: identidad editorial completa
 
-El sistema vuelve a llamarse **Radar-RSS** por indicación del usuario. Se actualizan cabecera, pie, pestaña, preferencias, descripción, metadatos sociales, aplicación instalada, textos, resúmenes, archivos descargados y nombre de los RSS generados.
+Se renueva toda la identidad de **Radar-RSS** con la dirección elegida por el usuario: petróleo, turquesa y coral. El cambio abarca logo, iconos, tarjeta social, colores, jerarquía, navegación, tarjetas, botones, formularios, agenda, lector y configuración. La cabecera conserva un único logo de 24 píxeles; no se incorpora un banner grande ni otra barra superior.
 
-GitHub confirma que el repositorio actual es `medinacaj/radar-rss`. La dirección vigente es **https://medinacaj.github.io/radar-rss/**: tanto la página como `data/meta.json` respondieron 200. Las rutas anteriores de `/notisonda/` respondieron 404. `scripts/site_config.py` alinea recuperación de noticias, agenda y monitor con la ruta vigente; la comprobación real de salud con esa configuración terminó correctamente. Esa comprobación no significa que el cambio de código ya esté publicado.
+| Tema | Fondo | Texto | Acción principal |
+|---|---|---|---|
+| Claro | `#f3f7f7` | `#183442` | `#146e7b` con texto blanco |
+| Oscuro | `#111e29` | `#e7eff2` | `#7dd5ce` con texto petróleo |
 
-Se recupera el símbolo RSS anterior bajo `radar-favicon.svg` y `radar-icon-maskable.svg`, copiado sin modificar de la revisión `afc1785`. Se reutilizan los PNG históricos `icon-192.png`, `icon-512.png`, `icon-maskable-512.png` y `social-card.png`. El icono Apple declara sus 192 píxeles reales. La tarjeta social conserva su diseño anterior, donde la marca se escribe visualmente «Radar RSS»; el nombre canónico de HTML y manifest es «Radar-RSS». Los SVG y PNG de Notisonda permanecen en el repositorio.
+Los textos largos permanecen neutros. El color identifica secciones, selección, estados y acciones; los bordes y sombras dan profundidad sin desplazar tarjetas al interactuar. El foco del teclado es visible, los controles principales tienen 44 píxeles y se respeta reducción de movimiento. El barrido del gráfico se activa al interactuar, evitando un movimiento continuo en reposo.
 
-Las claves de almacenamiento, el formato `radar-rss-settings-v3`, los GUID de noticias y los UID `@agenda.radar-rss` se conservan. Los respaldos v2/v3 anteriores siguen aceptándose. Los archivos nuevos usan el prefijo `radar-rss-`. La caché se renueva a `radar-rss-v56`, conservando la limpieza de las cachés anteriores de ambas marcas, la lectura sin conexión y la exigencia de red al actualizar manualmente.
+## Logo y activos
 
-`web/data/sources.json` conserva exactamente sus bytes anteriores: 311 fuentes en ocho carpetas. El cambio del OPML se limita a su título. Los PR #120 y #121 de fuentes siguen separados, en borrador y pendientes de publicación por indicación del usuario.
+El símbolo RSS/radar y la tarjeta social se generaron para el proyecto mediante `image_gen`. Los maestros se conservan en `assets/brand/`. Los tamaños web y de instalación se exportan con `browser_tests/export_radar_brand.py`, usando el renderer del navegador sin modificar el dibujo. No se añaden dependencias a producción ni se afirma exclusividad jurídica de la marca.
 
-La URL anterior de una aplicación instalada o un marcador seguirá apuntando a una ruta que ya devuelve 404. El acceso vigente debe abrirse desde `/radar-rss/`; las claves de almacenamiento se mantienen en el mismo origen. No se puede crear una redirección desde el proyecto GitHub Pages cuyo nombre anterior dejó de publicarse mediante este cambio de aplicación.
+Los activos activos usan el prefijo `radar-rss-`: marca de 128 píxeles mostrada a 24, favicon de 64, iconos de 192 y 512, maskable de 512 con área segura, Apple de 180 y tarjeta social de 1200×630. Los originales anteriores de RSS y Notisonda se conservan como históricos. HTML, manifest, iconos, metadatos y caché apuntan a la nueva identidad; el manifest se referencia con versión para evitar una copia HTTP anterior.
 
-## Verificación
+## Compatibilidad y publicación
 
-- 292 pruebas Python aprobadas, incluidas recuperación, monitor, títulos RSS, atribución y conservación de activos anteriores.
-- Auditoría OPML: 311 fuentes, ocho carpetas, cero problemas; catálogo JSON idéntico byte a byte.
-- Sintaxis de los scripts modificados y pruebas Node de migración de caché, lectura offline, actualización manual y herramientas de fuentes aprobadas.
-- 42 regresiones de interfaz y 12 de herramientas de agenda aprobadas; el calendario conserva su UID y exporta con el nombre y PRODID de Radar-RSS.
-- Comprobación de navegador con los `app.js` y `library.js` exactos de la versión anterior: actualización con lectura, guardados, fuentes ocultas y carpetas conservadas; importación del respaldo anterior de Notisonda y exportación nueva con el mismo esquema.
-- Cabecera, metadatos, manifest, enlaces y ambos temas comprobados a 390 y 1440 píxeles, sin desbordamiento horizontal.
+La ruta verificada es **https://medinacaj.github.io/radar-rss/**. GitHub confirma `medinacaj/radar-rss`; página y metadatos responden 200, mientras `/notisonda/` devuelve 404. La recuperación y el monitor usan la ruta vigente mediante `scripts/site_config.py`; la comprobación real de salud pasó. Esto no implica que el código propuesto ya esté publicado.
 
-La revisión final encontró un texto antiguo en el pie y la versión anterior en la URL del script de agenda. Ambos se corrigieron con regresiones que fallaron antes del ajuste y pasaron después. La comprobación del navegador reprodujo una respuesta anterior de `agenda.js?v=1.1.1` que exportaba `notisonda-agenda.ics`; la referencia nueva `v=1.1.2` evita esa copia y exporta con el nombre actual, conservando el UID del evento.
+Se conservan las claves de almacenamiento, respaldos v2/v3 y formato `radar-rss-settings-v3`, GUID de noticias y UID `@agenda.radar-rss`. El catálogo JSON sigue idéntico byte a byte: 311 fuentes en ocho carpetas. Se mantienen rutas, navegación, filtros, estados de lectura y guardados. Los PR #120 y #121 de fuentes continúan separados y aplazados.
 
-Las pruebas locales y los cambios preparados no equivalen a una publicación. La revisión y CI del PR documentan el estado del commit propuesto.
+La caché se renueva a `radar-rss-v57`, manteniendo migración de ambas marcas, lectura offline y exigencia de red al comprobar novedades manualmente. Los accesos instalados que apuntan a la ruta anterior deberán abrir la dirección vigente; este cambio no puede crear una redirección desde el proyecto anterior de GitHub Pages.
+
+## Comprobaciones
+
+- 292 pruebas Python y auditoría OPML sin problemas; todos los activos históricos protegidos conservan sus hashes.
+- 42 regresiones de interfaz, siete tamaños responsivos y cuatro tamaños de lectura; pruebas de controles, fuentes y compatibilidad de respaldos.
+- Regresión de contraste en el lector: el texto «en otra pestaña» heredaba blanco sobre una acción clara. Se observó el fallo, se corrigió en su regla original y se comprobó tanto en reposo como al pasar el puntero, en ambos temas.
+- Auditoría ampliada: 2.570 muestras de texto, mínimo observado 4,52:1 y ninguna por debajo de 4,5:1. Incluye categorías y tres carpetas adicionales previstas, sin añadirlas al catálogo.
+- Actualización desde los scripts exactos anteriores e importación de su respaldo original de Notisonda aprobadas; se conservan lectura, guardados, fuentes ocultas y carpetas personales.
+- Vista con la instantánea pública completa de 5.000 artículos y 311 fuentes: Inicio, Noticias, Resumen, Agenda, lector y configuración, en ambos temas y anchos de 320, 390, 768, 1440 y 2560 píxeles, sin desbordamiento.
+
+Las imágenes de noticias externas estuvieron limitadas por la política de red de la herramienta de pruebas. Se comprobó la alternativa sin fotografía, sin inventar imágenes de noticias. Las capturas y métricas son evidencia de las condiciones probadas, no una garantía de ausencia de fallos o de comodidad visual idéntica para todas las personas.
+
+La publicación continúa pendiente por indicación del usuario. La descripción del PR documenta revisión y CI del commit final.

@@ -766,6 +766,15 @@ class DimensionRegressions(unittest.TestCase):
                 self.assertTrue(self.page.evaluate('document.documentElement.scrollWidth<=innerWidth+2'))
             self.page.set_viewport_size({'width':1440,'height':1000})
 
+            self.page.locator('#articleGrid .article-title a').first.click()
+            expect(self.page.locator('#articleReaderDialog')).to_be_visible()
+            for selector in ('.reader-primary', '.reader-primary .reader-open-hint'):
+                self.assertGreaterEqual(self.page.locator(selector).evaluate(contrast), 4.5, (theme, selector))
+            self.page.locator('.reader-primary').hover()
+            for selector in ('.reader-primary', '.reader-primary .reader-open-hint'):
+                self.assertGreaterEqual(self.page.locator(selector).evaluate(contrast), 4.5, (theme, 'hover', selector))
+            self.page.keyboard.press('Escape')
+
 
 if __name__=='__main__':
     result=unittest.main(verbosity=2,exit=False).result
