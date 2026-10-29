@@ -11,8 +11,9 @@ import responsive_smoke as fixtures
 
 def check_failed_upgrade(browser, tls_context):
     source = (fixtures.WEB / 'sw.js').read_text()
-    # Observe navigation flags without replacing the production fetch handler.
-    source += """
+    # Observe before the production handler: respondWith stops later listeners.
+    # The observer does not replace the production fetch response.
+    source = """
     self.addEventListener('fetch', event => {
         if (event.request.mode !== 'navigate') return;
         event.waitUntil(caches.open('upgrade-test-diagnostics').then(cache => cache.put(
@@ -20,13 +21,22 @@ def check_failed_upgrade(browser, tls_context):
             new Response(JSON.stringify({cache:event.request.cache, mode:event.request.mode}))
         )));
     });
-    """
+    """ + source
     legacy = re.sub(r"const CACHE = '[^']+';", "const CACHE = 'notisonda-v4';", source, count=1)
 
     for failed_path, failure in (('/app.js', 'http'), ('/data/latest.json', 'network')):
         state = {'upgrade': False, 'failure': failure, 'offline': False, 'offline_attempts': 0}
 
         class Handler(fixtures.QuietHandler):
+            def end_headers(self):
+                # Keep this test offline without browser request interception,
+                # which changes cache/navigation behavior in Firefox.
+                self.send_header('Content-Security-Policy',
+                    "default-src 'self'; script-src 'self' 'unsafe-inline'; "
+                    "style-src 'self' 'unsafe-inline'; img-src 'self' data:; "
+                    "font-src 'self'; connect-src 'self'; worker-src 'self'")
+                super().end_headers()
+
             def do_GET(self):
                 try:
                     self.respond()
@@ -68,7 +78,6 @@ def check_failed_upgrade(browser, tls_context):
         base = f'https://127.0.0.1:{server.server_port}/'
         threading.Thread(target=server.serve_forever, daemon=True).start()
         context = browser.new_context(service_workers='allow', ignore_https_errors=True)
-        context.route(re.compile(r'^https?://(?!127\.0\.0\.1:)'), lambda route: route.abort())
         page = context.new_page()
         errors = []
         page.on('pageerror', lambda error: errors.append(str(error)))
@@ -113,6 +122,11 @@ def check_failed_upgrade(browser, tls_context):
                 assert offline_page.evaluate('state.items.length') == len(fixtures.ITEMS), (failed_path, 'offline news lost', registration)
                 expect(offline_page.locator('#dashboardTitle')).to_have_text('Inicio')
                 assert offline_page.locator('.topbar').evaluate('node => getComputedStyle(node).display') == 'flex'
+                navigation = offline_page.evaluate("""async () => {
+                    const response = await caches.match(new URL('__navigation', location.href).href);
+                    return response ? await response.json() : null;
+                }""")
+                assert navigation and navigation['mode'] == 'navigate', (failed_path, 'SW navigation was bypassed', navigation)
                 assert state['offline_attempts'] > attempts, (failed_path, 'network failure not exercised')
             finally:
                 offline_page.close()
