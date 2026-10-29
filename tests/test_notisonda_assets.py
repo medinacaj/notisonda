@@ -26,24 +26,28 @@ class NotisondaAssetsTests(unittest.TestCase):
     def setUp(self):
         self.tags=HeadTags((WEB/'index.html').read_text()).tags
 
-    def test_apple_touch_icon_is_a_real_180px_png(self):
+    def test_apple_touch_icon_is_a_real_png_with_its_advertised_size(self):
         attrs=next(attrs for tag,attrs in self.tags if tag=='link' and attrs.get('rel')=='apple-touch-icon')
         path=urlsplit(attrs['href']).path
         self.assertEqual(Path(path).suffix,'.png')
-        self.assertEqual(png_size(WEB/path.removeprefix('./')),(180,180))
+        self.assertEqual(attrs['sizes'], '192x192')
+        self.assertEqual(png_size(WEB/path.removeprefix('./')),(192,192))
 
     def test_open_graph_and_twitter_share_the_same_real_1200x630_png(self):
         meta={a.get('property') or a.get('name'):a.get('content') for t,a in self.tags if t=='meta'}
         url=meta['og:image']
         self.assertEqual(meta['twitter:image'],url)
         self.assertEqual(urlsplit(url).netloc,'medinacaj.github.io')
-        self.assertTrue(urlsplit(url).path.startswith('/notisonda/'))
+        self.assertTrue(urlsplit(url).path.startswith('/radar-rss/'))
         self.assertEqual(Path(urlsplit(url).path).suffix,'.png')
         self.assertEqual(meta.get('og:image:type'),'image/png')
         self.assertEqual(png_size(WEB/Path(urlsplit(url).path).name),(1200,630))
 
     def test_installable_icons_include_real_png_sizes_and_maskable(self):
         manifest=json.loads((WEB/'manifest.webmanifest').read_text())
+        self.assertEqual(manifest['short_name'], 'Radar-RSS')
+        self.assertTrue(manifest['name'].startswith('Radar-RSS'))
+        self.assertEqual(manifest['start_url'], './#inicio')
         icons=[i for i in manifest['icons'] if i.get('type')=='image/png']
         self.assertTrue(any(i['sizes']=='192x192' and i['purpose']=='any' for i in icons))
         self.assertTrue(any(i['sizes']=='512x512' and i['purpose']=='any' for i in icons))

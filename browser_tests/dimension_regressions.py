@@ -417,19 +417,19 @@ class DimensionRegressions(unittest.TestCase):
         self.page.locator('#settingsButton').click()
         self.page.locator('[data-settings-tab="sources"]').click()
 
-    def test_notisonda_exports_keep_legacy_backup_format_and_use_current_identity(self):
+    def test_exports_keep_legacy_backup_format_and_use_current_identity(self):
         self.open_source_settings()
         self.page.locator('#settingsSources .library-source-details-trigger').first.click()
-        expect(self.page.locator('#librarySourceDetailsDialog')).to_contain_text('catálogo público de Notisonda')
+        expect(self.page.locator('#librarySourceDetailsDialog')).to_contain_text('catálogo público de Radar-RSS')
         self.page.locator('#librarySourceDetailsDialog button').last.click()
         self.page.evaluate('()=>{window.brandDownloads=[];downloadText=(name,body,mime)=>window.brandDownloads.push({name,body,mime});}')
         self.page.locator('#exportOPML').click()
         xml=self.page.evaluate('window.brandDownloads.at(-1).body')
-        self.assertIn('<title>Mis fuentes Notisonda</title>',xml)
+        self.assertIn('<title>Mis fuentes Radar-RSS</title>',xml)
         self.page.locator('[data-settings-tab="data"]').click()
         self.page.locator('#exportData').click()
         backup=self.page.evaluate('window.brandDownloads.at(-1)')
-        self.assertEqual(backup['name'],'notisonda-respaldo-completo.json')
+        self.assertEqual(backup['name'],'radar-rss-respaldo-completo.json')
         self.assertEqual(json.loads(backup['body'])['format'],'radar-rss-settings-v3')
 
     def test_source_addresses_search_filters_and_stable_identity(self):
