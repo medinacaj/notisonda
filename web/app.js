@@ -213,7 +213,7 @@ function setTheme(theme, explicit=false) {
   $('themeGlyph').replaceChildren(svgIcon(light?'moon':'sun'));
   $('themeToggle').setAttribute('aria-label',light?'Cambiar a modo oscuro':'Cambiar a modo claro');
   $('themeToggle').title=light?'Modo oscuro':'Modo claro';
-  document.querySelector('meta[name="theme-color"]')?.setAttribute('content',light?'#f3f1eb':'#171c25');
+  document.querySelector('meta[name="theme-color"]')?.setAttribute('content',light?'#f6f5f2':'#19181f');
   if(explicit){
     try{localStorage.setItem('radar-theme',state.theme);localStorage.setItem(THEME_EXPLICIT_KEY,'true');}catch{}
   }
@@ -1467,6 +1467,7 @@ let nextCheckAt=Date.now()+CHECK_INTERVAL_MS;
 let checkStartedAt=Date.now();
 let checkTimer=null;
 let feedRefreshBusy=false;
+let bootBusy=false;
 let pendingPublication=null;
 function freshnessLabel(){
   if(!state.generated)return state.ready?'Sin sincronizar':'Cargando…';
@@ -1479,7 +1480,13 @@ function updateScheduleProgress(){
   const description='Notisonda busca noticias nuevas cada 15 minutos; los medios se recopilan aproximadamente cada 3 horas.'+exact;
   $('refreshCycle').title=description;
   $('lastUpdate').title=description;
-  $('refreshNow').disabled=feedRefreshBusy;
+  $('refreshNow').disabled=feedRefreshBusy||bootBusy;
+  $('refreshNow').setAttribute('aria-busy',String(feedRefreshBusy||bootBusy));
+  $('refreshNowLabel').textContent=feedRefreshBusy?'Buscando…':bootBusy?'Cargando…':'Actualizar';
+}
+function refreshFeedback(message,status='success'){
+  $('refreshStatus').textContent=message;
+  $('refreshStatus').dataset.state=status;
 }
 function scheduleNextCheck(){
   window.clearTimeout(checkTimer);
@@ -1489,27 +1496,38 @@ function scheduleNextCheck(){
   updateScheduleProgress();
 }
 // Comprueba si GitHub Pages publicó datos nuevos, sin descargar directamente las fuentes.
-async function refreshPublishedData(){
-  if(feedRefreshBusy)return;
-  if(!state.ready||document.hidden){scheduleNextCheck();return;}
+async function refreshPublishedData({manual=false}={}){
+  if(feedRefreshBusy||bootBusy)return;
+  if((!state.ready&&!manual)||document.hidden){scheduleNextCheck();return;}
   feedRefreshBusy=true;updateScheduleProgress();
+  if(manual)refreshFeedback('Comprobando publicaciones…','loading');
+  else refreshFeedback('','idle');
+  const controller=new AbortController();
+  const timeout=window.setTimeout(()=>controller.abort(),15_000);
+  const options={signal:controller.signal,fresh:manual};
   try{
-    const meta=await dataFetch('./data/meta.json?check='+Date.now());
-    if(!meta.generated_at)return;
+    const meta=await dataFetch('./data/meta.json?check='+Date.now(),options);
+    const generatedTime=typeof meta?.generated_at==='string'?Date.parse(meta.generated_at):NaN;
+    if(!Number.isFinite(generatedTime))throw Error('Fecha de publicación RSS incompatible');
+    if(pendingPublication&&generatedTime<=Date.parse(pendingPublication.meta.generated_at)){
+      if(manual){applyPendingPublication();refreshFeedback('Noticias actualizadas.');}
+      return;
+    }
     if(meta.generated_at===state.generated){
       if(!newsCountsComplete()&&!state.historyLoading){
         state.feedMeta=meta;state.historyLoaded=false;state.historyFailed=false;render();
       }
+      if(manual)refreshFeedback('No hay novedades publicadas.');
       return;
     }
-    if(meta.generated_at===pendingPublication?.meta.generated_at)return;
-    const generatedTime=typeof meta.generated_at==='string'?Date.parse(meta.generated_at):NaN;
-    if(!Number.isFinite(generatedTime))throw Error('Fecha de publicación RSS incompatible');
-    if(generatedTime<=Date.parse(state.generated)||generatedTime<=Date.parse(pendingPublication?.meta.generated_at))return;
+    if(generatedTime<=Date.parse(state.generated)){
+      if(manual)refreshFeedback('No hay una publicación más reciente disponible.');
+      return;
+    }
     const [sources,latest,status]=await Promise.all([
-      dataFetch('./data/sources.json?check='+Date.now()),
-      dataFetch('./data/latest.json?check='+Date.now()),
-      dataFetch('./data/status.json?check='+Date.now())
+      dataFetch('./data/sources.json?check='+Date.now(),options),
+      dataFetch('./data/latest.json?check='+Date.now(),options),
+      dataFetch('./data/status.json?check='+Date.now(),options)
     ]);
     // latest y status llevan la misma generación del manifiesto. sources no
     // publica sello temporal; se valida su estructura antes de aceptar el lote.
@@ -1524,12 +1542,18 @@ async function refreshPublishedData(){
       throw Error('Publicación RSS incompatible');
     }
     pendingPublication={meta,sources,latest,status};
+    if(manual){applyPendingPublication();refreshFeedback('Noticias actualizadas.');return;}
     const previousIds=new Set(state.items.map(item=>item.id));
     const added=new Set(latest.items.filter(item=>!previousIds.has(item.id)).map(item=>item.id)).size;
     $('publicationMessage').textContent=added?`Hay ${format.format(added)} ${added===1?'noticia nueva':'noticias nuevas'}`:'Hay una actualización disponible';
     $('publicationNotice').hidden=false;
-  }catch(error){console.warn('Comprobación automática RSS:',error);}
-  finally{feedRefreshBusy=false;scheduleNextCheck();}
+  }catch(error){
+    const timedOut=controller.signal.aborted;
+    controller.abort();
+    console.warn('Comprobación RSS:',error);
+    if(manual)refreshFeedback(timedOut?'La comprobación tardó demasiado. Vuelve a intentar.':'No se pudo actualizar. Revisa tu conexión y vuelve a intentar.','error');
+  }
+  finally{window.clearTimeout(timeout);feedRefreshBusy=false;scheduleNextCheck();}
 }
 
 function applyPendingPublication(){
@@ -1541,6 +1565,7 @@ function applyPendingPublication(){
   state.sources=sources.sources;state.categories=sources.categories;
   state.items=latest.items;state.health=status.feeds;state.healthCheckedAt=status.checked_at||null;
   state.feedMeta=meta;state.generated=meta.generated_at;
+  state.ready=true;
   state.historyLoaded=false;state.historyFailed=false;
   historyAbort?.abort();pendingPublication=null;
   $('publicationNotice').hidden=true;
@@ -1551,30 +1576,37 @@ function applyPendingPublication(){
 }
 
 async function dataFetch(path, options={}) {
-  const response = await fetch(path,{cache:'no-cache',signal:options.signal});
+  const response = await fetch(path,{cache:options.fresh?'no-store':'no-cache',signal:options.signal});
   if (!response.ok) throw new Error(`HTTP ${response.status} al abrir ${path}`);
   return response.json();
 }
 async function boot() {
+  bootBusy=true;updateScheduleProgress();
+  const controller=new AbortController();
+  const timeout=window.setTimeout(()=>controller.abort(),15_000);
+  const options={signal:controller.signal};
   setTheme(state.theme);
   applyDisplaySettings();
   state.mode=state.startMode;
   try {
     const [sources, articles, status] = await Promise.all([
-      dataFetch('./data/sources.json'), dataFetch('./data/latest.json'), dataFetch('./data/status.json')
+      dataFetch('./data/sources.json',options), dataFetch('./data/latest.json',options), dataFetch('./data/status.json',options)
     ]);
     state.sources=Array.isArray(sources.sources)?sources.sources:[];
     state.categories=Array.isArray(sources.categories)?sources.categories:[];
     state.items=Array.isArray(articles.items)?articles.items:[];
     state.health=Array.isArray(status.feeds)?status.feeds:[];state.healthCheckedAt=status.checked_at||null;
     state.generated=articles.generated_at;
-    try{state.feedMeta=await dataFetch('./data/meta.json');}catch{state.feedMeta=null;state.historyLoaded=true;}
+    try{state.feedMeta=await dataFetch('./data/meta.json',options);}catch{state.feedMeta=null;state.historyLoaded=true;}
     state.ready=true;
     updateScheduleProgress();
 
   } catch(err) {
     state.ready=false;
     console.error('Carga de fuentes:',err);
+  } finally {
+    window.clearTimeout(timeout);controller.abort();
+    bootBusy=false;updateScheduleProgress();
   }
   statusSummary(); navigateFromHash();
   if(state.ready)publishNewRSSNews();
@@ -1599,7 +1631,7 @@ function initHandlers() {
  initCardMenu();
   window.setInterval(updateScheduleProgress,30_000);
   scheduleNextCheck();
-  $('refreshNow').addEventListener('click',()=>{void refreshPublishedData();});
+  $('refreshNow').addEventListener('click',()=>{void refreshPublishedData({manual:true});});
   $('publicationApply').addEventListener('click',applyPendingPublication);
   window.addEventListener('focus',()=>{if(document.visibilityState==='visible'&&Date.now()>=nextCheckAt){void refreshPublishedData();}});
   document.addEventListener('visibilitychange',()=>{if(!document.hidden){if(Date.now()>=nextCheckAt){void refreshPublishedData();}else{updateScheduleProgress();}}});

@@ -2,7 +2,7 @@
    Estrategia: primero la red (siempre lo más reciente); si no hay conexión, la última
    copia guardada. Solo se guardan archivos del propio sitio, nunca imágenes ni enlaces externos.
    Las URL se guardan sin parámetros (?v=, ?check=) para que la caché no crezca sin límite. */
-const CACHE = 'notisonda-v3';
+const CACHE = 'notisonda-v4';
 const SHELL = [
   './', './index.html', './manifest.webmanifest', './favicon.svg', './social-card.svg', './icon-maskable.svg',
   './notisonda-icon-192.png', './notisonda-icon-512.png', './notisonda-maskable-512.png', './notisonda-apple-touch-icon.png', './notisonda-social-card.png',
@@ -46,6 +46,9 @@ self.addEventListener('fetch', event => {
       }
       return response;
     } catch (error) {
+      // Una comprobación manual exige red: una copia antigua no demuestra
+      // que no haya novedades. El resto de la lectura sigue disponible offline.
+      if (request.cache === 'no-store') throw error;
       const cached = await cache.match(keyFor(request));
       if (cached) return cached;
       if (request.mode === 'navigate') {

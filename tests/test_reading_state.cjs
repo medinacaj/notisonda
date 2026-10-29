@@ -92,6 +92,111 @@ function stableState(state){
     mode:state.mode,search:state.search,page:state.page});
 }
 
+test('manual refresh applies new published news immediately while preserving reading choices',async()=>{
+  const h=harness(),docs=publication();
+  h.el('articleReaderDialog').open=true;
+  h.state.saved.add('kept');h.state.read.add('history');
+  h.setFetch(name=>docs[name]);
+  await h.run('refreshPublishedData({manual:true})');
+  assert.equal(h.state.generated,NEXT);
+  assert.equal(h.state.items,docs['latest.json'].items);
+  assert.equal(h.state.category,'old-category');
+  assert.equal(h.state.search,'texto');
+  assert(h.state.saved.has('kept')&&h.state.read.has('history'));
+  assert.equal(h.el('articleReaderDialog').open,true);
+  assert.equal(h.document.activeElement,h.input);
+  assert.equal(h.window.scrollY,640);
+  assert.equal(h.el('publicationNotice').hidden,true);
+  assert.match(h.el('refreshStatus').textContent,/Noticias actualizadas/);
+});
+
+test('manual refresh with no new publication confirms the check instead of remaining silent',async()=>{
+  const h=harness();
+  h.state.feedMeta={generated_at:OLD,archive_files:[],total_articles:h.state.items.length};
+  h.setFetch(()=>h.state.feedMeta);
+  await h.run('refreshPublishedData({manual:true})');
+  assert.match(h.el('refreshStatus').textContent,/No hay novedades publicadas/);
+  assert.equal(h.state.generated,OLD);
+  assert.equal(h.el('refreshNow').disabled,false);
+});
+
+test('a later automatic check clears an obsolete manual result when new news becomes available',async()=>{
+  const h=harness();
+  h.setFetch(()=>({generated_at:OLD,archive_files:[],total_articles:h.state.items.length}));
+  await h.run('refreshPublishedData({manual:true})');
+  assert.match(h.el('refreshStatus').textContent,/No hay novedades/);
+  const docs=publication();h.setFetch(name=>docs[name]);
+  await h.run('refreshPublishedData()');
+  assert.equal(h.el('refreshStatus').textContent,'');
+  assert.equal(h.el('publicationNotice').hidden,false);
+  assert.equal(h.state.generated,OLD,'automatic arrival still waits for acceptance');
+});
+
+test('failed manual refresh announces a retry and keeps valid news and pending publication',async()=>{
+  const h=harness(),docs=publication(),before=stableState(h.state);
+  h.setFetch(name=>docs[name]);
+  await h.run('refreshPublishedData()');
+  h.setFetch(()=>new Error('offline'));
+  await h.run('refreshPublishedData({manual:true})');
+  assert.match(h.el('refreshStatus').textContent,/No se pudo actualizar.*intentar/);
+  assert.equal(stableState(h.state),before);
+  assert.equal(h.el('refreshNow').disabled,false);
+  h.run('applyPendingPublication()');
+  assert.equal(h.state.generated,NEXT);
+});
+
+test('manual refresh can recover after an initial load failure',async()=>{
+  const h=harness(),docs=publication();
+  Object.assign(h.state,{ready:false,generated:null,items:[],feedMeta:null});
+  h.setFetch(name=>docs[name]);
+  await h.run('refreshPublishedData({manual:true})');
+  assert.equal(h.state.ready,true);
+  assert.equal(h.state.generated,NEXT);
+  assert.equal(h.state.items,docs['latest.json'].items);
+});
+
+test('manual refresh accepts an already validated pending generation without fetching it twice',async()=>{
+  const h=harness(),docs=publication();
+  h.setFetch(name=>docs[name]);
+  await h.run('refreshPublishedData()');
+  await h.run('refreshPublishedData({manual:true})');
+  assert.equal(h.state.generated,NEXT);
+  assert.deepEqual(h.calls,['meta.json','sources.json','latest.json','status.json','meta.json']);
+});
+
+test('manual refresh times out a stuck request, releases the button and allows a new attempt',async()=>{
+  const h=harness(),docs=publication();
+  h.setFetch(()=>new Promise(()=>{}));
+  const request=h.run('refreshPublishedData({manual:true})');
+  assert.equal(h.el('refreshNow').disabled,true);
+  const pending=h.run('refreshPublishedData({manual:true})');
+  await pending;
+  assert.deepEqual(h.calls,['meta.json']);
+  assert([...h.timers.values()].some(timer=>timer.ms===15000),'request has a bounded wait');
+  h.expire(15000);await request;
+  assert.equal(h.el('refreshNow').disabled,false);
+  assert.match(h.el('refreshStatus').textContent,/tardó demasiado/);
+  h.setFetch(name=>docs[name]);
+  await h.run('refreshPublishedData({manual:true})');
+  assert.equal(h.state.generated,NEXT);
+});
+
+test('a stuck initial download releases the refresh button for a manual recovery',async()=>{
+  const h=harness(),docs=publication();
+  h.run('setTheme=()=>{};applyDisplaySettings=()=>{};navigateFromHash=()=>{};');
+  h.setFetch(()=>new Promise(()=>{}));
+  const request=h.run('boot()');
+  assert.equal(h.el('refreshNow').disabled,true);
+  assert([...h.timers.values()].some(timer=>timer.ms===15000),'initial load has a bounded wait');
+  h.expire(15000);await request;
+  assert.equal(h.state.ready,false);
+  assert.equal(h.el('refreshNow').disabled,false);
+  h.setFetch(name=>docs[name]);
+  await h.run('refreshPublishedData({manual:true})');
+  assert.equal(h.state.ready,true);
+  assert.equal(h.state.generated,NEXT);
+});
+
 test('refresh leaves the current feed, loaded history, metadata, filters and position intact until Mostrar',async()=>{
   const h=harness(),docs=publication(),before=stableState(h.state),items=h.state.items;
   h.setFetch(name=>docs[name]);

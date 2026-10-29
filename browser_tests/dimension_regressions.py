@@ -1,10 +1,12 @@
 """Dimension layout: real routes and content, HTTPS fixtures, no publisher requests."""
 from copy import deepcopy
+from datetime import datetime, timedelta
 from pathlib import Path
 import json
 import os
 import ssl
 import subprocess
+import sys
 import tempfile
 import threading
 import unittest
@@ -671,4 +673,110 @@ class DimensionRegressions(unittest.TestCase):
         expect(self.page.locator('#settingsSourceVisibility')).to_be_focused()
 
 
-if __name__=='__main__':unittest.main(verbosity=2)
+    def test_manual_refresh_reports_unchanged_news_then_applies_a_new_publication(self):
+        self.page.evaluate("goTo('all')")
+        self.page.locator('#refreshNow').click()
+        expect(self.page.locator('#refreshStatus')).to_have_text('No hay novedades publicadas.')
+        expect(self.page.locator('#refreshNow')).to_be_enabled()
+        stamp=(datetime.fromisoformat(fixtures.STAMP.replace('Z','+00:00'))+timedelta(minutes=1)).isoformat()
+        docs=deepcopy(fixtures.RESPONSES)
+        for doc in docs.values():
+            if 'generated_at' in doc:doc['generated_at']=stamp
+            if 'checked_at' in doc:doc['checked_at']=stamp
+        docs['latest.json']['items'].insert(0,{**docs['latest.json']['items'][0],
+            'id':'manual-new','title':'Noticia recién publicada tras actualizar','published_at':stamp})
+        docs['meta.json']['total_articles']=docs['meta.json']['latest_count']=len(docs['latest.json']['items'])
+        def publication(route):
+            name=route.request.url.split('/')[-1].split('?')[0]
+            route.fulfill(json=docs[name])
+        self.page.route('**/data/**',publication)
+        self.page.evaluate("()=>{state.saved.add('noticia-1');state.read.add('noticia-2');}")
+        self.page.locator('#refreshNow').click()
+        expect(self.page.locator('#refreshStatus')).to_have_text('Noticias actualizadas.')
+        expect(self.page.locator('#articleGrid > [data-article-id="manual-new"]')).to_be_visible()
+        expect(self.page.locator('#publicationNotice')).to_be_hidden()
+        self.assertEqual(self.page.evaluate('state.generated'),stamp)
+        self.assertTrue(self.page.evaluate("state.saved.has('noticia-1')&&state.read.has('noticia-2')"))
+        self.assertEqual(self.page.evaluate('state.pageView'),'feed')
+
+    def test_manual_refresh_network_error_keeps_news_and_can_be_retried(self):
+        before=self.page.evaluate('state.items.map(x=>x.id)')
+        def offline(route):route.abort('failed')
+        self.page.route('**/data/meta.json*',offline)
+        self.page.locator('#refreshNow').click()
+        expect(self.page.locator('#refreshStatus')).to_contain_text('No se pudo actualizar')
+        expect(self.page.locator('#refreshNow')).to_be_enabled()
+        self.assertEqual(self.page.evaluate('state.items.map(x=>x.id)'),before)
+        self.page.unroute('**/data/meta.json*',offline)
+        self.page.locator('#refreshNow').click()
+        expect(self.page.locator('#refreshStatus')).to_have_text('No hay novedades publicadas.')
+        expect(self.page.locator('#refreshStatus')).to_have_attribute('role','status')
+
+    def test_manual_refresh_recovers_after_the_initial_news_download_fails(self):
+        def offline(route):route.abort('failed')
+        self.page.route('**/data/latest.json*',offline)
+        self.page.reload()
+        self.page.wait_for_function('()=>!bootBusy&&!state.ready')
+        expect(self.page.locator('#refreshNow')).to_be_enabled()
+        self.page.unroute('**/data/latest.json*',offline)
+        self.page.locator('#refreshNow').click()
+        expect(self.page.locator('#refreshStatus')).to_have_text('Noticias actualizadas.')
+        self.assertTrue(self.page.evaluate('state.ready'))
+        self.assertEqual(self.page.evaluate('state.items.length'),len(fixtures.ITEMS))
+        expect(self.page.locator('#dashboardFeature > .article-card')).to_have_count(1)
+
+    def test_controls_keep_contrast_keyboard_focus_and_accessible_refresh_target(self):
+        self.page.emulate_media(reduced_motion='reduce')
+        self.page.evaluate("goTo('all')")
+        contrast=r"""node=>{
+            const canvas=document.createElement('canvas');canvas.width=canvas.height=1;
+            const ctx=canvas.getContext('2d',{willReadFrequently:true});
+            const rgba=c=>{ctx.clearRect(0,0,1,1);ctx.fillStyle=c;ctx.fillRect(0,0,1,1);const v=Array.from(ctx.getImageData(0,0,1,1).data);return [v[0],v[1],v[2],v[3]/255];};
+            const bg=n=>{const c=rgba(getComputedStyle(n).backgroundColor);if(c[3]>=1||!n.parentElement)return c.slice(0,3);const below=bg(n.parentElement);return c.slice(0,3).map((v,i)=>v*c[3]+below[i]*(1-c[3]));};
+            const lum=c=>c.map(v=>{v/=255;return v<=.04045?v/12.92:((v+.055)/1.055)**2.4}).reduce((s,v,i)=>s+v*[.2126,.7152,.0722][i],0);
+            const a=lum(bg(node)),b=lum(rgba(getComputedStyle(node).color).slice(0,3));return (Math.max(a,b)+.05)/(Math.min(a,b)+.05);
+        }"""
+        for theme in ('dark','light'):
+            self.page.evaluate('(theme)=>setTheme(theme,true)',theme)
+            for selector in ('#refreshNow','#settingsButton','#themeToggle','#categoryNav .nav-link.active','.mode-tab.active'):
+                self.assertGreaterEqual(self.page.locator(selector).evaluate(contrast),4.5,(theme,selector))
+            self.page.locator('#settingsButton').focus();self.page.keyboard.press('Tab')
+            expect(self.page.locator('#themeToggle')).to_be_focused()
+            outline=self.page.locator('#themeToggle').evaluate('n=>({style:getComputedStyle(n).outlineStyle,width:parseFloat(getComputedStyle(n).outlineWidth)})')
+            self.assertEqual(outline['style'],'solid');self.assertGreaterEqual(outline['width'],2)
+            for width in (320,390,951,1440):
+                was_mobile=self.page.evaluate('MOBILE_NAV.matches')
+                self.page.set_viewport_size({'width':width,'height':950})
+                # Let the breakpoint change finish before a user opens the
+                # drawer. WebKit dispatches matchMedia changes asynchronously.
+                if (width<=950)!=was_mobile:
+                    if width<=950:
+                        expect(self.page.locator('#menuToggle')).to_have_attribute('aria-expanded','false')
+                    else:
+                        expect(self.page.locator('#appSidebar')).not_to_have_attribute('role','dialog')
+                if self.page.locator('#menuToggle').get_attribute('aria-expanded')!='true':
+                    self.page.locator('#menuToggle').click()
+                button=self.page.locator('#refreshNow')
+                expect(button).to_be_visible()
+                box=button.bounding_box()
+                self.assertGreaterEqual(box['height'],44)
+                self.assertGreaterEqual(box['width'],44)
+                self.assertGreaterEqual(box['x'],0)
+                self.assertLessEqual(box['x']+box['width'],width+1)
+                self.assertTrue(self.page.evaluate('document.documentElement.scrollWidth<=innerWidth+2'))
+            self.page.set_viewport_size({'width':1440,'height':1000})
+
+
+if __name__=='__main__':
+    result=unittest.main(verbosity=2,exit=False).result
+    if not result.wasSuccessful():
+        # CI keeps the tail of stderr. Preserve full diagnostics above, then
+        # repeat each failure's cause so a long ARIA snapshot cannot hide it.
+        print('\nCompact failure summary:',file=sys.stderr)
+        for case,detail in result.failures+result.errors:
+            cause=detail.split('Call log:',1)[0].split('Aria snapshot:',1)[0]
+            print(f'{case.id()}\n{cause[:2400]}',file=sys.stderr)
+            if os.environ.get('GITHUB_ACTIONS')=='true':
+                escaped=cause[:2400].replace('%','%25').replace('\r','%0D').replace('\n','%0A')
+                print(f'::error title={case.id()}::{escaped}',file=sys.stderr)
+    sys.exit(not result.wasSuccessful())
