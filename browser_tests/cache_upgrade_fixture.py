@@ -9,8 +9,18 @@ from playwright.sync_api import expect
 import responsive_smoke as fixtures
 
 
-def check_failed_upgrade(browser):
+def check_failed_upgrade(browser, tls_context):
     source = (fixtures.WEB / 'sw.js').read_text()
+    # Observe navigation flags without replacing the production fetch handler.
+    source += """
+    self.addEventListener('fetch', event => {
+        if (event.request.mode !== 'navigate') return;
+        event.waitUntil(caches.open('upgrade-test-diagnostics').then(cache => cache.put(
+            new URL('__navigation', self.registration.scope).href,
+            new Response(JSON.stringify({cache:event.request.cache, mode:event.request.mode}))
+        )));
+    });
+    """
     legacy = re.sub(r"const CACHE = '[^']+';", "const CACHE = 'notisonda-v4';", source, count=1)
 
     for failed_path, failure in (('/app.js', 'http'), ('/data/latest.json', 'network')):
@@ -54,11 +64,14 @@ def check_failed_upgrade(browser):
                 self.wfile.write(body)
 
         server = fixtures.ThreadingHTTPServer(('127.0.0.1', 0), Handler)
-        base = f'http://127.0.0.1:{server.server_port}/'
+        server.socket = tls_context.wrap_socket(server.socket, server_side=True)
+        base = f'https://127.0.0.1:{server.server_port}/'
         threading.Thread(target=server.serve_forever, daemon=True).start()
-        context = browser.new_context(service_workers='allow')
+        context = browser.new_context(service_workers='allow', ignore_https_errors=True)
         context.route(re.compile(r'^https?://(?!127\.0\.0\.1:)'), lambda route: route.abort())
         page = context.new_page()
+        errors = []
+        page.on('pageerror', lambda error: errors.append(str(error)))
 
         def update():
             return page.evaluate("""async () => {
@@ -78,18 +91,31 @@ def check_failed_upgrade(browser):
             }""")
 
         def offline_reload():
-            # Drop every connection at the server: all engines exercise actual
-            # fetch failures, without browser automation disabling SW navigation.
+            registration = page.evaluate("""async () => {
+                const r = await navigator.serviceWorker.getRegistration();
+                return {active:r?.active?.state, controller:navigator.serviceWorker.controller?.state,
+                    cachedHTML:!!(await caches.match(location.origin+'/'))};
+            }""")
+            assert registration['active'] == 'activated', (failed_path, registration)
+            assert registration['controller'] == 'activated', (failed_path, registration)
+            assert registration['cachedHTML'], (failed_path, registration)
+            # Drop every connection, then open the reader in a new tab and use
+            # DOM reload. This checks real navigation without automation reload
+            # commands that can ask an engine to bypass its service worker.
             attempts = state['offline_attempts']
             state['offline'] = True
+            offline_page = context.new_page()
             try:
-                page.reload(wait_until='domcontentloaded')
-                page.wait_for_function('() => typeof state !== "undefined" && state.ready')
-                assert page.evaluate('state.items.length') == len(fixtures.ITEMS), (failed_path, 'offline news lost')
-                expect(page.locator('#dashboardTitle')).to_have_text('Inicio')
-                assert page.locator('.topbar').evaluate('node => getComputedStyle(node).display') == 'flex'
+                offline_page.goto(base, wait_until='domcontentloaded')
+                with offline_page.expect_navigation(wait_until='domcontentloaded'):
+                    offline_page.evaluate('location.reload()')
+                offline_page.wait_for_function('() => typeof state !== "undefined" && state.ready')
+                assert offline_page.evaluate('state.items.length') == len(fixtures.ITEMS), (failed_path, 'offline news lost', registration)
+                expect(offline_page.locator('#dashboardTitle')).to_have_text('Inicio')
+                assert offline_page.locator('.topbar').evaluate('node => getComputedStyle(node).display') == 'flex'
                 assert state['offline_attempts'] > attempts, (failed_path, 'network failure not exercised')
             finally:
+                offline_page.close()
                 state['offline'] = False
 
         try:
@@ -105,6 +131,13 @@ def check_failed_upgrade(browser):
             assert update() == 'activated', (failed_path, 'complete upgrade failed')
             page.wait_for_function("async () => !(await caches.keys()).includes('notisonda-v4')")
             offline_reload()
+        except Exception as error:
+            diagnostics = page.evaluate("""async () => {
+                const r = await navigator.serviceWorker.getRegistration();
+                const navigation = await caches.match(new URL('__navigation', location.href).href);
+                return {active:r?.active?.state, navigation:navigation ? await navigation.text() : null};
+            }""")
+            raise AssertionError((failed_path, 'upgrade fixture failed', errors, diagnostics)) from error
         finally:
             context.close()
             server.shutdown()

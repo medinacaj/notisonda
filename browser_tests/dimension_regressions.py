@@ -2,6 +2,8 @@
 from copy import deepcopy
 from datetime import datetime, timedelta
 from pathlib import Path
+import base64
+import hashlib
 import json
 import os
 import ssl
@@ -28,6 +30,12 @@ class DimensionRegressions(unittest.TestCase):
         threading.Thread(target=cls.server.serve_forever,daemon=True).start()
         cls.driver=sync_playwright().start()
         engine=os.environ.get('RADAR_TEST_ENGINE','chromium');options={'headless':True}
+        if engine=='chromium':
+            # Trust only this temporary fixture certificate, including SW fetches.
+            pem=subprocess.run(['openssl','x509','-in',str(cert),'-pubkey','-noout'],check=True,capture_output=True).stdout
+            der=subprocess.run(['openssl','pkey','-pubin','-outform','DER'],input=pem,check=True,capture_output=True).stdout
+            spki=base64.b64encode(hashlib.sha256(der).digest()).decode()
+            options['args']=[f'--ignore-certificate-errors-spki-list={spki}']
         if engine=='chromium' and os.environ.get('RADAR_CHROMIUM_EXECUTABLE'):options['executable_path']=os.environ['RADAR_CHROMIUM_EXECUTABLE']
         cls.browser=getattr(cls.driver,engine).launch(**options)
 
@@ -50,7 +58,7 @@ class DimensionRegressions(unittest.TestCase):
 
     def test_failed_cache_upgrade_keeps_the_working_offline_reader(self):
         from cache_upgrade_fixture import check_failed_upgrade
-        check_failed_upgrade(self.browser)
+        check_failed_upgrade(self.browser, self.server.socket.context)
 
     def test_destinations_are_separate_and_agenda_is_reloadable(self):
         expect(self.page.locator('#dashboardView')).to_be_visible()
