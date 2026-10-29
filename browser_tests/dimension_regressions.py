@@ -48,6 +48,10 @@ class DimensionRegressions(unittest.TestCase):
         self.assertFalse(self.errors)
         self.context.close()
 
+    def test_failed_cache_upgrade_keeps_the_working_offline_reader(self):
+        from cache_upgrade_fixture import check_failed_upgrade
+        check_failed_upgrade(self.browser)
+
     def test_destinations_are_separate_and_agenda_is_reloadable(self):
         expect(self.page.locator('#dashboardView')).to_be_visible()
         expect(self.page.locator('#agendaSection')).to_be_hidden()

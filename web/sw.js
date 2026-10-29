@@ -19,9 +19,11 @@ const keyFor = request => {
 };
 
 self.addEventListener('install', event => {
-  event.waitUntil(caches.open(CACHE).then(cache => Promise.all(SHELL.map(path =>
-    fetch(path, { cache: 'reload' }).then(res => res.ok ? cache.put(keyFor(new Request(path)), res) : null).catch(() => null)
-  ))).then(() => self.skipWaiting()));
+  // addAll es atómico: un fallo conserva activo el lector anterior y su caché.
+  // Solo una copia completa puede pasar a activate y retirar las versiones viejas.
+  event.waitUntil(caches.open(CACHE)
+    .then(cache => cache.addAll(SHELL.map(path => new Request(path, { cache: 'reload' }))))
+    .then(() => self.skipWaiting()));
 });
 
 self.addEventListener('activate', event => {

@@ -28,7 +28,7 @@
 ### Task 1: Identidad y compatibilidad
 
 **Files:** `scripts/site_config.py`, URL del proyecto en el User-Agent de `scripts/collect.py`, `web/index.html`, `manifest.webmanifest`, scripts con textos públicos, `web/sw.js`, SVG RSS recuperados bajo nombres nuevos, `README.md`, cabecera OPML; pruebas de publicación/activos, exportaciones y navegador pertinentes.
-**Interfaces:** `SITE_NAME` cambia a Radar-RSS, `SITE_URL` a la ruta comprobada; esquemas, GUID y UID permanecen idénticos. El HTML y manifest referencian los archivos RSS históricos; no se sobrescriben los originales de Notisonda.
+**Interfaces:** `SITE_NAME` cambia a Radar-RSS, `SITE_URL` a la ruta comprobada; esquemas, GUID y UID permanecen idénticos. El paso inicial recuperó los SVG históricos; la instrucción ampliada de la tarea 2 sustituye las referencias activas por nuevos PNG. No se sobrescriben los originales anteriores.
 
 - [x] Actualizar pruebas de límites HTTP, identidad/PNG y exportaciones al resultado solicitado; observar fallos antes del cambio.
 - [x] Actualizar identidad activa y enlaces de publicación sin reemplazar formatos ni IDs técnicos.
@@ -40,8 +40,10 @@
 **Files:** `web/dimension.css`, logo y derivados nuevos, `web/index.html`, `manifest.webmanifest`, `web/sw.js`, documentación y comprobaciones pertinentes de activos.
 **Interfaces:** Los tokens del tema abastecen todo el lector; se mantienen selectores e IDs funcionales, variables de anchura/alineación, preferencias y rutas. Los metadatos e iconos apuntan a activos de la misma marca.
 
-- [ ] Generar un símbolo nuevo, pequeño y reconocible; preparar iconos y tarjeta social con nombres nuevos, conservando originales.
-- [ ] Renovar paleta y lenguaje de componentes: navegación, tarjetas, botones, formularios, agenda, lector y configuración.
-- [ ] Verificar contraste, foco, movimiento reducido, ambos temas y pantallas de 320–2560 píxeles con contenido real y preferencias conservadas.
-- [ ] Ejecutar suites pertinentes y una revisión final del alcance ampliado; corregir hallazgos importantes y actualizar el PR #123 alrededor del diseño final.
+- [x] Generar un símbolo nuevo, pequeño y reconocible; preparar iconos y tarjeta social con nombres nuevos, conservando originales.
+- [x] Renovar paleta y lenguaje de componentes: navegación, tarjetas, botones, formularios, agenda, lector y configuración.
+- [x] Verificar contraste, foco, movimiento reducido, ambos temas y pantallas de 320–2560 píxeles con contenido real y preferencias conservadas.
+- [x] Ejecutar suites pertinentes y una revisión final del alcance ampliado; corregir hallazgos importantes y actualizar el PR #123 alrededor del diseño final.
 - [ ] Comprobar CI del commit exacto y mantenerlo en borrador, sin fusionar ni publicar.
+
+Los últimos controles son puertas de cierre. Su evidencia definitiva se registra en la descripción y los checks del PR #123, para identificar el commit comprobado sin crear otro commit solo por modificar estas casillas.
