@@ -767,4 +767,7 @@ if __name__=='__main__':
         for case,detail in result.failures+result.errors:
             cause=detail.split('Call log:',1)[0].split('Aria snapshot:',1)[0]
             print(f'{case.id()}\n{cause[:2400]}',file=sys.stderr)
+            if os.environ.get('GITHUB_ACTIONS')=='true':
+                escaped=cause[:2400].replace('%','%25').replace('\r','%0D').replace('\n','%0A')
+                print(f'::error title={case.id()}::{escaped}',file=sys.stderr)
     sys.exit(not result.wasSuccessful())
