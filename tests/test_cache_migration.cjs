@@ -21,3 +21,17 @@ test('activation removes legacy app caches, keeps current cache and other apps, 
  assert.ok(!deleted.includes(current));
  assert.ok(!deleted.includes('another-app-v1'));
 });
+
+for(const fresh of [false,true])test(fresh?'fresh manual check fails offline instead of returning stale cached news':'ordinary offline reading still returns cached news',async()=>{
+ const handlers={},cached=new Response('{"generated_at":"old"}');
+ let matches=0,pending;
+ const context=vm.createContext({URL,Request,
+  self:{location:{origin:'https://example.test'},registration:{scope:'https://example.test/notisonda/'},addEventListener:(name,fn)=>handlers[name]=fn},
+  caches:{open:async()=>({match:async()=>{matches++;return cached;}})},
+  fetch:async()=>{throw new Error('offline');}
+ });
+ vm.runInContext(fs.readFileSync(path.join(__dirname,'../web/sw.js'),'utf8'),context);
+ handlers.fetch({request:new Request('https://example.test/notisonda/data/meta.json?check=123',{cache:fresh?'no-store':'no-cache'}),respondWith:promise=>{pending=promise;}});
+ if(fresh){await assert.rejects(pending,/offline/);assert.equal(matches,0);}
+ else{assert.equal(await pending,cached);assert.equal(matches,1);}
+});

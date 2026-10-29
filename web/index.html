@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Notisonda: noticias actualizadas de inteligencia artificial, tecnología, Chile, Venezuela, Latinoamérica y el mundo.">
-  <meta name="theme-color" content="#171c25">
+  <meta name="theme-color" content="#19181f">
   <link rel="canonical" href="https://medinacaj.github.io/notisonda/">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="Notisonda">
@@ -42,7 +42,7 @@
   <link rel="stylesheet" href="./agenda.css?v=1.1.0">
   <link rel="stylesheet" href="./reader-layout.css?v=1.0.0">
   <link rel="stylesheet" href="./reading-ux.css?v=1.0.0">
-  <link rel="stylesheet" href="./dimension.css?v=1.6.1">
+  <link rel="stylesheet" href="./dimension.css?v=2.0.0">
   <title>Notisonda — Actualidad en un solo lugar</title>
 </head>
 <body class="radar-hybrid dimension" data-columns="auto">
@@ -67,7 +67,8 @@
       <div class="sidebar-bottom">
           <div class="topbar-refresh" id="refreshCycle" role="group" aria-label="Actualización de noticias" title="Notisonda busca noticias nuevas cada 15 minutos. Los medios se recopilan aproximadamente cada 3 horas.">
             <span class="update-label" id="lastUpdate">Sin sincronizar</span>
-            <button id="refreshNow" class="refresh-now" type="button" title="Comprobar ahora si hay publicaciones nuevas" aria-label="Comprobar novedades ahora"><span data-icon="refresh" class="ui-icon-slot" aria-hidden="true"></span></button>
+            <button id="refreshNow" class="refresh-now" type="button" title="Buscar y cargar las novedades ya publicadas" aria-label="Comprobar novedades ahora" aria-describedby="refreshStatus"><span data-icon="refresh" class="ui-icon-slot" aria-hidden="true"></span><span id="refreshNowLabel">Actualizar</span></button>
+            <span id="refreshStatus" class="refresh-status" role="status" aria-live="polite" aria-atomic="true"></span>
           </div>
         <section class="sidebar-feed-status" id="sidebarFeedHealth" aria-label="Estado de las fuentes RSS" hidden>
           <span class="sidebar-feed-status-heading">ESTADO RSS</span>
@@ -413,7 +414,7 @@
   <button id="backTop" class="back-to-top" type="button" aria-label="Volver arriba" title="Volver arriba" hidden><span data-icon="arrow-up" class="ui-icon-slot" aria-hidden="true"></span></button>
   <div id="actionToast" class="action-toast" role="status" aria-live="polite" aria-atomic="true" hidden></div>
   <script src="./source-tools.js?v=1.0.1" defer></script>
-  <script src="./app.js?v=9.8.0" defer></script>
+  <script src="./app.js?v=9.9.0" defer></script>
   <script src="./library.js?v=2.0.1" defer></script>
   <script src="./sidebar-layout.js?v=1.2.3" defer></script>
   <script src="./news-effects.js?v=1.0.0" defer></script>
